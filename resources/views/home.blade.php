@@ -1474,12 +1474,12 @@
                 success: function(res) {
                     if (res.status === 'success') {
                         let html = '';
-                        res.users.forEach(u => {
+                        res.data.users.forEach(u => {
                             const isActiveBadge = u.is_active ? '<span class="status-badge status-shortlisted">Active</span>' : '<span class="status-badge status-rejected">Suspended</span>';
                             const roleBadge = u.role === 'admin' ? '<span class="role-badge role-admin">Admin</span>' : '<span class="role-badge role-candidate">Candidate</span>';
                             const toggleRoleBtnText = u.role === 'admin' ? 'Demote Candidate' : 'Promote Admin';
                             const toggleActiveBtnText = u.is_active ? 'Suspend' : 'Activate';
-                            const activeBtnClass = u.is_active ? 'btn-sm-danger' : 'btn-view btn-view-sm';
+                            const activeBtnClass = u.is_active ? 'btn-sm-danger' : 'btn-sm-success';
                             
                             html += `
                                 <tr>

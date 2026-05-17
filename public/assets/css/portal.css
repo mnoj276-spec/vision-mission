@@ -679,6 +679,23 @@ header {
     color: #ffffff;
 }
 
+.btn-sm-success {
+    padding: 0.35rem 0.75rem;
+    background: rgba(16, 185, 129, 0.08);
+    color: #10b981;
+    border: 1px solid rgba(16, 185, 129, 0.15);
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.75rem;
+    font-weight: 600;
+    transition: all 0.2s ease;
+}
+
+.btn-sm-success:hover {
+    background: #10b981;
+    color: #ffffff;
+}
+
 /* Administrative Overrides and Quarantine Dashboard */
 .admin-badge-status {
     padding: 0.25rem 0.5rem;

@@ -1540,7 +1540,7 @@
                                     <td>
                                         <div style="display:flex; gap:0.5rem; justify-content:center;">
                                             <button class="btn-sm-view btn-toggle-role" data-id="${u.id}" data-role="${u.role}">Toggle Role</button>
-                                            <button class="btn-sm-danger btn-toggle-status" data-id="${u.id}" data-active="${u.is_active}" style="background:${u.is_active ? '#ef4444' : '#10b981'};">${u.is_active ? 'Suspend' : 'Activate'}</button>
+                                            <button class="${u.is_active ? 'btn-sm-danger' : 'btn-sm-success'} btn-toggle-status" data-id="${u.id}" data-active="${u.is_active}">${u.is_active ? 'Suspend' : 'Activate'}</button>
                                         </div>
                                     </td>
                                 </tr>

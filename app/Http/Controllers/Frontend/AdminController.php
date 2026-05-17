@@ -270,7 +270,9 @@ class AdminController extends Controller
 
         return response()->json([
             'status' => 'success',
-            'users' => $users
+            'data' => [
+                'users' => $users
+            ]
         ]);
     }
 
