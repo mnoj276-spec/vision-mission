@@ -1,0 +1,155 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Builder;
+
+class JobPost extends Model
+{
+    use HasFactory;
+
+    protected $table = 'job_posts';
+
+    protected $fillable = [
+        'department_id',
+        'state_id',
+        'qualification_id',
+        'category_id',
+        'title',
+        'slug',
+        'description',
+        'exam_pattern',
+        'selection_process',
+        'age_limit',
+        'salary_min',
+        'salary_max',
+        'vacancy_count',
+        'application_fee',
+        'official_website_link',
+        'apply_link',
+        'notification_pdf_path',
+        'last_date_to_apply',
+        'exam_date',
+        'status',
+        'published_at',
+        'is_featured'
+    ];
+
+    protected $casts = [
+        'salary_min' => 'decimal:2',
+        'salary_max' => 'decimal:2',
+        'vacancy_count' => 'integer',
+        'application_fee' => 'decimal:2',
+        'last_date_to_apply' => 'date',
+        'exam_date' => 'date',
+        'published_at' => 'datetime',
+        'is_featured' => 'boolean',
+    ];
+
+    /*
+    |--------------------------------------------------------------------------
+    | Relationships
+    |--------------------------------------------------------------------------
+    */
+
+    public function category(): BelongsTo
+    {
+        return $this->belongsTo(Category::class);
+    }
+
+    public function department(): BelongsTo
+    {
+        return $this->belongsTo(Department::class);
+    }
+
+    public function state(): BelongsTo
+    {
+        return $this->belongsTo(State::class);
+    }
+
+    public function qualification(): BelongsTo
+    {
+        return $this->belongsTo(Qualification::class);
+    }
+
+    public function tags(): BelongsToMany
+    {
+        return $this->belongsToMany(Tag::class, 'job_post_tags', 'job_post_id', 'tag_id');
+    }
+
+    public function bookmarks(): HasMany
+    {
+        return $this->hasMany(Bookmark::class);
+    }
+
+    public function applications(): HasMany
+    {
+        return $this->hasMany(JobApplication::class);
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | Query Scopes for AJAX Filtering & Searches
+    |--------------------------------------------------------------------------
+    */
+
+    /**
+     * Scope to retrieve only published posts.
+     */
+    public function scopePublished(Builder $query): Builder
+    {
+        return $query->where('status', 'published')
+                     ->where(function ($q) {
+                         $q->whereNull('published_at')
+                           ->orWhere('published_at', '<=', now());
+                     });
+    }
+
+    /**
+     * Scope to retrieve featured posts.
+     */
+    public function scopeFeatured(Builder $query): Builder
+    {
+        return $query->where('is_featured', true);
+    }
+
+    /**
+     * Scope to search by key phrases or titles.
+     */
+    public function scopeSearch(Builder $query, ?string $term): Builder
+    {
+        if (empty($term)) {
+            return $query;
+        }
+
+        return $query->where(function ($q) use ($term) {
+            $q->where('title', 'like', "%{$term}%")
+              ->orWhere('description', 'like', "%{$term}%");
+        });
+    }
+
+    /**
+     * Scope to handle dynamic filter configurations.
+     */
+    public function scopeFilterBy(Builder $query, array $filters): Builder
+    {
+        return $query->when(!empty($filters['state_id']), function ($q) use ($filters) {
+            $q->where('state_id', $filters['state_id']);
+        })->when(!empty($filters['category_id']), function ($q) use ($filters) {
+            $q->where('category_id', $filters['category_id']);
+        })->when(!empty($filters['qualification_id']), function ($q) use ($filters) {
+            $q->where('qualification_id', $filters['qualification_id']);
+        })->when(!empty($filters['department_id']), function ($q) use ($filters) {
+            $q->where('department_id', $filters['department_id']);
+        })->when(isset($filters['min_salary']), function ($q) use ($filters) {
+            $q->where('salary_max', '>=', $filters['min_salary']);
+        })->when(isset($filters['has_no_fee']) && $filters['has_no_fee'] == true, function ($q) {
+            $q->where('application_fee', 0);
+        });
+    }
+}
