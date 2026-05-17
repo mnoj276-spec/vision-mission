@@ -72,9 +72,32 @@
                         Login / Register
                     </button>
                 @endauth
+
+                <!-- Hamburger menu button for smaller screens -->
+                <button class="hamburger-btn" id="hamburgerMenuBtn" aria-label="Toggle Navigation Menu">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+                </button>
             </div>
         </nav>
     </header>
+
+    <!-- Mobile Glassmorphic Navigation Drawer -->
+    <div class="mobile-drawer-overlay" id="mobileDrawerOverlay"></div>
+    <div class="mobile-drawer glass-panel" id="mobileDrawer">
+        <div class="mobile-drawer-header">
+            <a href="/" class="logo">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="color: var(--accent-color);"><path d="M12 2L2 7l10 5 10-5-10-5z"></path><path d="M2 17l10 5 10-5"></path><path d="M2 12l10 5 10-5"></path></svg>
+                Gov<span>Jobs</span>
+            </a>
+            <button class="drawer-close-btn" id="closeMobileDrawerBtn">&times;</button>
+        </div>
+        <ul class="mobile-drawer-links">
+            <li><a href="/" class="nav-tab-trigger mobile-drawer-link" data-target="jobs">Home</a></li>
+            <li><a href="#latest-jobs" class="nav-tab-trigger mobile-drawer-link" data-target="jobs">Jobs List</a></li>
+            <li><a href="#" class="nav-tab-trigger mobile-drawer-link" data-target="info-hub">Information Hub</a></li>
+            <li><a href="#admit-cards" class="mobile-drawer-link">Exam Utilities</a></li>
+        </ul>
+    </div>
 
     <!-- 2. Master Dynamic Content -->
     <main>
@@ -391,10 +414,30 @@
                 }
             });
 
+            // ================== MOBILE DRAWER TOGGLE SYSTEM ==================
+            const mDrawer = $('#mobileDrawer');
+            const mOverlay = $('#mobileDrawerOverlay');
+            
+            function openDrawer() {
+                mDrawer.addClass('active');
+                mOverlay.addClass('active');
+                body.css('overflow', 'hidden');
+            }
+            
+            function closeDrawer() {
+                mDrawer.removeClass('active');
+                mOverlay.removeClass('active');
+                body.css('overflow', '');
+            }
+
+            $('#hamburgerMenuBtn').on('click', openDrawer);
+            $('#closeMobileDrawerBtn, #mobileDrawerOverlay, .mobile-drawer-link').on('click', closeDrawer);
+
+
             // ================== LOGIN MODAL TRIGGERS ==================
             const authModal = $('#authModal');
             
-            $('#openAuthModalBtn, .trigger-auth-redirect-btn').on('click', function(e) {
+            $(document).on('click', '#openAuthModalBtn, .trigger-auth-redirect-btn', function(e) {
                 e.preventDefault();
                 $('#ajaxLoginForm')[0].reset();
                 $('#ajaxRegisterForm')[0].reset();

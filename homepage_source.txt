@@ -1,15 +1,58 @@
-@extends('layouts.app')
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="PF5w3tROmou5Z6SgIvSHkNjjkjmd0YzYSEjvPKcV">
+    <title>GovJobs - Premium Automated Government Jobs Portal</title>
+    
+    <!-- Meta SEO Binds -->
+    <meta name="description" content="Custom Meta Description">
+    <meta name="keywords" content="custom, keyword, checks">
+    <meta name="robots" content="index, follow">
+    
+    <!-- Custom Design Stylesheet -->
+    <link rel="stylesheet" href="http://127.0.0.1:8000/assets/css/portal.css">
+</head>
+<body>
 
-@section('title', 'GovJobs - Premium Automated Government Jobs Portal')
+    <!-- 1. Mega Menu Header & Glassmorphic Navigation -->
+    <header class="glass-panel">
+        <nav class="navbar">
+            <a href="/" class="logo">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="color: var(--accent-color);"><path d="M12 2L2 7l10 5 10-5-10-5z"></path><path d="M2 17l10 5 10-5"></path><path d="M2 12l10 5 10-5"></path></svg>
+                Gov<span>Jobs</span>
+            </a>
+            
+            <ul class="nav-links">
+                <li><a href="/" class="nav-tab-trigger" data-target="jobs">Home</a></li>
+                <li><a href="#latest-jobs" class="nav-tab-trigger" data-target="jobs">Jobs List</a></li>
+                <li><a href="#" class="nav-tab-trigger" data-target="info-hub">Information Hub</a></li>
+                <li><a href="#admit-cards">Exam Utilities</a></li>
+            </ul>
 
-@section('content')
+            <div class="header-actions" style="display: flex; gap: 0.75rem; align-items: center;">
+                <button class="theme-toggle-btn" id="themeToggle">
+                    <svg id="themeIcon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></svg>
+                    <span id="themeText">Night Mode</span>
+                </button>
 
+                                    <button class="theme-toggle-btn" id="openAuthModalBtn">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path><polyline points="10 17 15 12 10 7"></polyline><line x1="15" y1="12" x2="3" y2="12"></line></svg>
+                        Login / Register
+                    </button>
+                            </div>
+        </nav>
+    </header>
+
+    <!-- 2. Master Dynamic Content -->
+    <main>
+        
 <!-- AAGGREGATOR DESIGN SYSTEM STYLES -->
 <style>
     /* Scrolling Marquee Update Ticker */
     .ticker-wrap {
         width: 100%;
-        box-sizing: border-box;
         overflow: hidden;
         height: 48px;
         background: linear-gradient(135deg, rgba(37, 99, 235, 0.15) 0%, rgba(16, 185, 129, 0.1) 100%);
@@ -76,89 +119,42 @@
     /* Trending Hot Action Cards */
     .trending-grid {
         display: grid;
-        grid-template-columns: repeat(8, 1fr);
-        gap: 0.75rem;
-        margin-bottom: 3rem;
+        grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+        gap: 1rem;
+        margin-bottom: 2.5rem;
     }
-    
-    @media (max-width: 1200px) {
-        .trending-grid {
-            grid-template-columns: repeat(4, 1fr);
-            gap: 1rem;
-        }
-    }
-    
-    @media (max-width: 640px) {
-        .trending-grid {
-            grid-template-columns: repeat(2, 1fr);
-            gap: 0.75rem;
-        }
-    }
-    
     .trending-card {
-        background: var(--bg-secondary);
+        background: rgba(255, 255, 255, 0.02);
         border: 1px solid var(--border-color);
-        border-radius: 14px;
-        padding: 1.1rem 0.5rem;
+        border-radius: 8px;
+        padding: 1.25rem 0.75rem;
         text-align: center;
         text-decoration: none;
         transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         display: flex;
         flex-direction: column;
         align-items: center;
-        justify-content: center;
-        gap: 0.4rem;
-        height: 105px;
-        position: relative;
-        overflow: hidden;
-        box-shadow: var(--card-shadow);
+        gap: 0.5rem;
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
     }
-    
-    .trending-card::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 3px;
-        background: var(--card-accent, var(--accent-color));
-        opacity: 0.85;
-    }
-    
     .trending-card:hover {
-        transform: translateY(-5px);
-        border-color: var(--card-accent, var(--accent-color));
-        box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 0 15px -3px var(--card-accent, var(--accent-color));
-        background: var(--bg-secondary);
+        transform: translateY(-4px);
+        border-color: rgba(255, 255, 255, 0.2);
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+        background: rgba(255, 255, 255, 0.05);
     }
-    
-    .dark-theme .trending-card:hover {
-        box-shadow: 0 12px 30px -8px rgba(0, 0, 0, 0.5), 0 0 20px -5px var(--card-accent, var(--accent-color));
-    }
-    
     .trending-card .card-icon {
-        font-size: 1.6rem;
-        margin-bottom: 0.15rem;
-        filter: drop-shadow(0 2px 6px rgba(0,0,0,0.15));
-        transition: transform 0.3s ease;
+        font-size: 1.5rem;
+        margin-bottom: 0.25rem;
+        filter: drop-shadow(0 2px 8px rgba(0,0,0,0.2));
     }
-    
-    .trending-card:hover .card-icon {
-        transform: scale(1.12) rotate(3deg);
-    }
-    
     .trending-card .card-title {
-        font-family: 'Outfit', sans-serif;
-        font-size: 0.82rem;
+        font-size: 0.8rem;
         font-weight: 700;
         color: var(--text-primary);
         text-transform: uppercase;
         letter-spacing: 0.02em;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        max-width: 100%;
-        padding: 0 0.25rem;
     }
 
     /* Sarkari Board Panels */
@@ -179,7 +175,6 @@
         }
     }
     .sarkari-panel {
-        min-width: 0;
         background: rgba(255, 255, 255, 0.02);
         border: 1px solid var(--border-color);
         border-radius: 12px;
@@ -230,7 +225,6 @@
         border-radius: 3px;
     }
     .sarkari-item {
-        min-width: 0;
         display: flex;
         justify-content: space-between;
         align-items: center;
@@ -319,8 +313,6 @@
     }
 </style>
 
-<div style="max-width: 1400px; margin: 0 auto; padding: 0 5%;">
-
 <!-- 1. Hero Welcome Segment -->
 <section class="hero" style="margin-bottom: 1.5rem;">
     <h1>Find Your Dream <span style="color: var(--accent-color);">Government Job</span> Today</h1>
@@ -332,63 +324,111 @@
     <div class="ticker-label">LATEST UPDATES</div>
     <div class="ticker">
         <div class="ticker-item-list">
-            @forelse($tickerNotices as $tNotice)
-                <a href="#" class="ticker-item btn-view" data-slug="{{ $tNotice->slug }}">
+                            <a href="#" class="ticker-item btn-view" data-slug="ssc-annual-exam-calendar-schedule-announcement-2026-688">
                     <span class="new-badge" style="margin-right: 0.25rem;">NEW</span>
-                    {{ $tNotice->title }}
+                    SSC Annual Exam Calendar &amp; Schedule Announcement 2026
                 </a>
-            @empty
-                <a href="#" class="ticker-item">Welcome to GovJobs - Real-time Highly Validated Recruitment Aggregator Platform</a>
-            @endforelse
-            <!-- Duplicate array items to create seamless scrolling loop -->
-            @foreach($tickerNotices as $tNotice)
-                <a href="#" class="ticker-item btn-view" data-slug="{{ $tNotice->slug }}">
+                            <a href="#" class="ticker-item btn-view" data-slug="ssc-cgl-application-date-postponement-delay-notice-2026-206">
                     <span class="new-badge" style="margin-right: 0.25rem;">NEW</span>
-                    {{ $tNotice->title }}
+                    SSC CGL Application Date Postponement &amp; Delay Notice 2026
                 </a>
-            @endforeach
-        </div>
+                            <a href="#" class="ticker-item btn-view" data-slug="upsc-ias-civil-services-complete-examination-syllabus-2026-642">
+                    <span class="new-badge" style="margin-right: 0.25rem;">NEW</span>
+                    UPSC IAS Civil Services Complete Examination Syllabus 2026
+                </a>
+                            <a href="#" class="ticker-item btn-view" data-slug="ssc-cgl-tier-1-2-complete-syllabus-and-pattern-2026-299">
+                    <span class="new-badge" style="margin-right: 0.25rem;">NEW</span>
+                    SSC CGL Tier 1 &amp; 2 Complete Syllabus and Pattern 2026
+                </a>
+                            <a href="#" class="ticker-item btn-view" data-slug="ssc-cgl-tier-1-official-response-sheet-answer-key-2026-650">
+                    <span class="new-badge" style="margin-right: 0.25rem;">NEW</span>
+                    SSC CGL Tier 1 Official Response Sheet &amp; Answer Key 2026
+                </a>
+                            <a href="#" class="ticker-item btn-view" data-slug="upsc-ias-2025-final-selection-list-recommendations-267">
+                    <span class="new-badge" style="margin-right: 0.25rem;">NEW</span>
+                    UPSC IAS 2025 Final Selection List &amp; Recommendations
+                </a>
+                            <a href="#" class="ticker-item btn-view" data-slug="ssc-gd-constable-2025-written-exam-scorecard-result-411">
+                    <span class="new-badge" style="margin-right: 0.25rem;">NEW</span>
+                    SSC GD Constable 2025 Written Exam Scorecard Result
+                </a>
+                            <a href="#" class="ticker-item btn-view" data-slug="ssc-cgl-2025-tier-2-final-merit-list-cutoff-630">
+                    <span class="new-badge" style="margin-right: 0.25rem;">NEW</span>
+                    SSC CGL 2025 Tier 2 Final Merit List &amp; Cutoff
+                </a>
+                        <!-- Duplicate array items to create seamless scrolling loop -->
+                            <a href="#" class="ticker-item btn-view" data-slug="ssc-annual-exam-calendar-schedule-announcement-2026-688">
+                    <span class="new-badge" style="margin-right: 0.25rem;">NEW</span>
+                    SSC Annual Exam Calendar &amp; Schedule Announcement 2026
+                </a>
+                            <a href="#" class="ticker-item btn-view" data-slug="ssc-cgl-application-date-postponement-delay-notice-2026-206">
+                    <span class="new-badge" style="margin-right: 0.25rem;">NEW</span>
+                    SSC CGL Application Date Postponement &amp; Delay Notice 2026
+                </a>
+                            <a href="#" class="ticker-item btn-view" data-slug="upsc-ias-civil-services-complete-examination-syllabus-2026-642">
+                    <span class="new-badge" style="margin-right: 0.25rem;">NEW</span>
+                    UPSC IAS Civil Services Complete Examination Syllabus 2026
+                </a>
+                            <a href="#" class="ticker-item btn-view" data-slug="ssc-cgl-tier-1-2-complete-syllabus-and-pattern-2026-299">
+                    <span class="new-badge" style="margin-right: 0.25rem;">NEW</span>
+                    SSC CGL Tier 1 &amp; 2 Complete Syllabus and Pattern 2026
+                </a>
+                            <a href="#" class="ticker-item btn-view" data-slug="ssc-cgl-tier-1-official-response-sheet-answer-key-2026-650">
+                    <span class="new-badge" style="margin-right: 0.25rem;">NEW</span>
+                    SSC CGL Tier 1 Official Response Sheet &amp; Answer Key 2026
+                </a>
+                            <a href="#" class="ticker-item btn-view" data-slug="upsc-ias-2025-final-selection-list-recommendations-267">
+                    <span class="new-badge" style="margin-right: 0.25rem;">NEW</span>
+                    UPSC IAS 2025 Final Selection List &amp; Recommendations
+                </a>
+                            <a href="#" class="ticker-item btn-view" data-slug="ssc-gd-constable-2025-written-exam-scorecard-result-411">
+                    <span class="new-badge" style="margin-right: 0.25rem;">NEW</span>
+                    SSC GD Constable 2025 Written Exam Scorecard Result
+                </a>
+                            <a href="#" class="ticker-item btn-view" data-slug="ssc-cgl-2025-tier-2-final-merit-list-cutoff-630">
+                    <span class="new-badge" style="margin-right: 0.25rem;">NEW</span>
+                    SSC CGL 2025 Tier 2 Final Merit List &amp; Cutoff
+                </a>
+                    </div>
     </div>
 </div>
-
-</div><!-- end centering wrapper -->
 
 <!-- ======================= PORTAL FRONTEND TAB SEGMENTS ======================= -->
 
 <!-- TAB 1: PRIMARY JOBS DIRECTORY & FILTERS (Active by default) -->
-<div class="portal-main-tab active" id="jobs-search-section" style="padding: 0 5%; max-width: 1400px; margin: 0 auto;">
+<div class="portal-main-tab active" id="jobs-search-section">
 
     <!-- 3. Trending Hot Quick Navigation Cards -->
     <div class="trending-grid">
-        <a href="#sarkari-jobs" class="trending-card" style="--card-accent: #3b82f6;">
+        <a href="#sarkari-jobs" class="trending-card" style="border-top: 3px solid #3b82f6;">
             <div class="card-icon" style="background: rgba(59, 130, 246, 0.1); color: #3b82f6;">💼</div>
             <span class="card-title">Latest Jobs</span>
         </a>
-        <a href="#sarkari-admit-cards" class="trending-card" style="--card-accent: #10b981;">
+        <a href="#sarkari-admit-cards" class="trending-card" style="border-top: 3px solid #10b981;">
             <div class="card-icon" style="background: rgba(16, 185, 129, 0.1); color: #10b981;">🎟️</div>
             <span class="card-title">Admit Cards</span>
         </a>
-        <a href="#sarkari-results" class="trending-card" style="--card-accent: #8b5cf6;">
+        <a href="#sarkari-results" class="trending-card" style="border-top: 3px solid #8b5cf6;">
             <div class="card-icon" style="background: rgba(139, 92, 246, 0.1); color: #8b5cf6;">🏆</div>
             <span class="card-title">Exam Results</span>
         </a>
-        <a href="#sarkari-answer-keys" class="trending-card" style="--card-accent: #f59e0b;">
+        <a href="#sarkari-answer-keys" class="trending-card" style="border-top: 3px solid #f59e0b;">
             <div class="card-icon" style="background: rgba(245, 158, 11, 0.1); color: #f59e0b;">🔑</div>
             <span class="card-title">Answer Keys</span>
         </a>
-        <a href="#sarkari-syllabus" class="trending-card" style="--card-accent: #ec4899;">
+        <a href="#sarkari-syllabus" class="trending-card" style="border-top: 3px solid #ec4899;">
             <div class="card-icon" style="background: rgba(236, 72, 153, 0.1); color: #ec4899;">📖</div>
             <span class="card-title">Syllabus</span>
         </a>
-        <a href="#sarkari-notices" class="trending-card" style="--card-accent: #ef4444;">
+        <a href="#sarkari-notices" class="trending-card" style="border-top: 3px solid #ef4444;">
             <div class="card-icon" style="background: rgba(239, 68, 68, 0.1); color: #ef4444;">📢</div>
             <span class="card-title">Notices</span>
         </a>
-        <a href="#sarkari-admissions" class="trending-card" style="--card-accent: #06b6d4;">
+        <a href="#sarkari-admissions" class="trending-card" style="border-top: 3px solid #06b6d4;">
             <div class="card-icon" style="background: rgba(6, 182, 212, 0.1); color: #06b6d4;">🎓</div>
             <span class="card-title">Admissions</span>
         </a>
-        <a href="#sarkari-scholarships" class="trending-card" style="--card-accent: #f97316;">
+        <a href="#sarkari-scholarships" class="trending-card" style="border-top: 3px solid #f97316;">
             <div class="card-icon" style="background: rgba(249, 115, 22, 0.1); color: #f97316;">💰</div>
             <span class="card-title">Scholarships</span>
         </a>
@@ -413,17 +453,79 @@
                 Latest Jobs
             </div>
             <ul class="sarkari-list">
-                @forelse($recentJobs as $job)
-                    <li class="sarkari-item">
-                        <a href="#" class="sarkari-item-link btn-view" data-slug="{{ $job->slug }}">
-                            &raquo; {{ $job->title }}
+                                    <li class="sarkari-item">
+                        <a href="#" class="sarkari-item-link btn-view" data-slug="upsc-nda-na-exam-ii-2026-recruitment-799">
+                            &raquo; UPSC NDA &amp; NA Exam (II) 2026 Recruitment
                         </a>
                         <span class="new-badge">NEW</span>
                     </li>
-                @empty
-                    <li style="padding: 1rem; text-align: center; color: var(--text-secondary); font-size: 0.85rem;">No active recruitments listed.</li>
-                @endforelse
-            </ul>
+                                    <li class="sarkari-item">
+                        <a href="#" class="sarkari-item-link btn-view" data-slug="upsc-civil-services-ias-2026-preliminary-exam-notification-951">
+                            &raquo; UPSC Civil Services IAS 2026 Preliminary Exam Notification
+                        </a>
+                        <span class="new-badge">NEW</span>
+                    </li>
+                                    <li class="sarkari-item">
+                        <a href="#" class="sarkari-item-link btn-view" data-slug="ssc-gd-constable-recruitment-2026-announcement-444">
+                            &raquo; SSC GD Constable Recruitment 2026 Announcement
+                        </a>
+                        <span class="new-badge">NEW</span>
+                    </li>
+                                    <li class="sarkari-item">
+                        <a href="#" class="sarkari-item-link btn-view" data-slug="ssc-junior-engineer-je-2026-exam-form-344">
+                            &raquo; SSC Junior Engineer (JE) 2026 Exam Form
+                        </a>
+                        <span class="new-badge">NEW</span>
+                    </li>
+                                    <li class="sarkari-item">
+                        <a href="#" class="sarkari-item-link btn-view" data-slug="ssc-mts-multi-tasking-staff-2026-application-798">
+                            &raquo; SSC MTS Multi-Tasking Staff 2026 Application
+                        </a>
+                        <span class="new-badge">NEW</span>
+                    </li>
+                                    <li class="sarkari-item">
+                        <a href="#" class="sarkari-item-link btn-view" data-slug="ssc-chsl-102-vacancy-2026-registration-456">
+                            &raquo; SSC CHSL (10+2) Vacancy 2026 Registration
+                        </a>
+                        <span class="new-badge">NEW</span>
+                    </li>
+                                    <li class="sarkari-item">
+                        <a href="#" class="sarkari-item-link btn-view" data-slug="ssc-cgl-tier-1-recruitment-2026-notification-298">
+                            &raquo; SSC CGL Tier 1 Recruitment 2026 Notification
+                        </a>
+                        <span class="new-badge">NEW</span>
+                    </li>
+                                    <li class="sarkari-item">
+                        <a href="#" class="sarkari-item-link btn-view" data-slug="upsc-nda-na-exam-ii-2026-recruitment-409">
+                            &raquo; UPSC NDA &amp; NA Exam (II) 2026 Recruitment
+                        </a>
+                        <span class="new-badge">NEW</span>
+                    </li>
+                                    <li class="sarkari-item">
+                        <a href="#" class="sarkari-item-link btn-view" data-slug="upsc-civil-services-ias-2026-preliminary-exam-notification-986">
+                            &raquo; UPSC Civil Services IAS 2026 Preliminary Exam Notification
+                        </a>
+                        <span class="new-badge">NEW</span>
+                    </li>
+                                    <li class="sarkari-item">
+                        <a href="#" class="sarkari-item-link btn-view" data-slug="ssc-gd-constable-recruitment-2026-announcement-224">
+                            &raquo; SSC GD Constable Recruitment 2026 Announcement
+                        </a>
+                        <span class="new-badge">NEW</span>
+                    </li>
+                                    <li class="sarkari-item">
+                        <a href="#" class="sarkari-item-link btn-view" data-slug="ssc-junior-engineer-je-2026-exam-form-388">
+                            &raquo; SSC Junior Engineer (JE) 2026 Exam Form
+                        </a>
+                        <span class="new-badge">NEW</span>
+                    </li>
+                                    <li class="sarkari-item">
+                        <a href="#" class="sarkari-item-link btn-view" data-slug="ssc-mts-multi-tasking-staff-2026-application-397">
+                            &raquo; SSC MTS Multi-Tasking Staff 2026 Application
+                        </a>
+                        <span class="new-badge">NEW</span>
+                    </li>
+                            </ul>
         </div>
 
         <!-- Panel 2: Admit Cards -->
@@ -433,17 +535,43 @@
                 Admit Cards
             </div>
             <ul class="sarkari-list">
-                @forelse($admitCards as $card)
-                    <li class="sarkari-item">
-                        <a href="#" class="sarkari-item-link btn-view" data-slug="{{ $card->slug }}">
-                            &raquo; {{ $card->title }}
+                                    <li class="sarkari-item">
+                        <a href="#" class="sarkari-item-link btn-view" data-slug="upsc-ias-preliminary-hall-ticket-admit-card-2026-963">
+                            &raquo; UPSC IAS Preliminary Hall Ticket / Admit Card 2026
                         </a>
                         <span class="new-badge">NEW</span>
                     </li>
-                @empty
-                    <li style="padding: 1rem; text-align: center; color: var(--text-secondary); font-size: 0.85rem;">No active admit cards released.</li>
-                @endforelse
-            </ul>
+                                    <li class="sarkari-item">
+                        <a href="#" class="sarkari-item-link btn-view" data-slug="ssc-chsl-tier-1-computer-based-test-entry-card-2026-881">
+                            &raquo; SSC CHSL Tier 1 Computer Based Test Entry Card 2026
+                        </a>
+                        <span class="new-badge">NEW</span>
+                    </li>
+                                    <li class="sarkari-item">
+                        <a href="#" class="sarkari-item-link btn-view" data-slug="ssc-cgl-tier-1-admit-card-hall-ticket-release-2026-772">
+                            &raquo; SSC CGL Tier 1 Admit Card &amp; Hall Ticket Release 2026
+                        </a>
+                        <span class="new-badge">NEW</span>
+                    </li>
+                                    <li class="sarkari-item">
+                        <a href="#" class="sarkari-item-link btn-view" data-slug="upsc-ias-preliminary-hall-ticket-admit-card-2026-379">
+                            &raquo; UPSC IAS Preliminary Hall Ticket / Admit Card 2026
+                        </a>
+                        <span class="new-badge">NEW</span>
+                    </li>
+                                    <li class="sarkari-item">
+                        <a href="#" class="sarkari-item-link btn-view" data-slug="ssc-chsl-tier-1-computer-based-test-entry-card-2026-760">
+                            &raquo; SSC CHSL Tier 1 Computer Based Test Entry Card 2026
+                        </a>
+                        <span class="new-badge">NEW</span>
+                    </li>
+                                    <li class="sarkari-item">
+                        <a href="#" class="sarkari-item-link btn-view" data-slug="ssc-cgl-tier-1-admit-card-hall-ticket-release-2026-368">
+                            &raquo; SSC CGL Tier 1 Admit Card &amp; Hall Ticket Release 2026
+                        </a>
+                        <span class="new-badge">NEW</span>
+                    </li>
+                            </ul>
         </div>
 
         <!-- Panel 3: Exam Results -->
@@ -453,17 +581,55 @@
                 Exam Results
             </div>
             <ul class="sarkari-list">
-                @forelse($results as $res)
-                    <li class="sarkari-item">
-                        <a href="#" class="sarkari-item-link btn-view" data-slug="{{ $res->slug }}">
-                            &raquo; {{ $res->title }}
+                                    <li class="sarkari-item">
+                        <a href="#" class="sarkari-item-link btn-view" data-slug="ssc-annual-exam-calendar-schedule-announcement-2026-688">
+                            &raquo; SSC Annual Exam Calendar &amp; Schedule Announcement 2026
                         </a>
                         <span class="new-badge">NEW</span>
                     </li>
-                @empty
-                    <li style="padding: 1rem; text-align: center; color: var(--text-secondary); font-size: 0.85rem;">No active results declared yet.</li>
-                @endforelse
-            </ul>
+                                    <li class="sarkari-item">
+                        <a href="#" class="sarkari-item-link btn-view" data-slug="upsc-ias-2025-final-selection-list-recommendations-267">
+                            &raquo; UPSC IAS 2025 Final Selection List &amp; Recommendations
+                        </a>
+                        <span class="new-badge">NEW</span>
+                    </li>
+                                    <li class="sarkari-item">
+                        <a href="#" class="sarkari-item-link btn-view" data-slug="ssc-gd-constable-2025-written-exam-scorecard-result-411">
+                            &raquo; SSC GD Constable 2025 Written Exam Scorecard Result
+                        </a>
+                        <span class="new-badge">NEW</span>
+                    </li>
+                                    <li class="sarkari-item">
+                        <a href="#" class="sarkari-item-link btn-view" data-slug="ssc-cgl-2025-tier-2-final-merit-list-cutoff-630">
+                            &raquo; SSC CGL 2025 Tier 2 Final Merit List &amp; Cutoff
+                        </a>
+                        <span class="new-badge">NEW</span>
+                    </li>
+                                    <li class="sarkari-item">
+                        <a href="#" class="sarkari-item-link btn-view" data-slug="ssc-annual-exam-calendar-schedule-announcement-2026-788">
+                            &raquo; SSC Annual Exam Calendar &amp; Schedule Announcement 2026
+                        </a>
+                        <span class="new-badge">NEW</span>
+                    </li>
+                                    <li class="sarkari-item">
+                        <a href="#" class="sarkari-item-link btn-view" data-slug="upsc-ias-2025-final-selection-list-recommendations-464">
+                            &raquo; UPSC IAS 2025 Final Selection List &amp; Recommendations
+                        </a>
+                        <span class="new-badge">NEW</span>
+                    </li>
+                                    <li class="sarkari-item">
+                        <a href="#" class="sarkari-item-link btn-view" data-slug="ssc-gd-constable-2025-written-exam-scorecard-result-453">
+                            &raquo; SSC GD Constable 2025 Written Exam Scorecard Result
+                        </a>
+                        <span class="new-badge">NEW</span>
+                    </li>
+                                    <li class="sarkari-item">
+                        <a href="#" class="sarkari-item-link btn-view" data-slug="ssc-cgl-2025-tier-2-final-merit-list-cutoff-911">
+                            &raquo; SSC CGL 2025 Tier 2 Final Merit List &amp; Cutoff
+                        </a>
+                        <span class="new-badge">NEW</span>
+                    </li>
+                            </ul>
         </div>
     </div>
 
@@ -476,17 +642,19 @@
                 Answer Keys
             </div>
             <ul class="sarkari-list">
-                @forelse($answerKeys as $key)
-                    <li class="sarkari-item">
-                        <a href="#" class="sarkari-item-link btn-view" data-slug="{{ $key->slug }}">
-                            &raquo; {{ $key->title }}
+                                    <li class="sarkari-item">
+                        <a href="#" class="sarkari-item-link btn-view" data-slug="ssc-cgl-tier-1-official-response-sheet-answer-key-2026-650">
+                            &raquo; SSC CGL Tier 1 Official Response Sheet &amp; Answer Key 2026
                         </a>
                         <span class="new-badge">NEW</span>
                     </li>
-                @empty
-                    <li style="padding: 1rem; text-align: center; color: var(--text-secondary); font-size: 0.85rem;">No official answer keys released.</li>
-                @endforelse
-            </ul>
+                                    <li class="sarkari-item">
+                        <a href="#" class="sarkari-item-link btn-view" data-slug="ssc-cgl-tier-1-official-response-sheet-answer-key-2026-478">
+                            &raquo; SSC CGL Tier 1 Official Response Sheet &amp; Answer Key 2026
+                        </a>
+                        <span class="new-badge">NEW</span>
+                    </li>
+                            </ul>
         </div>
 
         <!-- Panel 5: Exam Syllabus -->
@@ -496,17 +664,31 @@
                 Syllabus & Exams
             </div>
             <ul class="sarkari-list">
-                @forelse($syllabi as $syllabus)
-                    <li class="sarkari-item">
-                        <a href="#" class="sarkari-item-link btn-view" data-slug="{{ $syllabus->slug }}">
-                            &raquo; {{ $syllabus->title }}
+                                    <li class="sarkari-item">
+                        <a href="#" class="sarkari-item-link btn-view" data-slug="upsc-ias-civil-services-complete-examination-syllabus-2026-642">
+                            &raquo; UPSC IAS Civil Services Complete Examination Syllabus 2026
                         </a>
                         <span class="new-badge">NEW</span>
                     </li>
-                @empty
-                    <li style="padding: 1rem; text-align: center; color: var(--text-secondary); font-size: 0.85rem;">No new syllabus structures out.</li>
-                @endforelse
-            </ul>
+                                    <li class="sarkari-item">
+                        <a href="#" class="sarkari-item-link btn-view" data-slug="ssc-cgl-tier-1-2-complete-syllabus-and-pattern-2026-299">
+                            &raquo; SSC CGL Tier 1 &amp; 2 Complete Syllabus and Pattern 2026
+                        </a>
+                        <span class="new-badge">NEW</span>
+                    </li>
+                                    <li class="sarkari-item">
+                        <a href="#" class="sarkari-item-link btn-view" data-slug="upsc-ias-civil-services-complete-examination-syllabus-2026-472">
+                            &raquo; UPSC IAS Civil Services Complete Examination Syllabus 2026
+                        </a>
+                        <span class="new-badge">NEW</span>
+                    </li>
+                                    <li class="sarkari-item">
+                        <a href="#" class="sarkari-item-link btn-view" data-slug="ssc-cgl-tier-1-2-complete-syllabus-and-pattern-2026-431">
+                            &raquo; SSC CGL Tier 1 &amp; 2 Complete Syllabus and Pattern 2026
+                        </a>
+                        <span class="new-badge">NEW</span>
+                    </li>
+                            </ul>
         </div>
 
         <!-- Panel 6: Important Notices -->
@@ -516,17 +698,19 @@
                 Important Notices
             </div>
             <ul class="sarkari-list">
-                @forelse($notices as $notice)
-                    <li class="sarkari-item">
-                        <a href="#" class="sarkari-item-link btn-view" data-slug="{{ $notice->slug }}">
-                            &raquo; {{ $notice->title }}
+                                    <li class="sarkari-item">
+                        <a href="#" class="sarkari-item-link btn-view" data-slug="ssc-cgl-application-date-postponement-delay-notice-2026-206">
+                            &raquo; SSC CGL Application Date Postponement &amp; Delay Notice 2026
                         </a>
                         <span class="new-badge">NEW</span>
                     </li>
-                @empty
-                    <li style="padding: 1rem; text-align: center; color: var(--text-secondary); font-size: 0.85rem;">No important circular notices active.</li>
-                @endforelse
-            </ul>
+                                    <li class="sarkari-item">
+                        <a href="#" class="sarkari-item-link btn-view" data-slug="ssc-cgl-application-date-postponement-delay-notice-2026-895">
+                            &raquo; SSC CGL Application Date Postponement &amp; Delay Notice 2026
+                        </a>
+                        <span class="new-badge">NEW</span>
+                    </li>
+                            </ul>
         </div>
     </div>
 
@@ -539,17 +723,8 @@
                 Admissions Hub
             </div>
             <ul class="sarkari-list">
-                @forelse($admissions as $adm)
-                    <li class="sarkari-item">
-                        <a href="#" class="sarkari-item-link btn-view" data-slug="{{ $adm->slug }}">
-                            &raquo; {{ $adm->title }}
-                        </a>
-                        <span class="new-badge">NEW</span>
-                    </li>
-                @empty
-                    <li style="padding: 1rem; text-align: center; color: var(--text-secondary); font-size: 0.85rem;">No active entrance exam admission notices.</li>
-                @endforelse
-            </ul>
+                                    <li style="padding: 1rem; text-align: center; color: var(--text-secondary); font-size: 0.85rem;">No active entrance exam admission notices.</li>
+                            </ul>
         </div>
 
         <!-- Panel 8: Scholarships -->
@@ -559,17 +734,8 @@
                 Scholarships & Grants
             </div>
             <ul class="sarkari-list">
-                @forelse($scholarships as $scho)
-                    <li class="sarkari-item">
-                        <a href="#" class="sarkari-item-link btn-view" data-slug="{{ $scho->slug }}">
-                            &raquo; {{ $scho->title }}
-                        </a>
-                        <span class="new-badge">NEW</span>
-                    </li>
-                @empty
-                    <li style="padding: 1rem; text-align: center; color: var(--text-secondary); font-size: 0.85rem;">No active scholarship schemes posted.</li>
-                @endforelse
-            </ul>
+                                    <li style="padding: 1rem; text-align: center; color: var(--text-secondary); font-size: 0.85rem;">No active scholarship schemes posted.</li>
+                            </ul>
         </div>
     </div>
 
@@ -582,12 +748,25 @@
         <div class="explorer-chip active" data-id="">
             🌐 All Regions
         </div>
-        @foreach($states as $state)
-            <div class="explorer-chip" data-id="{{ $state->id }}">
-                📍 {{ $state->name }}
+                    <div class="explorer-chip" data-id="1">
+                📍 Pan India Central
             </div>
-        @endforeach
-    </div>
+                    <div class="explorer-chip" data-id="2">
+                📍 Uttar Pradesh
+            </div>
+                    <div class="explorer-chip" data-id="3">
+                📍 Maharashtra
+            </div>
+                    <div class="explorer-chip" data-id="4">
+                📍 Delhi NCT
+            </div>
+                    <div class="explorer-chip" data-id="5">
+                📍 Karnataka
+            </div>
+                    <div class="explorer-chip" data-id="6">
+                📍 Goa
+            </div>
+            </div>
 
     <div class="explorer-deck-title" style="margin-top: 1rem;">
         <svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" style="color: #10b981;"><path d="M12 14l9-5-9-5-9 5 9 5z"></path><path d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z"></path></svg>
@@ -597,12 +776,22 @@
         <div class="explorer-chip active" data-id="">
             🎓 All Qualifications
         </div>
-        @foreach($qualifications as $qual)
-            <div class="explorer-chip" data-id="{{ $qual->id }}">
-                📚 {{ $qual->name }}
+                    <div class="explorer-chip" data-id="1">
+                📚 10th Pass (High School)
             </div>
-        @endforeach
-    </div>
+                    <div class="explorer-chip" data-id="2">
+                📚 12th Pass (Intermediate)
+            </div>
+                    <div class="explorer-chip" data-id="3">
+                📚 Graduate Degree (Bachelor)
+            </div>
+                    <div class="explorer-chip" data-id="4">
+                📚 Post Graduate Degree (Master)
+            </div>
+                    <div class="explorer-chip" data-id="5">
+                📚 B.Tech Biotechnology
+            </div>
+            </div>
 
     <!-- 8. Interactive Search Filters Panel (original Search Compass) -->
     <div class="main-grid" style="margin-bottom: 0px; padding-bottom: 0px;" id="interactive-finder">
@@ -613,26 +802,32 @@
             <div>
                 <select id="stateSelect">
                     <option value="">Select Region/State</option>
-                    @foreach($states as $state)
-                        <option value="{{ $state->id }}">{{ $state->name }}</option>
-                    @endforeach
-                </select>
+                                            <option value="1">Pan India Central</option>
+                                            <option value="2">Uttar Pradesh</option>
+                                            <option value="3">Maharashtra</option>
+                                            <option value="4">Delhi NCT</option>
+                                            <option value="5">Karnataka</option>
+                                            <option value="6">Goa</option>
+                                    </select>
             </div>
             <div>
                 <select id="qualificationSelect">
                     <option value="">Select Qualification</option>
-                    @foreach($qualifications as $qual)
-                        <option value="{{ $qual->id }}">{{ $qual->name }}</option>
-                    @endforeach
-                </select>
+                                            <option value="1">10th Pass (High School)</option>
+                                            <option value="2">12th Pass (Intermediate)</option>
+                                            <option value="3">Graduate Degree (Bachelor)</option>
+                                            <option value="4">Post Graduate Degree (Master)</option>
+                                            <option value="5">B.Tech Biotechnology</option>
+                                    </select>
             </div>
             <div>
                 <select id="categorySelect">
                     <option value="">Select Category</option>
-                    @foreach($categories as $category)
-                        <option value="{{ $category->id }}">{{ $category->name }}</option>
-                    @endforeach
-                </select>
+                                            <option value="1">UPSC &amp; SSC Jobs</option>
+                                            <option value="2">Banking &amp; Finance</option>
+                                            <option value="3">Railways (RRB)</option>
+                                            <option value="4">Defense &amp; Police</option>
+                                    </select>
             </div>
         </div>
     </div>
@@ -649,26 +844,10 @@
                     Premium Featured Announcements
                 </h2>
                 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.2rem;">
-                    @forelse($featuredJobs as $fJob)
-                        <div class="glass-panel job-card" style="display:block; border-left: 4px solid var(--accent-color); margin-bottom: 0;">
-                            <div class="job-info">
-                                <span class="badge" style="margin-bottom: 0.5rem; display: inline-block;">FEATURED</span>
-                                <h3 style="font-size: 1.1rem; margin-bottom: 0.4rem;">{{ $fJob->title }}</h3>
-                                <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 0.8rem;">
-                                    {{ $fJob->department->name ?? 'Government' }} &bull; {{ $fJob->state->name ?? 'Pan India' }}
-                                </p>
-                            </div>
-                            <div style="display: flex; justify-content: space-between; align-items: center;">
-                                <span class="badge badge-deadline">Apply by {{ $fJob->last_date_to_apply ? $fJob->last_date_to_apply->format('d M') : 'N/A' }}</span>
-                                <a href="#" class="btn-view" data-slug="{{ $fJob->slug }}">Details</a>
-                            </div>
-                        </div>
-                    @empty
-                        <div class="glass-panel" style="grid-column: 1/-1; padding: 2rem; text-align: center; color: var(--text-secondary);">
+                                            <div class="glass-panel" style="grid-column: 1/-1; padding: 2rem; text-align: center; color: var(--text-secondary);">
                             No featured announcements active at this moment.
                         </div>
-                    @endforelse
-                </div>
+                                    </div>
             </div>
 
             <!-- Latest active postings section -->
@@ -690,34 +869,199 @@
 
                 <!-- Dynamic Jobs container -->
                 <div id="jobsListContainer">
-                    @forelse($recentJobs as $rJob)
-                        <div class="glass-panel job-card">
+                                            <div class="glass-panel job-card">
                             <div class="job-info">
-                                <h3>{{ $rJob->title }}</h3>
+                                <h3>UPSC NDA &amp; NA Exam (II) 2026 Recruitment</h3>
                                 <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 0.5rem;">
-                                    {{ $rJob->department->name ?? 'Government' }} &bull; {{ $rJob->state->name ?? 'Pan India' }}
+                                    Staff Selection Commission &bull; Uttar Pradesh
                                 </p>
                                 <div class="job-tags">
-                                    <span class="badge badge-dept">{{ $rJob->qualification->name ?? 'Degree Required' }}</span>
-                                    <span class="badge" style="background: rgba(16, 185, 129, 0.08); color: #10b981;">Vacancies: {{ $rJob->vacancy_count }}</span>
-                                    <span class="badge badge-deadline">Apply by {{ $rJob->last_date_to_apply ? $rJob->last_date_to_apply->format('d M Y') : 'N/A' }}</span>
+                                    <span class="badge badge-dept">12th Pass (Intermediate)</span>
+                                    <span class="badge" style="background: rgba(16, 185, 129, 0.08); color: #10b981;">Vacancies: 0</span>
+                                    <span class="badge badge-deadline">Apply by 24 Aug 2026</span>
                                 </div>
                             </div>
                             <div style="display: flex; flex-direction: column; gap: 0.5rem; align-items: flex-end;">
-                                <a href="#" class="btn-view" data-slug="{{ $rJob->slug }}">View Details</a>
-                                @auth
-                                    <button class="btn-sm-danger toggle-bookmark-btn" data-id="{{ $rJob->id }}" style="background: rgba(37,99,235,0.06); color: var(--accent-color); border-color: rgba(37,99,235,0.15);">
-                                        Save Job
-                                    </button>
-                                @endauth
+                                <a href="#" class="btn-view" data-slug="upsc-nda-na-exam-ii-2026-recruitment-799">View Details</a>
+                                                            </div>
+                        </div>
+                                            <div class="glass-panel job-card">
+                            <div class="job-info">
+                                <h3>UPSC Civil Services IAS 2026 Preliminary Exam Notification</h3>
+                                <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 0.5rem;">
+                                    Staff Selection Commission &bull; Uttar Pradesh
+                                </p>
+                                <div class="job-tags">
+                                    <span class="badge badge-dept">Graduate Degree (Bachelor)</span>
+                                    <span class="badge" style="background: rgba(16, 185, 129, 0.08); color: #10b981;">Vacancies: 0</span>
+                                    <span class="badge badge-deadline">Apply by 15 Aug 2026</span>
+                                </div>
                             </div>
+                            <div style="display: flex; flex-direction: column; gap: 0.5rem; align-items: flex-end;">
+                                <a href="#" class="btn-view" data-slug="upsc-civil-services-ias-2026-preliminary-exam-notification-951">View Details</a>
+                                                            </div>
                         </div>
-                    @empty
-                        <div class="glass-panel" style="padding: 3rem; text-align: center; color: var(--text-secondary);">
-                            No recruitment posts active. Check back later!
+                                            <div class="glass-panel job-card">
+                            <div class="job-info">
+                                <h3>SSC GD Constable Recruitment 2026 Announcement</h3>
+                                <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 0.5rem;">
+                                    Staff Selection Commission &bull; Delhi NCT
+                                </p>
+                                <div class="job-tags">
+                                    <span class="badge badge-dept">10th Pass (High School)</span>
+                                    <span class="badge" style="background: rgba(16, 185, 129, 0.08); color: #10b981;">Vacancies: 0</span>
+                                    <span class="badge badge-deadline">Apply by 15 Oct 2026</span>
+                                </div>
+                            </div>
+                            <div style="display: flex; flex-direction: column; gap: 0.5rem; align-items: flex-end;">
+                                <a href="#" class="btn-view" data-slug="ssc-gd-constable-recruitment-2026-announcement-444">View Details</a>
+                                                            </div>
                         </div>
-                    @endforelse
-                </div>
+                                            <div class="glass-panel job-card">
+                            <div class="job-info">
+                                <h3>SSC Junior Engineer (JE) 2026 Exam Form</h3>
+                                <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 0.5rem;">
+                                    Staff Selection Commission &bull; Delhi NCT
+                                </p>
+                                <div class="job-tags">
+                                    <span class="badge badge-dept">Graduate Degree (Bachelor)</span>
+                                    <span class="badge" style="background: rgba(16, 185, 129, 0.08); color: #10b981;">Vacancies: 0</span>
+                                    <span class="badge badge-deadline">Apply by 10 Sep 2026</span>
+                                </div>
+                            </div>
+                            <div style="display: flex; flex-direction: column; gap: 0.5rem; align-items: flex-end;">
+                                <a href="#" class="btn-view" data-slug="ssc-junior-engineer-je-2026-exam-form-344">View Details</a>
+                                                            </div>
+                        </div>
+                                            <div class="glass-panel job-card">
+                            <div class="job-info">
+                                <h3>SSC MTS Multi-Tasking Staff 2026 Application</h3>
+                                <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 0.5rem;">
+                                    Staff Selection Commission &bull; Delhi NCT
+                                </p>
+                                <div class="job-tags">
+                                    <span class="badge badge-dept">10th Pass (High School)</span>
+                                    <span class="badge" style="background: rgba(16, 185, 129, 0.08); color: #10b981;">Vacancies: 0</span>
+                                    <span class="badge badge-deadline">Apply by 20 Aug 2026</span>
+                                </div>
+                            </div>
+                            <div style="display: flex; flex-direction: column; gap: 0.5rem; align-items: flex-end;">
+                                <a href="#" class="btn-view" data-slug="ssc-mts-multi-tasking-staff-2026-application-798">View Details</a>
+                                                            </div>
+                        </div>
+                                            <div class="glass-panel job-card">
+                            <div class="job-info">
+                                <h3>SSC CHSL (10+2) Vacancy 2026 Registration</h3>
+                                <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 0.5rem;">
+                                    Staff Selection Commission &bull; Pan India Central
+                                </p>
+                                <div class="job-tags">
+                                    <span class="badge badge-dept">12th Pass (Intermediate)</span>
+                                    <span class="badge" style="background: rgba(16, 185, 129, 0.08); color: #10b981;">Vacancies: 0</span>
+                                    <span class="badge badge-deadline">Apply by 12 Aug 2026</span>
+                                </div>
+                            </div>
+                            <div style="display: flex; flex-direction: column; gap: 0.5rem; align-items: flex-end;">
+                                <a href="#" class="btn-view" data-slug="ssc-chsl-102-vacancy-2026-registration-456">View Details</a>
+                                                            </div>
+                        </div>
+                                            <div class="glass-panel job-card">
+                            <div class="job-info">
+                                <h3>SSC CGL Tier 1 Recruitment 2026 Notification</h3>
+                                <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 0.5rem;">
+                                    Staff Selection Commission &bull; Pan India Central
+                                </p>
+                                <div class="job-tags">
+                                    <span class="badge badge-dept">Graduate Degree (Bachelor)</span>
+                                    <span class="badge" style="background: rgba(16, 185, 129, 0.08); color: #10b981;">Vacancies: 0</span>
+                                    <span class="badge badge-deadline">Apply by 30 Jul 2026</span>
+                                </div>
+                            </div>
+                            <div style="display: flex; flex-direction: column; gap: 0.5rem; align-items: flex-end;">
+                                <a href="#" class="btn-view" data-slug="ssc-cgl-tier-1-recruitment-2026-notification-298">View Details</a>
+                                                            </div>
+                        </div>
+                                            <div class="glass-panel job-card">
+                            <div class="job-info">
+                                <h3>UPSC NDA &amp; NA Exam (II) 2026 Recruitment</h3>
+                                <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 0.5rem;">
+                                    Union Public Service Commission &bull; Uttar Pradesh
+                                </p>
+                                <div class="job-tags">
+                                    <span class="badge badge-dept">12th Pass (Intermediate)</span>
+                                    <span class="badge" style="background: rgba(16, 185, 129, 0.08); color: #10b981;">Vacancies: 0</span>
+                                    <span class="badge badge-deadline">Apply by 24 Aug 2026</span>
+                                </div>
+                            </div>
+                            <div style="display: flex; flex-direction: column; gap: 0.5rem; align-items: flex-end;">
+                                <a href="#" class="btn-view" data-slug="upsc-nda-na-exam-ii-2026-recruitment-409">View Details</a>
+                                                            </div>
+                        </div>
+                                            <div class="glass-panel job-card">
+                            <div class="job-info">
+                                <h3>UPSC Civil Services IAS 2026 Preliminary Exam Notification</h3>
+                                <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 0.5rem;">
+                                    Union Public Service Commission &bull; Uttar Pradesh
+                                </p>
+                                <div class="job-tags">
+                                    <span class="badge badge-dept">Graduate Degree (Bachelor)</span>
+                                    <span class="badge" style="background: rgba(16, 185, 129, 0.08); color: #10b981;">Vacancies: 0</span>
+                                    <span class="badge badge-deadline">Apply by 15 Aug 2026</span>
+                                </div>
+                            </div>
+                            <div style="display: flex; flex-direction: column; gap: 0.5rem; align-items: flex-end;">
+                                <a href="#" class="btn-view" data-slug="upsc-civil-services-ias-2026-preliminary-exam-notification-986">View Details</a>
+                                                            </div>
+                        </div>
+                                            <div class="glass-panel job-card">
+                            <div class="job-info">
+                                <h3>SSC GD Constable Recruitment 2026 Announcement</h3>
+                                <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 0.5rem;">
+                                    Union Public Service Commission &bull; Delhi NCT
+                                </p>
+                                <div class="job-tags">
+                                    <span class="badge badge-dept">10th Pass (High School)</span>
+                                    <span class="badge" style="background: rgba(16, 185, 129, 0.08); color: #10b981;">Vacancies: 0</span>
+                                    <span class="badge badge-deadline">Apply by 15 Oct 2026</span>
+                                </div>
+                            </div>
+                            <div style="display: flex; flex-direction: column; gap: 0.5rem; align-items: flex-end;">
+                                <a href="#" class="btn-view" data-slug="ssc-gd-constable-recruitment-2026-announcement-224">View Details</a>
+                                                            </div>
+                        </div>
+                                            <div class="glass-panel job-card">
+                            <div class="job-info">
+                                <h3>SSC Junior Engineer (JE) 2026 Exam Form</h3>
+                                <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 0.5rem;">
+                                    Union Public Service Commission &bull; Delhi NCT
+                                </p>
+                                <div class="job-tags">
+                                    <span class="badge badge-dept">Graduate Degree (Bachelor)</span>
+                                    <span class="badge" style="background: rgba(16, 185, 129, 0.08); color: #10b981;">Vacancies: 0</span>
+                                    <span class="badge badge-deadline">Apply by 10 Sep 2026</span>
+                                </div>
+                            </div>
+                            <div style="display: flex; flex-direction: column; gap: 0.5rem; align-items: flex-end;">
+                                <a href="#" class="btn-view" data-slug="ssc-junior-engineer-je-2026-exam-form-388">View Details</a>
+                                                            </div>
+                        </div>
+                                            <div class="glass-panel job-card">
+                            <div class="job-info">
+                                <h3>SSC MTS Multi-Tasking Staff 2026 Application</h3>
+                                <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 0.5rem;">
+                                    Union Public Service Commission &bull; Delhi NCT
+                                </p>
+                                <div class="job-tags">
+                                    <span class="badge badge-dept">10th Pass (High School)</span>
+                                    <span class="badge" style="background: rgba(16, 185, 129, 0.08); color: #10b981;">Vacancies: 0</span>
+                                    <span class="badge badge-deadline">Apply by 20 Aug 2026</span>
+                                </div>
+                            </div>
+                            <div style="display: flex; flex-direction: column; gap: 0.5rem; align-items: flex-end;">
+                                <a href="#" class="btn-view" data-slug="ssc-mts-multi-tasking-staff-2026-application-397">View Details</a>
+                                                            </div>
+                        </div>
+                                    </div>
 
                 <!-- Dynamic AJAX Pagination container -->
                 <div class="pagination-container" id="paginationContainer"></div>
@@ -894,8 +1238,7 @@
                 Have questions or spot a typo on a scraped recruitment feed? Send us a ticket.
             </p>
             <form id="ajaxContactForm">
-                @csrf
-                <div class="form-group">
+                <input type="hidden" name="_token" value="PF5w3tROmou5Z6SgIvSHkNjjkjmd0YzYSEjvPKcV" autocomplete="off">                <div class="form-group">
                     <label for="contactName">Your Name</label>
                     <input type="text" name="name" id="contactName" class="form-control" placeholder="Candidate Name" required>
                 </div>
@@ -999,8 +1342,7 @@
             <h3 style="font-family:'Outfit'; color: var(--accent-color); margin-bottom: 1.5rem; text-align: center;">Update Profile Settings & Preferences</h3>
             
             <form id="ajaxProfileUpdateForm" style="margin-bottom: 2rem; border-bottom: 1px solid var(--border-color); padding-bottom: 2rem;">
-                @csrf
-                <div class="form-group">
+                <input type="hidden" name="_token" value="PF5w3tROmou5Z6SgIvSHkNjjkjmd0YzYSEjvPKcV" autocomplete="off">                <div class="form-group">
                     <label for="profileName">Full Name</label>
                     <input type="text" name="name" id="profileName" class="form-control" required>
                     <div class="invalid-feedback" id="profileNameError"></div>
@@ -1033,8 +1375,7 @@
             </form>
 
             <form id="ajaxPreferencesForm">
-                @csrf
-                <h4 style="font-family:'Outfit'; font-size:1.1rem; color:var(--text-primary); margin-bottom:1rem;">Real-time Recruitment Alert Channels</h4>
+                <input type="hidden" name="_token" value="PF5w3tROmou5Z6SgIvSHkNjjkjmd0YzYSEjvPKcV" autocomplete="off">                <h4 style="font-family:'Outfit'; font-size:1.1rem; color:var(--text-primary); margin-bottom:1rem;">Real-time Recruitment Alert Channels</h4>
                 
                 <div class="alert-preference-row">
                     <div>
@@ -1163,8 +1504,7 @@
             <p style="font-size:0.85rem; color:var(--text-secondary); text-align:center; margin-bottom:1.5rem;">Broadcast a verified recruitment opportunity directly into GovJobs directories instantly.</p>
             
             <form id="ajaxManualJobForm">
-                @csrf
-                <div class="form-group">
+                <input type="hidden" name="_token" value="PF5w3tROmou5Z6SgIvSHkNjjkjmd0YzYSEjvPKcV" autocomplete="off">                <div class="form-group">
                     <label for="mjTitle">Recruitment Post Title</label>
                     <input type="text" name="title" id="mjTitle" class="form-control" placeholder="e.g. UPSC Assistant Commandant Recruitment 2026" required>
                     <div class="invalid-feedback" id="mjTitleError"></div>
@@ -1174,18 +1514,22 @@
                     <div class="form-group">
                         <label for="mjCategory">Job Category</label>
                         <select name="category_id" id="mjCategory" class="form-control" required>
-                            @foreach($categories as $category)
-                                <option value="{{ $category->id }}">{{ $category->name }}</option>
-                            @endforeach
-                        </select>
+                                                            <option value="1">UPSC &amp; SSC Jobs</option>
+                                                            <option value="2">Banking &amp; Finance</option>
+                                                            <option value="3">Railways (RRB)</option>
+                                                            <option value="4">Defense &amp; Police</option>
+                                                    </select>
                     </div>
                     <div class="form-group">
                         <label for="mjDepartment">Partner Organization / Department</label>
                         <select name="department_id" id="mjDepartment" class="form-control" required>
-                            @foreach($departments as $dept)
-                                <option value="{{ $dept->id }}">{{ $dept->name }}</option>
-                            @endforeach
-                        </select>
+                                                            <option value="1">Union Public Service Commission</option>
+                                                            <option value="2">Staff Selection Commission</option>
+                                                            <option value="3">Reserve Bank of India</option>
+                                                            <option value="4">State Bank of India</option>
+                                                            <option value="5">Railway Recruitment Board</option>
+                                                            <option value="6">Goa Public Service Commission</option>
+                                                    </select>
                     </div>
                 </div>
 
@@ -1193,18 +1537,23 @@
                     <div class="form-group">
                         <label for="mjState">Region / State</label>
                         <select name="state_id" id="mjState" class="form-control" required>
-                            @foreach($states as $st)
-                                <option value="{{ $st->id }}">{{ $st->name }}</option>
-                            @endforeach
-                        </select>
+                                                            <option value="1">Pan India Central</option>
+                                                            <option value="2">Uttar Pradesh</option>
+                                                            <option value="3">Maharashtra</option>
+                                                            <option value="4">Delhi NCT</option>
+                                                            <option value="5">Karnataka</option>
+                                                            <option value="6">Goa</option>
+                                                    </select>
                     </div>
                     <div class="form-group">
                         <label for="mjQualification">Minimum Qualification</label>
                         <select name="qualification_id" id="mjQualification" class="form-control" required>
-                            @foreach($qualifications as $ql)
-                                <option value="{{ $ql->id }}">{{ $ql->name }}</option>
-                            @endforeach
-                        </select>
+                                                            <option value="1">10th Pass (High School)</option>
+                                                            <option value="2">12th Pass (Intermediate)</option>
+                                                            <option value="3">Graduate Degree (Bachelor)</option>
+                                                            <option value="4">Post Graduate Degree (Master)</option>
+                                                            <option value="5">B.Tech Biotechnology</option>
+                                                    </select>
                     </div>
                 </div>
 
@@ -1286,8 +1635,7 @@
             <p style="font-size:0.85rem; color:var(--text-secondary); text-align:center; margin-bottom:1.5rem;">Configure dynamic keywords and metadata dynamically cached in local JSON store configurations.</p>
             
             <form id="ajaxSeoSettingsForm">
-                @csrf
-                <div class="form-group">
+                <input type="hidden" name="_token" value="PF5w3tROmou5Z6SgIvSHkNjjkjmd0YzYSEjvPKcV" autocomplete="off">                <div class="form-group">
                     <label for="seoTitle">Homepage Meta Title</label>
                     <input type="text" name="meta_title" id="seoTitle" class="form-control" value="GovJobs - Premium Automated Government Jobs Portal" required>
                     <div class="invalid-feedback" id="seoTitleError"></div>
@@ -1308,11 +1656,551 @@
     </div>
 </div>
 
-@endsection
+    </main>
 
-@section('scripts')
-<script>
-    const isLoggedIn = @json(auth()->check());
+    <!-- 3. Dynamic Footer -->
+    <footer style="background-color: var(--bg-secondary); border-top: 1px solid var(--border-color); padding: 3rem 5% 2rem 5%; font-size: 0.9rem; color: var(--text-secondary); margin-top: 4rem;">
+        <div style="max-width: 1400px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 2rem; margin-bottom: 2rem;">
+            <div>
+                <h3 style="color: var(--text-primary); margin-bottom: 1rem; font-family: 'Outfit';">GovJobs</h3>
+                <p>An advanced, fully automated Government Recruitment Job Portal featuring low-temperature validation engines and zero full page refreshes.</p>
+            </div>
+            <div>
+                <h4 style="color: var(--text-primary); margin-bottom: 1rem; font-family: 'Outfit';">Portal Hubs</h4>
+                <ul style="list-style: none; display: grid; gap: 0.5rem;">
+                    <li><a href="#" class="nav-tab-trigger" data-target="jobs" style="color: var(--text-secondary); text-decoration: none;">Recruitments Board</a></li>
+                    <li><a href="#" class="nav-tab-trigger" data-target="info-hub" style="color: var(--text-secondary); text-decoration: none;">Information Hub</a></li>
+                    <li><a href="#" class="nav-tab-trigger" data-target="info-hub" style="color: var(--text-secondary); text-decoration: none;">FAQ Accordions</a></li>
+                </ul>
+            </div>
+            <div>
+                <h4 style="color: var(--text-primary); margin-bottom: 1rem; font-family: 'Outfit';">Recruitment Partners</h4>
+                <ul style="list-style: none; display: grid; gap: 0.5rem;">
+                    <li><a href="#" style="color: var(--text-secondary); text-decoration: none;">Union Public Service Commission (UPSC)</a></li>
+                    <li><a href="#" style="color: var(--text-secondary); text-decoration: none;">Staff Selection Commission (SSC)</a></li>
+                    <li><a href="#" style="color: var(--text-secondary); text-decoration: none;">Reserve Bank of India (RBI)</a></li>
+                </ul>
+            </div>
+        </div>
+        <div style="max-width: 1400px; margin: 0 auto; border-top: 1px solid var(--border-color); padding-top: 1.5rem; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 1rem;">
+            <p>&copy; 2026 GovJobs Portal Automation Inc. All rights reserved.</p>
+            <p>Developed with robust MVC + Service-Repository architecture.</p>
+        </div>
+    </footer>
+
+    <!-- ================= DYNAMIC MODALS OVERLAYS ================= -->
+
+    <!-- A. Authenticatable Login/Register Modal -->
+    <div class="modal-overlay" id="authModal">
+        <div class="modal-box glass-panel">
+            <button class="modal-close-btn" id="closeAuthModal">&times;</button>
+            <div class="auth-tabs">
+                <button class="auth-tab-btn active" data-tab="loginFormContainer">Sign In</button>
+                <button class="auth-tab-btn" data-tab="registerFormContainer">Register</button>
+                <button class="auth-tab-btn" data-tab="forgotFormContainer">Reset PW</button>
+            </div>
+
+            <!-- Login Sub-Form -->
+            <div id="loginFormContainer">
+                <form id="ajaxLoginForm">
+                    <input type="hidden" name="_token" value="PF5w3tROmou5Z6SgIvSHkNjjkjmd0YzYSEjvPKcV" autocomplete="off">                    <div class="form-group">
+                        <label for="loginEmail">Email Address</label>
+                        <input type="email" name="email" id="loginEmail" class="form-control" placeholder="candidate@example.com" required>
+                        <div class="invalid-feedback" id="loginEmailError"></div>
+                    </div>
+                    <div class="form-group">
+                        <label for="loginPassword">Password</label>
+                        <input type="password" name="password" id="loginPassword" class="form-control" placeholder="••••••••" required>
+                        <div class="invalid-feedback" id="loginPasswordError"></div>
+                    </div>
+                    <button type="submit" class="form-btn" id="loginSubmitBtn">Sign In</button>
+                    <p class="form-text">Forgot password? <a href="#" class="auth-toggle-link" data-target="forgotFormContainer">Recover account</a></p>
+                </form>
+            </div>
+
+            <!-- Register Sub-Form -->
+            <div id="registerFormContainer" style="display: none;">
+                <form id="ajaxRegisterForm">
+                    <input type="hidden" name="_token" value="PF5w3tROmou5Z6SgIvSHkNjjkjmd0YzYSEjvPKcV" autocomplete="off">                    <div class="form-group">
+                        <label for="regName">Full Name</label>
+                        <input type="text" name="name" id="regName" class="form-control" placeholder="John Doe" required>
+                        <div class="invalid-feedback" id="regNameError"></div>
+                    </div>
+                    <div class="form-group">
+                        <label for="regEmail">Email Address</label>
+                        <input type="email" name="email" id="regEmail" class="form-control" placeholder="johndoe@example.com" required>
+                        <div class="invalid-feedback" id="regEmailError"></div>
+                    </div>
+                    <div class="form-group">
+                        <label for="regPhone">Phone Number</label>
+                        <input type="text" name="phone" id="regPhone" class="form-control" placeholder="9876543210" required>
+                        <div class="invalid-feedback" id="regPhoneError"></div>
+                    </div>
+                    <div class="form-group">
+                        <label for="regPassword">Password (Min 6 chars)</label>
+                        <input type="password" name="password" id="regPassword" class="form-control" placeholder="••••••••" required>
+                        <div class="invalid-feedback" id="regPasswordError"></div>
+                    </div>
+                    <div class="form-group">
+                        <label for="regPasswordConfirm">Confirm Password</label>
+                        <input type="password" name="password_confirmation" id="regPasswordConfirm" class="form-control" placeholder="••••••••" required>
+                    </div>
+                    <button type="submit" class="form-btn" id="registerSubmitBtn">Register Now</button>
+                    <p class="form-text">Already registered? <a href="#" class="auth-toggle-link" data-target="loginFormContainer">Sign In instead</a></p>
+                </form>
+            </div>
+
+            <!-- Forgot Password OTP Reset Flow -->
+            <div id="forgotFormContainer" style="display: none;">
+                <!-- Step 1: Send OTP code -->
+                <form id="ajaxForgotForm">
+                    <input type="hidden" name="_token" value="PF5w3tROmou5Z6SgIvSHkNjjkjmd0YzYSEjvPKcV" autocomplete="off">                    <div class="form-group">
+                        <label for="forgotEmail">Registered Email Address</label>
+                        <input type="email" name="email" id="forgotEmail" class="form-control" placeholder="candidate@example.com" required>
+                        <div class="invalid-feedback" id="forgotEmailError"></div>
+                    </div>
+                    <button type="submit" class="form-btn" id="forgotSubmitBtn">Send Verification Code</button>
+                </form>
+
+                <!-- Step 2: Validate OTP and Set password -->
+                <form id="ajaxResetForm" style="display: none; border-top: 1px solid var(--border-color); padding-top: 1.5rem; margin-top: 1.5rem;">
+                    <input type="hidden" name="_token" value="PF5w3tROmou5Z6SgIvSHkNjjkjmd0YzYSEjvPKcV" autocomplete="off">                    <input type="hidden" name="email" id="resetEmailHidden">
+                    <div class="form-group">
+                        <label for="resetOtp">Enter OTP Code (Sent: 123456)</label>
+                        <input type="text" name="otp_code" id="resetOtp" class="form-control" placeholder="123456" required>
+                        <div class="invalid-feedback" id="resetOtpError"></div>
+                    </div>
+                    <div class="form-group">
+                        <label for="resetPassword">New Password (Min 6 chars)</label>
+                        <input type="password" name="password" id="resetPassword" class="form-control" placeholder="••••••••" required>
+                        <div class="invalid-feedback" id="resetPasswordError"></div>
+                    </div>
+                    <div class="form-group">
+                        <label for="resetPasswordConfirm">Confirm New Password</label>
+                        <input type="password" name="password_confirmation" id="resetPasswordConfirm" class="form-control" placeholder="••••••••" required>
+                    </div>
+                    <button type="submit" class="form-btn" id="resetSubmitBtn">Synchronize Password</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- B. Asynchronous Job Details Modal -->
+    <div class="modal-overlay" id="jobDetailsModal">
+        <div class="modal-box glass-panel" style="max-width: 800px;">
+            <button class="modal-close-btn" id="closeJobDetailsModal">&times;</button>
+            
+            <!-- Skeleton Loader placeholder inside modal -->
+            <div id="modalSkeletonLoader" class="skeleton-modal">
+                <div class="skeleton-modal-line" style="height: 40px; width: 60%;"></div>
+                <div class="skeleton-modal-line" style="height: 20px; width: 40%; margin-bottom: 2rem;"></div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 2rem;">
+                    <div class="skeleton-modal-line" style="height: 80px;"></div>
+                    <div class="skeleton-modal-line" style="height: 80px;"></div>
+                </div>
+                <div class="skeleton-modal-line" style="height: 150px; width: 100%;"></div>
+            </div>
+
+            <!-- Authentic details block loaded dynamically -->
+            <div id="modalRealContent" style="display: none;">
+                <div class="details-header">
+                    <h2 id="detailTitle" style="font-size: 1.8rem; margin-bottom: 0.25rem;"></h2>
+                    <p style="color: var(--text-secondary); display: flex; gap: 0.75rem; flex-wrap: wrap; font-size: 0.95rem; margin-top: 0.5rem;">
+                        <span class="badge" id="detailCategory"></span>
+                        <span class="badge badge-dept" id="detailDepartment"></span>
+                        <span class="badge" id="detailState" style="background: rgba(139, 92, 246, 0.1); color: #8b5cf6;"></span>
+                    </p>
+                </div>
+
+                <div class="details-grid">
+                    <div class="glass-panel" style="padding: 1rem; border-radius: 8px;">
+                        <div class="details-box-label">Salary Range (Monthly)</div>
+                        <div class="details-box-val">₹ <span id="detailSalary"></span></div>
+                    </div>
+                    <div class="glass-panel" style="padding: 1rem; border-radius: 8px;">
+                        <div class="details-box-label">Age Requirements</div>
+                        <div class="details-box-val" id="detailAge"></div>
+                    </div>
+                    <div class="glass-panel" style="padding: 1rem; border-radius: 8px;">
+                        <div class="details-box-label">Total Vacancies</div>
+                        <div class="details-box-val" id="detailVacancies"></div>
+                    </div>
+                    <div class="glass-panel" style="padding: 1rem; border-radius: 8px;">
+                        <div class="details-box-label">Application Fees</div>
+                        <div class="details-box-val">₹ <span id="detailFee"></span></div>
+                    </div>
+                    <div class="glass-panel" style="padding: 1rem; border-radius: 8px;">
+                        <div class="details-box-label">Application Deadline</div>
+                        <div class="details-box-val" id="detailDeadline" style="color: #ef4444;"></div>
+                    </div>
+                    <div class="glass-panel" style="padding: 1rem; border-radius: 8px;">
+                        <div class="details-box-label">Expected Exam Date</div>
+                        <div class="details-box-val" id="detailExamDate"></div>
+                    </div>
+                </div>
+
+                <div class="details-full-section">
+                    <h4>Recruitment Overview & Eligibility</h4>
+                    <p id="detailDescription" style="color: var(--text-secondary); margin-bottom: 1.25rem; font-size: 0.95rem;"></p>
+                </div>
+
+                <div class="details-full-section">
+                    <h4>Official Syllabus & Exam Pattern</h4>
+                    <div class="details-syllabus-container" id="detailSyllabus"></div>
+                </div>
+
+                <div class="details-full-section">
+                    <h4>Selection Process</h4>
+                    <p id="detailSelection" style="color: var(--text-secondary); font-size: 0.95rem;"></p>
+                </div>
+
+                <div style="display: flex; gap: 1rem; margin-top: 2rem; border-top: 1px solid var(--border-color); padding-top: 1.5rem; flex-wrap: wrap;">
+                    <a id="detailOfficialLink" href="" target="_blank" class="btn-view" style="flex:1; text-align:center;">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 4px; vertical-align: middle;"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+                        Official Advertisement
+                    </a>
+                    
+                                            <button class="form-btn trigger-auth-redirect-btn" style="flex:1.5; margin-top:0; padding: 0.8rem; background: var(--text-secondary);">
+                            Login to Apply Now
+                        </button>
+                                    </div>
+            </div>
+
+            <!-- Application Form section loaded inside details modal -->
+            <div id="modalApplicationFormBlock" style="display: none; border-top: 1px solid var(--border-color); padding-top: 1.5rem; margin-top: 1.5rem;">
+                <h3 style="font-family: 'Outfit'; font-size: 1.3rem; margin-bottom: 0.5rem; color: var(--accent-color);">Recruitment Submission Form</h3>
+                <form id="recruitmentApplicationForm" enctype="multipart/form-data">
+                    <input type="hidden" name="_token" value="PF5w3tROmou5Z6SgIvSHkNjjkjmd0YzYSEjvPKcV" autocomplete="off">                    <input type="hidden" name="job_id" id="applicationFormJobId">
+                    <div class="form-group">
+                        <label for="appResume">Upload Default CV / Resume (PDF, DOC, DOCX up to 2MB)</label>
+                        <input type="file" name="resume" id="appResume" class="form-control" required>
+                        <div class="invalid-feedback" id="appResumeError"></div>
+                    </div>
+                    <div style="display:flex; gap:0.75rem; margin-top:1.5rem;">
+                        <button type="button" class="btn-view" id="cancelApplicationBtn" style="flex:1; text-align:center;">Cancel</button>
+                        <button type="submit" class="form-btn" id="submitApplicationBtn" style="flex:2; margin-top:0;">Submit Application</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- C. Sidebar/Utilities Details Modal (Admit Cards / Results / Syllabus Detail) -->
+    <div class="modal-overlay" id="sidebarDetailsModal">
+        <div class="modal-box glass-panel" style="max-width: 600px;">
+            <button class="modal-close-btn" id="closeSidebarDetailsModal">&times;</button>
+            <h3 style="font-family: 'Outfit'; font-size: 1.4rem; margin-bottom: 1.25rem; color: var(--accent-color);" id="sidebarDetailTitle">Exam Utility Info</h3>
+            <div id="sidebarDetailBody" style="color: var(--text-secondary); font-size: 0.95rem; line-height: 1.75;">
+                <!-- Loaded dynamically -->
+            </div>
+        </div>
+    </div>
+
+    <!-- D. Sliding toast feedback alerts -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <!-- 4. jQuery CDN and Theme JS Controller -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script>
+        // Global Sliding Toast Dispenser
+        function showToast(message, type = 'success') {
+            const container = $('#toastContainer');
+            const toastId = 'toast_' + Math.floor(Math.random() * 1000);
+            
+            let icon = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>';
+            if (type === 'error') {
+                icon = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg>';
+            } else if (type === 'warning') {
+                icon = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>';
+            }
+
+            const toastHtml = `
+                <div class="toast toast-${type}" id="${toastId}">
+                    ${icon}
+                    <span>${message}</span>
+                </div>
+            `;
+            container.append(toastHtml);
+            
+            setTimeout(() => {
+                $(`#${toastId}`).addClass('active');
+            }, 50);
+
+            setTimeout(() => {
+                const toast = $(`#${toastId}`);
+                toast.removeClass('active');
+                setTimeout(() => {
+                    toast.remove();
+                }, 400);
+            }, 3500);
+        }
+
+        $(document).ready(function() {
+            // Theme Toggle Controller Binds
+            const body = $('body');
+            const themeBtn = $('#themeToggle');
+            const themeText = $('#themeText');
+            
+            if (localStorage.getItem('theme') === 'dark') {
+                body.addClass('dark-theme');
+                themeText.text('Day Mode');
+            }
+
+            themeBtn.on('click', function() {
+                body.toggleClass('dark-theme');
+                if (body.hasClass('dark-theme')) {
+                    localStorage.setItem('theme', 'dark');
+                    themeText.text('Day Mode');
+                } else {
+                    localStorage.setItem('theme', 'light');
+                    themeText.text('Night Mode');
+                }
+            });
+
+            // ================== LOGIN MODAL TRIGGERS ==================
+            const authModal = $('#authModal');
+            
+            $(document).on('click', '#openAuthModalBtn, .trigger-auth-redirect-btn', function(e) {
+                e.preventDefault();
+                $('#ajaxLoginForm')[0].reset();
+                $('#ajaxRegisterForm')[0].reset();
+                $('#ajaxForgotForm')[0].reset();
+                $('#ajaxResetForm')[0].reset();
+                $('#ajaxResetForm').hide();
+                $('#ajaxForgotForm').show();
+                $('.invalid-feedback').hide();
+                authModal.addClass('active');
+            });
+
+            $('#closeAuthModal, #authModal').on('click', function(e) {
+                if (e.target === this || e.target.id === 'closeAuthModal') {
+                    authModal.removeClass('active');
+                }
+            });
+
+            // Tab Switching inside Auth modal
+            $('.auth-tab-btn').on('click', function() {
+                $('.auth-tab-btn').removeClass('active');
+                $(this).addClass('active');
+                
+                const target = $(this).data('tab');
+                $('#loginFormContainer, #registerFormContainer, #forgotFormContainer').hide();
+                $(`#${target}`).show();
+            });
+
+            $('.auth-toggle-link').on('click', function(e) {
+                e.preventDefault();
+                const target = $(this).data('target');
+                $(`.auth-tab-btn[data-tab="${target}"]`).trigger('click');
+            });
+
+            // ================== AJAX LOGIN SUBMISSION ==================
+            $('#ajaxLoginForm').on('submit', function(e) {
+                e.preventDefault();
+                const btn = $('#loginSubmitBtn');
+                btn.prop('disabled', true).text('Signing In...');
+                $('.invalid-feedback').hide();
+
+                $.ajax({
+                    url: '/api/login',
+                    method: 'POST',
+                    data: $(this).serialize(),
+                    success: function(res) {
+                        showToast(res.message, 'success');
+                        setTimeout(() => {
+                            window.location.reload();
+                        }, 1000);
+                    },
+                    error: function(err) {
+                        btn.prop('disabled', false).text('Sign In');
+                        if (err.status === 422 || err.status === 401) {
+                            const res = err.responseJSON;
+                            showToast(res.message || 'Login failed', 'error');
+                            if (res.errors) {
+                                Object.keys(res.errors).forEach(key => {
+                                    $(`#login${key.charAt(0).toUpperCase() + key.slice(1)}Error`).text(res.errors[key][0]).show();
+                                });
+                            }
+                        } else {
+                            showToast('Server connection failed.', 'error');
+                        }
+                    }
+                });
+            });
+
+            // ================== AJAX REGISTRATION SUBMISSION ==================
+            $('#ajaxRegisterForm').on('submit', function(e) {
+                e.preventDefault();
+                const btn = $('#registerSubmitBtn');
+                btn.prop('disabled', true).text('Registering...');
+                $('.invalid-feedback').hide();
+
+                $.ajax({
+                    url: '/api/register',
+                    method: 'POST',
+                    data: $(this).serialize(),
+                    success: function(res) {
+                        showToast(res.message, 'success');
+                        setTimeout(() => {
+                            window.location.reload();
+                        }, 1000);
+                    },
+                    error: function(err) {
+                        btn.prop('disabled', false).text('Register Now');
+                        if (err.status === 422) {
+                            const res = err.responseJSON;
+                            showToast('Please correct validation flaws', 'error');
+                            if (res.errors) {
+                                Object.keys(res.errors).forEach(key => {
+                                    $(`#reg${key.charAt(0).toUpperCase() + key.slice(1)}Error`).text(res.errors[key][0]).show();
+                                });
+                            }
+                        } else {
+                            showToast('Server connection failed.', 'error');
+                        }
+                    }
+                });
+            });
+
+            // ================== AJAX FORGOT PASSWORD OTP TRIGGER ==================
+            $('#ajaxForgotForm').on('submit', function(e) {
+                e.preventDefault();
+                const btn = $('#forgotSubmitBtn');
+                btn.prop('disabled', true).text('Requesting code...');
+                $('.invalid-feedback').hide();
+
+                $.ajax({
+                    url: '/api/forgot-password',
+                    method: 'POST',
+                    data: $(this).serialize(),
+                    success: function(res) {
+                        btn.prop('disabled', false).text('Send Verification Code');
+                        showToast(res.message, 'success');
+                        
+                        // Proceed to Reset Step Form
+                        $('#resetEmailHidden').val($('#forgotEmail').val());
+                        $('#ajaxForgotForm').hide();
+                        $('#ajaxResetForm').fadeIn();
+                        
+                        // Seed mock OTP in placeholder to make manual testing super friendly!
+                        $('#resetOtp').val(res.otp_code || '123456');
+                    },
+                    error: function(err) {
+                        btn.prop('disabled', false).text('Send Verification Code');
+                        if (err.status === 422 || err.status === 404) {
+                            const res = err.responseJSON;
+                            showToast(res.message || 'OTP dispatch failed.', 'error');
+                            if (res.errors && res.errors.email) {
+                                $('#forgotEmailError').text(res.errors.email[0]).show();
+                            }
+                        } else {
+                            showToast('Server connection failed.', 'error');
+                        }
+                    }
+                });
+            });
+
+            // ================== AJAX RESET PASSWORD CONFIRM SUBMIT ==================
+            $('#ajaxResetForm').on('submit', function(e) {
+                e.preventDefault();
+                const btn = $('#resetSubmitBtn');
+                btn.prop('disabled', true).text('Overriding password...');
+                $('.invalid-feedback').hide();
+
+                $.ajax({
+                    url: '/api/reset-password',
+                    method: 'POST',
+                    data: $(this).serialize(),
+                    success: function(res) {
+                        showToast(res.message, 'success');
+                        setTimeout(() => {
+                            window.location.reload();
+                        }, 1000);
+                    },
+                    error: function(err) {
+                        btn.prop('disabled', false).text('Synchronize Password');
+                        const res = err.responseJSON;
+                        showToast(res.message || 'Password override failed.', 'error');
+                        if (res.errors) {
+                            Object.keys(res.errors).forEach(key => {
+                                $(`#reset${key.charAt(0).toUpperCase() + key.slice(1)}Error`).text(res.errors[key][0]).show();
+                            });
+                        }
+                    }
+                });
+            });
+
+            // ================== AJAX LOGOUT SUBMISSION ==================
+            $('#logoutBtn').on('click', function(e) {
+                e.preventDefault();
+                $.ajax({
+                    url: '/api/logout',
+                    method: 'POST',
+                    data: { _token: 'PF5w3tROmou5Z6SgIvSHkNjjkjmd0YzYSEjvPKcV' },
+                    success: function(res) {
+                        showToast(res.message, 'success');
+                        setTimeout(() => {
+                            window.location.href = '/';
+                        }, 800);
+                    },
+                    error: function() {
+                        window.location.reload();
+                    }
+                });
+            });
+
+            // ================== DYNAMIC SIDEBAR DETAILS MODAL ==================
+            const sModal = $('#sidebarDetailsModal');
+            
+            // Map sidebar clicks to show immersive instructions popup
+            $(document).on('click', '.tab-item a', function(e) {
+                e.preventDefault();
+                const text = $(this).text();
+                const cleanText = text.replace('→ ', '').replace('✓ ', '').replace('• ', '');
+                
+                $('#sidebarDetailTitle').text(cleanText);
+                
+                // Synthesize comprehensive mock description depending on clicks
+                let detailsText = '';
+                if (cleanText.includes('Admit Card') || cleanText.includes('Entry Card') || cleanText.includes('Hall Ticket')) {
+                    detailsText = `
+                        <strong>Recruitment Body:</strong> Government Selection Board<br>
+                        <strong>Release Status:</strong> LIVE & Ready to Download<br>
+                        <strong>Instructions:</strong> candidates can access their call letters by logging into their application reference dashboard. Please carry a printed copy of the Admit Card along with an active government-issued Photo ID (Aadhaar, Passport, PAN Card) to the allocated testing venue.<br><br>
+                        <strong>Exam Date:</strong> Scheduled for next month.<br>
+                        <strong>Reporting Time:</strong> 08:30 AM (Strict closing gate hours apply).
+                    `;
+                } else if (cleanText.includes('Result') || cleanText.includes('Selection List') || cleanText.includes('Merit List')) {
+                    detailsText = `
+                        <strong>Examination Segment:</strong> Final Merit & Cutoff Index Lists<br>
+                        <strong>Review Status:</strong> Official Verification Complete<br>
+                        <strong>Cutoff Parameters:</strong> General 78.5%, OBC 72.4%, SC/ST 65.0%<br><br>
+                        Congratulations to all qualifying candidates! The selection board will dispatch individual call letters for physical verification and biometric checks via registered email profiles shortly.
+                    `;
+                } else {
+                    detailsText = `
+                        <strong>Subject Stream:</strong> Combined Competitive Exam Syllabus Patterns<br>
+                        <strong>Topic Outlines:</strong><br>
+                        &bull; <strong>Paper I (Aptitude & Math):</strong> Quantitative Reasoning, Algebra, Numerical Analysis, Data Interpretation.<br>
+                        &bull; <strong>Paper II (General Studies):</strong> Current Affairs, Constitutional Law, Public Policies, Indian History & Geography.<br><br>
+                        <strong>Marking Scheme:</strong> Objective type MCQ format (negative marking 0.25 index points for every wrong answer choice).
+                    `;
+                }
+                
+                $('#sidebarDetailBody').html(detailsText);
+                sModal.addClass('active');
+            });
+
+            $('#closeSidebarDetailsModal, #sidebarDetailsModal').on('click', function(e) {
+                if (e.target === this || e.target.id === 'closeSidebarDetailsModal') {
+                    sModal.removeClass('active');
+                }
+            });
+        });
+    </script>
+    
+    <script>
+    const isLoggedIn = false;
 
     $(document).ready(function() {
         
@@ -1467,12 +2355,7 @@
                                     </div>
                                     <div style="display: flex; flex-direction: column; gap: 0.5rem; align-items: flex-end;">
                                         <a href="#" class="btn-view" data-slug="${job.slug}">View Details</a>
-                                        @auth
-                                            <button class="btn-sm-danger toggle-bookmark-btn" data-id="${job.id}" style="background: rgba(37,99,235,0.06); color: var(--accent-color); border-color: rgba(37,99,235,0.15);">
-                                                Save Job
-                                            </button>
-                                        @endauth
-                                    </div>
+                                                                            </div>
                                 </div>
                             `;
                         });
@@ -1568,7 +2451,7 @@
             $.ajax({
                 url: `/api/jobs/${jobId}/bookmark`,
                 method: 'POST',
-                data: { _token: '{{ csrf_token() }}' },
+                data: { _token: 'PF5w3tROmou5Z6SgIvSHkNjjkjmd0YzYSEjvPKcV' },
                 success: function(res) {
                     btn.prop('disabled', false);
                     showToast(res.message, 'success');
@@ -2267,7 +3150,7 @@
             $.ajax({
                 url: `/api/jobs/${jobId}/bookmark`,
                 method: 'POST',
-                data: { _token: '{{ csrf_token() }}' },
+                data: { _token: 'PF5w3tROmou5Z6SgIvSHkNjjkjmd0YzYSEjvPKcV' },
                 success: function(res) {
                     showToast('Bookmark deleted.', 'success');
                     loadDashboardData();
@@ -2435,8 +3318,7 @@
                                         </div>
 
                                         <form class="quarantine-rescue-override-form" data-id="${item.id}">
-                                            @csrf
-                                            <div class="quarantine-grid-fields">
+                                            <input type="hidden" name="_token" value="PF5w3tROmou5Z6SgIvSHkNjjkjmd0YzYSEjvPKcV" autocomplete="off">                                            <div class="quarantine-grid-fields">
                                                 <div class="form-group" style="margin-bottom:0;">
                                                     <label style="font-size:0.8rem; margin-bottom:0.25rem;">Correct Recruitment Title</label>
                                                     <input type="text" name="title" class="form-control" style="padding:0.5rem 0.75rem; font-size:0.85rem;" value="${item.raw_payload.title || ''}" required>
@@ -2494,7 +3376,7 @@
             $.ajax({
                 url: `/api/admin/scraper/${id}/toggle`,
                 method: 'POST',
-                data: { _token: '{{ csrf_token() }}' },
+                data: { _token: 'PF5w3tROmou5Z6SgIvSHkNjjkjmd0YzYSEjvPKcV' },
                 success: function(res) {
                     showToast(res.message, 'success');
                     loadAdminData();
@@ -2515,7 +3397,7 @@
             $.ajax({
                 url: `/api/admin/scraper/${id}/run`,
                 method: 'POST',
-                data: { _token: '{{ csrf_token() }}' },
+                data: { _token: 'PF5w3tROmou5Z6SgIvSHkNjjkjmd0YzYSEjvPKcV' },
                 success: function(res) {
                     btn.prop('disabled', false).text('Crawl Now');
                     showToast(res.message, 'success');
@@ -2619,7 +3501,7 @@
             $.ajax({
                 url: `/api/admin/users/${id}/update`,
                 method: 'POST',
-                data: { _token: '{{ csrf_token() }}', role: targetRole },
+                data: { _token: 'PF5w3tROmou5Z6SgIvSHkNjjkjmd0YzYSEjvPKcV', role: targetRole },
                 success: function(res) {
                     showToast(res.message, 'success');
                     loadUsersRegistry();
@@ -2637,7 +3519,7 @@
             $.ajax({
                 url: `/api/admin/users/${id}/update`,
                 method: 'POST',
-                data: { _token: '{{ csrf_token() }}', is_active: targetActive },
+                data: { _token: 'PF5w3tROmou5Z6SgIvSHkNjjkjmd0YzYSEjvPKcV', is_active: targetActive },
                 success: function(res) {
                     showToast(res.message, 'success');
                     loadUsersRegistry();
@@ -2710,4 +3592,6 @@
 
     });
 </script>
-@endsection
+</body>
+</html>
+

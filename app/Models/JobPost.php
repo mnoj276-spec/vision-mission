@@ -20,6 +20,7 @@ class JobPost extends Model
         'state_id',
         'qualification_id',
         'category_id',
+        'post_type',
         'title',
         'slug',
         'description',
@@ -37,7 +38,8 @@ class JobPost extends Model
         'exam_date',
         'status',
         'published_at',
-        'is_featured'
+        'is_featured',
+        'is_historical'
     ];
 
     protected $casts = [
@@ -49,6 +51,7 @@ class JobPost extends Model
         'exam_date' => 'date',
         'published_at' => 'datetime',
         'is_featured' => 'boolean',
+        'is_historical' => 'boolean',
     ];
 
     /*
@@ -97,6 +100,49 @@ class JobPost extends Model
     | Query Scopes for AJAX Filtering & Searches
     |--------------------------------------------------------------------------
     */
+
+    /**
+     * Scopes for post type categorization.
+     */
+    public function scopeJobs(Builder $query): Builder
+    {
+        return $query->where('post_type', 'job');
+    }
+
+    public function scopeResults(Builder $query): Builder
+    {
+        return $query->where('post_type', 'result');
+    }
+
+    public function scopeAdmitCards(Builder $query): Builder
+    {
+        return $query->where('post_type', 'admit_card');
+    }
+
+    public function scopeAnswerKeys(Builder $query): Builder
+    {
+        return $query->where('post_type', 'answer_key');
+    }
+
+    public function scopeSyllabi(Builder $query): Builder
+    {
+        return $query->where('post_type', 'syllabus');
+    }
+
+    public function scopeNotices(Builder $query): Builder
+    {
+        return $query->where('post_type', 'notice');
+    }
+
+    public function scopeAdmissions(Builder $query): Builder
+    {
+        return $query->where('post_type', 'admission');
+    }
+
+    public function scopeScholarships(Builder $query): Builder
+    {
+        return $query->where('post_type', 'scholarship');
+    }
 
     /**
      * Scope to retrieve only published posts.

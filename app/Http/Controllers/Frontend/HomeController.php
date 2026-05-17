@@ -35,11 +35,26 @@ class HomeController extends Controller
         $qualifications = Qualification::all();
         $departments = \App\Models\Department::all();
         
-        // 3. Fetch initial featured and recent job posts
-        $featuredJobs = $this->jobRepo->getFeatured(4);
-        $recentJobs = $this->jobRepo->getRecent(5);
+        // 3. Fetch initial featured and categorized posts dynamically
+        $featuredJobs = \App\Models\JobPost::published()->featured()->latest('published_at')->take(6)->get();
+        $recentJobs = \App\Models\JobPost::published()->jobs()->latest('published_at')->take(12)->get();
+        $admitCards = \App\Models\JobPost::published()->admitCards()->latest('published_at')->take(12)->get();
+        $results = \App\Models\JobPost::published()->results()->latest('published_at')->take(12)->get();
+        $answerKeys = \App\Models\JobPost::published()->answerKeys()->latest('published_at')->take(10)->get();
+        $syllabi = \App\Models\JobPost::published()->syllabi()->latest('published_at')->take(10)->get();
+        $admissions = \App\Models\JobPost::published()->admissions()->latest('published_at')->take(10)->get();
+        $scholarships = \App\Models\JobPost::published()->scholarships()->latest('published_at')->take(10)->get();
+        $notices = \App\Models\JobPost::published()->notices()->latest('published_at')->take(10)->get();
+        
+        // Load scrolling ticker announcements
+        $tickerNotices = \App\Models\JobPost::published()->latest('published_at')->take(8)->get();
 
-        return view('home', compact('states', 'categories', 'qualifications', 'departments', 'featuredJobs', 'recentJobs'));
+        return view('home', compact(
+            'states', 'categories', 'qualifications', 'departments', 
+            'featuredJobs', 'recentJobs', 'admitCards', 'results', 
+            'answerKeys', 'syllabi', 'admissions', 'scholarships', 
+            'notices', 'tickerNotices'
+        ));
     }
 
     /**
@@ -70,6 +85,7 @@ class HomeController extends Controller
                 'id' => $job->id,
                 'title' => $job->title,
                 'slug' => $job->slug,
+                'post_type' => $job->post_type,
                 'category' => $job->category->name ?? 'Gov Job',
                 'department' => $job->department->name ?? 'Government',
                 'state' => $job->state->name ?? 'Pan India',
@@ -113,6 +129,7 @@ class HomeController extends Controller
             'data' => [
                 'id' => $job->id,
                 'title' => $job->title,
+                'post_type' => $job->post_type,
                 'category' => $job->category->name ?? 'Gov Job',
                 'department' => $job->department->name ?? 'Government',
                 'state' => $job->state->name ?? 'Pan India',
