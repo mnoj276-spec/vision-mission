@@ -12,3 +12,16 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', [JobController::class, 'index'])->name('home');
+
+// Growth & SEO Landing Pages
+Route::get('/ssc-jobs',     [JobController::class, 'sscJobs'])->name('seo.ssc');
+Route::get('/railway-jobs', [JobController::class, 'railwayJobs'])->name('seo.railway');
+Route::get('/upsc-jobs',    [JobController::class, 'upscJobs'])->name('seo.upsc');
+Route::get('/state-jobs',   [JobController::class, 'stateJobs'])->name('seo.state');
+
+// Automated XML Sitemap
+Route::get('/sitemap.xml',  [JobController::class, 'sitemap'])->name('sitemap');
+
+// Lead Capture & Growth Analytics APIs
+Route::post('/api/growth/subscribe', [JobController::class, 'subscribeAlerts'])->name('growth.subscribe');
+Route::post('/api/growth/track',     [JobController::class, 'trackEvent'])->name('growth.track');

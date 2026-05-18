@@ -40,9 +40,11 @@
             
             <ul class="nav-links">
                 <li><a href="/" class="nav-tab-trigger" data-target="jobs">Home</a></li>
-                <li><a href="#latest-jobs" class="nav-tab-trigger" data-target="jobs">Jobs List</a></li>
-                <li><a href="#" class="nav-tab-trigger" data-target="info-hub">Information Hub</a></li>
-                <li><a href="#admit-cards">Exam Utilities</a></li>
+                <li><a href="/ssc-jobs" style="font-weight: 700;">SSC Board</a></li>
+                <li><a href="/railway-jobs" style="font-weight: 700;">Railways</a></li>
+                <li><a href="/upsc-jobs" style="font-weight: 700;">UPSC</a></li>
+                <li><a href="/state-jobs" style="font-weight: 700;">State Jobs</a></li>
+                <li><a href="#" class="nav-tab-trigger" data-target="info-hub">Info Hub</a></li>
             </ul>
 
             <div class="header-actions" style="display: flex; gap: 0.75rem; align-items: center;">
