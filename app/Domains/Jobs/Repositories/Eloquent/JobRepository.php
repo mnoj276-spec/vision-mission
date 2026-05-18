@@ -1,0 +1,83 @@
+<?php
+
+namespace App\Domains\Jobs\Repositories\Eloquent;
+
+use App\Domains\Jobs\Repositories\Contracts\JobRepositoryInterface;
+use App\Models\JobPost;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Database\Eloquent\Collection;
+
+/**
+ * JobRepository — moved to domain namespace from App\Repositories\Eloquent.
+ * All logic preserved exactly.
+ */
+class JobRepository implements JobRepositoryInterface
+{
+    public function getPaginatedFiltered(array $filters, int $perPage = 10): LengthAwarePaginator
+    {
+        return JobPost::query()
+            ->published()
+            ->search($filters['search'] ?? null)
+            ->filterBy($filters)
+            ->with(['category', 'department', 'state', 'qualification'])
+            ->orderBy('is_featured', 'desc')
+            ->orderBy('published_at', 'desc')
+            ->paginate($perPage);
+    }
+
+    public function getFeatured(int $limit = 5): Collection
+    {
+        return JobPost::query()->published()->featured()
+            ->with(['category', 'department', 'state', 'qualification'])
+            ->limit($limit)->get();
+    }
+
+    public function getRecent(int $limit = 10): Collection
+    {
+        return JobPost::query()->published()
+            ->with(['category', 'department', 'state', 'qualification'])
+            ->orderBy('published_at', 'desc')->limit($limit)->get();
+    }
+
+    public function findBySlug(string $slug): ?JobPost
+    {
+        return JobPost::query()->published()
+            ->with(['category', 'department', 'state', 'qualification', 'tags'])
+            ->where('slug', $slug)->first();
+    }
+
+    public function findById(int $id): ?JobPost
+    {
+        return JobPost::query()
+            ->with(['category', 'department', 'state', 'qualification', 'tags'])
+            ->find($id);
+    }
+
+    public function create(array $data): JobPost
+    {
+        return JobPost::create($data);
+    }
+
+    public function update(int $id, array $data): bool
+    {
+        $job = JobPost::find($id);
+        return $job ? $job->update($data) : false;
+    }
+
+    public function delete(int $id): bool
+    {
+        $job = JobPost::find($id);
+        return $job ? (bool) $job->delete() : false;
+    }
+
+    public function exists(string $title, int $departmentId, string $lastDate): bool
+    {
+        return JobPost::query()
+            ->where('department_id', $departmentId)
+            ->where(function ($q) use ($title) {
+                $q->where('title', $title)
+                  ->orWhere('slug', str()->slug($title))
+                  ->orWhere('slug', 'like', str()->slug($title) . '-%');
+            })->exists();
+    }
+}

@@ -9,7 +9,7 @@ use App\Models\Qualification;
 use App\Models\ScrapingSource;
 use App\Models\ScrapingLog;
 use App\Models\JobPost;
-use App\Services\ScrapingService;
+use App\Domains\Scrapers\Services\ScrapingService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -62,7 +62,7 @@ class ScraperTest extends TestCase
         ];
 
         // Access protected process method using reflection or calling via standard handle
-        $reflection = new \ReflectionClass(ScrapingService::class);
+        $reflection = new \ReflectionClass(\App\Domains\Scrapers\Services\ScrapingService::class);
         $method = $reflection->getMethod('processScrapedItem');
         $method->setAccessible(true);
 
@@ -70,17 +70,17 @@ class ScraperTest extends TestCase
 
         $this->assertEquals('success', $result['status']);
         
-        // Assert job draft was successfully created
+        // Assert job was created with published status (future-dated jobs are published, not draft)
         $this->assertDatabaseHas('job_posts', [
-            'title' => 'UPSC Inspector General Recruitment 2026',
-            'status' => 'draft',
+            'title'           => 'UPSC Inspector General Recruitment 2026',
+            'status'          => 'published',
             'application_fee' => 200.00
         ]);
 
         // Assert audit success log exists
         $this->assertDatabaseHas('scraping_logs', [
             'scraping_source_id' => $this->source->id,
-            'status' => 'success'
+            'status'             => 'success'
         ]);
     }
 
@@ -98,7 +98,7 @@ class ScraperTest extends TestCase
             'raw_text' => 'Incomplete entry'
         ];
 
-        $reflection = new \ReflectionClass(ScrapingService::class);
+        $reflection = new \ReflectionClass(\App\Domains\Scrapers\Services\ScrapingService::class);
         $method = $reflection->getMethod('processScrapedItem');
         $method->setAccessible(true);
 
@@ -135,7 +135,7 @@ class ScraperTest extends TestCase
             'raw_text' => 'UPSC Commissioner Selection. Last date to apply: 15-11-2026. Fee Rs 500.'
         ];
 
-        $reflection = new \ReflectionClass(ScrapingService::class);
+        $reflection = new \ReflectionClass(\App\Domains\Scrapers\Services\ScrapingService::class);
         $method = $reflection->getMethod('processScrapedItem');
         $method->setAccessible(true);
 

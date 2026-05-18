@@ -2,27 +2,58 @@
 
 namespace App\Providers;
 
+use App\Domains\Admin\Services\AdminService;
+use App\Domains\Admin\Services\Contracts\AdminServiceInterface;
+use App\Domains\Jobs\Repositories\Contracts\JobRepositoryInterface;
+use App\Domains\Jobs\Repositories\Eloquent\JobRepository;
+use App\Domains\Jobs\Services\Contracts\JobServiceInterface;
+use App\Domains\Jobs\Services\JobService;
+use App\Domains\Notifications\Services\Contracts\NotificationServiceInterface;
+use App\Domains\Notifications\Services\NotificationService;
+use App\Domains\Scrapers\Repositories\Contracts\ScrapingSourceRepositoryInterface;
+use App\Domains\Scrapers\Repositories\Eloquent\ScrapingSourceRepository;
+use App\Domains\Scrapers\Services\Contracts\ScrapingServiceInterface;
+use App\Domains\Scrapers\Services\ScrapingService;
+use App\Domains\Users\Services\AuthService;
+use App\Domains\Users\Services\Contracts\AuthServiceInterface;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
 {
     /**
-     * Register any application services.
+     * Register all interface → implementation bindings.
+     *
+     * Following DIP (Dependency Inversion Principle):
+     * controllers and services depend on abstractions, not concretions.
      */
     public function register(): void
     {
-        $this->app->bind(
-            \App\Repositories\Contracts\JobRepositoryInterface::class,
-            \App\Repositories\Eloquent\JobRepository::class
-        );
+        // ─── Jobs Domain ──────────────────────────────────────────────────────
+        $this->app->bind(JobRepositoryInterface::class, JobRepository::class);
+        $this->app->bind(JobServiceInterface::class,    JobService::class);
+
+        // ─── Scrapers Domain ──────────────────────────────────────────────────
+        $this->app->bind(ScrapingSourceRepositoryInterface::class, ScrapingSourceRepository::class);
+        $this->app->bind(ScrapingServiceInterface::class,          ScrapingService::class);
+
+        // ─── Users Domain ─────────────────────────────────────────────────────
+        $this->app->bind(AuthServiceInterface::class, AuthService::class);
+
+        // ─── Notifications Domain ─────────────────────────────────────────────
+        $this->app->bind(NotificationServiceInterface::class, NotificationService::class);
+
+        // ─── Admin Domain ─────────────────────────────────────────────────────
+        $this->app->bind(AdminServiceInterface::class, AdminService::class);
     }
 
     /**
-     * Bootstrap any application services.
+     * Bootstrap application services.
      */
     public function boot(): void
     {
-        \Illuminate\Support\Facades\Gate::define('admin-access', function (\App\Models\User $user) {
+        // Gate definition for admin authorization (used by EnsureAdmin middleware)
+        Gate::define('admin-access', function (\App\Models\User $user) {
             return $user->role === 'admin';
         });
     }
