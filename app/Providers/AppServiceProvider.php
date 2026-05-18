@@ -56,5 +56,10 @@ class AppServiceProvider extends ServiceProvider
         Gate::define('admin-access', function (\App\Models\User $user) {
             return $user->role === 'admin';
         });
+
+        // Prevent N+1 lazy loading issues in development and testing
+        \Illuminate\Database\Eloquent\Model::preventLazyLoading(
+            !$this->app->isProduction()
+        );
     }
 }

@@ -28,26 +28,25 @@ class JobService implements JobServiceInterface
         protected JobRepositoryInterface $jobRepo
     ) {}
 
-    /**
-     * Build the complete homepage data payload for the Blade view.
-     */
     public function getHomePageData(): array
     {
+        $relations = ['category', 'department', 'state', 'qualification', 'source'];
+
         return [
             'states'        => State::all(),
             'categories'    => Category::where('is_active', true)->get(),
             'qualifications' => Qualification::all(),
             'departments'   => Department::all(),
-            'featuredJobs'  => JobPost::published()->featured()->latest('published_at')->take(6)->get(),
-            'recentJobs'    => JobPost::published()->jobs()->latest('published_at')->take(12)->get(),
-            'admitCards'    => JobPost::published()->admitCards()->latest('published_at')->take(12)->get(),
-            'results'       => JobPost::published()->results()->latest('published_at')->take(12)->get(),
-            'answerKeys'    => JobPost::published()->answerKeys()->latest('published_at')->take(10)->get(),
-            'syllabi'       => JobPost::published()->syllabi()->latest('published_at')->take(10)->get(),
-            'admissions'    => JobPost::published()->admissions()->latest('published_at')->take(10)->get(),
-            'scholarships'  => JobPost::published()->scholarships()->latest('published_at')->take(10)->get(),
-            'notices'       => JobPost::published()->notices()->latest('published_at')->take(10)->get(),
-            'tickerNotices' => JobPost::published()->latest('published_at')->take(8)->get(),
+            'featuredJobs'  => JobPost::published()->with($relations)->featured()->latest('published_at')->take(6)->get(),
+            'recentJobs'    => JobPost::published()->with($relations)->jobs()->latest('published_at')->take(12)->get(),
+            'admitCards'    => JobPost::published()->with($relations)->admitCards()->latest('published_at')->take(12)->get(),
+            'results'       => JobPost::published()->with($relations)->results()->latest('published_at')->take(12)->get(),
+            'answerKeys'    => JobPost::published()->with($relations)->answerKeys()->latest('published_at')->take(10)->get(),
+            'syllabi'       => JobPost::published()->with($relations)->syllabi()->latest('published_at')->take(10)->get(),
+            'admissions'    => JobPost::published()->with($relations)->admissions()->latest('published_at')->take(10)->get(),
+            'scholarships'  => JobPost::published()->with($relations)->scholarships()->latest('published_at')->take(10)->get(),
+            'notices'       => JobPost::published()->with($relations)->notices()->latest('published_at')->take(10)->get(),
+            'tickerNotices' => JobPost::published()->with($relations)->latest('published_at')->take(8)->get(),
         ];
     }
 
@@ -83,6 +82,9 @@ class JobService implements JobServiceInterface
         $data['slug'] = $this->generateUniqueSlug($data['title']);
         $data['status'] = 'published';
         $data['published_at'] = Carbon::now();
+        if (isset($data['last_date_to_apply'])) {
+            $data['expires_at'] = $data['last_date_to_apply'];
+        }
 
         return $this->jobRepo->create($data);
     }
@@ -94,6 +96,9 @@ class JobService implements JobServiceInterface
     {
         $data = $this->sanitizeJobFields($data);
         $data['slug'] = $this->generateUniqueSlug($data['title']);
+        if (isset($data['last_date_to_apply'])) {
+            $data['expires_at'] = $data['last_date_to_apply'];
+        }
 
         $this->jobRepo->update($id, $data);
 

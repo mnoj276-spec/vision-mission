@@ -9,9 +9,11 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Builder;
 
+use Illuminate\Database\Eloquent\SoftDeletes;
+
 class JobPost extends Model
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes;
 
     protected $table = 'job_posts';
 
@@ -20,6 +22,7 @@ class JobPost extends Model
         'state_id',
         'qualification_id',
         'category_id',
+        'source_id',
         'post_type',
         'title',
         'slug',
@@ -41,6 +44,7 @@ class JobPost extends Model
         'is_featured',
         'is_historical',
         'fingerprint',
+        'expires_at',
     ];
 
     protected $casts = [
@@ -53,6 +57,7 @@ class JobPost extends Model
         'published_at' => 'datetime',
         'is_featured' => 'boolean',
         'is_historical' => 'boolean',
+        'expires_at' => 'date',
     ];
 
     /*
@@ -64,6 +69,11 @@ class JobPost extends Model
     public function category(): BelongsTo
     {
         return $this->belongsTo(Category::class);
+    }
+
+    public function source(): BelongsTo
+    {
+        return $this->belongsTo(ScrapingSource::class, 'source_id');
     }
 
     public function department(): BelongsTo
@@ -190,9 +200,31 @@ class JobPost extends Model
             return $query;
         }
 
+        // Clean the search term to prevent syntax errors
+        $term = trim(preg_replace('/[+\-><()~*\"@]+/u', ' ', $term));
+
+        if (empty($term)) {
+            return $query;
+        }
+
+        $connection = $query->getConnection();
+        $driver = $connection->getDriverName();
+
+        if ($driver === 'mysql') {
+            return $query->whereRaw(
+                "MATCH(title, description) AGAINST(? IN BOOLEAN MODE)",
+                [$term . '*']
+            );
+        }
+
         return $query->where(function ($q) use ($term) {
-            $q->where('title', 'like', "%{$term}%")
-              ->orWhere('description', 'like', "%{$term}%");
+            $words = array_filter(explode(' ', $term));
+            foreach ($words as $word) {
+                $q->where(function ($sub) use ($word) {
+                    $sub->where('title', 'like', "%{$word}%")
+                        ->orWhere('description', 'like', "%{$word}%");
+                });
+            }
         });
     }
 

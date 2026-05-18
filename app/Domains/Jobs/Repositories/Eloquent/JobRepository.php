@@ -20,7 +20,7 @@ class JobRepository implements JobRepositoryInterface
             ->published()
             ->search($filters['search'] ?? null)
             ->filterBy($filters)
-            ->with(['category', 'department', 'state', 'qualification'])
+            ->with(['category', 'department', 'state', 'qualification', 'source'])
             ->orderBy('is_featured', 'desc')
             ->orderBy('published_at', 'desc')
             ->paginate($perPage);
@@ -29,28 +29,28 @@ class JobRepository implements JobRepositoryInterface
     public function getFeatured(int $limit = 5): Collection
     {
         return JobPost::query()->published()->featured()
-            ->with(['category', 'department', 'state', 'qualification'])
+            ->with(['category', 'department', 'state', 'qualification', 'source'])
             ->limit($limit)->get();
     }
 
     public function getRecent(int $limit = 10): Collection
     {
         return JobPost::query()->published()
-            ->with(['category', 'department', 'state', 'qualification'])
+            ->with(['category', 'department', 'state', 'qualification', 'source'])
             ->orderBy('published_at', 'desc')->limit($limit)->get();
     }
 
     public function findBySlug(string $slug): ?JobPost
     {
         return JobPost::query()->published()
-            ->with(['category', 'department', 'state', 'qualification', 'tags'])
+            ->with(['category', 'department', 'state', 'qualification', 'tags', 'source'])
             ->where('slug', $slug)->first();
     }
 
     public function findById(int $id): ?JobPost
     {
         return JobPost::query()
-            ->with(['category', 'department', 'state', 'qualification', 'tags'])
+            ->with(['category', 'department', 'state', 'qualification', 'tags', 'source'])
             ->find($id);
     }
 

@@ -215,6 +215,9 @@ class ScrapingService implements ScrapingServiceInterface
             // -----------------------------------------------------------------
             // ALL GATES PASSED — Insert with DB unique constraint as final net
             // -----------------------------------------------------------------
+            $finalJobData['source_id']  = $source->id;
+            $finalJobData['expires_at'] = $finalJobData['last_date_to_apply'] ?? null;
+
             try {
                 $jobPost = DB::transaction(function () use ($finalJobData, $source, $rawLogPayload, $rawData) {
                     $finalJobData['slug'] = str()->slug($finalJobData['title']) . '-' . rand(100, 999);
