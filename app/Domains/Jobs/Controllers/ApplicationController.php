@@ -42,12 +42,63 @@ class ApplicationController extends Controller
             return response()->json(['status' => 'error', 'message' => 'You have already applied for this posting.'], 422);
         }
 
-        Validator::make($request->all(), ['resume' => 'required|file|mimes:pdf,doc,docx|max:2048'])->validate();
+        // Basic validation first (presence, file, basic size)
+        $validator = Validator::make($request->all(), [
+            'resume' => 'required|file|max:2048'
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Validation failed.',
+                'errors' => $validator->errors()
+            ], 422);
+        }
+
+        $file = $request->file('resume');
+
+        // 1. Strict server-side magic bytes validation (MIME check)
+        $finfo = finfo_open(FILEINFO_MIME_TYPE);
+        $mimeType = finfo_file($finfo, $file->getRealPath());
+        finfo_close($finfo);
+
+        $allowedMimes = [
+            'application/pdf',
+            'application/msword',
+            'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+        ];
+
+        if (!in_array($mimeType, $allowedMimes)) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Invalid file format. Only PDF, DOC, and DOCX resumes are allowed.'
+            ], 422);
+        }
+
+        // 2. Reject dual extensions or mismatch extension-spoofing
+        $originalName = $file->getClientOriginalName();
+        $extension = strtolower($file->getClientOriginalExtension());
+        $allowedExtensions = ['pdf', 'doc', 'docx'];
+
+        // Reject if original extension isn't in allowed list or if there are multiple extensions
+        if (!in_array($extension, $allowedExtensions) || preg_match('/\.[a-zA-Z0-9]+\.[a-zA-Z0-9]+$/', $originalName)) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'File contains invalid extensions or structure. Dual extension spoofing detected.'
+            ], 422);
+        }
+
+        // 3. Scan the upload via the AntivirusScanner hook
+        if (!\App\Services\AntivirusScanner::scan($file)) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Antivirus scan failed. The uploaded file appears to be infected or malicious.'
+            ], 422);
+        }
 
         $resumePath = null;
         if ($request->hasFile('resume')) {
-            $file       = $request->file('resume');
-            $fileName   = 'resume_' . $user->id . '_' . time() . '.' . $file->getClientOriginalExtension();
+            $fileName   = 'resume_' . $user->id . '_' . time() . '.' . $extension;
             $resumePath = $file->storeAs('resumes', $fileName, 'public');
         }
 

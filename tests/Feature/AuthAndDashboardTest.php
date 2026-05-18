@@ -163,8 +163,8 @@ class AuthAndDashboardTest extends TestCase
         Storage::fake('public');
         $this->actingAs($this->candidate);
 
-        // Generate fake resume file
-        $resumeFile = UploadedFile::fake()->create('my_resume.pdf', 500, 'application/pdf');
+        // Generate fake resume file with valid PDF magic bytes
+        $resumeFile = UploadedFile::fake()->createWithContent('my_resume.pdf', "%PDF-1.4\n" . str_repeat('A', 500));
 
         $response = $this->postJson(route('jobs.apply', ['id' => $this->job->id]), [
             'resume' => $resumeFile

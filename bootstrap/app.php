@@ -21,9 +21,11 @@ return Application::configure(basePath: dirname(__DIR__))
         \App\Domains\Scrapers\Commands\RunScraperCommand::class,
     ])
     ->withMiddleware(function (Middleware $middleware): void {
-        // Register EnsureAdmin as the 'admin' middleware alias
+        // Register security middleware aliases
         $middleware->alias([
-            'admin' => \App\Http\Middleware\EnsureAdmin::class,
+            'admin'  => \App\Http\Middleware\EnsureAdmin::class,
+            'role'   => \App\Http\Middleware\RoleMiddleware::class,
+            'active' => \App\Http\Middleware\EnsureActiveUser::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

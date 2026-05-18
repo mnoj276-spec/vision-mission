@@ -22,9 +22,9 @@ class AuthService implements AuthServiceInterface
     public function register(array $data): User
     {
         $user = User::create([
-            'name'      => $data['name'],
-            'email'     => $data['email'],
-            'phone'     => $data['phone'],
+            'name'      => \App\Services\HtmlSanitizer::sanitizeString($data['name']),
+            'email'     => \App\Services\HtmlSanitizer::sanitizeString($data['email']),
+            'phone'     => \App\Services\HtmlSanitizer::sanitizeString($data['phone']),
             'password'  => Hash::make($data['password']),
             'role'      => 'candidate',
             'is_active' => true,
@@ -97,9 +97,9 @@ class AuthService implements AuthServiceInterface
      */
     public function updateProfile(User $user, array $data): void
     {
-        $user->name  = $data['name'];
-        $user->email = $data['email'];
-        $user->phone = $data['phone'];
+        $user->name  = \App\Services\HtmlSanitizer::sanitizeString($data['name']);
+        $user->email = \App\Services\HtmlSanitizer::sanitizeString($data['email']);
+        $user->phone = \App\Services\HtmlSanitizer::sanitizeString($data['phone']);
 
         if (!empty($data['password'])) {
             $user->password = Hash::make($data['password']);

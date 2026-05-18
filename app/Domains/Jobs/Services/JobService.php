@@ -78,6 +78,7 @@ class JobService implements JobServiceInterface
      */
     public function createJob(array $data): JobPost
     {
+        $data = $this->sanitizeJobFields($data);
         $data = $this->applyJobDefaults($data);
         $data['slug'] = $this->generateUniqueSlug($data['title']);
         $data['status'] = 'published';
@@ -91,11 +92,35 @@ class JobService implements JobServiceInterface
      */
     public function updateJob(int $id, array $data): JobPost
     {
+        $data = $this->sanitizeJobFields($data);
         $data['slug'] = $this->generateUniqueSlug($data['title']);
 
         $this->jobRepo->update($id, $data);
 
         return JobPost::findOrFail($id);
+    }
+
+    /**
+     * Sanitize JobPost fields to prevent XSS.
+     */
+    private function sanitizeJobFields(array $data): array
+    {
+        if (isset($data['title'])) {
+            $data['title'] = \App\Services\HtmlSanitizer::sanitizeString($data['title']);
+        }
+        if (isset($data['description'])) {
+            $data['description'] = \App\Services\HtmlSanitizer::sanitizeHtml($data['description']);
+        }
+        if (isset($data['exam_pattern'])) {
+            $data['exam_pattern'] = \App\Services\HtmlSanitizer::sanitizeHtml($data['exam_pattern']);
+        }
+        if (isset($data['selection_process'])) {
+            $data['selection_process'] = \App\Services\HtmlSanitizer::sanitizeHtml($data['selection_process']);
+        }
+        if (isset($data['age_limit'])) {
+            $data['age_limit'] = \App\Services\HtmlSanitizer::sanitizeString($data['age_limit']);
+        }
+        return $data;
     }
 
     /**

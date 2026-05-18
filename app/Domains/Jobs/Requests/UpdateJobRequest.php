@@ -22,7 +22,15 @@ class UpdateJobRequest extends FormRequest
             'vacancy_count'         => 'required|integer|min:1',
             'application_fee'       => 'required|numeric|min:0',
             'last_date_to_apply'    => 'required|date',
-            'official_website_link' => 'required|url',
+            'official_website_link' => [
+                'required',
+                'url',
+                function ($attribute, $value, $fail) {
+                    if (!\App\Services\UrlSecurity::isSafeUrl($value)) {
+                        $fail("The {$attribute} must be a .gov.in, .nic.in, or approved domain to prevent SSRF.");
+                    }
+                }
+            ],
         ];
     }
 }

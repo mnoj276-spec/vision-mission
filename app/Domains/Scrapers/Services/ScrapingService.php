@@ -30,6 +30,12 @@ class ScrapingService implements ScrapingServiceInterface
         $url = $source->source_url;
         try {
             Log::info("Starting scrape run for source: {$source->name} [URL: {$url}]");
+            
+            // Mitigate SSRF: enforce strict allowed domains and reject local loopback
+            if (!\App\Services\UrlSecurity::isSafeUrl($url)) {
+                throw new \Exception("SSRF Block: The source URL '{$url}' is not a permitted domain.");
+            }
+
             $response = Http::timeout(30)->get($url);
             if ($response->failed()) {
                 throw new \Exception("HTTP Request failed with status: " . $response->status());
@@ -78,6 +84,23 @@ class ScrapingService implements ScrapingServiceInterface
                 'official_website_link' => $parsedData['official_website_link'] ?? $aiData['official_website_link'] ?? null,
                 'apply_link'            => $parsedData['apply_link']            ?? $aiData['apply_link']            ?? null,
             ]);
+
+            // Prevent Stored XSS from scraped rich-text or title strings
+            if (isset($finalJobData['title'])) {
+                $finalJobData['title'] = \App\Services\HtmlSanitizer::sanitizeString($finalJobData['title']);
+            }
+            if (isset($finalJobData['description'])) {
+                $finalJobData['description'] = \App\Services\HtmlSanitizer::sanitizeHtml($finalJobData['description']);
+            }
+            if (isset($finalJobData['exam_pattern'])) {
+                $finalJobData['exam_pattern'] = \App\Services\HtmlSanitizer::sanitizeHtml($finalJobData['exam_pattern']);
+            }
+            if (isset($finalJobData['selection_process'])) {
+                $finalJobData['selection_process'] = \App\Services\HtmlSanitizer::sanitizeHtml($finalJobData['selection_process']);
+            }
+            if (isset($finalJobData['age_limit'])) {
+                $finalJobData['age_limit'] = \App\Services\HtmlSanitizer::sanitizeString($finalJobData['age_limit']);
+            }
             $finalJobData['post_type'] = $this->classifyPostType($finalJobData['title'], $parsedData['raw_text'] ?? '');
             $textForMapping = ($parsedData['title'] ?? '') . ' ' . ($parsedData['raw_text'] ?? '');
             $defaultCat   = $source->selectors_config['default_category_id']     ?? 1;

@@ -27,7 +27,7 @@ Route::post('/forgot-password',  [AuthController::class, 'forgotPassword'])->nam
 Route::post('/reset-password',   [AuthController::class, 'resetPassword'])->name('password.reset');
 
 // ─── Candidate Authenticated Endpoints ───────────────────────────────────────
-Route::middleware('auth')->group(function () {
+Route::middleware(['auth', 'active'])->group(function () {
     Route::get('/dashboard',             [DashboardController::class,  'getDashboardData'])->name('dashboard.data');
     Route::post('/jobs/{id}/bookmark',   [ApplicationController::class,'toggleBookmark'])->name('jobs.bookmark');
     Route::post('/jobs/{id}/apply',      [ApplicationController::class,'applyJob'])->name('jobs.apply');

@@ -17,7 +17,7 @@ use Illuminate\Support\Facades\Route;
 Route::middleware(['auth', 'admin'])->prefix('api/admin')->group(function () {
 
     // ─── Admin Dashboard & Analytics ─────────────────────────────────────────
-    Route::get('/dashboard',       [AdminDashboardController::class, 'dashboardView'])->name('admin.dashboard')->withoutMiddleware('admin');
+    Route::get('/dashboard',       [AdminDashboardController::class, 'dashboardView'])->name('admin.dashboard');
     Route::get('/data',            [AdminDashboardController::class, 'getAdminData'])->name('admin.data');
     Route::get('/activity-logs',   [AdminDashboardController::class, 'getActivityLogs'])->name('admin.activity-logs');
     Route::post('/seo/update',     [AdminDashboardController::class, 'updateSeoSettings'])->name('admin.seo.update');

@@ -21,11 +21,21 @@ class EnsureAdmin
 {
     public function handle(Request $request, Closure $next): Response
     {
-        if (!Auth::check() || Gate::denies('admin-access')) {
+        if (!Auth::check() || Gate::denies('admin-access') || !Auth::user()->is_active) {
+            // Immediate session termination if admin user is suspended
+            if (Auth::check() && !Auth::user()->is_active) {
+                Auth::logout();
+                
+                if ($request->hasSession()) {
+                    $request->session()->invalidate();
+                    $request->session()->regenerateToken();
+                }
+            }
+
             if ($request->expectsJson() || $request->ajax()) {
                 return response()->json([
                     'status'  => 'error',
-                    'message' => 'Access Denied: Only authenticated administrators can access this panel.',
+                    'message' => 'Access Denied: Only authenticated active administrators can access this panel.',
                 ], 403);
             }
 

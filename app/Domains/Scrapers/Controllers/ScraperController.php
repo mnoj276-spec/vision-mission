@@ -49,6 +49,13 @@ class ScraperController extends Controller
             'link_selector'          => 'required|string',
         ]);
 
+        if (!\App\Services\UrlSecurity::isSafeUrl($request->source_url)) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'The scraping source URL must be a .gov.in, .nic.in, or approved domain to prevent SSRF.'
+            ], 422);
+        }
+
         $source = $this->scraperRepo->create([
             'name'             => $request->name,
             'source_url'       => $request->source_url,
@@ -80,6 +87,14 @@ class ScraperController extends Controller
             'default_state_id' => 'required|integer', 'default_qualification_id' => 'required|integer',
             'title_selector' => 'required|string', 'row_selector' => 'required|string', 'link_selector' => 'required|string',
         ]);
+
+        if (!\App\Services\UrlSecurity::isSafeUrl($request->source_url)) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'The scraping source URL must be a .gov.in, .nic.in, or approved domain to prevent SSRF.'
+            ], 422);
+        }
+
         $source = $this->scraperRepo->update($source, [
             'name' => $request->name, 'source_url' => $request->source_url,
             'cron_expression' => $request->cron_expression, 'is_active' => $request->is_active,
@@ -127,6 +142,20 @@ class ScraperController extends Controller
             'application_fee'       => 'required|numeric|min:0',
             'vacancy_count'         => 'required|integer|min:1',
         ]);
+
+        if (!\App\Services\UrlSecurity::isSafeUrl($request->official_website_link)) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'The official website link must be a .gov.in, .nic.in, or approved domain to prevent SSRF.'
+            ], 422);
+        }
+
+        if ($request->filled('apply_link') && !\App\Services\UrlSecurity::isSafeUrl($request->apply_link)) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'The application link must be a .gov.in, .nic.in, or approved domain to prevent SSRF.'
+            ], 422);
+        }
 
         try {
             DB::beginTransaction();
