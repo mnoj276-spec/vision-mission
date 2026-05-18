@@ -17,7 +17,8 @@
             <button class="admin-nav-btn" data-block="jobs"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path></svg> Recruitment Postings</button>
             <button class="admin-nav-btn" data-block="crawlers"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg> Crawler Target Configs</button>
             <button class="admin-nav-btn" data-block="master"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2L2 7l10 5 10-5-10-5z"></path><path d="M2 17l10 5 10-5"></path><path d="M2 12l10 5 10-5"></path></svg> Master Data Manager</button>
-            <button class="admin-nav-btn" data-block="users"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg> User Access Panel</button>
+            <button class="admin-nav-btn" data-block="users"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M17 21v-2a4 4 0 0 0-3-3.87"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg> User Access Panel</button>
+            <button class="admin-nav-btn" data-block="queues"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="2" y="2" width="20" height="8" rx="2" ry="2"></rect><rect x="2" y="14" width="20" height="8" rx="2" ry="2"></rect><line x1="6" y1="6" x2="6.01" y2="6"></line><line x1="6" y1="18" x2="6.01" y2="18"></line></svg> Queue Engine & DLQ</button>
             <button class="admin-nav-btn" data-block="seo"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg> SEO & Content Cache</button>
             <button class="admin-nav-btn" data-block="audit"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg> Audit Activity Logs</button>
         </div>
@@ -400,6 +401,65 @@
                 <div class="pagination-container" id="audit-logs-pagination" style="margin-top: 1.5rem;"></div>
             </div>
         </section>
+
+        <!-- ================= PANEL 8: QUEUE ENGINE & DLQ MANAGEMENT ================= -->
+        <section class="admin-panel-block" id="admin-queues" style="display: none;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                <h2 style="font-family: 'Outfit'; font-size: 1.75rem; margin: 0;">Distributed Queue Control Center</h2>
+                <div style="display: flex; gap: 0.75rem;">
+                    <a href="/horizon" target="_blank" class="form-btn" style="margin: 0; padding: 0.6rem 1.2rem; background: var(--accent-color); border: none; text-decoration: none; display: flex; align-items: center; gap: 0.5rem;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg> Open Horizon Console</a>
+                    <button class="form-btn" id="btn-queues-retry-all" style="margin: 0; padding: 0.6rem 1.2rem; background: #10b981; border: none; display: flex; align-items: center; gap: 0.5rem;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="23 4 23 10 17 10"></polyline><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path></svg> Retry All Failures</button>
+                    <button class="form-btn" id="btn-queues-clear-all" style="margin: 0; padding: 0.6rem 1.2rem; background: #ef4444; border: none; display: flex; align-items: center; gap: 0.5rem;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg> Flush DLQ Store</button>
+                </div>
+            </div>
+
+            <!-- Queue Telemetry Stats -->
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem; margin-bottom: 2rem;">
+                <div class="glass-panel stat-card-premium" style="border-left: 5px solid var(--accent-color);">
+                    <div class="label">Queue Connection Driver</div>
+                    <div class="number" id="queues-driver" style="font-size: 1.5rem; text-transform: uppercase;">REDIS</div>
+                    <div class="subtext">Multi-worker active driver</div>
+                </div>
+                <div class="glass-panel stat-card-premium" style="border-left: 5px solid #10b981;">
+                    <div class="label">Total Pending Tasks</div>
+                    <div class="number" id="queues-pending">0</div>
+                    <div class="subtext" id="queues-pending-details">scrapers: 0 | notifications: 0</div>
+                </div>
+                <div class="glass-panel stat-card-premium" style="border-left: 5px solid #f59e0b;">
+                    <div class="label">Active Workers Processing</div>
+                    <div class="number" id="queues-active">0</div>
+                    <div class="subtext">Active concurrent allocations</div>
+                </div>
+                <div class="glass-panel stat-card-premium" style="border-left: 5px solid #ef4444;">
+                    <div class="label">Dead-Letter Queue Failures</div>
+                    <div class="number" id="queues-failed" style="color: #ef4444;">0</div>
+                    <div class="subtext">Awaiting manual operations</div>
+                </div>
+            </div>
+
+            <!-- DLQ failed jobs browser table -->
+            <div class="glass-panel" style="padding: 1.5rem; border-radius: 16px;">
+                <h3 style="font-family: 'Outfit'; font-size: 1.2rem; color: var(--accent-color); margin-bottom: 1rem;">Dead-Letter Queue (DLQ) Browser</h3>
+                <div class="responsive-table-container">
+                    <table class="portal-table">
+                        <thead>
+                            <tr>
+                                <th>UUID</th>
+                                <th>Job Class</th>
+                                <th>Origin Queue</th>
+                                <th>Diagnostic Error</th>
+                                <th>Failed Time</th>
+                                <th style="text-align: center;">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="queues-failed-table-body">
+                            <!-- Populated dynamically via AJAX -->
+                        </tbody>
+                    </table>
+                </div>
+                <div class="pagination-container" id="queues-failed-pagination" style="margin-top: 1.5rem;"></div>
+            </div>
+        </section>
     </main>
 </div>
 
@@ -670,6 +730,8 @@
                 loadMasterData();
             } else if (targetBlock === 'users') {
                 loadUsersData();
+            } else if (targetBlock === 'queues') {
+                loadQueueDashboard(1);
             } else if (targetBlock === 'audit') {
                 loadAuditLogs(1);
             }
@@ -1616,7 +1678,145 @@
         });
 
         // ===================================================================
-        // 7. AUDIT LOGS DISPLAY
+        // 7. QUEUE DASHBOARD & DLQ OPERATIONS
+        // ===================================================================
+        let currentQueuePage = 1;
+        function loadQueueDashboard(page) {
+            currentQueuePage = page || 1;
+            
+            // 1. Fetch metrics
+            $.ajax({
+                url: '/api/admin/queues/metrics',
+                method: 'GET',
+                success: function(res) {
+                    if (res.status === 'success') {
+                        const m = res.data.metrics;
+                        $('#queues-driver').text(res.data.driver);
+                        $('#queues-pending').text(m.total_pending);
+                        $('#queues-pending-details').text(`scrapers: ${m.pending_scrapers} | notifications: ${m.pending_notifications} | default: ${m.pending_default}`);
+                        $('#queues-active').text(m.processing);
+                        $('#queues-failed').text(m.failed_dlq);
+                    }
+                }
+            });
+
+            // 2. Fetch failed jobs list
+            $.ajax({
+                url: '/api/admin/queues/failed',
+                method: 'GET',
+                data: { page: currentQueuePage },
+                success: function(res) {
+                    if (res.status === 'success') {
+                        let trs = '';
+                        res.data.items.forEach(job => {
+                            trs += `
+                                <tr id="dlq-row-${job.uuid}">
+                                    <td style="font-family:monospace; font-size:0.8rem; font-weight:bold; color:var(--text-secondary);">${job.uuid}</td>
+                                    <td><strong style="color:var(--accent-color);">${job.job_name}</strong></td>
+                                    <td><span class="badge" style="background:rgba(37,99,235,0.08); color:var(--accent-color);">${job.queue}</span></td>
+                                    <td><span style="font-size:0.8rem; color:#ef4444; font-family:monospace;">${job.exception}</span></td>
+                                    <td><span style="font-size:0.8rem; color:var(--text-secondary);">${job.failed_at}</span></td>
+                                    <td style="text-align:center; display:flex; gap:0.5rem; justify-content:center;">
+                                        <button class="btn-sm btn-queue-retry" data-uuid="${job.uuid}" style="background:#10b981; color:#fff; border:none; padding:0.4rem 0.8rem; border-radius:4px; font-size:0.75rem; cursor:pointer;">Retry</button>
+                                        <button class="btn-sm btn-queue-delete" data-uuid="${job.uuid}" style="background:#ef4444; color:#fff; border:none; padding:0.4rem 0.8rem; border-radius:4px; font-size:0.75rem; cursor:pointer;">Forget</button>
+                                    </td>
+                                </tr>
+                            `;
+                        });
+                        $('#queues-failed-table-body').html(trs || '<tr><td colspan="6" style="text-align:center; color:var(--text-secondary); padding: 1.5rem 0;">Excellent! Dead-Letter Queue is empty. 0 failures.</td></tr>');
+                        
+                        buildPagination('#queues-failed-pagination', res.data.current_page, res.data.last_page, loadQueueDashboard);
+                    }
+                }
+            });
+        }
+
+        // Retry single job
+        $(document).on('click', '.btn-queue-retry', function() {
+            const uuid = $(this).data('uuid');
+            const btn = $(this);
+            btn.prop('disabled', true).text('Retrying...');
+
+            $.ajax({
+                url: `/api/admin/queues/failed/${uuid}/retry`,
+                method: 'POST',
+                data: { _token: '{{ csrf_token() }}' },
+                success: function(res) {
+                    showToast(res.message, 'success');
+                    loadQueueDashboard(currentQueuePage);
+                },
+                error: function(xhr) {
+                    btn.prop('disabled', false).text('Retry');
+                    showToast(xhr.responseJSON?.message || 'Failed to retry job.', 'error');
+                }
+            });
+        });
+
+        // Forget single job
+        $(document).on('click', '.btn-queue-delete', function() {
+            if (!confirm('Are you sure you want to permanently delete this failed job from the Dead-Letter Queue?')) return;
+            const uuid = $(this).data('uuid');
+            
+            $.ajax({
+                url: `/api/admin/queues/failed/${uuid}`,
+                method: 'DELETE',
+                data: { _token: '{{ csrf_token() }}' },
+                success: function(res) {
+                    showToast(res.message, 'success');
+                    loadQueueDashboard(currentQueuePage);
+                },
+                error: function(xhr) {
+                    showToast(xhr.responseJSON?.message || 'Failed to delete job.', 'error');
+                }
+            });
+        });
+
+        // Retry all failures
+        $('#btn-queues-retry-all').on('click', function() {
+            const btn = $(this);
+            if (!confirm('Are you sure you want to retry all failed jobs currently in the Dead-Letter Queue?')) return;
+            btn.prop('disabled', true).html('Dispatching...');
+
+            $.ajax({
+                url: '/api/admin/queues/failed/retry-all',
+                method: 'POST',
+                data: { _token: '{{ csrf_token() }}' },
+                success: function(res) {
+                    btn.prop('disabled', false).html('<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="23 4 23 10 17 10"></polyline><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path></svg> Retry All Failures');
+                    showToast(res.message, 'success');
+                    loadQueueDashboard(1);
+                },
+                error: function(xhr) {
+                    btn.prop('disabled', false).html('<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="23 4 23 10 17 10"></polyline><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path></svg> Retry All Failures');
+                    showToast(xhr.responseJSON?.message || 'Failed to retry jobs.', 'error');
+                }
+            });
+        });
+
+        // Flush all failures
+        $('#btn-queues-clear-all').on('click', function() {
+            const btn = $(this);
+            if (!confirm('WARNING: Are you absolutely sure you want to permanently clear all failed jobs from the Dead-Letter Queue? This action cannot be undone.')) return;
+            btn.prop('disabled', true).html('Purging...');
+
+            $.ajax({
+                url: '/api/admin/queues/failed/flush',
+                method: 'POST',
+                data: { _token: '{{ csrf_token() }}' },
+                success: function(res) {
+                    btn.prop('disabled', false).html('<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg> Flush DLQ Store');
+                    showToast(res.message, 'success');
+                    loadQueueDashboard(1);
+                },
+                error: function(xhr) {
+                    btn.prop('disabled', false).html('<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg> Flush DLQ Store');
+                    showToast(xhr.responseJSON?.message || 'Failed to flush jobs.', 'error');
+                }
+            });
+        });
+
+        // ===================================================================
+        // 8. AUDIT LOGS DISPLAY
         // ===================================================================
         let currentAuditPage = 1;
         function loadAuditLogs(page) {

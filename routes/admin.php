@@ -22,6 +22,14 @@ Route::middleware(['auth', 'admin'])->prefix('api/admin')->group(function () {
     Route::get('/activity-logs',   [AdminDashboardController::class, 'getActivityLogs'])->name('admin.activity-logs');
     Route::post('/seo/update',     [AdminDashboardController::class, 'updateSeoSettings'])->name('admin.seo.update');
 
+    // ─── Queue & DLQ Management ──────────────────────────────────────────────
+    Route::get('/queues/metrics',       [\App\Domains\Admin\Controllers\QueueManagementController::class, 'getMetrics'])->name('admin.queues.metrics');
+    Route::get('/queues/failed',        [\App\Domains\Admin\Controllers\QueueManagementController::class, 'getFailedJobs'])->name('admin.queues.failed');
+    Route::post('/queues/failed/retry-all', [\App\Domains\Admin\Controllers\QueueManagementController::class, 'retryAll'])->name('admin.queues.retry-all');
+    Route::post('/queues/failed/flush',     [\App\Domains\Admin\Controllers\QueueManagementController::class, 'flushAll'])->name('admin.queues.flush');
+    Route::post('/queues/failed/{uuid}/retry', [\App\Domains\Admin\Controllers\QueueManagementController::class, 'retryJob'])->name('admin.queues.retry');
+    Route::delete('/queues/failed/{uuid}',  [\App\Domains\Admin\Controllers\QueueManagementController::class, 'deleteJob'])->name('admin.queues.delete');
+
     // ─── User Management ─────────────────────────────────────────────────────
     Route::get('/users',           [AdminUserController::class, 'getUsersList'])->name('admin.users.list');
     Route::post('/users/{id}/update', [AdminUserController::class, 'updateUser'])->name('admin.users.update');

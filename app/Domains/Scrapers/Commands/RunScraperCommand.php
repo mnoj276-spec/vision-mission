@@ -14,23 +14,35 @@ class RunScraperCommand extends Command
 
     public function handle(): int
     {
-        $this->info("Initializing Scraping Engine Scheduler...");
-        Log::info("Artisan command scraper:run executed.");
+        $lock = \Illuminate\Support\Facades\Cache::lock('command:scraper:run', 600); // 10 minutes max duration
 
-        $sources = ScrapingSource::where('is_active', true)->get();
-
-        if ($sources->isEmpty()) {
-            $this->warn("No active scraping sources configured.");
+        if (!$lock->get()) {
+            $this->warn("Another instance of scraper:run is already active.");
+            Log::warning("Overlapping execution of Artisan scraper:run blocked.");
             return Command::SUCCESS;
         }
 
-        $this->info("Found {$sources->count()} active targets. Dispatching...");
-        foreach ($sources as $source) {
-            $this->line("Dispatching: {$source->name}");
-            RunWebScraper::dispatch($source);
-        }
+        try {
+            $this->info("Initializing Scraping Engine Scheduler...");
+            Log::info("Artisan command scraper:run executed.");
 
-        $this->info("All tasks dispatched!");
-        return Command::SUCCESS;
+            $sources = ScrapingSource::where('is_active', true)->get();
+
+            if ($sources->isEmpty()) {
+                $this->warn("No active scraping sources configured.");
+                return Command::SUCCESS;
+            }
+
+            $this->info("Found {$sources->count()} active targets. Dispatching...");
+            foreach ($sources as $source) {
+                $this->line("Dispatching: {$source->name}");
+                RunWebScraper::dispatch($source);
+            }
+
+            $this->info("All tasks dispatched!");
+            return Command::SUCCESS;
+        } finally {
+            $lock->release();
+        }
     }
 }
