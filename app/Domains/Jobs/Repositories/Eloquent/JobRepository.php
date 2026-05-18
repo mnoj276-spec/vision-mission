@@ -4,6 +4,7 @@ namespace App\Domains\Jobs\Repositories\Eloquent;
 
 use App\Domains\Jobs\Repositories\Contracts\JobRepositoryInterface;
 use App\Models\JobPost;
+use Carbon\Carbon;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Collection;
 
@@ -79,5 +80,26 @@ class JobRepository implements JobRepositoryInterface
                   ->orWhere('slug', str()->slug($title))
                   ->orWhere('slug', 'like', str()->slug($title) . '-%');
             })->exists();
+    }
+
+    /**
+     * Exact fingerprint lookup via the unique index — O(1), race-condition safe.
+     */
+    public function findByFingerprint(string $fingerprint): ?JobPost
+    {
+        return JobPost::where('fingerprint', $fingerprint)->first();
+    }
+
+    /**
+     * Return recent posts in the same department for PHP-side fuzzy scoring.
+     * Only `id`, `title`, and `fingerprint` are fetched to minimise memory.
+     */
+    public function findFuzzyDuplicates(int $departmentId, int $lookbackDays = 90): Collection
+    {
+        return JobPost::query()
+            ->where('department_id', $departmentId)
+            ->where('created_at', '>=', Carbon::now()->subDays($lookbackDays))
+            ->select(['id', 'title', 'fingerprint'])
+            ->get();
     }
 }

@@ -4,11 +4,13 @@ namespace Tests\Feature;
 
 use App\Models\Category;
 use App\Models\Department;
+use App\Models\DuplicateAuditLog;
 use App\Models\State;
 use App\Models\Qualification;
 use App\Models\ScrapingSource;
 use App\Models\ScrapingLog;
 use App\Models\JobPost;
+use App\Domains\Scrapers\Services\FingerprintService;
 use App\Domains\Scrapers\Services\ScrapingService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -155,5 +157,144 @@ class ScraperTest extends TestCase
             'scraping_source_id' => $this->source->id,
             'status' => 'duplicate'
         ]);
+    }
+
+    /**
+     * Test: Fingerprint is computed and stored on a successful insert.
+     */
+    public function test_fingerprint_is_generated_and_stored_on_insert(): void
+    {
+        $rawItem = [
+            'title'         => 'UPSC Combined Defence Services Exam 2026',
+            'deadline_raw'  => '10-11-2026',
+            'fee_raw'       => 'Rs 200',
+            'official_link' => 'https://upsc.gov.in',
+            'apply_link'    => 'https://upsconline.nic.in',
+            'raw_text'      => 'UPSC Combined Defence Services Examination 2026. Graduate required. Last date: 10-11-2026. Fee Rs 200.',
+        ];
+
+        $reflection = new \ReflectionClass(ScrapingService::class);
+        $method = $reflection->getMethod('processScrapedItem');
+        $method->setAccessible(true);
+
+        $result = $method->invokeArgs($this->scrapingService, [$this->source, $rawItem]);
+
+        $this->assertEquals('success', $result['status']);
+
+        $job = JobPost::first();
+        $this->assertNotNull($job->fingerprint, 'Fingerprint must not be null after insert.');
+        $this->assertEquals(64, strlen($job->fingerprint), 'SHA-256 fingerprint must be exactly 64 hex chars.');
+    }
+
+    /**
+     * Test: Exact same payload on a second scrape is blocked by fingerprint gate.
+     */
+    public function test_exact_fingerprint_blocks_second_insert(): void
+    {
+        $rawItem = [
+            'title'         => 'UPSC Engineering Services Main Examination 2026',
+            'deadline_raw'  => '25-09-2026',
+            'fee_raw'       => 'Rs 200',
+            'official_link' => 'https://upsc.gov.in',
+            'apply_link'    => 'https://upsconline.nic.in',
+            'raw_text'      => 'UPSC Engineering Services Examination 2026. Graduate required. Last date: 25-09-2026. Fee Rs 200.',
+        ];
+
+        $reflection = new \ReflectionClass(ScrapingService::class);
+        $method = $reflection->getMethod('processScrapedItem');
+        $method->setAccessible(true);
+
+        // First scrape: must succeed
+        $result1 = $method->invokeArgs($this->scrapingService, [$this->source, $rawItem]);
+        $this->assertEquals('success', $result1['status']);
+
+        // Second scrape (identical payload): must be blocked at Stage 1
+        $result2 = $method->invokeArgs($this->scrapingService, [$this->source, $rawItem]);
+        $this->assertEquals('duplicate', $result2['status']);
+        $this->assertEquals('fingerprint', $result2['method']);
+
+        // Only one job post must exist
+        $this->assertEquals(1, JobPost::count());
+
+        // A duplicate_audit_logs record must be written with correct method
+        $this->assertDatabaseHas('duplicate_audit_logs', [
+            'detection_method' => 'fingerprint',
+        ]);
+    }
+
+    /**
+     * Test: A title variation (year bumped, same content) is caught by the fuzzy gate.
+     */
+    public function test_fuzzy_duplicate_is_detected_by_title_variation(): void
+    {
+        $originalItem = [
+            'title'         => 'SSC Combined Graduate Level Recruitment 2025',
+            'deadline_raw'  => '01-08-2026',
+            'fee_raw'       => 'Rs 100',
+            'official_link' => 'https://ssc.gov.in',
+            'apply_link'    => 'https://ssc.gov.in/apply',
+            'raw_text'      => 'SSC CGL 2025 recruitment. Graduate. Last date: 01-08-2026. Fee Rs 100.',
+            'department_name' => 'UPSC Board',
+        ];
+        $variantItem = [
+            'title'         => 'SSC Combined Graduate Level Recruitment 2026',  // year changed
+            'deadline_raw'  => '01-08-2026',
+            'fee_raw'       => 'Rs 100',
+            'official_link' => 'https://ssc.gov.in',
+            'apply_link'    => 'https://ssc.gov.in/apply',
+            'raw_text'      => 'SSC CGL 2026 recruitment. Graduate. Last date: 01-08-2026. Fee Rs 100.',
+            'department_name' => 'UPSC Board',
+        ];
+
+        $reflection = new \ReflectionClass(ScrapingService::class);
+        $method = $reflection->getMethod('processScrapedItem');
+        $method->setAccessible(true);
+
+        // Insert original
+        $result1 = $method->invokeArgs($this->scrapingService, [$this->source, $originalItem]);
+        $this->assertEquals('success', $result1['status'], 'Original item must insert successfully.');
+
+        // Insert variant — different fingerprint but should be caught by fuzzy or variant gate
+        $result2 = $method->invokeArgs($this->scrapingService, [$this->source, $variantItem]);
+        $this->assertEquals('duplicate', $result2['status'], 'Year-variant title must be detected as duplicate.');
+        $this->assertContains($result2['method'], ['fuzzy', 'title_variant']);
+
+        // Only one job post row must exist
+        $this->assertEquals(1, JobPost::count());
+    }
+
+    /**
+     * Test: DuplicateAuditLog is written with the correct detection_method enum.
+     */
+    public function test_duplicate_audit_log_is_written_with_correct_method(): void
+    {
+        $rawItem = [
+            'title'         => 'UPSC Statistical Investigator Grade II Recruitment 2026',
+            'deadline_raw'  => '30-10-2026',
+            'fee_raw'       => 'Rs 200',
+            'official_link' => 'https://upsc.gov.in',
+            'apply_link'    => 'https://upsconline.nic.in',
+            'raw_text'      => 'UPSC Statistical Investigator Grade 2 2026. Graduate. Last date: 30-10-2026. Fee Rs 200.',
+        ];
+
+        $reflection = new \ReflectionClass(ScrapingService::class);
+        $method = $reflection->getMethod('processScrapedItem');
+        $method->setAccessible(true);
+
+        // First insert
+        $result1 = $method->invokeArgs($this->scrapingService, [$this->source, $rawItem]);
+        $this->assertEquals('success', $result1['status']);
+
+        // Second insert (duplicate)
+        $result2 = $method->invokeArgs($this->scrapingService, [$this->source, $rawItem]);
+        $this->assertEquals('duplicate', $result2['status']);
+
+        // Verify the audit log exists and has the correct detection method
+        $auditLog = DuplicateAuditLog::first();
+        $this->assertNotNull($auditLog, 'A DuplicateAuditLog record must be created.');
+        $this->assertContains($auditLog->detection_method, ['fingerprint', 'fuzzy', 'title_variant']);
+        $this->assertNotNull($auditLog->incoming_fingerprint, 'incoming_fingerprint must be stored.');
+        $this->assertEquals(64, strlen($auditLog->incoming_fingerprint), 'Fingerprint must be 64 chars.');
+        $this->assertNotNull($auditLog->raw_payload, 'raw_payload must be stored for re-processing.');
     }
 }

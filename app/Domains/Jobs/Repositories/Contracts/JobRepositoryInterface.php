@@ -5,6 +5,7 @@ namespace App\Domains\Jobs\Repositories\Contracts;
 use App\Models\JobPost;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Collection;
+use Carbon\Carbon;
 
 interface JobRepositoryInterface
 {
@@ -50,6 +51,21 @@ interface JobRepositoryInterface
 
     /**
      * Check if a job post already exists based on title, department and date.
+     * Retained for backwards-compatibility with existing callers.
      */
     public function exists(string $title, int $departmentId, string $lastDate): bool;
+
+    /**
+     * Look up an existing job post by its exact SHA-256 fingerprint.
+     * Uses the unique index — O(1) lookup, safe under concurrent inserts.
+     */
+    public function findByFingerprint(string $fingerprint): ?JobPost;
+
+    /**
+     * Return a Collection of recent job posts in the same department for
+     * fuzzy-similarity scoring in PHP.
+     *
+     * Scoped to the last $lookbackDays days to keep the candidate pool small.
+     */
+    public function findFuzzyDuplicates(int $departmentId, int $lookbackDays = 90): Collection;
 }

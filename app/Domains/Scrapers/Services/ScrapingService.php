@@ -6,6 +6,7 @@ use App\Domains\Jobs\Repositories\Contracts\JobRepositoryInterface;
 use App\Domains\Scrapers\Services\Contracts\ScrapingServiceInterface;
 use App\Models\Category;
 use App\Models\Department;
+use App\Models\DuplicateAuditLog;
 use App\Models\Qualification;
 use App\Models\ScrapingLog;
 use App\Models\ScrapingSource;
@@ -20,7 +21,8 @@ class ScrapingService implements ScrapingServiceInterface
 {
     public function __construct(
         protected JobRepositoryInterface $jobRepo,
-        protected AIService $aiService
+        protected AIService $aiService,
+        protected FingerprintService $fingerprintService
     ) {}
 
     public function scrapeSource(ScrapingSource $source): array
@@ -109,24 +111,129 @@ class ScrapingService implements ScrapingServiceInterface
                 $log = ScrapingLog::create(['scraping_source_id' => $source->id, 'status' => 'quarantined', 'items_found' => 0, 'raw_payload' => $rawLogPayload, 'validation_errors' => $errors, 'error_message' => 'Failed schema validation.']);
                 return ['status' => 'quarantined', 'errors' => $errors, 'log_id' => $log->id];
             }
-            if ($this->jobRepo->exists($finalJobData['title'] ?? '', $finalJobData['department_id'], $finalJobData['last_date_to_apply'] ?? '')) {
-                $log = ScrapingLog::create(['scraping_source_id' => $source->id, 'status' => 'duplicate', 'items_found' => 0, 'raw_payload' => $rawLogPayload, 'error_message' => 'Duplicate posting skipped.']);
-                return ['status' => 'duplicate', 'log_id' => $log->id];
+
+            // -----------------------------------------------------------------
+            // STAGE 1 — Exact SHA-256 Fingerprint Gate
+            // -----------------------------------------------------------------
+            $incomingFingerprint = $this->fingerprintService->generate([
+                'title'         => $finalJobData['title'],
+                'department_id' => $finalJobData['department_id'],
+                'source_url'    => $source->source_url,
+                'publish_date'  => $finalJobData['last_date_to_apply'] ?? '',
+            ]);
+            $finalJobData['fingerprint'] = $incomingFingerprint;
+
+            $masterByFingerprint = $this->jobRepo->findByFingerprint($incomingFingerprint);
+            if ($masterByFingerprint) {
+                $log = ScrapingLog::create([
+                    'scraping_source_id' => $source->id,
+                    'status'             => 'duplicate',
+                    'items_found'        => 0,
+                    'raw_payload'        => $rawLogPayload,
+                    'error_message'      => '[Stage 1] Exact fingerprint collision.',
+                ]);
+                DuplicateAuditLog::create([
+                    'master_job_post_id'  => $masterByFingerprint->id,
+                    'detection_method'    => 'fingerprint',
+                    'incoming_fingerprint'=> $incomingFingerprint,
+                    'master_fingerprint'  => $masterByFingerprint->fingerprint,
+                    'raw_payload'         => $rawLogPayload,
+                ]);
+                return ['status' => 'duplicate', 'method' => 'fingerprint', 'log_id' => $log->id];
             }
-            $jobPost = DB::transaction(function () use ($finalJobData, $source, $rawLogPayload, $rawData) {
-                $finalJobData['slug'] = str()->slug($finalJobData['title']) . '-' . rand(100, 999);
-                $jobPost = $this->jobRepo->create($finalJobData);
-                if (!empty($rawData['tags'])) {
-                    $tagsArray = is_array($rawData['tags']) ? $rawData['tags'] : array_map('trim', explode(',', $rawData['tags']));
-                    $tagIds = [];
-                    foreach (array_filter(array_map('trim', $tagsArray)) as $tagName) {
-                        $tagIds[] = Tag::firstOrCreate(['slug' => str()->slug($tagName)], ['name' => $tagName])->id;
+
+            // -----------------------------------------------------------------
+            // STAGE 2 — Fuzzy Similarity Gate (similar_text ≥ 85 %)
+            // -----------------------------------------------------------------
+            $recentPosts   = $this->jobRepo->findFuzzyDuplicates($finalJobData['department_id']);
+            $fuzzyHit      = $this->fingerprintService->isFuzzyDuplicate($finalJobData['title'], $recentPosts);
+            if ($fuzzyHit) {
+                $log = ScrapingLog::create([
+                    'scraping_source_id' => $source->id,
+                    'status'             => 'duplicate',
+                    'items_found'        => 0,
+                    'raw_payload'        => $rawLogPayload,
+                    'error_message'      => "[Stage 2] Fuzzy duplicate detected (score: {$fuzzyHit['score']}%).",
+                ]);
+                DuplicateAuditLog::create([
+                    'master_job_post_id'  => $fuzzyHit['post']->id,
+                    'detection_method'    => 'fuzzy',
+                    'similarity_score'    => $fuzzyHit['score'],
+                    'incoming_fingerprint'=> $incomingFingerprint,
+                    'master_fingerprint'  => $fuzzyHit['post']->fingerprint,
+                    'raw_payload'         => $rawLogPayload,
+                ]);
+                return ['status' => 'duplicate', 'method' => 'fuzzy', 'score' => $fuzzyHit['score'], 'log_id' => $log->id];
+            }
+
+            // -----------------------------------------------------------------
+            // STAGE 3 — Title Variant Gate (year-stripped / acronym-expanded)
+            // -----------------------------------------------------------------
+            $variantHit = $this->fingerprintService->detectTitleVariant($finalJobData['title'], $recentPosts);
+            if ($variantHit) {
+                $log = ScrapingLog::create([
+                    'scraping_source_id' => $source->id,
+                    'status'             => 'duplicate',
+                    'items_found'        => 0,
+                    'raw_payload'        => $rawLogPayload,
+                    'error_message'      => "[Stage 3] Title variant duplicate (score: {$variantHit['score']}%, variant: '{$variantHit['variant']}').",
+                ]);
+                DuplicateAuditLog::create([
+                    'master_job_post_id'  => $variantHit['post']->id,
+                    'detection_method'    => 'title_variant',
+                    'similarity_score'    => $variantHit['score'],
+                    'incoming_fingerprint'=> $incomingFingerprint,
+                    'master_fingerprint'  => $variantHit['post']->fingerprint,
+                    'raw_payload'         => $rawLogPayload,
+                ]);
+                return ['status' => 'duplicate', 'method' => 'title_variant', 'score' => $variantHit['score'], 'log_id' => $log->id];
+            }
+
+            // -----------------------------------------------------------------
+            // ALL GATES PASSED — Insert with DB unique constraint as final net
+            // -----------------------------------------------------------------
+            try {
+                $jobPost = DB::transaction(function () use ($finalJobData, $source, $rawLogPayload, $rawData) {
+                    $finalJobData['slug'] = str()->slug($finalJobData['title']) . '-' . rand(100, 999);
+                    $jobPost = $this->jobRepo->create($finalJobData);
+                    if (!empty($rawData['tags'])) {
+                        $tagsArray = is_array($rawData['tags']) ? $rawData['tags'] : array_map('trim', explode(',', $rawData['tags']));
+                        $tagIds = [];
+                        foreach (array_filter(array_map('trim', $tagsArray)) as $tagName) {
+                            $tagIds[] = Tag::firstOrCreate(['slug' => str()->slug($tagName)], ['name' => $tagName])->id;
+                        }
+                        $jobPost->tags()->sync($tagIds);
                     }
-                    $jobPost->tags()->sync($tagIds);
+                    ScrapingLog::create(['scraping_source_id' => $source->id, 'job_post_id' => $jobPost->id, 'status' => 'success', 'items_found' => 1, 'raw_payload' => $rawLogPayload]);
+                    return $jobPost;
+                });
+            } catch (\Illuminate\Database\QueryException $e) {
+                // Race condition: another worker inserted the same fingerprint between
+                // our Stage 1 check and this INSERT. Treat as a fingerprint duplicate.
+                if (str_contains($e->getMessage(), 'uq_job_posts_fingerprint') ||
+                    str_contains($e->getMessage(), 'UNIQUE constraint failed') ||
+                    str_contains($e->getMessage(), 'Duplicate entry')) {
+                    Log::warning("Fingerprint race-condition caught for: {$finalJobData['title']}");
+                    $masterByFingerprint = $this->jobRepo->findByFingerprint($incomingFingerprint);
+                    $log = ScrapingLog::create([
+                        'scraping_source_id' => $source->id,
+                        'status'             => 'duplicate',
+                        'items_found'        => 0,
+                        'raw_payload'        => $rawLogPayload,
+                        'error_message'      => '[Stage 1 Race] Unique constraint caught concurrent duplicate insert.',
+                    ]);
+                    DuplicateAuditLog::create([
+                        'master_job_post_id'  => $masterByFingerprint?->id,
+                        'detection_method'    => 'fingerprint',
+                        'incoming_fingerprint'=> $incomingFingerprint,
+                        'master_fingerprint'  => $masterByFingerprint?->fingerprint,
+                        'raw_payload'         => $rawLogPayload,
+                    ]);
+                    return ['status' => 'duplicate', 'method' => 'fingerprint_race', 'log_id' => $log->id];
                 }
-                ScrapingLog::create(['scraping_source_id' => $source->id, 'job_post_id' => $jobPost->id, 'status' => 'success', 'items_found' => 1, 'raw_payload' => $rawLogPayload]);
-                return $jobPost;
-            });
+                throw $e; // Re-throw unrelated DB errors
+            }
+
             return ['status' => 'success', 'job_post_id' => $jobPost->id];
         } catch (\Exception $e) {
             Log::error("Failed parsing scraped item: " . $e->getMessage());

@@ -39,7 +39,8 @@ class JobPost extends Model
         'status',
         'published_at',
         'is_featured',
-        'is_historical'
+        'is_historical',
+        'fingerprint',
     ];
 
     protected $casts = [
@@ -93,6 +94,22 @@ class JobPost extends Model
     public function applications(): HasMany
     {
         return $this->hasMany(JobApplication::class);
+    }
+
+    /**
+     * All duplicate audit events where this post was the incoming (rejected) record.
+     */
+    public function duplicationLogs(): HasMany
+    {
+        return $this->hasMany(DuplicateAuditLog::class, 'job_post_id');
+    }
+
+    /**
+     * All duplicate audit events where this post was chosen as the canonical master.
+     */
+    public function duplicatesBlocked(): HasMany
+    {
+        return $this->hasMany(DuplicateAuditLog::class, 'master_job_post_id');
     }
 
     /*
