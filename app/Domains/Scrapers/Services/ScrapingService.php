@@ -101,6 +101,7 @@ class ScrapingService implements ScrapingServiceInterface
             if (isset($finalJobData['age_limit'])) {
                 $finalJobData['age_limit'] = \App\Services\HtmlSanitizer::sanitizeString($finalJobData['age_limit']);
             }
+
             $finalJobData['post_type'] = $this->classifyPostType($finalJobData['title'], $parsedData['raw_text'] ?? '');
             $textForMapping = ($parsedData['title'] ?? '') . ' ' . ($parsedData['raw_text'] ?? '');
             $defaultCat   = $source->selectors_config['default_category_id']     ?? 1;
@@ -132,6 +133,36 @@ class ScrapingService implements ScrapingServiceInterface
             $errors = $this->validateScrapedJobSchema($finalJobData);
             if (!empty($errors)) {
                 $log = ScrapingLog::create(['scraping_source_id' => $source->id, 'status' => 'quarantined', 'items_found' => 0, 'raw_payload' => $rawLogPayload, 'validation_errors' => $errors, 'error_message' => 'Failed schema validation.']);
+                return ['status' => 'quarantined', 'errors' => $errors, 'log_id' => $log->id];
+            }
+
+            // Compute AI Reliability & Programmatic Confidence Scores
+            $rawText = $parsedData['raw_text'] ?? $parsedData['title'] ?? '';
+            $confidence = $this->aiService->computeConfidence($finalJobData, $rawText);
+            $overallScore = $confidence['overall'];
+
+            // Save structured AI Audit Log
+            \App\Models\AiAuditLog::create([
+                'scraping_source_id' => $source->id,
+                'raw_text'           => $rawText,
+                'extracted_json'     => $finalJobData,
+                'confidence_scores'  => $confidence['scores'],
+                'overall_score'      => $overallScore,
+                'status'             => $overallScore >= 85.0 ? 'passed' : 'failed_confidence',
+            ]);
+
+            // Human Review Fallback: Quarantine low-confidence extraction
+            if ($overallScore < 85.0) {
+                Log::warning("AI Reliability Fallback: Low confidence detected ({$overallScore}%). Quarantining listing.");
+                $errors = ["AI Confidence Score ({$overallScore}%) is below the reliability threshold of 85%."];
+                $log = ScrapingLog::create([
+                    'scraping_source_id' => $source->id,
+                    'status'             => 'quarantined',
+                    'items_found'        => 0,
+                    'raw_payload'        => $rawLogPayload,
+                    'validation_errors'  => $errors,
+                    'error_message'      => 'AI Reliability confidence check failed.'
+                ]);
                 return ['status' => 'quarantined', 'errors' => $errors, 'log_id' => $log->id];
             }
 
