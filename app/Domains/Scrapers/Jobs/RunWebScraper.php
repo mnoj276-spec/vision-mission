@@ -41,8 +41,8 @@ class RunWebScraper implements ShouldQueue
 
         if ($lock->get()) {
             try {
-                Log::info("Async scraper job started for source ID: {$this->source->id}");
-                $result = $scrapingService->scrapeSource($this->source);
+                Log::info("Async scraper job started for source ID: {$this->source->id} (Attempt #{$this->attempts()})");
+                $result = $scrapingService->scrapeSource($this->source, $this->attempts());
                 $result['success']
                     ? Log::info("Async scraper job completed successfully.")
                     : Log::error("Async scraper job failed: " . ($result['error'] ?? 'Unknown Error'));

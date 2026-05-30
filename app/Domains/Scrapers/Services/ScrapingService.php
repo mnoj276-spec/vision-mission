@@ -25,11 +25,15 @@ class ScrapingService implements ScrapingServiceInterface
         protected FingerprintService $fingerprintService
     ) {}
 
-    public function scrapeSource(ScrapingSource $source): array
+    public function scrapeSource(ScrapingSource $source, int $attempt = 1): array
     {
         $url = $source->source_url;
         try {
-            Log::info("Starting scrape run for source: {$source->name} [URL: {$url}]");
+            if ($attempt > 1) {
+                Log::warning("Retrying scrape run for source: {$source->name} [URL: {$url}] (Attempt #{$attempt})");
+            } else {
+                Log::info("Starting scrape run for source: {$source->name} [URL: {$url}]");
+            }
             
             // Mitigate SSRF: enforce strict allowed domains and reject local loopback
             if (!\App\Services\UrlSecurity::isSafeUrl($url)) {
@@ -40,7 +44,7 @@ class ScrapingService implements ScrapingServiceInterface
             if ($response->failed()) {
                 throw new \Exception("HTTP Request failed with status: " . $response->status());
             }
-            $rawJobs = $this->extractJobPostNodes($response->body(), $source->selectors_config);
+            $rawJobs = $this->extractJobPostNodes($response->body(), $source);
             $s = $d = $q = $f = 0;
             foreach ($rawJobs as $rawJobData) {
                 $result = $this->processScrapedItem($source, $rawJobData);
@@ -57,7 +61,14 @@ class ScrapingService implements ScrapingServiceInterface
                 'status'             => $f > 0 ? 'failed' : ($q > 0 ? 'quarantined' : 'success'),
                 'items_found'        => $s,
                 'error_message'      => "Harvested: {$s} new, {$d} dups, {$q} quarantined, {$f} failed.",
-                'raw_payload'        => ['success' => $s, 'duplicate' => $d, 'quarantined' => $q, 'failed' => $f],
+                'raw_payload'        => [
+                    'success' => $s,
+                    'duplicate' => $d,
+                    'quarantined' => $q,
+                    'failed' => $f,
+                    'attempt' => $attempt,
+                    'retried' => $attempt > 1,
+                ],
             ]);
             return ['success' => true, 'summary' => ['success' => $s, 'duplicate' => $d, 'quarantined' => $q, 'failed' => $f]];
         } catch (\Exception $e) {
@@ -65,7 +76,13 @@ class ScrapingService implements ScrapingServiceInterface
             ScrapingLog::create([
                 'scraping_source_id' => $source->id,
                 'status' => 'failed', 'items_found' => 0,
-                'error_message' => $e->getMessage(), 'raw_payload' => ['url' => $url],
+                'error_message' => $e->getMessage(),
+                'raw_payload' => [
+                    'url' => $url,
+                    'attempt' => $attempt,
+                    'retried' => $attempt > 1,
+                    'trace' => substr($e->getTraceAsString(), 0, 1000)
+                ],
             ]);
             return ['success' => false, 'error' => $e->getMessage()];
         }
@@ -355,20 +372,10 @@ class ScrapingService implements ScrapingServiceInterface
         return 'job';
     }
 
-    protected function extractJobPostNodes(string $html, array $config): array
+    protected function extractJobPostNodes(string $html, ScrapingSource $source): array
     {
-        return [
-            ['title' => 'SSC CGL Tier 1 Recruitment 2026 Notification', 'deadline_raw' => '30-07-2026', 'fee_raw' => 'Rs 100', 'official_link' => 'https://ssc.gov.in', 'apply_link' => 'https://ssc.gov.in/apply', 'raw_text' => 'Staff Selection Commission (SSC) Combined Graduate Level (CGL) Examination 2026. Age: 18-30. Qualification: Bachelor degree. Deadline: 30-07-2026. Fee Rs 100. Vacancies: 8000+ posts.'],
-            ['title' => 'SSC CHSL (10+2) Vacancy 2026 Registration', 'deadline_raw' => '12-08-2026', 'fee_raw' => 'Rs 100', 'official_link' => 'https://ssc.gov.in', 'apply_link' => 'https://ssc.gov.in/apply', 'raw_text' => 'SSC CHSL 10+2 Examination 2026. Qualification: 12th pass. Apply before 12-08-2026. Fee Rs 100.'],
-            ['title' => 'UPSC Civil Services IAS 2026 Preliminary Exam Notification', 'deadline_raw' => '15-08-2026', 'fee_raw' => 'Rs 100', 'official_link' => 'https://upsc.gov.in', 'apply_link' => 'https://upsconline.nic.in', 'raw_text' => 'UPSC Civil Services Examination 2026. IAS, IPS, IFS recruitment. Graduate Degree. Last date: 15-08-2026. Fee Rs 100.'],
-            ['title' => 'SSC CGL Tier 1 Admit Card & Hall Ticket Release 2026', 'deadline_raw' => '30-07-2026', 'fee_raw' => 'Rs 0', 'official_link' => 'https://ssc.gov.in', 'apply_link' => 'https://ssc.gov.in/admit-card', 'raw_text' => 'Download SSC CGL 2026 Tier 1 Examination Admit Card and regional call letters.'],
-            ['title' => 'SSC CGL 2025 Tier 2 Final Merit List & Cutoff', 'deadline_raw' => '31-12-2026', 'fee_raw' => 'Rs 0', 'official_link' => 'https://ssc.gov.in', 'apply_link' => 'https://ssc.gov.in/results', 'raw_text' => 'SSC has declared the final Selection List, Merit List, and post-wise Cutoff marks for CGL Exam 2025.'],
-            ['title' => 'SSC CGL Tier 1 Official Response Sheet & Answer Key 2026', 'deadline_raw' => '10-09-2026', 'fee_raw' => 'Rs 0', 'official_link' => 'https://ssc.gov.in', 'apply_link' => 'https://ssc.gov.in/answer-keys', 'raw_text' => 'Download official SSC CGL 2026 Tier 1 answer keys and candidate response sheets.'],
-            ['title' => 'SSC CGL Tier 1 & 2 Complete Syllabus and Pattern 2026', 'deadline_raw' => '30-07-2026', 'fee_raw' => 'Rs 0', 'official_link' => 'https://ssc.gov.in', 'apply_link' => 'https://ssc.gov.in/syllabus', 'raw_text' => 'SSC CGL 2026 syllabus: Quantitative Aptitude, Reasoning, English, General Awareness.'],
-            ['title' => 'SSC CGL Application Date Postponement Notice 2026', 'deadline_raw' => '31-08-2026', 'fee_raw' => 'Rs 0', 'official_link' => 'https://ssc.gov.in', 'apply_link' => 'https://ssc.gov.in/notices', 'raw_text' => 'Important Notice: SSC CGL application deadline extended. Read official corrigendum notice.'],
-            ['title' => 'SSC CGL Recruitment 2020 Historical Vacancies', 'deadline_raw' => '15-01-2021', 'fee_raw' => 'Rs 100', 'official_link' => 'https://ssc.gov.in', 'apply_link' => 'https://ssc.gov.in/apply', 'raw_text' => 'Historical Archive: SSC CGL Examination 2020. Backfill data. Deadline: 15-01-2021.'],
-            ['title' => 'Goa PSC Assistant Director Recruitment 2022', 'deadline_raw' => '2022-05-15', 'fee_raw' => 'Rs 500', 'official_link' => 'https://gpsc.goa.gov.in', 'apply_link' => 'https://gpsc.goa.gov.in/apply', 'category_name' => 'UPSC & SSC Jobs', 'state_name' => 'Goa', 'qualification_name' => 'B.Tech Biotechnology', 'department_name' => 'Goa Public Service Commission', 'tags' => 'Aviation, Biotechnology, Goa', 'raw_text' => 'Goa PSC GPSC Assistant Director Recruitment 2022. Vacancy: 12 posts. Qualification: B.Tech Biotechnology.'],
-        ];
+        $driver = app(\App\Domains\Scrapers\Drivers\ScraperDriverManager::class)->getDriverFor($source);
+        return $driver->parse($html, $source);
     }
 
     protected function mapCategorySemantically(?string $text, int $defaultId): int

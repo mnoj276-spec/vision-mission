@@ -11,7 +11,7 @@ interface ScrapingServiceInterface
      *
      * @return array{success: bool, summary?: array, error?: string}
      */
-    public function scrapeSource(ScrapingSource $source): array;
+    public function scrapeSource(ScrapingSource $source, int $attempt = 1): array;
 
     /**
      * Classify a scraped post into its canonical post type
