@@ -16,8 +16,14 @@ use App\Domains\Scrapers\Services\Contracts\ScrapingServiceInterface;
 use App\Domains\Scrapers\Services\ScrapingService;
 use App\Domains\Users\Services\AuthService;
 use App\Domains\Users\Services\Contracts\AuthServiceInterface;
+use App\Services\JwtService;
+use App\Models\User;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\Request;
+use Illuminate\Cache\RateLimiting\Limit;
+use Illuminate\Support\Facades\RateLimiter;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -49,6 +55,11 @@ class AppServiceProvider extends ServiceProvider
 
         // ─── Admin Domain ─────────────────────────────────────────────────────
         $this->app->bind(AdminServiceInterface::class, AdminService::class);
+
+        // ─── JWT Service ──────────────────────────────────────────────────────
+        $this->app->singleton(JwtService::class, function ($app) {
+            return new JwtService();
+        });
     }
 
     /**
@@ -72,5 +83,38 @@ class AppServiceProvider extends ServiceProvider
         \Illuminate\Database\Eloquent\Model::preventLazyLoading(
             !$this->app->isProduction()
         );
+
+        // ─── Custom Stateless JWT Request Guard ───────────────────────────────
+        Auth::viaRequest('jwt', function (Request $request) {
+            $token = $request->bearerToken();
+            if (!$token) {
+                return null;
+            }
+
+            $jwtService = app(JwtService::class);
+            $payload = $jwtService->validateToken($token);
+
+            if (!$payload || !isset($payload['sub'])) {
+                return null;
+            }
+
+            $user = User::find($payload['sub']);
+
+            if ($user && !$user->is_active) {
+                return null;
+            }
+
+            return $user;
+        });
+
+        // ─── Global API Rate Limiters ────────────────────────────────────────
+        RateLimiter::for('api', function (Request $request) {
+            return Limit::perMinute(60)->by($request->user()?->id ?: $request->ip());
+        });
+
+        RateLimiter::for('api.auth', function (Request $request) {
+            return Limit::perMinute(5)->by($request->ip());
+        });
     }
 }
+

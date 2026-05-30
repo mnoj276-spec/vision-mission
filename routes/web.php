@@ -65,3 +65,7 @@ Route::get('/syllabus/{slug}', [ProgrammaticSeoController::class, 'showJob'])->n
 
 // Dynamic Google News Compliant News Sitemap
 Route::get('/news-sitemap.xml', [ProgrammaticSeoController::class, 'newsSitemap'])->name('seo.news_sitemap');
+
+// ─── Developer Interactive OpenAPI Documentation ────────────────────────────
+Route::get('/docs', [\App\Http\Controllers\Api\DocsController::class, 'index'])->name('api.docs');
+
