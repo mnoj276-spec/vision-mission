@@ -7,17 +7,17 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Symfony\Component\HttpFoundation\Response;
 
-class RoleMiddleware
+class CheckPermission
 {
     /**
      * Handle an incoming request.
      *
-     * @param  Request  $request
-     * @param  Closure  $next
-     * @param  string  $role
-     * @return Response
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
+     * @param  string  $permission
+     * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function handle(Request $request, Closure $next, string $role): Response
+    public function handle(Request $request, Closure $next, string $permission): Response
     {
         if (!Auth::check()) {
             if ($request->expectsJson() || $request->ajax()) {
@@ -31,7 +31,7 @@ class RoleMiddleware
 
         $user = Auth::user();
 
-        // 1. Enforce active user validation: Boot inactive users instantly
+        // Enforce active user validation: Boot inactive users instantly
         if (!$user->is_active) {
             Auth::logout();
             
@@ -49,16 +49,15 @@ class RoleMiddleware
             return redirect('/')->with('error', 'Your account has been suspended.');
         }
 
-        // 2. Validate user role (checks Spatie roles & raw role column for full backward compatibility)
-        $roleNameNormalized = ucwords(str_replace('_', ' ', $role));
-        if ($user->role !== $role && !$user->hasRole($role) && !$user->hasRole($roleNameNormalized)) {
+        // Validate user permission using Laravel's native can() gate
+        if (!$user->can($permission)) {
             if ($request->expectsJson() || $request->ajax()) {
                 return response()->json([
                     'status' => 'error',
-                    'message' => 'Access Denied: Unauthorized role.'
+                    'message' => 'Access Denied: You do not have the required clearance for this action.'
                 ], 403);
             }
-            return redirect('/')->with('error', 'Unauthorized access.');
+            return redirect('/')->with('error', 'Access Denied: Unauthorized action.');
         }
 
         return $next($request);

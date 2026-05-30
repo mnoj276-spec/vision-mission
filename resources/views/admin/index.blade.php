@@ -22,6 +22,7 @@
             <button class="admin-nav-btn" data-block="seo"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg> SEO & Content Cache</button>
             <button class="admin-nav-btn" data-block="audit"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg> Audit Activity Logs</button>
             <button class="admin-nav-btn" data-block="ai-content"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="12 2 2 7 12 12 22 7 12 2"></polygon><polyline points="2 17 12 22 22 17"></polyline><polyline points="2 12 12 17 22 12"></polyline></svg> AI Content Manager</button>
+            <button class="admin-nav-btn" data-block="rbac"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg> RBAC Clearance Matrix</button>
         </div>
         
         <div style="margin-top: 3rem; text-align: center;">
@@ -528,6 +529,133 @@
                     </table>
                 </div>
                 <div class="pagination-container" id="ai-management-pagination" style="margin-top: 1.5rem;"></div>
+            </div>
+        </section>
+
+        <!-- ================= PANEL 10: RBAC MATRIX ================= -->
+        <section class="admin-panel-block" id="admin-rbac" style="display: none;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                <h2 style="font-family: 'Outfit'; font-size: 1.75rem; margin: 0;">RBAC Clearance & Privilege Matrix</h2>
+                <span class="badge" style="background: rgba(16, 185, 129, 0.1); color: #10b981; font-weight: 700; padding: 0.4rem 0.8rem; border-radius: 6px;">Enterprise RBAC Active</span>
+            </div>
+
+            <!-- Access Control Matrix Premium Table -->
+            <div class="glass-panel" style="padding: 2rem; border-radius: 16px;">
+                <p style="color: var(--text-secondary); margin-bottom: 1.5rem; font-size: 0.95rem; line-height: 1.5;">
+                    The following matrix defines the granular access levels and permissions granted to each administrative role in the system. Security settings are dynamically enforced by Spatie Permission Package.
+                </p>
+                <div class="responsive-table-container">
+                    <table class="portal-table" style="width: 100%;">
+                        <thead>
+                            <tr>
+                                <th style="text-align: left; width: 35%;">Administrative Permission</th>
+                                <th style="text-align: center;">Super Admin</th>
+                                <th style="text-align: center;">Admin</th>
+                                <th style="text-align: center;">Editor</th>
+                                <th style="text-align: center;">Reviewer</th>
+                                <th style="text-align: center;">Moderator</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>View Dashboard Analytics</strong> <br><small style="color: var(--text-secondary);">Access administrative landing metrics</small></td>
+                                <td style="text-align: center; color: #10b981; font-weight: bold; font-size: 1.2rem;">✔</td>
+                                <td style="text-align: center; color: #10b981; font-weight: bold; font-size: 1.2rem;">✔</td>
+                                <td style="text-align: center; color: #10b981; font-weight: bold; font-size: 1.2rem;">✔</td>
+                                <td style="text-align: center; color: #10b981; font-weight: bold; font-size: 1.2rem;">✔</td>
+                                <td style="text-align: center; color: #10b981; font-weight: bold; font-size: 1.2rem;">✔</td>
+                            </tr>
+                            <tr>
+                                <td><strong>View Admin Audit Logs</strong> <br><small style="color: var(--text-secondary);">Access system audit trail</small></td>
+                                <td style="text-align: center; color: #10b981; font-weight: bold; font-size: 1.2rem;">✔</td>
+                                <td style="text-align: center; color: #10b981; font-weight: bold; font-size: 1.2rem;">✔</td>
+                                <td style="text-align: center; color: #ef4444; font-weight: bold; font-size: 1.2rem;">✘</td>
+                                <td style="text-align: center; color: #ef4444; font-weight: bold; font-size: 1.2rem;">✘</td>
+                                <td style="text-align: center; color: #ef4444; font-weight: bold; font-size: 1.2rem;">✘</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Manage Queues & DLQ</strong> <br><small style="color: var(--text-secondary);">Flush DLQ or retry failed queue jobs</small></td>
+                                <td style="text-align: center; color: #10b981; font-weight: bold; font-size: 1.2rem;">✔</td>
+                                <td style="text-align: center; color: #10b981; font-weight: bold; font-size: 1.2rem;">✔</td>
+                                <td style="text-align: center; color: #ef4444; font-weight: bold; font-size: 1.2rem;">✘</td>
+                                <td style="text-align: center; color: #ef4444; font-weight: bold; font-size: 1.2rem;">✘</td>
+                                <td style="text-align: center; color: #ef4444; font-weight: bold; font-size: 1.2rem;">✘</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Manage System Users</strong> <br><small style="color: var(--text-secondary);">Alter roles or suspend user accounts</small></td>
+                                <td style="text-align: center; color: #10b981; font-weight: bold; font-size: 1.2rem;">✔</td>
+                                <td style="text-align: center; color: #10b981; font-weight: bold; font-size: 1.2rem;">✔</td>
+                                <td style="text-align: center; color: #ef4444; font-weight: bold; font-size: 1.2rem;">✘</td>
+                                <td style="text-align: center; color: #ef4444; font-weight: bold; font-size: 1.2rem;">✘</td>
+                                <td style="text-align: center; color: #ef4444; font-weight: bold; font-size: 1.2rem;">✘</td>
+                            </tr>
+                            <tr>
+                                <td><strong>View Job Registry</strong> <br><small style="color: var(--text-secondary);">Browse active and draft recruitments</small></td>
+                                <td style="text-align: center; color: #10b981; font-weight: bold; font-size: 1.2rem;">✔</td>
+                                <td style="text-align: center; color: #10b981; font-weight: bold; font-size: 1.2rem;">✔</td>
+                                <td style="text-align: center; color: #10b981; font-weight: bold; font-size: 1.2rem;">✔</td>
+                                <td style="text-align: center; color: #10b981; font-weight: bold; font-size: 1.2rem;">✔</td>
+                                <td style="text-align: center; color: #10b981; font-weight: bold; font-size: 1.2rem;">✔</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Create Recruitment Posts</strong> <br><small style="color: var(--text-secondary);">Add new job postings</small></td>
+                                <td style="text-align: center; color: #10b981; font-weight: bold; font-size: 1.2rem;">✔</td>
+                                <td style="text-align: center; color: #10b981; font-weight: bold; font-size: 1.2rem;">✔</td>
+                                <td style="text-align: center; color: #10b981; font-weight: bold; font-size: 1.2rem;">✔</td>
+                                <td style="text-align: center; color: #ef4444; font-weight: bold; font-size: 1.2rem;">✘</td>
+                                <td style="text-align: center; color: #ef4444; font-weight: bold; font-size: 1.2rem;">✘</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Edit Recruitment Posts</strong> <br><small style="color: var(--text-secondary);">Modify details of job postings</small></td>
+                                <td style="text-align: center; color: #10b981; font-weight: bold; font-size: 1.2rem;">✔</td>
+                                <td style="text-align: center; color: #10b981; font-weight: bold; font-size: 1.2rem;">✔</td>
+                                <td style="text-align: center; color: #10b981; font-weight: bold; font-size: 1.2rem;">✔</td>
+                                <td style="text-align: center; color: #ef4444; font-weight: bold; font-size: 1.2rem;">✘</td>
+                                <td style="text-align: center; color: #ef4444; font-weight: bold; font-size: 1.2rem;">✘</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Delete Recruitment Posts</strong> <br><small style="color: var(--text-secondary);">Delete existing job announcements</small></td>
+                                <td style="text-align: center; color: #10b981; font-weight: bold; font-size: 1.2rem;">✔</td>
+                                <td style="text-align: center; color: #10b981; font-weight: bold; font-size: 1.2rem;">✔</td>
+                                <td style="text-align: center; color: #ef4444; font-weight: bold; font-size: 1.2rem;">✘</td>
+                                <td style="text-align: center; color: #ef4444; font-weight: bold; font-size: 1.2rem;">✘</td>
+                                <td style="text-align: center; color: #ef4444; font-weight: bold; font-size: 1.2rem;">✘</td>
+                            </tr>
+                            <tr>
+                                <td><strong>View AI Content Registry</strong> <br><small style="color: var(--text-secondary);">View draft or approved AI generated content</small></td>
+                                <td style="text-align: center; color: #10b981; font-weight: bold; font-size: 1.2rem;">✔</td>
+                                <td style="text-align: center; color: #10b981; font-weight: bold; font-size: 1.2rem;">✔</td>
+                                <td style="text-align: center; color: #10b981; font-weight: bold; font-size: 1.2rem;">✔</td>
+                                <td style="text-align: center; color: #10b981; font-weight: bold; font-size: 1.2rem;">✔</td>
+                                <td style="text-align: center; color: #10b981; font-weight: bold; font-size: 1.2rem;">✔</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Generate AI Content</strong> <br><small style="color: var(--text-secondary);">Trigger AI copy generation workflows</small></td>
+                                <td style="text-align: center; color: #10b981; font-weight: bold; font-size: 1.2rem;">✔</td>
+                                <td style="text-align: center; color: #10b981; font-weight: bold; font-size: 1.2rem;">✔</td>
+                                <td style="text-align: center; color: #10b981; font-weight: bold; font-size: 1.2rem;">✔</td>
+                                <td style="text-align: center; color: #ef4444; font-weight: bold; font-size: 1.2rem;">✘</td>
+                                <td style="text-align: center; color: #10b981; font-weight: bold; font-size: 1.2rem;">✔</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Approve/Reject AI Content</strong> <br><small style="color: var(--text-secondary);">Publish or reject draft copies</small></td>
+                                <td style="text-align: center; color: #10b981; font-weight: bold; font-size: 1.2rem;">✔</td>
+                                <td style="text-align: center; color: #10b981; font-weight: bold; font-size: 1.2rem;">✔</td>
+                                <td style="text-align: center; color: #10b981; font-weight: bold; font-size: 1.2rem;">✔</td>
+                                <td style="text-align: center; color: #10b981; font-weight: bold; font-size: 1.2rem;">✔</td>
+                                <td style="text-align: center; color: #ef4444; font-weight: bold; font-size: 1.2rem;">✘</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Manage SEO Cache</strong> <br><small style="color: var(--text-secondary);">Update global dynamic SEO metadata</small></td>
+                                <td style="text-align: center; color: #10b981; font-weight: bold; font-size: 1.2rem;">✔</td>
+                                <td style="text-align: center; color: #10b981; font-weight: bold; font-size: 1.2rem;">✔</td>
+                                <td style="text-align: center; color: #10b981; font-weight: bold; font-size: 1.2rem;">✔</td>
+                                <td style="text-align: center; color: #ef4444; font-weight: bold; font-size: 1.2rem;">✘</td>
+                                <td style="text-align: center; color: #ef4444; font-weight: bold; font-size: 1.2rem;">✘</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </section>
     </main>
@@ -1744,9 +1872,39 @@
                     if (res.status === 'success') {
                         let trs = '';
                         res.data.users.forEach(u => {
-                            const badgeRole = u.role === 'admin' ? '<span class="badge" style="background:rgba(139,92,246,0.08); color:#8b5cf6;">Administrator</span>' : '<span class="badge badge-dept">Candidate</span>';
+                            let badgeRole = '';
+                            if (u.role === 'super_admin') {
+                                badgeRole = '<span class="badge" style="background:rgba(239,68,68,0.08); color:#ef4444; font-weight:700;">Super Admin</span>';
+                            } else if (u.role === 'admin') {
+                                badgeRole = '<span class="badge" style="background:rgba(139,92,246,0.08); color:#8b5cf6; font-weight:700;">Admin</span>';
+                            } else if (u.role === 'editor') {
+                                badgeRole = '<span class="badge" style="background:rgba(59,130,246,0.08); color:#3b82f6;">Editor</span>';
+                            } else if (u.role === 'reviewer') {
+                                badgeRole = '<span class="badge" style="background:rgba(20,184,166,0.08); color:#14b8a6;">Reviewer</span>';
+                            } else if (u.role === 'moderator') {
+                                badgeRole = '<span class="badge" style="background:rgba(245,158,11,0.08); color:#f59e0b;">Moderator</span>';
+                            } else {
+                                badgeRole = '<span class="badge badge-dept">Candidate</span>';
+                            }
+
                             const badgeState = u.is_active ? '<span class="badge" style="background:rgba(16,185,129,0.08); color:#10b981;">Active Session</span>' : '<span class="badge" style="background:rgba(239,68,68,0.08); color:#ef4444;">Suspended</span>';
                             
+                            const rolesList = [
+                                { value: 'super_admin', label: 'Super Admin' },
+                                { value: 'admin', label: 'Admin' },
+                                { value: 'editor', label: 'Editor' },
+                                { value: 'reviewer', label: 'Reviewer' },
+                                { value: 'moderator', label: 'Moderator' },
+                                { value: 'candidate', label: 'Candidate' }
+                            ];
+
+                            let roleSelect = `<select class="select-user-role" data-id="${u.id}" style="background:var(--bg-card); color:var(--text-primary); border:1px solid var(--border-color); padding:0.3rem 0.5rem; border-radius:6px; font-size:0.8rem; cursor:pointer;">`;
+                            rolesList.forEach(r => {
+                                const selected = u.role === r.value ? 'selected' : '';
+                                roleSelect += `<option value="${r.value}" ${selected}>${r.label}</option>`;
+                            });
+                            roleSelect += `</select>`;
+
                             trs += `
                                 <tr>
                                     <td>${u.id}</td>
@@ -1755,8 +1913,8 @@
                                     <td>${badgeRole}</td>
                                     <td style="text-align:center;">${badgeState}</td>
                                     <td>
-                                        <div style="display:flex; gap:0.5rem; justify-content:center;">
-                                            <button class="btn-sm-view btn-toggle-role" data-id="${u.id}" data-role="${u.role}">Toggle Role</button>
+                                        <div style="display:flex; gap:0.5rem; justify-content:center; align-items:center;">
+                                            ${roleSelect}
                                             <button class="${u.is_active ? 'btn-sm-danger' : 'btn-sm-success'} btn-toggle-status" data-id="${u.id}" data-active="${u.is_active}">${u.is_active ? 'Suspend' : 'Activate'}</button>
                                         </div>
                                     </td>
@@ -1769,11 +1927,10 @@
             });
         }
 
-        // Toggle user access role
-        $(document).on('click', '.btn-toggle-role', function() {
+        // Change user access role via dropdown selector
+        $(document).on('change', '.select-user-role', function() {
             const id = $(this).data('id');
-            const currentRole = $(this).data('role');
-            const targetRole = currentRole === 'admin' ? 'candidate' : 'admin';
+            const targetRole = $(this).val();
 
             $.ajax({
                 url: `/api/admin/users/${id}/update`,
@@ -1785,6 +1942,7 @@
                 },
                 error: function(err) {
                     showToast(err.responseJSON.message || 'Access change forbidden.', 'error');
+                    loadUsersData();
                 }
             });
         });

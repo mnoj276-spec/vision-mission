@@ -54,7 +54,14 @@ class AppServiceProvider extends ServiceProvider
     {
         // Gate definition for admin authorization (used by EnsureAdmin middleware)
         Gate::define('admin-access', function (\App\Models\User $user) {
-            return $user->role === 'admin';
+            return $user->getRawOriginal('role') === 'admin' || $user->hasAnyRole(['Super Admin', 'Admin', 'Editor', 'Reviewer', 'Moderator']);
+        });
+
+        // Implicitly grant "Super Admin" role and legacy "admin" users all permissions (for backward compatibility)
+        Gate::before(function (\App\Models\User $user, string $ability) {
+            if ($user->getRawOriginal('role') === 'admin' || $user->hasAnyRole(['Super Admin', 'Admin'])) {
+                return true;
+            }
         });
 
         // Prevent N+1 lazy loading issues in development and testing

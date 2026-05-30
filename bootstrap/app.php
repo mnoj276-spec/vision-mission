@@ -23,9 +23,12 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware): void {
         // Register security middleware aliases
         $middleware->alias([
-            'admin'  => \App\Http\Middleware\EnsureAdmin::class,
-            'role'   => \App\Http\Middleware\RoleMiddleware::class,
-            'active' => \App\Http\Middleware\EnsureActiveUser::class,
+            'admin'              => \App\Http\Middleware\EnsureAdmin::class,
+            'role'               => \App\Http\Middleware\RoleMiddleware::class,
+            'active'             => \App\Http\Middleware\EnsureActiveUser::class,
+            'permission'         => \App\Http\Middleware\CheckPermission::class,
+            'spatie_role'        => \Spatie\Permission\Middleware\RoleMiddleware::class,
+            'spatie_permission'  => \Spatie\Permission\Middleware\PermissionMiddleware::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
