@@ -9,5 +9,5 @@ Artisan::command('inspire', function () {
 
 use Illuminate\Support\Facades\Schedule;
 
-// Automatically execute the Scraping Engine scheduler every 5 minutes
-Schedule::command('scraper:run')->everyFiveMinutes();
+// Automatically execute the Scraping Engine scheduler every 5 minutes safely
+Schedule::command('scraper:run')->everyFiveMinutes()->withoutOverlapping(10)->onOneServer();

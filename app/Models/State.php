@@ -10,7 +10,15 @@ class State extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['name', 'code'];
+    protected $fillable = ['name', 'code', 'slug'];
+
+    /**
+     * Get all districts associated with this state.
+     */
+    public function districts(): HasMany
+    {
+        return $this->hasMany(District::class);
+    }
 
     /**
      * Get all job postings located in this state.

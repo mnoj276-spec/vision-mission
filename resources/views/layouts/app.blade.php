@@ -40,9 +40,11 @@
             
             <ul class="nav-links">
                 <li><a href="/" class="nav-tab-trigger" data-target="jobs">Home</a></li>
-                <li><a href="#latest-jobs" class="nav-tab-trigger" data-target="jobs">Jobs List</a></li>
-                <li><a href="#" class="nav-tab-trigger" data-target="info-hub">Information Hub</a></li>
-                <li><a href="#admit-cards">Exam Utilities</a></li>
+                <li><a href="/ssc-jobs" style="font-weight: 700;">SSC Board</a></li>
+                <li><a href="/railway-jobs" style="font-weight: 700;">Railways</a></li>
+                <li><a href="/upsc-jobs" style="font-weight: 700;">UPSC</a></li>
+                <li><a href="/state-jobs" style="font-weight: 700;">State Jobs</a></li>
+                <li><a href="#" class="nav-tab-trigger" data-target="info-hub">Info Hub</a></li>
             </ul>
 
             <div class="header-actions" style="display: flex; gap: 0.75rem; align-items: center;">
@@ -72,9 +74,32 @@
                         Login / Register
                     </button>
                 @endauth
+
+                <!-- Hamburger menu button for smaller screens -->
+                <button class="hamburger-btn" id="hamburgerMenuBtn" aria-label="Toggle Navigation Menu">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+                </button>
             </div>
         </nav>
     </header>
+
+    <!-- Mobile Glassmorphic Navigation Drawer -->
+    <div class="mobile-drawer-overlay" id="mobileDrawerOverlay"></div>
+    <div class="mobile-drawer glass-panel" id="mobileDrawer">
+        <div class="mobile-drawer-header">
+            <a href="/" class="logo">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="color: var(--accent-color);"><path d="M12 2L2 7l10 5 10-5-10-5z"></path><path d="M2 17l10 5 10-5"></path><path d="M2 12l10 5 10-5"></path></svg>
+                Gov<span>Jobs</span>
+            </a>
+            <button class="drawer-close-btn" id="closeMobileDrawerBtn">&times;</button>
+        </div>
+        <ul class="mobile-drawer-links">
+            <li><a href="/" class="nav-tab-trigger mobile-drawer-link" data-target="jobs">Home</a></li>
+            <li><a href="#latest-jobs" class="nav-tab-trigger mobile-drawer-link" data-target="jobs">Jobs List</a></li>
+            <li><a href="#" class="nav-tab-trigger mobile-drawer-link" data-target="info-hub">Information Hub</a></li>
+            <li><a href="#admit-cards" class="mobile-drawer-link">Exam Utilities</a></li>
+        </ul>
+    </div>
 
     <!-- 2. Master Dynamic Content -->
     <main>
@@ -391,10 +416,30 @@
                 }
             });
 
+            // ================== MOBILE DRAWER TOGGLE SYSTEM ==================
+            const mDrawer = $('#mobileDrawer');
+            const mOverlay = $('#mobileDrawerOverlay');
+            
+            function openDrawer() {
+                mDrawer.addClass('active');
+                mOverlay.addClass('active');
+                body.css('overflow', 'hidden');
+            }
+            
+            function closeDrawer() {
+                mDrawer.removeClass('active');
+                mOverlay.removeClass('active');
+                body.css('overflow', '');
+            }
+
+            $('#hamburgerMenuBtn').on('click', openDrawer);
+            $('#closeMobileDrawerBtn, #mobileDrawerOverlay, .mobile-drawer-link').on('click', closeDrawer);
+
+
             // ================== LOGIN MODAL TRIGGERS ==================
             const authModal = $('#authModal');
             
-            $('#openAuthModalBtn, .trigger-auth-redirect-btn').on('click', function(e) {
+            $(document).on('click', '#openAuthModalBtn, .trigger-auth-redirect-btn', function(e) {
                 e.preventDefault();
                 $('#ajaxLoginForm')[0].reset();
                 $('#ajaxRegisterForm')[0].reset();
@@ -628,6 +673,64 @@
             $('#closeSidebarDetailsModal, #sidebarDetailsModal').on('click', function(e) {
                 if (e.target === this || e.target.id === 'closeSidebarDetailsModal') {
                     sModal.removeClass('active');
+                }
+            });
+
+            // ================== HIGH PERFORMANCE TELEMETRY TRACKER ==================
+            // 1. Auto Page View Track
+            if (!window.location.pathname.startsWith('/admin') && !window.location.pathname.startsWith('/api')) {
+                $.ajax({
+                    url: '/api/analytics/page-view',
+                    method: 'POST',
+                    data: {
+                        path: window.location.pathname,
+                        referer: document.referrer,
+                        _token: '{{ csrf_token() }}'
+                    }
+                });
+            }
+
+            // 2. Track Ad Slot Impressions
+            $('.ad-banner-placeholder').each(function() {
+                const slotName = $(this).attr('id') || 'home_sponsored_banner';
+                $.ajax({
+                    url: '/api/analytics/ad-event',
+                    method: 'POST',
+                    data: {
+                        event_type: 'ad_impression',
+                        slot_name: slotName,
+                        _token: '{{ csrf_token() }}'
+                    }
+                });
+            });
+
+            // 3. Track Ad Slot Clicks
+            $(document).on('click', '.ad-banner-placeholder', function() {
+                const slotName = $(this).attr('id') || 'home_sponsored_banner';
+                $.ajax({
+                    url: '/api/analytics/ad-event',
+                    method: 'POST',
+                    data: {
+                        event_type: 'ad_click',
+                        slot_name: slotName,
+                        _token: '{{ csrf_token() }}'
+                    }
+                });
+            });
+
+            // 4. Track External Apply link CTR Click
+            $(document).on('click', '#detailOfficialLink', function() {
+                const jobId = $('#applicationFormJobId').val();
+                if (jobId) {
+                    $.ajax({
+                        url: '/api/analytics/job-event',
+                        method: 'POST',
+                        data: {
+                            job_post_id: jobId,
+                            event_type: 'apply_click',
+                            _token: '{{ csrf_token() }}'
+                        }
+                    });
                 }
             });
         });

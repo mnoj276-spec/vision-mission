@@ -1,0 +1,670 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Vision Mission Career Portal API",
+    "description": "Enterprise-grade, mobile-ready, versioned REST API architecture for the Career Portal. Supports JWT stateless authorization, strict parameter typing, rate limiting, and real-time document search.",
+    "version": "1.0.0",
+    "contact": {
+      "name": "API Engineering Team",
+      "email": "api-architect@visionmission.gov.in"
+    }
+  },
+  "servers": [
+    {
+      "url": "/api",
+      "description": "Local environment"
+    }
+  ],
+  "paths": {
+    "/v1/register": {
+      "post": {
+        "tags": ["Authentication"],
+        "summary": "Register a new Candidate user",
+        "description": "Creates a new user record and issues JWT access and secure refresh tokens.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["name", "email", "phone", "password", "password_confirmation"],
+                "properties": {
+                  "name": { "type": "string", "example": "Aarav Sharma" },
+                  "email": { "type": "string", "format": "email", "example": "aarav.sharma@example.com" },
+                  "phone": { "type": "string", "example": "9876543210" },
+                  "password": { "type": "string", "format": "password", "minLength": 6, "example": "securePass123" },
+                  "password_confirmation": { "type": "string", "format": "password", "example": "securePass123" },
+                  "deviceName": { "type": "string", "example": "iPhone 15 Pro" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "User created successfully and tokens issued.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthSuccessResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation failed.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/login": {
+      "post": {
+        "tags": ["Authentication"],
+        "summary": "Login candidate and retrieve tokens",
+        "description": "Authenticates candidate credentials and issues a stateless access JWT along with a secure refresh token.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["email", "password"],
+                "properties": {
+                  "email": { "type": "string", "format": "email", "example": "aarav.sharma@example.com" },
+                  "password": { "type": "string", "format": "password", "example": "securePass123" },
+                  "deviceName": { "type": "string", "example": "Android Emulator Pixel 7" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Credentials verified.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthSuccessResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid credentials.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/refresh": {
+      "post": {
+        "tags": ["Authentication"],
+        "summary": "Rotate Access and Refresh Tokens",
+        "description": "Exchanges a valid, long-lived refresh token for a brand new access and refresh token pair.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["refreshToken"],
+                "properties": {
+                  "refreshToken": { "type": "string", "example": "a1b2c3d4e5f6..." },
+                  "deviceName": { "type": "string", "example": "iPhone 15 Pro" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Token rotated successfully.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthSuccessResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid or expired refresh token.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/logout": {
+      "post": {
+        "tags": ["Authentication"],
+        "summary": "Revoke Refresh Token & Logout",
+        "description": "Invalidates the active refresh token record in the database, revoking API access for the device.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["refreshToken"],
+                "properties": {
+                  "refreshToken": { "type": "string", "example": "a1b2c3d4e5f6..." }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Token revoked successfully.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BaseSuccessResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/jobs": {
+      "get": {
+        "tags": ["Jobs"],
+        "summary": "List Job Postings with Filtering & Paging",
+        "description": "Returns a type-safe array of JobPost objects with paginator controls. Accepts query limits, search keywords, and location filters.",
+        "parameters": [
+          { "name": "search", "in": "query", "description": "Keyword search across titles and descriptions", "required": false, "schema": { "type": "string" } },
+          { "name": "stateId", "in": "query", "description": "State identifier", "required": false, "schema": { "type": "integer" } },
+          { "name": "categoryId", "in": "query", "description": "Job Category identifier", "required": false, "schema": { "type": "integer" } },
+          { "name": "qualificationId", "in": "query", "description": "Required qualification identifier", "required": false, "schema": { "type": "integer" } },
+          { "name": "minSalary", "in": "query", "description": "Minimum acceptable max salary range", "required": false, "schema": { "type": "number" } },
+          { "name": "hasNoFee", "in": "query", "description": "Filter jobs requiring zero application fee", "required": false, "schema": { "type": "boolean" } },
+          { "name": "postType", "in": "query", "description": "Categorized item type", "required": false, "schema": { "type": "string", "enum": ["job", "result", "admit_card", "syllabus", "notice"] } },
+          { "name": "perPage", "in": "query", "description": "Items per page", "required": false, "schema": { "type": "integer", "default": 10 } },
+          { "name": "page", "in": "query", "description": "Page offset identifier", "required": false, "schema": { "type": "integer", "default": 1 } }
+        ],
+        "responses": {
+          "200": {
+            "description": "Paginated listing retrieved.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean", "example": true },
+                    "message": { "type": "string", "example": "Jobs list retrieved successfully." },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "jobs": {
+                          "type": "array",
+                          "items": { "$ref": "#/components/schemas/JobPost" }
+                        },
+                        "pagination": { "$ref": "#/components/schemas/PaginationMetadata" }
+                      }
+                    },
+                    "errors": { "type": "object", "nullable": true, "example": null },
+                    "meta": { "$ref": "#/components/schemas/ResponseMeta" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/jobs/{slug}": {
+      "get": {
+        "tags": ["Jobs"],
+        "summary": "Retrieve Job Posting Detail",
+        "description": "Fetches a full job detail representation matching the unique URL slug. Returns bookmarks flags dynamically if authenticated.",
+        "parameters": [
+          { "name": "slug", "in": "path", "description": "URL slug representing the job posting", "required": true, "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "Detailed job parameters.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean", "example": true },
+                    "message": { "type": "string", "example": "Job details retrieved successfully." },
+                    "data": { "$ref": "#/components/schemas/JobPost" },
+                    "errors": { "type": "object", "nullable": true, "example": null },
+                    "meta": { "$ref": "#/components/schemas/ResponseMeta" }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Job posting not found.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorResponse" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/search/autocomplete": {
+      "get": {
+        "tags": ["Search & Suggestions"],
+        "summary": "Get prefix search suggestions",
+        "description": "Returns autocomplete matching keyword suggestions for search inputs in real-time.",
+        "parameters": [
+          { "name": "q", "in": "query", "description": "Autocomplete query prefix", "required": true, "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "Autocomplete matching suggestions array.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean", "example": true },
+                    "message": { "type": "string", "example": "Autocomplete suggestions retrieved successfully." },
+                    "data": {
+                      "type": "array",
+                      "items": { "type": "string" },
+                      "example": ["SSC CGL Recruitment", "SSC Multi Tasking", "SSC GD Constable"]
+                    },
+                    "errors": { "type": "object", "nullable": true },
+                    "meta": { "$ref": "#/components/schemas/ResponseMeta" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/search/typo": {
+      "get": {
+        "tags": ["Search & Suggestions"],
+        "summary": "Check for spelling corrections",
+        "description": "Calculates Levenshtein distances against active keywords to provide corrected query strings.",
+        "parameters": [
+          { "name": "q", "in": "query", "description": "Spelled search term", "required": true, "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "Spell-correction suggest details.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean", "example": true },
+                    "message": { "type": "string", "example": "Typo correction suggestion checked successfully." },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "suggestion": { "type": "string", "nullable": true, "example": "railway" }
+                      }
+                    },
+                    "errors": { "type": "object", "nullable": true },
+                    "meta": { "$ref": "#/components/schemas/ResponseMeta" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/dashboard": {
+      "get": {
+        "tags": ["Candidate Panel"],
+        "summary": "Retrieve user panel bookmarks and applications",
+        "security": [{ "bearerAuth": [] }],
+        "description": "Returns candidate credentials along with their bookmarked posts and job applications in full detail.",
+        "responses": {
+          "200": {
+            "description": "Dashboard listings.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean", "example": true },
+                    "message": { "type": "string", "example": "Dashboard data retrieved successfully." },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "user": { "$ref": "#/components/schemas/User" },
+                        "bookmarks": { "type": "array", "items": { "$ref": "#/components/schemas/JobPost" } },
+                        "applications": { "type": "array", "items": { "$ref": "#/components/schemas/JobApplication" } }
+                      }
+                    },
+                    "errors": { "type": "object", "nullable": true },
+                    "meta": { "$ref": "#/components/schemas/ResponseMeta" }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized access or expired bearer token.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorResponse" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/profile/update": {
+      "post": {
+        "tags": ["Candidate Panel"],
+        "summary": "Update Candidate account credentials",
+        "security": [{ "bearerAuth": [] }],
+        "description": "Updates core user information (name, email, phone, password). Enforces database unique keys.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["name", "email", "phone"],
+                "properties": {
+                  "name": { "type": "string", "example": "Aarav Sharma" },
+                  "email": { "type": "string", "format": "email", "example": "aarav.new@example.com" },
+                  "phone": { "type": "string", "example": "9999888877" },
+                  "password": { "type": "string", "format": "password", "example": "newSecurePass1" },
+                  "password_confirmation": { "type": "string", "format": "password", "example": "newSecurePass1" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "User updated successfully.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean", "example": true },
+                    "message": { "type": "string", "example": "Profile settings successfully updated!" },
+                    "data": { "$ref": "#/components/schemas/User" },
+                    "errors": { "type": "object", "nullable": true },
+                    "meta": { "$ref": "#/components/schemas/ResponseMeta" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/jobs/{id}/bookmark": {
+      "post": {
+        "tags": ["Candidate Interactions"],
+        "summary": "Toggle Bookmark state",
+        "security": [{ "bearerAuth": [] }],
+        "description": "Creates a bookmark association if absent, or deletes the bookmark association if it exists.",
+        "parameters": [
+          { "name": "id", "in": "path", "description": "Numerical JobPost identifier", "required": true, "schema": { "type": "integer" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "Bookmark toggled.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean", "example": true },
+                    "message": { "type": "string", "example": "Job successfully bookmarked!" },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "isBookmarked": { "type": "boolean", "example": true },
+                        "action": { "type": "string", "example": "added" }
+                      }
+                    },
+                    "errors": { "type": "object", "nullable": true },
+                    "meta": { "$ref": "#/components/schemas/ResponseMeta" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/jobs/{id}/apply": {
+      "post": {
+        "tags": ["Candidate Interactions"],
+        "summary": "Submit application with resume attachment",
+        "security": [{ "bearerAuth": [] }],
+        "description": "Uploads candidate resume and creates an active JobApplication. Enforces double application block, magic bytes MIME-check, antivirus scanner, and file-extension protections.",
+        "parameters": [
+          { "name": "id", "in": "path", "description": "Numerical JobPost identifier", "required": true, "schema": { "type": "integer" } }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "required": ["resume"],
+                "properties": {
+                  "resume": { "type": "string", "format": "binary", "description": "PDF, DOC, or DOCX resume document (Max 2MB)" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Application recorded successfully.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean", "example": true },
+                    "message": { "type": "string", "example": "Your application has been successfully submitted!" },
+                    "data": { "$ref": "#/components/schemas/JobApplication" },
+                    "errors": { "type": "object", "nullable": true },
+                    "meta": { "$ref": "#/components/schemas/ResponseMeta" }
+                  }
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "File validation, antivirus scan infection, or double application error.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorResponse" }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT",
+        "description": "Pass JWT access token under Authorization header in 'Bearer {token}' format"
+      }
+    },
+    "schemas": {
+      "ResponseMeta": {
+        "type": "object",
+        "properties": {
+          "timestamp": { "type": "integer", "example": 1716982200 },
+          "api_version": { "type": "string", "example": "v1" }
+        }
+      },
+      "BaseSuccessResponse": {
+        "type": "object",
+        "properties": {
+          "success": { "type": "boolean", "example": true },
+          "message": { "type": "string", "example": "Operation completed successfully." },
+          "data": { "type": "object", "nullable": true, "example": null },
+          "errors": { "type": "object", "nullable": true, "example": null },
+          "meta": { "$ref": "#/components/schemas/ResponseMeta" }
+        }
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "properties": {
+          "success": { "type": "boolean", "example": false },
+          "message": { "type": "string", "example": "Validation failed." },
+          "data": { "type": "object", "nullable": true, "example": null },
+          "errors": {
+            "type": "object",
+            "nullable": true,
+            "example": { "email": ["These credentials do not match our records."] }
+          },
+          "meta": { "$ref": "#/components/schemas/ResponseMeta" }
+        }
+      },
+      "User": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "integer", "example": 1 },
+          "name": { "type": "string", "example": "Aarav Sharma" },
+          "email": { "type": "string", "format": "email", "example": "aarav.sharma@example.com" },
+          "phone": { "type": "string", "nullable": true, "example": "9876543210" },
+          "role": { "type": "string", "example": "candidate" },
+          "isActive": { "type": "boolean", "example": true },
+          "createdAt": { "type": "string", "format": "date-time", "example": "2026-05-30T16:21:47+00:00" }
+        }
+      },
+      "AuthSuccessResponse": {
+        "type": "object",
+        "properties": {
+          "success": { "type": "boolean", "example": true },
+          "message": { "type": "string", "example": "Logged in successfully!" },
+          "data": {
+            "type": "object",
+            "properties": {
+              "accessToken": { "type": "string", "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJodHRwOlwvXC8xMjcuMC4wLjE6ODAwMCIsInN1YiI6MSwiaWF0IjoxNzE2OTgyMjAwLCJleHAiOjE3MTY5ODMxMDAsIm5iZiI6MTcxNjk4MjIwMCwianRpIjoiZmNjMzhjYTEyNDBiOWUxYiIsInVzZXIiOnsiaWQiOjEsIm5hbWUiOiJBYXJhdiBTaGFybWEiLCJlbWFpbCI6ImFhcmF2LnNoYXJtYUBleGFtcGxlLmNvbSIsInJvbGUiOiJjYW5kaWRhdGUifX0.xxxxxx" },
+              "refreshToken": { "type": "string", "example": "92f7cda3a812b3c456dfcba19024fbd9bcaee234" },
+              "user": { "$ref": "#/components/schemas/User" }
+            }
+          },
+          "errors": { "type": "object", "nullable": true, "example": null },
+          "meta": { "$ref": "#/components/schemas/ResponseMeta" }
+        }
+      },
+      "JobPost": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "integer", "example": 101 },
+          "postType": { "type": "string", "example": "job" },
+          "title": { "type": "string", "example": "SSC CGL Inspector Recruitment" },
+          "slug": { "type": "string", "example": "ssc-cgl-inspector-recruitment-8821" },
+          "description": { "type": "string", "example": "<p>Central excise inspector openings available...</p>" },
+          "examPattern": { "type": "string", "nullable": true, "example": "Written MCQ Exam Tiers" },
+          "selectionProcess": { "type": "string", "nullable": true, "example": "Written + Interview" },
+          "ageLimit": { "type": "string", "nullable": true, "example": "18-30 Years" },
+          "salaryMin": { "type": "number", "nullable": true, "example": 44900.00 },
+          "salaryMax": { "type": "number", "nullable": true, "example": 142400.00 },
+          "vacancyCount": { "type": "integer", "example": 450 },
+          "applicationFee": { "type": "number", "example": 100.00 },
+          "officialWebsiteLink": { "type": "string", "format": "uri", "nullable": true, "example": "https://ssc.gov.in" },
+          "applyLink": { "type": "string", "format": "uri", "nullable": true, "example": "https://ssc.gov.in/apply" },
+          "notificationPdfPath": { "type": "string", "nullable": true, "example": "notifications/ssc_cgl_2026.pdf" },
+          "lastDateToApply": { "type": "string", "format": "date", "nullable": true, "example": "2026-06-30" },
+          "examDate": { "type": "string", "format": "date", "nullable": true, "example": "2026-08-15" },
+          "publishedAt": { "type": "string", "format": "date-time", "nullable": true, "example": "2026-05-30T10:00:00+00:00" },
+          "isFeatured": { "type": "boolean", "example": true },
+          "category": {
+            "type": "object",
+            "properties": {
+              "id": { "type": "integer", "example": 3 },
+              "name": { "type": "string", "example": "SSC" },
+              "slug": { "type": "string", "example": "ssc" }
+            }
+          },
+          "department": {
+            "type": "object",
+            "properties": {
+              "id": { "type": "integer", "example": 1 },
+              "name": { "type": "string", "example": "Staff Selection Commission" }
+            }
+          },
+          "state": {
+            "type": "object",
+            "properties": {
+              "id": { "type": "integer", "example": 10 },
+              "name": { "type": "string", "example": "Central Government" }
+            }
+          },
+          "district": { "type": "object", "nullable": true },
+          "qualification": {
+            "type": "object",
+            "properties": {
+              "id": { "type": "integer", "example": 2 },
+              "name": { "type": "string", "example": "Graduate" }
+            }
+          },
+          "isBookmarked": { "type": "boolean", "example": false }
+        }
+      },
+      "JobApplication": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "integer", "example": 15 },
+          "status": { "type": "string", "example": "applied" },
+          "resumePath": { "type": "string", "format": "uri", "nullable": true, "example": "http://127.0.0.1:8000/storage/resumes/resume_1_1716983000.pdf" },
+          "appliedAt": { "type": "string", "format": "date-time", "example": "2026-05-30T16:21:47+00:00" },
+          "jobPost": {
+            "type": "object",
+            "properties": {
+              "id": { "type": "integer", "example": 101 },
+              "title": { "type": "string", "example": "SSC CGL Inspector Recruitment" },
+              "slug": { "type": "string", "example": "ssc-cgl-inspector-recruitment-8821" }
+            }
+          }
+        }
+      },
+      "PaginationMetadata": {
+        "type": "object",
+        "properties": {
+          "currentPage": { "type": "integer", "example": 1 },
+          "totalPages": { "type": "integer", "example": 5 },
+          "perPage": { "type": "integer", "example": 10 },
+          "totalCount": { "type": "integer", "example": 48 },
+          "hasNextPage": { "type": "boolean", "example": true },
+          "hasPreviousPage": { "type": "boolean", "example": false }
+        }
+      }
+    }
+  }
+}

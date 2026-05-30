@@ -4,21 +4,697 @@
 
 @section('content')
 
+<!-- AAGGREGATOR DESIGN SYSTEM STYLES -->
+<style>
+    /* Scrolling Marquee Update Ticker */
+    .ticker-wrap {
+        width: 100%;
+        box-sizing: border-box;
+        overflow: hidden;
+        height: 48px;
+        background: linear-gradient(135deg, rgba(37, 99, 235, 0.15) 0%, rgba(16, 185, 129, 0.1) 100%);
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        margin-bottom: 2rem;
+        padding: 0 1rem;
+        box-shadow: 0 4px 30px rgba(0, 0, 0, 0.05);
+        backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px);
+    }
+    .ticker-label {
+        background: linear-gradient(90deg, #ef4444 0%, #dc2626 100%);
+        color: #fff;
+        font-weight: 700;
+        font-size: 0.75rem;
+        padding: 0.3rem 0.75rem;
+        border-radius: 4px;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        margin-right: 1.5rem;
+        white-space: nowrap;
+        animation: ticker-pulse 1.5s infinite;
+    }
+    @keyframes ticker-pulse {
+        0% { opacity: 0.85; transform: scale(1); }
+        50% { opacity: 1; transform: scale(1.03); }
+        100% { opacity: 0.85; transform: scale(1); }
+    }
+    .ticker {
+        display: flex;
+        white-space: nowrap;
+        width: 100%;
+        overflow: hidden;
+        position: relative;
+    }
+    .ticker-item-list {
+        display: inline-flex;
+        animation: marquee 35s linear infinite;
+    }
+    .ticker-item {
+        color: var(--text-primary);
+        text-decoration: none;
+        font-size: 0.85rem;
+        font-weight: 600;
+        margin-right: 3rem;
+        transition: color 0.2s;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        white-space: nowrap;
+    }
+    .ticker-item:hover {
+        color: var(--accent-color);
+        text-decoration: underline;
+    }
+    @keyframes marquee {
+        0% { transform: translate3d(0, 0, 0); }
+        100% { transform: translate3d(-50%, 0, 0); }
+    }
+
+    /* Trending Hot Action Cards */
+    .trending-grid {
+        display: grid;
+        grid-template-columns: repeat(8, 1fr);
+        gap: 0.75rem;
+        margin-bottom: 3rem;
+    }
+    
+    @media (max-width: 1200px) {
+        .trending-grid {
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1rem;
+        }
+    }
+    
+    @media (max-width: 640px) {
+        .trending-grid {
+            grid-template-columns: repeat(2, 1fr);
+            gap: 0.75rem;
+        }
+    }
+    
+    .trending-card {
+        background: var(--bg-secondary);
+        border: 1px solid var(--border-color);
+        border-radius: 14px;
+        padding: 1.1rem 0.5rem;
+        text-align: center;
+        text-decoration: none;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 0.4rem;
+        height: 105px;
+        position: relative;
+        overflow: hidden;
+        box-shadow: var(--card-shadow);
+    }
+    
+    .trending-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 3px;
+        background: var(--card-accent, var(--accent-color));
+        opacity: 0.85;
+    }
+    
+    .trending-card:hover {
+        transform: translateY(-5px);
+        border-color: var(--card-accent, var(--accent-color));
+        box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 0 15px -3px var(--card-accent, var(--accent-color));
+        background: var(--bg-secondary);
+    }
+    
+    .dark-theme .trending-card:hover {
+        box-shadow: 0 12px 30px -8px rgba(0, 0, 0, 0.5), 0 0 20px -5px var(--card-accent, var(--accent-color));
+    }
+    
+    .trending-card .card-icon {
+        font-size: 1.6rem;
+        margin-bottom: 0.15rem;
+        filter: drop-shadow(0 2px 6px rgba(0,0,0,0.15));
+        transition: transform 0.3s ease;
+    }
+    
+    .trending-card:hover .card-icon {
+        transform: scale(1.12) rotate(3deg);
+    }
+    
+    .trending-card .card-title {
+        font-family: 'Outfit', sans-serif;
+        font-size: 0.82rem;
+        font-weight: 700;
+        color: var(--text-primary);
+        text-transform: uppercase;
+        letter-spacing: 0.02em;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 100%;
+        padding: 0 0.25rem;
+    }
+
+    /* Sarkari Board Panels */
+    .sarkari-panels-container {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 1.5rem;
+        margin-bottom: 2.5rem;
+    }
+    @media (max-width: 1024px) {
+        .sarkari-panels-container {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+    @media (max-width: 768px) {
+        .sarkari-panels-container {
+            grid-template-columns: 1fr;
+        }
+    }
+    .sarkari-panel {
+        min-width: 0;
+        background: rgba(255, 255, 255, 0.02);
+        border: 1px solid var(--border-color);
+        border-radius: 12px;
+        padding: 1.5rem 1.25rem;
+        display: flex;
+        flex-direction: column;
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+        transition: all 0.3s ease;
+    }
+    .sarkari-panel:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3);
+    }
+    .sarkari-panel-header {
+        font-size: 1.2rem;
+        font-weight: 800;
+        margin-bottom: 1.25rem;
+        padding-bottom: 0.75rem;
+        border-bottom: 2px solid var(--border-color);
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
+        font-family: 'Outfit', sans-serif;
+        text-transform: uppercase;
+        letter-spacing: 0.03em;
+    }
+    .sarkari-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 0.6rem;
+        max-height: 480px;
+        overflow-y: auto;
+    }
+    /* Style scrollbar for list containers */
+    .sarkari-list::-webkit-scrollbar {
+        width: 5px;
+    }
+    .sarkari-list::-webkit-scrollbar-track {
+        background: rgba(255,255,255,0.02);
+    }
+    .sarkari-list::-webkit-scrollbar-thumb {
+        background: rgba(255,255,255,0.1);
+        border-radius: 3px;
+    }
+    .sarkari-item {
+        min-width: 0;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.5rem 0.75rem;
+        border-radius: 6px;
+        background: rgba(255, 255, 255, 0.01);
+        border: 1px solid rgba(255,255,255,0.02);
+        transition: all 0.2s ease;
+    }
+    .sarkari-item:hover {
+        background: rgba(255, 255, 255, 0.04);
+        border-color: rgba(255,255,255,0.06);
+    }
+    .sarkari-item-link {
+        color: var(--text-primary);
+        text-decoration: none;
+        font-size: 0.82rem;
+        font-weight: 500;
+        line-height: 1.4;
+        flex-grow: 1;
+        display: block;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        cursor: pointer;
+    }
+    .sarkari-item-link:hover {
+        color: var(--accent-color);
+    }
+    .new-badge {
+        font-size: 0.6rem;
+        font-weight: 800;
+        color: #fff;
+        background: linear-gradient(90deg, #ef4444 0%, #ea580c 100%);
+        padding: 0.15rem 0.4rem;
+        border-radius: 3px;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        white-space: nowrap;
+        animation: badge-blink 1.2s infinite;
+    }
+    @keyframes badge-blink {
+        0% { opacity: 0.7; }
+        50% { opacity: 1; }
+        100% { opacity: 0.7; }
+    }
+
+    /* Monetization Google AdSense Responsive Frame */
+    .ad-banner-placeholder {
+        width: 100%;
+        background: linear-gradient(135deg, rgba(255,255,255,0.01) 0%, rgba(255,255,255,0.02) 100%);
+        border: 1px dashed var(--border-color);
+        border-radius: 10px;
+        padding: 1.5rem;
+        text-align: center;
+        margin-bottom: 2.5rem;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 0.6rem;
+        position: relative;
+        overflow: hidden;
+    }
+    .ad-banner-placeholder::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: radial-gradient(circle, rgba(37,99,235,0.03) 0%, transparent 60%);
+        pointer-events: none;
+    }
+    .ad-badge {
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255,255,255,0.05);
+        color: var(--text-secondary);
+        font-size: 0.6rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        padding: 0.2rem 0.6rem;
+        border-radius: 4px;
+        letter-spacing: 0.08em;
+    }
+    /* Autocomplete Suggestions Menu */
+    .autocomplete-dropdown {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        background: var(--bg-secondary);
+        border: 1px solid var(--border-color);
+        border-radius: 12px;
+        margin-top: 0.5rem;
+        max-height: 350px;
+        overflow-y: auto;
+        z-index: 1000;
+        box-shadow: 0 15px 35px -5px rgba(0,0,0,0.25);
+        display: none;
+        backdrop-filter: blur(14px);
+    }
+    .autocomplete-section {
+        border-bottom: 1px solid var(--border-color);
+        padding-bottom: 0.5rem;
+    }
+    .autocomplete-section:last-child {
+        border-bottom: none;
+    }
+    .autocomplete-header {
+        font-size: 0.72rem;
+        font-weight: 800;
+        text-transform: uppercase;
+        color: var(--accent-color);
+        letter-spacing: 0.08em;
+        padding: 0.75rem 1rem 0.4rem 1rem;
+        display: flex;
+        align-items: center;
+        gap: 0.4rem;
+        background: rgba(255,255,255,0.01);
+    }
+    .autocomplete-item {
+        padding: 0.6rem 1.25rem;
+        font-size: 0.88rem;
+        color: var(--text-secondary);
+        cursor: pointer;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        transition: all 0.15s ease;
+    }
+    .autocomplete-item:hover {
+        background: rgba(37, 99, 235, 0.08);
+        color: var(--text-primary);
+        padding-left: 1.5rem;
+    }
+    .autocomplete-item .badge-type {
+        font-size: 0.68rem;
+        font-weight: 700;
+        background: rgba(255,255,255,0.04);
+        padding: 0.15rem 0.4rem;
+        border-radius: 4px;
+        color: var(--text-secondary);
+    }
+    .typo-banner {
+        background: rgba(245, 158, 11, 0.08);
+        border: 1.5px solid rgba(245, 158, 11, 0.2);
+        color: #f59e0b;
+        padding: 0.85rem 1.25rem;
+        border-radius: 10px;
+        margin-bottom: 1.5rem;
+        font-size: 0.95rem;
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
+        animation: slideDown 0.3s ease;
+        font-weight: 500;
+    }
+    .typo-banner a {
+        color: var(--text-primary);
+        text-decoration: underline;
+        font-weight: 700;
+        cursor: pointer;
+    }
+    .typo-banner a:hover {
+        color: var(--accent-color);
+    }
+</style>
+
+<div style="max-width: 1400px; margin: 0 auto; padding: 0 5%;">
+
 <!-- 1. Hero Welcome Segment -->
-<section class="hero">
+<section class="hero" style="margin-bottom: 1.5rem;">
     <h1>Find Your Dream <span style="color: var(--accent-color);">Government Job</span> Today</h1>
     <p>Discover real-time, highly validated recruitment alerts across UPSC, SSC, Banking, Railways, and individual states. Updated automatically, verified by AI, 100% accurate.</p>
 </section>
 
+<!-- 2. Scrolling Marquee Updates Ticker -->
+<div class="ticker-wrap">
+    <div class="ticker-label">LATEST UPDATES</div>
+    <div class="ticker">
+        <div class="ticker-item-list">
+            @forelse($tickerNotices as $tNotice)
+                <a href="#" class="ticker-item btn-view" data-slug="{{ $tNotice->slug }}">
+                    <span class="new-badge" style="margin-right: 0.25rem;">NEW</span>
+                    {{ $tNotice->title }}
+                </a>
+            @empty
+                <a href="#" class="ticker-item">Welcome to GovJobs - Real-time Highly Validated Recruitment Aggregator Platform</a>
+            @endforelse
+            <!-- Duplicate array items to create seamless scrolling loop -->
+            @foreach($tickerNotices as $tNotice)
+                <a href="#" class="ticker-item btn-view" data-slug="{{ $tNotice->slug }}">
+                    <span class="new-badge" style="margin-right: 0.25rem;">NEW</span>
+                    {{ $tNotice->title }}
+                </a>
+            @endforeach
+        </div>
+    </div>
+</div>
+
+</div><!-- end centering wrapper -->
+
 <!-- ======================= PORTAL FRONTEND TAB SEGMENTS ======================= -->
 
 <!-- TAB 1: PRIMARY JOBS DIRECTORY & FILTERS (Active by default) -->
-<div class="portal-main-tab active" id="jobs-search-section">
-    <!-- Search compass console -->
-    <div class="main-grid" style="margin-bottom: 0px; padding-bottom: 0px;">
-        <div class="glass-panel search-compass">
-            <div>
+<div class="portal-main-tab active" id="jobs-search-section" style="padding: 0 5%; max-width: 1400px; margin: 0 auto;">
+
+    <!-- 3. Trending Hot Quick Navigation Cards -->
+    <div class="trending-grid">
+        <a href="#sarkari-jobs" class="trending-card" style="--card-accent: #3b82f6;">
+            <div class="card-icon" style="background: rgba(59, 130, 246, 0.1); color: #3b82f6;">💼</div>
+            <span class="card-title">Latest Jobs</span>
+        </a>
+        <a href="#sarkari-admit-cards" class="trending-card" style="--card-accent: #10b981;">
+            <div class="card-icon" style="background: rgba(16, 185, 129, 0.1); color: #10b981;">🎟️</div>
+            <span class="card-title">Admit Cards</span>
+        </a>
+        <a href="#sarkari-results" class="trending-card" style="--card-accent: #8b5cf6;">
+            <div class="card-icon" style="background: rgba(139, 92, 246, 0.1); color: #8b5cf6;">🏆</div>
+            <span class="card-title">Exam Results</span>
+        </a>
+        <a href="#sarkari-answer-keys" class="trending-card" style="--card-accent: #f59e0b;">
+            <div class="card-icon" style="background: rgba(245, 158, 11, 0.1); color: #f59e0b;">🔑</div>
+            <span class="card-title">Answer Keys</span>
+        </a>
+        <a href="#sarkari-syllabus" class="trending-card" style="--card-accent: #ec4899;">
+            <div class="card-icon" style="background: rgba(236, 72, 153, 0.1); color: #ec4899;">📖</div>
+            <span class="card-title">Syllabus</span>
+        </a>
+        <a href="#sarkari-notices" class="trending-card" style="--card-accent: #ef4444;">
+            <div class="card-icon" style="background: rgba(239, 68, 68, 0.1); color: #ef4444;">📢</div>
+            <span class="card-title">Notices</span>
+        </a>
+        <a href="#sarkari-admissions" class="trending-card" style="--card-accent: #06b6d4;">
+            <div class="card-icon" style="background: rgba(6, 182, 212, 0.1); color: #06b6d4;">🎓</div>
+            <span class="card-title">Admissions</span>
+        </a>
+        <a href="#sarkari-scholarships" class="trending-card" style="--card-accent: #f97316;">
+            <div class="card-icon" style="background: rgba(249, 115, 22, 0.1); color: #f97316;">💰</div>
+            <span class="card-title">Scholarships</span>
+        </a>
+    </div>
+
+    <!-- 4. Monetization Responsive Ad Placeholder Row 1 -->
+    <div class="ad-banner-placeholder">
+        <span class="ad-badge">Advertisement</span>
+        <div style="font-size: 0.9rem; font-weight: 600; color: var(--text-secondary); display: flex; align-items: center; gap: 0.5rem;">
+            <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+            Sponsored High-Target Ad slot - Monetization Enabled
+        </div>
+        <div style="font-size: 0.75rem; color: var(--text-secondary); opacity: 0.8;">Supports GovJobs Free Auto-Extraction & Failsafe Processing Infrastructure</div>
+    </div>
+
+    <!-- 5. Sarkari Grid Row 1 (Jobs, Admit Cards, Results) -->
+    <div class="sarkari-panels-container">
+        <!-- Panel 1: Latest Jobs -->
+        <div class="sarkari-panel" id="sarkari-jobs" style="border-top: 4px solid #3b82f6;">
+            <div class="sarkari-panel-header" style="color: #3b82f6;">
+                <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
+                Latest Jobs
+            </div>
+            <ul class="sarkari-list">
+                @forelse($recentJobs as $job)
+                    <li class="sarkari-item">
+                        <a href="#" class="sarkari-item-link btn-view" data-slug="{{ $job->slug }}">
+                            &raquo; {{ $job->title }}
+                        </a>
+                        <span class="new-badge">NEW</span>
+                    </li>
+                @empty
+                    <li style="padding: 1rem; text-align: center; color: var(--text-secondary); font-size: 0.85rem;">No active recruitments listed.</li>
+                @endforelse
+            </ul>
+        </div>
+
+        <!-- Panel 2: Admit Cards -->
+        <div class="sarkari-panel" id="sarkari-admit-cards" style="border-top: 4px solid #10b981;">
+            <div class="sarkari-panel-header" style="color: #10b981;">
+                <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M15 5v2m0 4v2m0 4v2M5 5a2 2 0 00-2 2v3a2 2 0 110 4v3a2 2 0 002 2h14a2 2 0 002-2v-3a2 2 0 110-4V7a2 2 0 00-2-2H5z"></path></svg>
+                Admit Cards
+            </div>
+            <ul class="sarkari-list">
+                @forelse($admitCards as $card)
+                    <li class="sarkari-item">
+                        <a href="#" class="sarkari-item-link btn-view" data-slug="{{ $card->slug }}">
+                            &raquo; {{ $card->title }}
+                        </a>
+                        <span class="new-badge">NEW</span>
+                    </li>
+                @empty
+                    <li style="padding: 1rem; text-align: center; color: var(--text-secondary); font-size: 0.85rem;">No active admit cards released.</li>
+                @endforelse
+            </ul>
+        </div>
+
+        <!-- Panel 3: Exam Results -->
+        <div class="sarkari-panel" id="sarkari-results" style="border-top: 4px solid #8b5cf6;">
+            <div class="sarkari-panel-header" style="color: #8b5cf6;">
+                <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138z"></path></svg>
+                Exam Results
+            </div>
+            <ul class="sarkari-list">
+                @forelse($results as $res)
+                    <li class="sarkari-item">
+                        <a href="#" class="sarkari-item-link btn-view" data-slug="{{ $res->slug }}">
+                            &raquo; {{ $res->title }}
+                        </a>
+                        <span class="new-badge">NEW</span>
+                    </li>
+                @empty
+                    <li style="padding: 1rem; text-align: center; color: var(--text-secondary); font-size: 0.85rem;">No active results declared yet.</li>
+                @endforelse
+            </ul>
+        </div>
+    </div>
+
+    <!-- 6. Sarkari Grid Row 2 (Answer Keys, Syllabus, Notices) -->
+    <div class="sarkari-panels-container">
+        <!-- Panel 4: Answer Keys -->
+        <div class="sarkari-panel" id="sarkari-answer-keys" style="border-top: 4px solid #f59e0b;">
+            <div class="sarkari-panel-header" style="color: #f59e0b;">
+                <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M15 7a2 2 0 012 2m-2 4a2 2 0 012 2m-2 4a2 2 0 012 2M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
+                Answer Keys
+            </div>
+            <ul class="sarkari-list">
+                @forelse($answerKeys as $key)
+                    <li class="sarkari-item">
+                        <a href="#" class="sarkari-item-link btn-view" data-slug="{{ $key->slug }}">
+                            &raquo; {{ $key->title }}
+                        </a>
+                        <span class="new-badge">NEW</span>
+                    </li>
+                @empty
+                    <li style="padding: 1rem; text-align: center; color: var(--text-secondary); font-size: 0.85rem;">No official answer keys released.</li>
+                @endforelse
+            </ul>
+        </div>
+
+        <!-- Panel 5: Exam Syllabus -->
+        <div class="sarkari-panel" id="sarkari-syllabus" style="border-top: 4px solid #ec4899;">
+            <div class="sarkari-panel-header" style="color: #ec4899;">
+                <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
+                Syllabus & Exams
+            </div>
+            <ul class="sarkari-list">
+                @forelse($syllabi as $syllabus)
+                    <li class="sarkari-item">
+                        <a href="#" class="sarkari-item-link btn-view" data-slug="{{ $syllabus->slug }}">
+                            &raquo; {{ $syllabus->title }}
+                        </a>
+                        <span class="new-badge">NEW</span>
+                    </li>
+                @empty
+                    <li style="padding: 1rem; text-align: center; color: var(--text-secondary); font-size: 0.85rem;">No new syllabus structures out.</li>
+                @endforelse
+            </ul>
+        </div>
+
+        <!-- Panel 6: Important Notices -->
+        <div class="sarkari-panel" id="sarkari-notices" style="border-top: 4px solid #ef4444;">
+            <div class="sarkari-panel-header" style="color: #ef4444;">
+                <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path></svg>
+                Important Notices
+            </div>
+            <ul class="sarkari-list">
+                @forelse($notices as $notice)
+                    <li class="sarkari-item">
+                        <a href="#" class="sarkari-item-link btn-view" data-slug="{{ $notice->slug }}">
+                            &raquo; {{ $notice->title }}
+                        </a>
+                        <span class="new-badge">NEW</span>
+                    </li>
+                @empty
+                    <li style="padding: 1rem; text-align: center; color: var(--text-secondary); font-size: 0.85rem;">No important circular notices active.</li>
+                @endforelse
+            </ul>
+        </div>
+    </div>
+
+    <!-- 7. Sarkari Grid Row 3 (Admissions, Scholarships) -->
+    <div class="sarkari-panels-container" style="grid-template-columns: repeat(2, 1fr);">
+        <!-- Panel 7: Admissions -->
+        <div class="sarkari-panel" id="sarkari-admissions" style="border-top: 4px solid #06b6d4;">
+            <div class="sarkari-panel-header" style="color: #06b6d4;">
+                <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M12 14l9-5-9-5-9 5 9 5z"></path><path d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z"></path></svg>
+                Admissions Hub
+            </div>
+            <ul class="sarkari-list">
+                @forelse($admissions as $adm)
+                    <li class="sarkari-item">
+                        <a href="#" class="sarkari-item-link btn-view" data-slug="{{ $adm->slug }}">
+                            &raquo; {{ $adm->title }}
+                        </a>
+                        <span class="new-badge">NEW</span>
+                    </li>
+                @empty
+                    <li style="padding: 1rem; text-align: center; color: var(--text-secondary); font-size: 0.85rem;">No active entrance exam admission notices.</li>
+                @endforelse
+            </ul>
+        </div>
+
+        <!-- Panel 8: Scholarships -->
+        <div class="sarkari-panel" id="sarkari-scholarships" style="border-top: 4px solid #f97316;">
+            <div class="sarkari-panel-header" style="color: #f97316;">
+                <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                Scholarships & Grants
+            </div>
+            <ul class="sarkari-list">
+                @forelse($scholarships as $scho)
+                    <li class="sarkari-item">
+                        <a href="#" class="sarkari-item-link btn-view" data-slug="{{ $scho->slug }}">
+                            &raquo; {{ $scho->title }}
+                        </a>
+                        <span class="new-badge">NEW</span>
+                    </li>
+                @empty
+                    <li style="padding: 1rem; text-align: center; color: var(--text-secondary); font-size: 0.85rem;">No active scholarship schemes posted.</li>
+                @endforelse
+            </ul>
+        </div>
+    </div>
+
+    <!-- State & Qualification Explorer Grids -->
+    <div class="explorer-deck-title">
+        <svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" style="color: var(--accent-color);"><path d="M12 2a8 8 0 00-8 8c0 5.25 8 12 8 12s8-6.75 8-12a8 8 0 00-8-8z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+        Explore by State / Region
+    </div>
+    <div class="explorer-chips-container" id="stateExplorerChips">
+        <div class="explorer-chip active" data-id="">
+            🌐 All Regions
+        </div>
+        @foreach($states as $state)
+            <div class="explorer-chip" data-id="{{ $state->id }}">
+                📍 {{ $state->name }}
+            </div>
+        @endforeach
+    </div>
+
+    <div class="explorer-deck-title" style="margin-top: 1rem;">
+        <svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" style="color: #10b981;"><path d="M12 14l9-5-9-5-9 5 9 5z"></path><path d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z"></path></svg>
+        Explore by Qualification
+    </div>
+    <div class="explorer-chips-container" id="qualExplorerChips">
+        <div class="explorer-chip active" data-id="">
+            🎓 All Qualifications
+        </div>
+        @foreach($qualifications as $qual)
+            <div class="explorer-chip" data-id="{{ $qual->id }}">
+                📚 {{ $qual->name }}
+            </div>
+        @endforeach
+    </div>
+
+    <!-- 8. Interactive Search Filters Panel (original Search Compass) -->
+    <div class="main-grid" style="margin-bottom: 0px; padding-bottom: 0px;" id="interactive-finder">
+        <!-- Typo Correction Banner -->
+        <div id="homeTypoBanner" style="display: none; grid-column: 1 / -1; margin-bottom: 1rem;"></div>
+
+        <div class="glass-panel search-compass" style="border-left: 4px solid var(--accent-color); overflow: visible;">
+            <div style="position: relative;">
                 <input type="text" id="searchKeywords" placeholder="Search keywords (e.g. UPSC, RBI officer)..." autocomplete="off">
+                <div class="autocomplete-dropdown" id="autocompleteDropdown" style="position: absolute; top: 100%; left: 0; right: 0; background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: 12px; margin-top: 0.5rem; max-height: 350px; overflow-y: auto; z-index: 1000; box-shadow: 0 15px 35px -5px rgba(0,0,0,0.25); display: none; text-align: left; backdrop-filter: blur(14px);"></div>
             </div>
             <div>
                 <select id="stateSelect">
@@ -722,6 +1398,8 @@
 
 @section('scripts')
 <script>
+    const isLoggedIn = @json(auth()->check());
+
     $(document).ready(function() {
         
         // 1. Interactive Sidebar Tab Switches (Local DOM shifts for admit card panel)
@@ -923,13 +1601,163 @@
             fetchJobs(1);
         });
 
+        // State Explorer Chips click handler
+        $('#stateExplorerChips').on('click', '.explorer-chip', function() {
+            $(this).addClass('active').siblings().removeClass('active');
+            const stateId = $(this).data('id');
+            $('#stateSelect').val(stateId);
+            fetchJobs(1);
+        });
+
+        // Qualification Explorer Chips click handler
+        $('#qualExplorerChips').on('click', '.explorer-chip', function() {
+            $(this).addClass('active').siblings().removeClass('active');
+            const qualId = $(this).data('id');
+            $('#qualificationSelect').val(qualId);
+            fetchJobs(1);
+        });
+
+        // Sync dropdown changes back to explorer chips
+        $('#stateSelect').on('change', function() {
+            const val = $(this).val();
+            $(`#stateExplorerChips .explorer-chip[data-id="${val || ''}"]`).addClass('active').siblings().removeClass('active');
+        });
+
+        // Sync dropdown changes back to explorer chips
+        $('#qualificationSelect').on('change', function() {
+            const val = $(this).val();
+            $(`#qualExplorerChips .explorer-chip[data-id="${val || ''}"]`).addClass('active').siblings().removeClass('active');
+        });
+
         // Search Input Keyup Debouncing
         let searchTimeout = null;
+        let autocompleteTimeout = null;
+
         $('#searchKeywords').on('keyup', function() {
+            const query = $(this).val();
+
             clearTimeout(searchTimeout);
             searchTimeout = setTimeout(function() {
                 fetchJobs(1);
+
+                // Fetch typo suggestion in the background
+                if (query.trim().length > 0) {
+                    $.ajax({
+                        url: '/api/search/typo',
+                        type: 'GET',
+                        data: { q: query },
+                        success: function(res) {
+                            if (res.status === 'success' && res.data.suggestion) {
+                                $('#homeTypoBanner').html(`
+                                    <div class="typo-banner">
+                                        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                                        <span>Did you mean: <a id="homeSuggestedQueryLink" href="#" data-query="${res.data.suggestion}">${res.data.suggestion}</a> ?</span>
+                                    </div>
+                                `).fadeIn();
+                            } else {
+                                $('#homeTypoBanner').hide().empty();
+                            }
+                        }
+                    });
+                } else {
+                    $('#homeTypoBanner').hide().empty();
+                }
             }, 300);
+
+            // Autocomplete suggest matching
+            clearTimeout(autocompleteTimeout);
+            if (query.trim().length < 2) {
+                $('#autocompleteDropdown').hide().empty();
+                return;
+            }
+
+            autocompleteTimeout = setTimeout(function() {
+                $.ajax({
+                    url: '/api/search/autocomplete',
+                    type: 'GET',
+                    data: { q: query },
+                    success: function(res) {
+                        if (res.status === 'success') {
+                            const data = res.data;
+                            let html = '';
+                            let totalSuggestions = 0;
+
+                            if (data.jobs && data.jobs.length > 0) {
+                                html += `<div class="autocomplete-section">
+                                    <div class="autocomplete-header">💼 Jobs Found</div>`;
+                                data.jobs.forEach(item => {
+                                    html += `<div class="autocomplete-item select-suggest-job" data-slug="${item.slug}">
+                                        <span>${item.title}</span>
+                                        <span class="badge-type">${item.post_type}</span>
+                                    </div>`;
+                                });
+                                html += `</div>`;
+                                totalSuggestions += data.jobs.length;
+                            }
+
+                            if (data.categories && data.categories.length > 0) {
+                                html += `<div class="autocomplete-section">
+                                    <div class="autocomplete-header">📁 Streams</div>`;
+                                data.categories.forEach(item => {
+                                    html += `<div class="autocomplete-item select-suggest-slug" data-type="category" data-slug="${item.slug}">
+                                        <span>${item.name} board listings</span>
+                                        <span class="badge-type">stream</span>
+                                    </div>`;
+                                });
+                                html += `</div>`;
+                                totalSuggestions += data.categories.length;
+                            }
+
+                            if (data.states && data.states.length > 0) {
+                                html += `<div class="autocomplete-section">
+                                    <div class="autocomplete-header">📍 Regions</div>`;
+                                data.states.forEach(item => {
+                                    html += `<div class="autocomplete-item select-suggest-slug" data-type="state" data-slug="${item.slug}">
+                                        <span>Jobs located in ${item.name}</span>
+                                        <span class="badge-type">region</span>
+                                    </div>`;
+                                });
+                                html += `</div>`;
+                                totalSuggestions += data.states.length;
+                            }
+
+                            if (totalSuggestions > 0) {
+                                $('#autocompleteDropdown').html(html).fadeIn();
+                            } else {
+                                $('#autocompleteDropdown').hide().empty();
+                            }
+                        }
+                    }
+                });
+            }, 150);
+        });
+
+        // Autocomplete click actions on homepage
+        $(document).on('click', '.select-suggest-job', function() {
+            const slug = $(this).data('slug');
+            window.location.href = `/job/${slug}`;
+        });
+
+        $(document).on('click', '.select-suggest-slug', function() {
+            const type = $(this).data('type');
+            const slug = $(this).data('slug');
+            window.location.href = `/search/${type}/${slug}`;
+        });
+
+        // Hide autocomplete when clicking outside input
+        $(document).on('click', function(e) {
+            if (!$(e.target).closest('#interactive-finder').length) {
+                $('#autocompleteDropdown').hide();
+            }
+        });
+
+        // Suggested typo link clicked handler
+        $(document).on('click', '#homeSuggestedQueryLink', function(e) {
+            e.preventDefault();
+            const query = $(this).data('query');
+            $('#searchKeywords').val(query);
+            $('#homeTypoBanner').hide().empty();
+            fetchJobs(1);
         });
 
         $(document).on('click', '.page-link', function(e) {
@@ -989,23 +1817,506 @@
                 success: function(res) {
                     if (res.status === 'success') {
                         const job = res.data;
-                        $('#detailTitle').text(job.title);
-                        $('#detailCategory').text(job.category);
-                        $('#detailDepartment').text(job.department);
-                        $('#detailState').text(job.state);
-                        $('#detailSalary').text(`${job.salary_min} - ${job.salary_max}`);
-                        $('#detailAge').text(job.age_limit);
-                        $('#detailVacancies').text(job.vacancy_count);
-                        $('#detailFee').text(job.application_fee);
-                        $('#detailDeadline').text(job.last_date);
-                        $('#detailExamDate').text(job.exam_date);
-                        $('#detailDescription').text(job.description);
-                        $('#detailSyllabus').html(`<strong>Written Test Pattern:</strong> ${job.exam_pattern}<br><br><strong>Major Selection Criteria:</strong> ${job.selection_process}`);
-                        $('#detailSelection').text(job.selection_process);
-                        $('#detailOfficialLink').attr('href', job.official_website_link);
+                        let html = '';
+                        const type = job.post_type || 'job';
                         
-                        // Bind apply buttons
-                        $('#modalApplyBtn').data('id', job.id).show();
+                        if (type === 'job') {
+                            html = `
+                                <div class="theme-accent-job">
+                                    <div class="category-visual-header">
+                                        <h2>💼 ${job.title}</h2>
+                                        <p>${job.department} &bull; ${job.state} &bull; ${job.category}</p>
+                                    </div>
+                                    
+                                    <div class="details-summary-grid">
+                                        <div class="details-summary-item">
+                                            <div style="font-size:0.75rem; text-transform:uppercase; color:var(--text-secondary);">Monthly Salary Index</div>
+                                            <div style="font-size:1.15rem; font-weight:700; color:var(--text-primary); margin-top:0.25rem;">₹ ${job.salary_min} - ₹ ${job.salary_max}</div>
+                                        </div>
+                                        <div class="details-summary-item">
+                                            <div style="font-size:0.75rem; text-transform:uppercase; color:var(--text-secondary);">Total Vacancies</div>
+                                            <div style="font-size:1.15rem; font-weight:700; color:var(--accent-color); margin-top:0.25rem;">${job.vacancy_count} Active Posts</div>
+                                        </div>
+                                        <div class="details-summary-item">
+                                            <div style="font-size:0.75rem; text-transform:uppercase; color:var(--text-secondary);">Application Fees</div>
+                                            <div style="font-size:1.15rem; font-weight:700; color:var(--text-primary); margin-top:0.25rem;">₹ ${job.application_fee}</div>
+                                        </div>
+                                        <div class="details-summary-item">
+                                            <div style="font-size:0.75rem; text-transform:uppercase; color:var(--text-secondary);">Age Requirements</div>
+                                            <div style="font-size:1.15rem; font-weight:700; color:var(--text-primary); margin-top:0.25rem;">${job.age_limit}</div>
+                                        </div>
+                                    </div>
+
+                                    <div class="details-full-section" style="margin-top:1.5rem;">
+                                        <h4 style="color: var(--accent-color); font-weight:700; font-family:'Outfit';">Recruitment Overview & Eligibility</h4>
+                                        <p style="color: var(--text-secondary); line-height:1.75; font-size:0.95rem; margin-top:0.5rem;">${job.description}</p>
+                                    </div>
+
+                                    <div class="details-full-section" style="margin-top:1.5rem;">
+                                        <h4 style="color: var(--accent-color); font-weight:700; font-family:'Outfit';">Selection Process Steps</h4>
+                                        <p style="color: var(--text-secondary); line-height:1.75; font-size:0.95rem; margin-top:0.5rem;">${job.selection_process}</p>
+                                    </div>
+
+                                    <div class="details-full-section" style="margin-top:1.5rem;">
+                                        <h4 style="color: var(--accent-color); font-weight:700; font-family:'Outfit';">Exam Scheme & Syllabus Patterns</h4>
+                                        <div class="details-syllabus-container" style="max-height: none; overflow: visible; margin-top:0.5rem; color:var(--text-secondary); line-height:1.75;">
+                                            ${job.exam_pattern}
+                                        </div>
+                                    </div>
+
+                                    <div style="display: flex; gap: 1rem; margin-top: 2rem; border-top: 1px solid var(--border-color); padding-top: 1.5rem; flex-wrap: wrap;">
+                                        <a href="${job.official_website_link}" target="_blank" class="btn-view" style="flex:1; text-align:center; display:flex; align-items:center; justify-content:center; gap:0.4rem; font-weight:600; text-decoration:none;">
+                                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle;"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+                                            Official Advertisement
+                                        </a>
+                                        \%isLoggedIn%
+                                    </div>
+                                </div>
+                            `;
+                            html = html.replace('\%isLoggedIn%', isLoggedIn ? `
+                                <button id="modalApplyBtn" class="form-btn" style="flex:1.5; margin-top:0; padding: 0.8rem; background: var(--accent-color); font-weight:700;" data-id="${job.id}">
+                                    Apply Recruitment Now
+                                </button>
+                            ` : `
+                                <button class="form-btn trigger-auth-redirect-btn" style="flex:1.5; margin-top:0; padding: 0.8rem; background: var(--text-secondary); color:#ffffff; font-weight:700;">
+                                    Login to Apply Now
+                                </button>
+                            `);
+                        } else if (type === 'admit_card') {
+                            html = `
+                                <div class="theme-accent-admit_card">
+                                    <div class="category-visual-header">
+                                        <h2>🎟️ ${job.title} Admit Card</h2>
+                                        <p>${job.department} &bull; ${job.state} &bull; Official Call Letter</p>
+                                    </div>
+
+                                    <div class="details-summary-grid">
+                                        <div class="details-summary-item">
+                                            <div style="font-size:0.75rem; text-transform:uppercase; color:var(--text-secondary);">Admit Card Status</div>
+                                            <div style="font-size:1.15rem; font-weight:700; color: #10b981; margin-top:0.25rem;">⚡ RELEASED & ACTIVE</div>
+                                        </div>
+                                        <div class="details-summary-item">
+                                            <div style="font-size:0.75rem; text-transform:uppercase; color:var(--text-secondary);">Expected Exam Date</div>
+                                            <div style="font-size:1.15rem; font-weight:700; color: var(--text-primary); margin-top:0.25rem;">${job.exam_date}</div>
+                                        </div>
+                                        <div class="details-summary-item">
+                                            <div style="font-size:0.75rem; text-transform:uppercase; color:var(--text-secondary);">Total Vacancies</div>
+                                            <div style="font-size:1.15rem; font-weight:700; color: var(--text-primary); margin-top:0.25rem;">${job.vacancy_count} Posts</div>
+                                        </div>
+                                        <div class="details-summary-item">
+                                            <div style="font-size:0.75rem; text-transform:uppercase; color:var(--text-secondary);">Download Deadline</div>
+                                            <div style="font-size:1.15rem; font-weight:700; color: #ef4444; margin-top:0.25rem;">${job.last_date}</div>
+                                        </div>
+                                    </div>
+
+                                    <div class="details-full-section" style="margin-top:1.5rem;">
+                                        <h4 style="color: #10b981; font-weight:700; font-family:'Outfit';">Download Call Letter Instructions</h4>
+                                        <p style="color: var(--text-secondary); line-height:1.75; font-size:0.95rem; margin-top:0.5rem;">
+                                            The selection board has released the admit cards for <strong>${job.title}</strong>. Please download your entry card prior to the download deadline.
+                                        </p>
+                                        <div style="background: rgba(16, 185, 129, 0.05); padding: 1.25rem; border-radius: 8px; border: 1px dashed rgba(16, 185, 129, 0.2); margin: 1.25rem 0;">
+                                            <h5 style="color: #10b981; margin-bottom: 0.5rem; font-weight: 700; font-size:0.95rem;">Required Credentials Checklist:</h5>
+                                            <ul style="list-style: none; display: flex; flex-direction: column; gap: 0.4rem; padding: 0; margin: 0; font-size: 0.9rem; color: var(--text-secondary);">
+                                                <li>🔑 1. Registered Application Number / Registration ID</li>
+                                                <li>🎂 2. Candidate Date of Birth (DD-MM-YYYY format)</li>
+                                                <li>🧩 3. Security Verification Code Captcha</li>
+                                            </ul>
+                                        </div>
+                                        <p style="color: var(--text-secondary); font-size: 0.9rem; line-height:1.5;">
+                                            ⚠️ <strong>Note:</strong> Carry a printed color copy of this Admit Card along with an active government photo ID proof (Aadhaar Card, Passport, driving license, PAN card) and two passport-sized color photos to the test venue.
+                                        </p>
+                                    </div>
+
+                                    <div class="download-callout-panel">
+                                        <h4 style="color: var(--text-primary); margin-bottom: 0.5rem; font-weight: 700;">Direct Candidate Server Access</h4>
+                                        <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 1.25rem;">Select Server 1 or 2 to download call letters instantly.</p>
+                                        <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+                                            <a href="${job.apply_link || job.official_website_link}" target="_blank" class="download-button-premium">
+                                                🚀 Download Call Letter (Server 1)
+                                            </a>
+                                            <a href="${job.official_website_link}" target="_blank" class="download-button-premium" style="background: var(--bg-secondary); border: 1px solid var(--border-color); color: var(--text-primary); box-shadow: none;">
+                                                🌐 Alternative Login (Server 2)
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            `;
+                        } else if (type === 'result') {
+                            html = `
+                                <div class="theme-accent-result">
+                                    <div class="category-visual-header">
+                                        <h2>🏆 ${job.title} Exam Result</h2>
+                                        <p>${job.department} &bull; ${job.state} &bull; Merit & Cutoff Scores</p>
+                                    </div>
+
+                                    <div class="details-summary-grid">
+                                        <div class="details-summary-item">
+                                            <div style="font-size:0.75rem; text-transform:uppercase; color:var(--text-secondary);">Result Status</div>
+                                            <div style="font-size:1.15rem; font-weight:700; color: #8b5cf6; margin-top:0.25rem;">🎉 MERIT LIST RELEASED</div>
+                                        </div>
+                                        <div class="details-summary-item">
+                                            <div style="font-size:0.75rem; text-transform:uppercase; color:var(--text-secondary);">Cutoff Verification</div>
+                                            <div style="font-size:1.15rem; font-weight:700; color: var(--text-primary); margin-top:0.25rem;">COMPLETED</div>
+                                        </div>
+                                        <div class="details-summary-item">
+                                            <div style="font-size:0.75rem; text-transform:uppercase; color:var(--text-secondary);">Total Selected Candidates</div>
+                                            <div style="font-size:1.15rem; font-weight:700; color: var(--text-primary); margin-top:0.25rem;">${job.vacancy_count} Allotments</div>
+                                        </div>
+                                        <div class="details-summary-item">
+                                            <div style="font-size:0.75rem; text-transform:uppercase; color:var(--text-secondary);">Allotment Date</div>
+                                            <div style="font-size:1.15rem; font-weight:700; color: var(--text-primary); margin-top:0.25rem;">${job.last_date}</div>
+                                        </div>
+                                    </div>
+
+                                    <div class="details-full-section" style="margin-top:1.5rem;">
+                                        <h4 style="color: #8b5cf6; font-weight:700; font-family:'Outfit';">Category-Wise Cutoff Marks</h4>
+                                        <table class="details-cutoff-table">
+                                            <thead>
+                                                <tr>
+                                                    <th>Category Segment</th>
+                                                    <th>Cutoff Marks (%)</th>
+                                                    <th>Status Index</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td><strong>General (UR)</strong></td>
+                                                    <td>78.50%</td>
+                                                    <td>Active / Cleared</td>
+                                                </tr>
+                                                <tr>
+                                                    <td><strong>OBC</strong></td>
+                                                    <td>72.40%</td>
+                                                    <td>Active / Cleared</td>
+                                                </tr>
+                                                <tr>
+                                                    <td><strong>SC / ST</strong></td>
+                                                    <td>65.00%</td>
+                                                    <td>Active / Cleared</td>
+                                                </tr>
+                                                <tr>
+                                                    <td><strong>EWS</strong></td>
+                                                    <td>70.15%</td>
+                                                    <td>Active / Cleared</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+
+                                    <div class="details-full-section" style="margin-top:1.5rem;">
+                                        <h4 style="color: #8b5cf6; font-weight:700; font-family:'Outfit';">Next Steps & Counselling Process</h4>
+                                        <p style="color: var(--text-secondary); line-height: 1.75; font-size: 0.95rem; margin-top:0.5rem;">
+                                            All qualifying candidates whose roll numbers are highlighted in the merit list must prepare documents for the biometric validation and certificate screening. Individual counseling invitations will be sent via registered candidate emails soon.
+                                        </p>
+                                    </div>
+
+                                    <div class="download-callout-panel">
+                                        <h4 style="color: var(--text-primary); margin-bottom: 0.5rem; font-weight: 700;">Direct Merit PDF Downloads</h4>
+                                        <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 1.25rem;">Download final selection indexes or cutoff list directly from secure servers.</p>
+                                        <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+                                            <a href="${job.apply_link || job.official_website_link}" target="_blank" class="download-button-premium">
+                                                📄 Download Merit List (PDF)
+                                            </a>
+                                            <a href="${job.official_website_link}" target="_blank" class="download-button-premium" style="background: var(--bg-secondary); border: 1px solid var(--border-color); color: var(--text-primary); box-shadow: none;">
+                                                📊 Download Official Cutoff
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            `;
+                        } else if (type === 'syllabus') {
+                            html = `
+                                <div class="theme-accent-syllabus">
+                                    <div class="category-visual-header">
+                                        <h2>📖 ${job.title} Exam Syllabus</h2>
+                                        <p>${job.department} &bull; ${job.state} &bull; Topics & Marking Pattern</p>
+                                    </div>
+
+                                    <div class="details-summary-grid">
+                                        <div class="details-summary-item">
+                                            <div style="font-size:0.75rem; text-transform:uppercase; color:var(--text-secondary);">Syllabus Status</div>
+                                            <div style="font-size:1.15rem; font-weight:700; color: #db2777; margin-top:0.25rem;">⭐ OFFICIAL OVERHAUL</div>
+                                        </div>
+                                        <div class="details-summary-item">
+                                            <div style="font-size:0.75rem; text-transform:uppercase; color:var(--text-secondary);">Total Exam Marks</div>
+                                            <div style="font-size:1.15rem; font-weight:700; color: var(--text-primary); margin-top:0.25rem;">200 - 300 Marks</div>
+                                        </div>
+                                        <div class="details-summary-item">
+                                            <div style="font-size:0.75rem; text-transform:uppercase; color:var(--text-secondary);">Negative Marking</div>
+                                            <div style="font-size:1.15rem; font-weight:700; color: #ef4444; margin-top:0.25rem;">0.25 Points / Wrong</div>
+                                        </div>
+                                        <div class="details-summary-item">
+                                            <div style="font-size:0.75rem; text-transform:uppercase; color:var(--text-secondary);">Duration Allowance</div>
+                                            <div style="font-size:1.15rem; font-weight:700; color: var(--text-primary); margin-top:0.25rem;">120 - 180 Minutes</div>
+                                        </div>
+                                    </div>
+
+                                    <div class="details-full-section" style="margin-top:1.5rem;">
+                                        <h4 style="color: #db2777; font-weight:700; font-family:'Outfit';">Exam Scheme & Section Breakdown</h4>
+                                        <p style="color: var(--text-secondary); line-height: 1.75; font-size: 0.95rem; margin-top:0.5rem;">${job.exam_pattern}</p>
+                                    </div>
+
+                                    <div class="details-full-section" style="margin-top:1.5rem;">
+                                        <h4 style="color: #db2777; font-weight:700; font-family:'Outfit';">Important Subjects & Key Syllabus Focus</h4>
+                                        <div class="details-syllabus-container" style="max-height: none; overflow: visible; margin-top:0.5rem; color:var(--text-secondary); line-height:1.75;">
+                                            ${job.description}
+                                        </div>
+                                    </div>
+
+                                    <div class="download-callout-panel">
+                                        <h4 style="color: var(--text-primary); margin-bottom: 0.5rem; font-weight: 700;">Download Official Study Resources</h4>
+                                        <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 1.25rem;">Grab verified syllabus copy and previous year mock papers instantly.</p>
+                                        <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+                                            <a href="${job.official_website_link}" target="_blank" class="download-button-premium">
+                                                📚 Download Detailed Syllabus (PDF)
+                                            </a>
+                                            <a href="${job.official_website_link}" target="_blank" class="download-button-premium" style="background: var(--bg-secondary); border: 1px solid var(--border-color); color: var(--text-primary); box-shadow: none;">
+                                                ✏️ Mock Question Papers
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            `;
+                        } else if (type === 'answer_key') {
+                            html = `
+                                <div class="theme-accent-answer_key">
+                                    <div class="category-visual-header">
+                                        <h2>🔑 ${job.title} Answer Key</h2>
+                                        <p>${job.department} &bull; ${job.state} &bull; Official Key & Objection Window</p>
+                                    </div>
+
+                                    <div class="details-summary-grid">
+                                        <div class="details-summary-grid">
+                                            <div class="details-summary-item">
+                                                <div style="font-size:0.75rem; text-transform:uppercase; color:var(--text-secondary);">Answer Key State</div>
+                                                <div style="font-size:1.15rem; font-weight:700; color: #d97706; margin-top:0.25rem;">📝 ACTIVE / OBJECTION OPEN</div>
+                                            </div>
+                                            <div class="details-summary-item">
+                                                <div style="font-size:0.75rem; text-transform:uppercase; color:var(--text-secondary);">Release Date</div>
+                                                <div style="font-size:1.15rem; font-weight:700; color: var(--text-primary); margin-top:0.25rem;">${job.exam_date}</div>
+                                            </div>
+                                            <div class="details-summary-item">
+                                                <div style="font-size:0.75rem; text-transform:uppercase; color:var(--text-secondary);">Objection Filing Fee</div>
+                                                <div style="font-size:1.15rem; font-weight:700; color: var(--text-primary); margin-top:0.25rem;">₹ 100 / Question</div>
+                                            </div>
+                                            <div class="details-summary-item">
+                                                <div style="font-size:0.75rem; text-transform:uppercase; color:var(--text-secondary);">Closing Date</div>
+                                                <div style="font-size:1.15rem; font-weight:700; color: #ef4444; margin-top:0.25rem;">${job.last_date}</div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="details-full-section" style="margin-top:1.5rem;">
+                                        <h4 style="color: #d97706; font-weight:700; font-family:'Outfit';">Important Objection Filing Milestones</h4>
+                                        <div class="objections-timeline">
+                                            <div class="timeline-milestone">
+                                                <div class="timeline-milestone-title">1. Release of Provisional Key</div>
+                                                <div class="timeline-milestone-desc">Candidates can access their individual exam response sheets along with official answer options.</div>
+                                            </div>
+                                            <div class="timeline-milestone">
+                                                <div class="timeline-milestone-title">2. Objection Submission Gate (OPEN)</div>
+                                                <div class="timeline-milestone-desc">If any answer candidate selected differs from the key, they can upload substantial text book proof.</div>
+                                            </div>
+                                            <div class="timeline-milestone">
+                                                <div class="timeline-milestone-title">3. Announcement of Final Key</div>
+                                                <div class="timeline-milestone-desc">The advisory committee will evaluate objections and launch the overridden final answer key copy.</div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="download-callout-panel">
+                                        <h4 style="color: var(--text-primary); margin-bottom: 0.5rem; font-weight: 700;">Download Keys & File Objections</h4>
+                                        <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 1.25rem;">Check your scores against the keys or raise concerns directly.</p>
+                                        <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+                                            <a href="${job.apply_link || job.official_website_link}" target="_blank" class="download-button-premium">
+                                                🔑 Download Provisional Key (PDF)
+                                            </a>
+                                            <a href="${job.official_website_link}" target="_blank" class="download-button-premium" style="background: var(--bg-secondary); border: 1px solid var(--border-color); color: var(--text-primary); box-shadow: none;">
+                                                🛡️ Raise Key Objections Now
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            `;
+                        } else if (type === 'admission') {
+                            html = `
+                                <div class="theme-accent-admission">
+                                    <div class="category-visual-header">
+                                        <h2>🎓 ${job.title}</h2>
+                                        <p>${job.department} &bull; Entrance & Counselling Board</p>
+                                    </div>
+
+                                    <div class="details-summary-grid">
+                                        <div class="details-summary-item">
+                                            <div style="font-size:0.75rem; text-transform:uppercase; color:var(--text-secondary);">Program Stream</div>
+                                            <div style="font-size:1.15rem; font-weight:700; color: #0891b2; margin-top:0.25rem;">Academic & Technical</div>
+                                        </div>
+                                        <div class="details-summary-item">
+                                            <div style="font-size:0.75rem; text-transform:uppercase; color:var(--text-secondary);">Entrance Exam Fee</div>
+                                            <div style="font-size:1.15rem; font-weight:700; color: var(--text-primary); margin-top:0.25rem;">₹ ${job.application_fee}</div>
+                                        </div>
+                                        <div class="details-summary-item">
+                                            <div style="font-size:0.75rem; text-transform:uppercase; color:var(--text-secondary);">Seat Intake Cap</div>
+                                            <div style="font-size:1.15rem; font-weight:700; color: var(--text-primary); margin-top:0.25rem;">${job.vacancy_count} Open Seats</div>
+                                        </div>
+                                        <div class="details-summary-item">
+                                            <div style="font-size:0.75rem; text-transform:uppercase; color:var(--text-secondary);">Counseling Deadline</div>
+                                            <div style="font-size:1.15rem; font-weight:700; color: #ef4444; margin-top:0.25rem;">${job.last_date}</div>
+                                        </div>
+                                    </div>
+
+                                    <div class="details-full-section" style="margin-top:1.5rem;">
+                                        <h4 style="color: #0891b2; font-weight:700; font-family:'Outfit';">Course Scope & Eligibility Guidelines</h4>
+                                        <p style="color: var(--text-secondary); line-height: 1.75; font-size: 0.95rem; margin-top:0.5rem;">${job.description}</p>
+                                    </div>
+
+                                    <div class="details-full-section" style="margin-top:1.5rem;">
+                                        <h4 style="color: #0891b2; font-weight:700; font-family:'Outfit';">Semester Fee & Academic Allocation</h4>
+                                        <div class="fees-info-grid">
+                                            <div style="background: rgba(255,255,255,0.01); border: 1px solid var(--border-color); padding: 1rem; border-radius: 8px;">
+                                                <div style="font-size:0.75rem; text-transform:uppercase; color:var(--text-secondary);">Regular Stream Fee</div>
+                                                <div style="font-size:1.15rem; font-weight:700; color:var(--text-primary); margin-top:0.25rem;">₹ 25,000 / Year</div>
+                                            </div>
+                                            <div style="background: rgba(255,255,255,0.01); border: 1px solid var(--border-color); padding: 1rem; border-radius: 8px;">
+                                                <div style="font-size:0.75rem; text-transform:uppercase; color:var(--text-secondary);">Selection / Entry Criteria</div>
+                                                <div style="font-size:1.15rem; font-weight:700; color:#0891b2; margin-top:0.25rem;">Entrance Score Merit</div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div style="display: flex; gap: 1rem; margin-top: 2rem; border-top: 1px solid var(--border-color); padding-top: 1.5rem; flex-wrap: wrap;">
+                                        <a href="${job.official_website_link}" target="_blank" class="btn-view" style="flex:1; text-align:center; display:flex; align-items:center; justify-content:center; gap:0.4rem; font-weight:600; text-decoration:none;">
+                                            🌐 Official Admissions Portal
+                                        </a>
+                                        \%isLoggedIn%
+                                    </div>
+                                </div>
+                            `;
+                            html = html.replace('\%isLoggedIn%', isLoggedIn ? `
+                                <button id="modalApplyBtn" class="form-btn" style="flex:1.5; margin-top:0; padding: 0.8rem; background: #0891b2; font-weight:700;" data-id="${job.id}">
+                                    Submit Admissions Form
+                                </button>
+                            ` : `
+                                <button class="form-btn trigger-auth-redirect-btn" style="flex:1.5; margin-top:0; padding: 0.8rem; background: var(--text-secondary); color:#ffffff; font-weight:700;">
+                                    Login to Apply Now
+                                </button>
+                            `);
+                        } else if (type === 'scholarship') {
+                            html = `
+                                <div class="theme-accent-scholarship">
+                                    <div class="category-visual-header">
+                                        <h2>💰 ${job.title} Scheme</h2>
+                                        <p>${job.department} &bull; ${job.state} &bull; Merit & Means Financial Grant</p>
+                                    </div>
+
+                                    <div class="details-summary-grid">
+                                        <div class="details-summary-item">
+                                            <div style="font-size:0.75rem; text-transform:uppercase; color:var(--text-secondary);">Financial Grant Scope</div>
+                                            <div style="font-size:1.15rem; font-weight:700; color: #ea580c; margin-top:0.25rem;">₹ 50,000 / Academic Year</div>
+                                        </div>
+                                        <div class="details-summary-item">
+                                            <div style="font-size:0.75rem; text-transform:uppercase; color:var(--text-secondary);">Income Eligibility Cap</div>
+                                            <div style="font-size:1.15rem; font-weight:700; color: var(--text-primary); margin-top:0.25rem;">&lt; ₹ 2.5 Lakhs / Year</div>
+                                        </div>
+                                        <div class="details-summary-item">
+                                            <div style="font-size:0.75rem; text-transform:uppercase; color:var(--text-secondary);">Allotment Seats Limit</div>
+                                            <div style="font-size:1.15rem; font-weight:700; color: var(--text-primary); margin-top:0.25rem;">${job.vacancy_count} Beneficiaries</div>
+                                        </div>
+                                        <div class="details-summary-item">
+                                            <div style="font-size:0.75rem; text-transform:uppercase; color:var(--text-secondary);">Submission Deadline</div>
+                                            <div style="font-size:1.15rem; font-weight:700; color: #ef4444; margin-top:0.25rem;">${job.last_date}</div>
+                                        </div>
+                                    </div>
+
+                                    <div class="details-full-section" style="margin-top:1.5rem;">
+                                        <h4 style="color: #ea580c; font-weight:700; font-family:'Outfit';">Scholarship Objective & Grant Criteria</h4>
+                                        <p style="color: var(--text-secondary); line-height: 1.75; font-size: 0.95rem; margin-top:0.5rem;">${job.description}</p>
+                                    </div>
+
+                                    <div class="details-full-section" style="margin-top:1.5rem;">
+                                        <h4 style="color: #ea580c; font-weight:700; font-family:'Outfit';">Mandatory Required Documents Checklist</h4>
+                                        <div class="documents-checklist">
+                                            <div class="checklist-item">
+                                                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24" style="margin-right:4px;"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                                                <span>1. Valid Income Certificate verified by local Revenue Inspector (Tahsildar)</span>
+                                            </div>
+                                            <div class="checklist-item">
+                                                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24" style="margin-right:4px;"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                                                <span>2. Candidate Caste & Domicile certificate files</span>
+                                            </div>
+                                            <div class="checklist-item">
+                                                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24" style="margin-right:4px;"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                                                <span>3. Previous Academic year Marks memo Card / Qualifying certificates</span>
+                                            </div>
+                                            <div class="checklist-item">
+                                                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24" style="margin-right:4px;"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                                                <span>4. Candidate Bank Passbook linking Aadhaar profile for direct DBTs</span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div style="display: flex; gap: 1rem; margin-top: 2rem; border-top: 1px solid var(--border-color); padding-top: 1.5rem; flex-wrap: wrap;">
+                                        <a href="${job.official_website_link}" target="_blank" class="btn-view" style="flex:1; text-align:center; display:flex; align-items:center; justify-content:center; gap:0.4rem; font-weight:600; text-decoration:none;">
+                                            🌐 Official Scheme Guidelines
+                                        </a>
+                                        \%isLoggedIn%
+                                    </div>
+                                </div>
+                            `;
+                            html = html.replace('\%isLoggedIn%', isLoggedIn ? `
+                                <button id="modalApplyBtn" class="form-btn" style="flex:1.5; margin-top:0; padding: 0.8rem; background: #ea580c; font-weight:700;" data-id="${job.id}">
+                                    Apply Scholarship Now
+                                </button>
+                            ` : `
+                                <button class="form-btn trigger-auth-redirect-btn" style="flex:1.5; margin-top:0; padding: 0.8rem; background: var(--text-secondary); color:#ffffff; font-weight:700;">
+                                    Login to Apply Now
+                                </button>
+                            `);
+                        } else {
+                            html = `
+                                <div class="theme-accent-notice">
+                                    <div class="category-visual-header">
+                                        <h2>📢 ${job.title}</h2>
+                                        <p>${job.department} &bull; ${job.state} &bull; Official Important Alert</p>
+                                    </div>
+
+                                    <div class="notice-critical-alert">
+                                        <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" style="margin-top: 2px; flex-shrink: 0;"><path d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                                        <div>
+                                            <strong>Critical Calendar Notice:</strong> The examination date has been scheduled/updated. Please review the official notice specifications below and align your schedules.
+                                        </div>
+                                    </div>
+
+                                    <div class="details-summary-grid">
+                                        <div class="details-summary-item">
+                                            <div style="font-size:0.75rem; text-transform:uppercase; color:var(--text-secondary);">Announced Exam Date</div>
+                                            <div style="font-size:1.15rem; font-weight:700; color: #dc2626; margin-top:0.25rem;">${job.exam_date}</div>
+                                        </div>
+                                        <div class="details-summary-item">
+                                            <div style="font-size:0.75rem; text-transform:uppercase; color:var(--text-secondary);">Notice Published Date</div>
+                                            <div style="font-size:1.15rem; font-weight:700; color: var(--text-primary); margin-top:0.25rem;">${job.last_date}</div>
+                                        </div>
+                                    </div>
+
+                                    <div class="details-full-section" style="margin-top:1.5rem;">
+                                        <h4 style="color: #dc2626; font-weight:700; font-family:'Outfit';">Important Circular Specifications</h4>
+                                        <p style="color: var(--text-secondary); line-height: 1.75; font-size: 0.95rem; margin-top:0.5rem;">${job.description}</p>
+                                    </div>
+
+                                    <div class="download-callout-panel">
+                                        <h4 style="color: var(--text-primary); margin-bottom: 0.5rem; font-weight: 700;">Download Official Circular</h4>
+                                        <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 1.25rem;">Download the full, official notice PDF released by the department.</p>
+                                        <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+                                            <a href="${job.official_website_link}" target="_blank" class="download-button-premium">
+                                                📄 Download Official Notice (PDF)
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            `;
+                        }
+
+                        $('#modalRealContent').html(html);
                         $('#applicationFormJobId').val(job.id);
                         
                         $('#modalSkeletonLoader').hide();
@@ -1025,8 +2336,8 @@
             }
         });
 
-        // Show application form section inside details modal
-        $('#modalApplyBtn').on('click', function() {
+        // Show application form section inside details modal (delegated for dynamic elements)
+        $(document).on('click', '#modalApplyBtn', function() {
             $('#modalRealContent').hide();
             $('#modalApplicationFormBlock').fadeIn();
         });
@@ -1474,12 +2785,12 @@
                 success: function(res) {
                     if (res.status === 'success') {
                         let html = '';
-                        res.users.forEach(u => {
+                        res.data.users.forEach(u => {
                             const isActiveBadge = u.is_active ? '<span class="status-badge status-shortlisted">Active</span>' : '<span class="status-badge status-rejected">Suspended</span>';
                             const roleBadge = u.role === 'admin' ? '<span class="role-badge role-admin">Admin</span>' : '<span class="role-badge role-candidate">Candidate</span>';
                             const toggleRoleBtnText = u.role === 'admin' ? 'Demote Candidate' : 'Promote Admin';
                             const toggleActiveBtnText = u.is_active ? 'Suspend' : 'Activate';
-                            const activeBtnClass = u.is_active ? 'btn-sm-danger' : 'btn-view btn-view-sm';
+                            const activeBtnClass = u.is_active ? 'btn-sm-danger' : 'btn-sm-success';
                             
                             html += `
                                 <tr>

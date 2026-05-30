@@ -7,19 +7,25 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Builder;
+
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class JobPost extends Model
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes;
 
     protected $table = 'job_posts';
 
     protected $fillable = [
         'department_id',
         'state_id',
+        'district_id',
         'qualification_id',
         'category_id',
+        'source_id',
+        'post_type',
         'title',
         'slug',
         'description',
@@ -37,7 +43,10 @@ class JobPost extends Model
         'exam_date',
         'status',
         'published_at',
-        'is_featured'
+        'is_featured',
+        'is_historical',
+        'fingerprint',
+        'expires_at',
     ];
 
     protected $casts = [
@@ -49,6 +58,8 @@ class JobPost extends Model
         'exam_date' => 'date',
         'published_at' => 'datetime',
         'is_featured' => 'boolean',
+        'is_historical' => 'boolean',
+        'expires_at' => 'date',
     ];
 
     /*
@@ -62,6 +73,11 @@ class JobPost extends Model
         return $this->belongsTo(Category::class);
     }
 
+    public function source(): BelongsTo
+    {
+        return $this->belongsTo(ScrapingSource::class, 'source_id');
+    }
+
     public function department(): BelongsTo
     {
         return $this->belongsTo(Department::class);
@@ -70,6 +86,11 @@ class JobPost extends Model
     public function state(): BelongsTo
     {
         return $this->belongsTo(State::class);
+    }
+
+    public function district(): BelongsTo
+    {
+        return $this->belongsTo(District::class);
     }
 
     public function qualification(): BelongsTo
@@ -92,11 +113,78 @@ class JobPost extends Model
         return $this->hasMany(JobApplication::class);
     }
 
+    /**
+     * Get the AI-generated content associated with this job post.
+     */
+    public function aiContent(): HasOne
+    {
+        return $this->hasOne(JobPostAiContent::class, 'job_post_id');
+    }
+
+    /**
+     * All duplicate audit events where this post was the incoming (rejected) record.
+     */
+    public function duplicationLogs(): HasMany
+    {
+        return $this->hasMany(DuplicateAuditLog::class, 'job_post_id');
+    }
+
+    /**
+     * All duplicate audit events where this post was chosen as the canonical master.
+     */
+    public function duplicatesBlocked(): HasMany
+    {
+        return $this->hasMany(DuplicateAuditLog::class, 'master_job_post_id');
+    }
+
     /*
     |--------------------------------------------------------------------------
     | Query Scopes for AJAX Filtering & Searches
     |--------------------------------------------------------------------------
     */
+
+    /**
+     * Scopes for post type categorization.
+     */
+    public function scopeJobs(Builder $query): Builder
+    {
+        return $query->where('post_type', 'job');
+    }
+
+    public function scopeResults(Builder $query): Builder
+    {
+        return $query->where('post_type', 'result');
+    }
+
+    public function scopeAdmitCards(Builder $query): Builder
+    {
+        return $query->where('post_type', 'admit_card');
+    }
+
+    public function scopeAnswerKeys(Builder $query): Builder
+    {
+        return $query->where('post_type', 'answer_key');
+    }
+
+    public function scopeSyllabi(Builder $query): Builder
+    {
+        return $query->where('post_type', 'syllabus');
+    }
+
+    public function scopeNotices(Builder $query): Builder
+    {
+        return $query->where('post_type', 'notice');
+    }
+
+    public function scopeAdmissions(Builder $query): Builder
+    {
+        return $query->where('post_type', 'admission');
+    }
+
+    public function scopeScholarships(Builder $query): Builder
+    {
+        return $query->where('post_type', 'scholarship');
+    }
 
     /**
      * Scope to retrieve only published posts.
@@ -127,9 +215,31 @@ class JobPost extends Model
             return $query;
         }
 
+        // Clean the search term to prevent syntax errors
+        $term = trim(preg_replace('/[+\-><()~*\"@]+/u', ' ', $term));
+
+        if (empty($term)) {
+            return $query;
+        }
+
+        $connection = $query->getConnection();
+        $driver = $connection->getDriverName();
+
+        if ($driver === 'mysql') {
+            return $query->whereRaw(
+                "MATCH(title, description) AGAINST(? IN BOOLEAN MODE)",
+                [$term . '*']
+            );
+        }
+
         return $query->where(function ($q) use ($term) {
-            $q->where('title', 'like', "%{$term}%")
-              ->orWhere('description', 'like', "%{$term}%");
+            $words = array_filter(explode(' ', $term));
+            foreach ($words as $word) {
+                $q->where(function ($sub) use ($word) {
+                    $sub->where('title', 'like', "%{$word}%")
+                        ->orWhere('description', 'like', "%{$word}%");
+                });
+            }
         });
     }
 
@@ -140,6 +250,8 @@ class JobPost extends Model
     {
         return $query->when(!empty($filters['state_id']), function ($q) use ($filters) {
             $q->where('state_id', $filters['state_id']);
+        })->when(!empty($filters['district_id']), function ($q) use ($filters) {
+            $q->where('district_id', $filters['district_id']);
         })->when(!empty($filters['category_id']), function ($q) use ($filters) {
             $q->where('category_id', $filters['category_id']);
         })->when(!empty($filters['qualification_id']), function ($q) use ($filters) {
