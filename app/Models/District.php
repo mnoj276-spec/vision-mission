@@ -4,24 +4,25 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-class State extends Model
+class District extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['name', 'code', 'slug'];
+    protected $fillable = ['state_id', 'name', 'slug'];
 
     /**
-     * Get all districts associated with this state.
+     * Get the state that owns this district.
      */
-    public function districts(): HasMany
+    public function state(): BelongsTo
     {
-        return $this->hasMany(District::class);
+        return $this->belongsTo(State::class);
     }
 
     /**
-     * Get all job postings located in this state.
+     * Get all job postings located in this district.
      */
     public function jobPosts(): HasMany
     {

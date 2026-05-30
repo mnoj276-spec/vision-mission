@@ -20,6 +20,7 @@ class JobPost extends Model
     protected $fillable = [
         'department_id',
         'state_id',
+        'district_id',
         'qualification_id',
         'category_id',
         'source_id',
@@ -84,6 +85,11 @@ class JobPost extends Model
     public function state(): BelongsTo
     {
         return $this->belongsTo(State::class);
+    }
+
+    public function district(): BelongsTo
+    {
+        return $this->belongsTo(District::class);
     }
 
     public function qualification(): BelongsTo
@@ -235,6 +241,8 @@ class JobPost extends Model
     {
         return $query->when(!empty($filters['state_id']), function ($q) use ($filters) {
             $q->where('state_id', $filters['state_id']);
+        })->when(!empty($filters['district_id']), function ($q) use ($filters) {
+            $q->where('district_id', $filters['district_id']);
         })->when(!empty($filters['category_id']), function ($q) use ($filters) {
             $q->where('category_id', $filters['category_id']);
         })->when(!empty($filters['qualification_id']), function ($q) use ($filters) {
