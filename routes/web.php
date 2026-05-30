@@ -22,6 +22,15 @@ Route::get('/state-jobs',   [JobController::class, 'stateJobs'])->name('seo.stat
 // Automated XML Sitemap
 Route::get('/sitemap.xml',  [JobController::class, 'sitemap'])->name('sitemap');
 
+// ─── Advanced Search System Routes ──────────────────────────────────────────
+use App\Domains\Jobs\Controllers\SearchController;
+
+Route::get('/search', [SearchController::class, 'search'])->name('search.index');
+Route::get('/search/state/{state_slug}', [SearchController::class, 'stateSearch'])->name('search.state');
+Route::get('/search/category/{category_slug}', [SearchController::class, 'categorySearch'])->name('search.category');
+Route::get('/search/qualification/{qualification_slug}', [SearchController::class, 'qualificationSearch'])->name('search.qualification');
+Route::get('/search/organization/{department_slug}', [SearchController::class, 'organizationSearch'])->name('search.organization');
+
 // Lead Capture & Growth Analytics APIs
 Route::post('/api/growth/subscribe', [JobController::class, 'subscribeAlerts'])->name('growth.subscribe');
 Route::post('/api/growth/track',     [JobController::class, 'trackEvent'])->name('growth.track');

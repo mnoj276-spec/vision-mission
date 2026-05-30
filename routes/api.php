@@ -18,6 +18,8 @@ use Illuminate\Support\Facades\Route;
 
 // ─── Public Endpoints ────────────────────────────────────────────────────────
 Route::get('/jobs/{slug}',       [JobController::class, 'show'])->name('jobs.show');
+Route::get('/search/autocomplete', [\App\Domains\Jobs\Controllers\SearchController::class, 'apiAutocomplete'])->name('api.search.autocomplete');
+Route::get('/search/typo',         [\App\Domains\Jobs\Controllers\SearchController::class, 'apiTypoCorrection'])->name('api.search.typo');
 
 // ─── Authentication ───────────────────────────────────────────────────────────
 Route::post('/register',         [AuthController::class, 'register'])->name('register');

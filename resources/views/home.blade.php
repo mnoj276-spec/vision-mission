@@ -317,6 +317,88 @@
         border-radius: 4px;
         letter-spacing: 0.08em;
     }
+    /* Autocomplete Suggestions Menu */
+    .autocomplete-dropdown {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        background: var(--bg-secondary);
+        border: 1px solid var(--border-color);
+        border-radius: 12px;
+        margin-top: 0.5rem;
+        max-height: 350px;
+        overflow-y: auto;
+        z-index: 1000;
+        box-shadow: 0 15px 35px -5px rgba(0,0,0,0.25);
+        display: none;
+        backdrop-filter: blur(14px);
+    }
+    .autocomplete-section {
+        border-bottom: 1px solid var(--border-color);
+        padding-bottom: 0.5rem;
+    }
+    .autocomplete-section:last-child {
+        border-bottom: none;
+    }
+    .autocomplete-header {
+        font-size: 0.72rem;
+        font-weight: 800;
+        text-transform: uppercase;
+        color: var(--accent-color);
+        letter-spacing: 0.08em;
+        padding: 0.75rem 1rem 0.4rem 1rem;
+        display: flex;
+        align-items: center;
+        gap: 0.4rem;
+        background: rgba(255,255,255,0.01);
+    }
+    .autocomplete-item {
+        padding: 0.6rem 1.25rem;
+        font-size: 0.88rem;
+        color: var(--text-secondary);
+        cursor: pointer;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        transition: all 0.15s ease;
+    }
+    .autocomplete-item:hover {
+        background: rgba(37, 99, 235, 0.08);
+        color: var(--text-primary);
+        padding-left: 1.5rem;
+    }
+    .autocomplete-item .badge-type {
+        font-size: 0.68rem;
+        font-weight: 700;
+        background: rgba(255,255,255,0.04);
+        padding: 0.15rem 0.4rem;
+        border-radius: 4px;
+        color: var(--text-secondary);
+    }
+    .typo-banner {
+        background: rgba(245, 158, 11, 0.08);
+        border: 1.5px solid rgba(245, 158, 11, 0.2);
+        color: #f59e0b;
+        padding: 0.85rem 1.25rem;
+        border-radius: 10px;
+        margin-bottom: 1.5rem;
+        font-size: 0.95rem;
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
+        animation: slideDown 0.3s ease;
+        font-weight: 500;
+    }
+    .typo-banner a {
+        color: var(--text-primary);
+        text-decoration: underline;
+        font-weight: 700;
+        cursor: pointer;
+    }
+    .typo-banner a:hover {
+        color: var(--accent-color);
+    }
 </style>
 
 <div style="max-width: 1400px; margin: 0 auto; padding: 0 5%;">
@@ -606,9 +688,13 @@
 
     <!-- 8. Interactive Search Filters Panel (original Search Compass) -->
     <div class="main-grid" style="margin-bottom: 0px; padding-bottom: 0px;" id="interactive-finder">
-        <div class="glass-panel search-compass" style="border-left: 4px solid var(--accent-color);">
-            <div>
+        <!-- Typo Correction Banner -->
+        <div id="homeTypoBanner" style="display: none; grid-column: 1 / -1; margin-bottom: 1rem;"></div>
+
+        <div class="glass-panel search-compass" style="border-left: 4px solid var(--accent-color); overflow: visible;">
+            <div style="position: relative;">
                 <input type="text" id="searchKeywords" placeholder="Search keywords (e.g. UPSC, RBI officer)..." autocomplete="off">
+                <div class="autocomplete-dropdown" id="autocompleteDropdown" style="position: absolute; top: 100%; left: 0; right: 0; background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: 12px; margin-top: 0.5rem; max-height: 350px; overflow-y: auto; z-index: 1000; box-shadow: 0 15px 35px -5px rgba(0,0,0,0.25); display: none; text-align: left; backdrop-filter: blur(14px);"></div>
             </div>
             <div>
                 <select id="stateSelect">
@@ -1545,11 +1631,133 @@
 
         // Search Input Keyup Debouncing
         let searchTimeout = null;
+        let autocompleteTimeout = null;
+
         $('#searchKeywords').on('keyup', function() {
+            const query = $(this).val();
+
             clearTimeout(searchTimeout);
             searchTimeout = setTimeout(function() {
                 fetchJobs(1);
+
+                // Fetch typo suggestion in the background
+                if (query.trim().length > 0) {
+                    $.ajax({
+                        url: '/api/search/typo',
+                        type: 'GET',
+                        data: { q: query },
+                        success: function(res) {
+                            if (res.status === 'success' && res.data.suggestion) {
+                                $('#homeTypoBanner').html(`
+                                    <div class="typo-banner">
+                                        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                                        <span>Did you mean: <a id="homeSuggestedQueryLink" href="#" data-query="${res.data.suggestion}">${res.data.suggestion}</a> ?</span>
+                                    </div>
+                                `).fadeIn();
+                            } else {
+                                $('#homeTypoBanner').hide().empty();
+                            }
+                        }
+                    });
+                } else {
+                    $('#homeTypoBanner').hide().empty();
+                }
             }, 300);
+
+            // Autocomplete suggest matching
+            clearTimeout(autocompleteTimeout);
+            if (query.trim().length < 2) {
+                $('#autocompleteDropdown').hide().empty();
+                return;
+            }
+
+            autocompleteTimeout = setTimeout(function() {
+                $.ajax({
+                    url: '/api/search/autocomplete',
+                    type: 'GET',
+                    data: { q: query },
+                    success: function(res) {
+                        if (res.status === 'success') {
+                            const data = res.data;
+                            let html = '';
+                            let totalSuggestions = 0;
+
+                            if (data.jobs && data.jobs.length > 0) {
+                                html += `<div class="autocomplete-section">
+                                    <div class="autocomplete-header">💼 Jobs Found</div>`;
+                                data.jobs.forEach(item => {
+                                    html += `<div class="autocomplete-item select-suggest-job" data-slug="${item.slug}">
+                                        <span>${item.title}</span>
+                                        <span class="badge-type">${item.post_type}</span>
+                                    </div>`;
+                                });
+                                html += `</div>`;
+                                totalSuggestions += data.jobs.length;
+                            }
+
+                            if (data.categories && data.categories.length > 0) {
+                                html += `<div class="autocomplete-section">
+                                    <div class="autocomplete-header">📁 Streams</div>`;
+                                data.categories.forEach(item => {
+                                    html += `<div class="autocomplete-item select-suggest-slug" data-type="category" data-slug="${item.slug}">
+                                        <span>${item.name} board listings</span>
+                                        <span class="badge-type">stream</span>
+                                    </div>`;
+                                });
+                                html += `</div>`;
+                                totalSuggestions += data.categories.length;
+                            }
+
+                            if (data.states && data.states.length > 0) {
+                                html += `<div class="autocomplete-section">
+                                    <div class="autocomplete-header">📍 Regions</div>`;
+                                data.states.forEach(item => {
+                                    html += `<div class="autocomplete-item select-suggest-slug" data-type="state" data-slug="${item.slug}">
+                                        <span>Jobs located in ${item.name}</span>
+                                        <span class="badge-type">region</span>
+                                    </div>`;
+                                });
+                                html += `</div>`;
+                                totalSuggestions += data.states.length;
+                            }
+
+                            if (totalSuggestions > 0) {
+                                $('#autocompleteDropdown').html(html).fadeIn();
+                            } else {
+                                $('#autocompleteDropdown').hide().empty();
+                            }
+                        }
+                    }
+                });
+            }, 150);
+        });
+
+        // Autocomplete click actions on homepage
+        $(document).on('click', '.select-suggest-job', function() {
+            const slug = $(this).data('slug');
+            window.location.href = `/job/${slug}`;
+        });
+
+        $(document).on('click', '.select-suggest-slug', function() {
+            const type = $(this).data('type');
+            const slug = $(this).data('slug');
+            window.location.href = `/search/${type}/${slug}`;
+        });
+
+        // Hide autocomplete when clicking outside input
+        $(document).on('click', function(e) {
+            if (!$(e.target).closest('#interactive-finder').length) {
+                $('#autocompleteDropdown').hide();
+            }
+        });
+
+        // Suggested typo link clicked handler
+        $(document).on('click', '#homeSuggestedQueryLink', function(e) {
+            e.preventDefault();
+            const query = $(this).data('query');
+            $('#searchKeywords').val(query);
+            $('#homeTypoBanner').hide().empty();
+            fetchJobs(1);
         });
 
         $(document).on('click', '.page-link', function(e) {

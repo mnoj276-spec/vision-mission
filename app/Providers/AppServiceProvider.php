@@ -32,6 +32,10 @@ class AppServiceProvider extends ServiceProvider
         // ─── Jobs Domain ──────────────────────────────────────────────────────
         $this->app->bind(JobRepositoryInterface::class, JobRepository::class);
         $this->app->bind(JobServiceInterface::class,    JobService::class);
+        $this->app->bind(
+            \App\Domains\Jobs\Services\Contracts\SearchServiceInterface::class,
+            \App\Domains\Jobs\Services\SearchService::class
+        );
 
         // ─── Scrapers Domain ──────────────────────────────────────────────────
         $this->app->bind(ScrapingSourceRepositoryInterface::class, ScrapingSourceRepository::class);
