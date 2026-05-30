@@ -62,16 +62,22 @@ Route::get('/jobs/psu', [ProgrammaticSeoController::class, 'psuJobs'])->name('se
 Route::get('/jobs/state/{state_slug}', [ProgrammaticSeoController::class, 'stateJobs'])->name('seo.dynamic_state');
 Route::get('/jobs/state/{state_slug}/{district_slug}', [ProgrammaticSeoController::class, 'districtJobs'])->name('seo.dynamic_district');
 
-// Standalone Crawler-Friendly Individual Detail Pages
-Route::get('/job/{slug}', [ProgrammaticSeoController::class, 'showJob'])->name('seo.job_detail');
-Route::get('/result/{slug}', [ProgrammaticSeoController::class, 'showJob'])->name('seo.result_detail');
-Route::get('/admit-card/{slug}', [ProgrammaticSeoController::class, 'showJob'])->name('seo.admit_card_detail');
-Route::get('/answer-key/{slug}', [ProgrammaticSeoController::class, 'showJob'])->name('seo.answer_key_detail');
-Route::get('/syllabus/{slug}', [ProgrammaticSeoController::class, 'showJob'])->name('seo.syllabus_detail');
+// Standalone Crawler-Friendly Individual Detail Pages (with Crawl Optimization Headers)
+Route::middleware('internal_linking')->group(function () {
+    Route::get('/job/{slug}', [ProgrammaticSeoController::class, 'showJob'])->name('seo.job_detail');
+    Route::get('/result/{slug}', [ProgrammaticSeoController::class, 'showJob'])->name('seo.result_detail');
+    Route::get('/admit-card/{slug}', [ProgrammaticSeoController::class, 'showJob'])->name('seo.admit_card_detail');
+    Route::get('/answer-key/{slug}', [ProgrammaticSeoController::class, 'showJob'])->name('seo.answer_key_detail');
+    Route::get('/syllabus/{slug}', [ProgrammaticSeoController::class, 'showJob'])->name('seo.syllabus_detail');
+});
 
 // Dynamic Google News Compliant News Sitemap
 Route::get('/news-sitemap.xml', [ProgrammaticSeoController::class, 'newsSitemap'])->name('seo.news_sitemap');
 
 // ─── Developer Interactive OpenAPI Documentation ────────────────────────────
 Route::get('/docs', [\App\Http\Controllers\Api\DocsController::class, 'index'])->name('api.docs');
+
+// ─── Internal Link Click Tracking ───────────────────────────────────────────
+Route::post('/api/internal-link/click', [ProgrammaticSeoController::class, 'trackLinkClick'])
+    ->name('internal_link.track');
 

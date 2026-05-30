@@ -406,6 +406,14 @@
             </div>
         </section>
     </article>
+
+    {{-- ─── Automated Internal Linking System ────────────────────────────── --}}
+    @if(!empty($internalLinks))
+        @include('components.internal-linking.related-links', [
+            'links' => $internalLinks,
+            'currentJob' => $job,
+        ])
+    @endif
 </div>
 
 <!-- Render Schema Markup (JSON-LD) -->

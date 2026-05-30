@@ -473,59 +473,8 @@
         </div>
     </div>
 
-    <!-- Automated Internal Linking Explorer Component for Programmatic Crawling -->
-    <section class="seo-explorer-card">
-        <h3 style="font-family: 'Outfit'; font-size: 1.25rem; display: flex; align-items: center; gap: 0.5rem;">
-            <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" style="color: var(--accent-color);"><path d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"></path></svg>
-            Explore More Government Job Hubs
-        </h3>
-        <p style="font-size: 0.85rem; color: var(--text-secondary); margin-top: 0.25rem;">Navigate our search networks for alternative recruitments, exam schedules, and circular announcements.</p>
-        
-        <div class="seo-explorer-grid">
-            <!-- Col 1: Explore State Wise -->
-            <div class="seo-explorer-col">
-                <h4>State Wise Jobs</h4>
-                <ul class="seo-explorer-list">
-                    @foreach($explorer['states'] as $st)
-                        <li><a href="{{ route('seo.dynamic_state', ['state_slug' => $st->slug]) }}">📍 {{ $st->name }} Jobs</a></li>
-                    @endforeach
-                    <li><a href="{{ route('seo.state') }}">View All States &raquo;</a></li>
-                </ul>
-            </div>
-
-            <!-- Col 2: Explore Districts (if state context) -->
-            @if(count($explorer['districts']) > 0)
-                <div class="seo-explorer-col">
-                    <h4>Sister Districts</h4>
-                    <ul class="seo-explorer-list">
-                        @foreach($explorer['districts'] as $dist)
-                            <li><a href="{{ route('seo.dynamic_district', ['state_slug' => $dist->state->slug, 'district_slug' => $dist->slug]) }}">🏢 Jobs in {{ $dist->name }}</a></li>
-                        @endforeach
-                    </ul>
-                </div>
-            @endif
-
-            <!-- Col 3: Explore Categories -->
-            <div class="seo-explorer-col">
-                <h4>Trending Sectors</h4>
-                <ul class="seo-explorer-list">
-                    @foreach($explorer['categories'] as $catTitle => $catUrl)
-                        <li><a href="{{ $catUrl }}">💼 {{ $catTitle }} Recruitments</a></li>
-                    @endforeach
-                </ul>
-            </div>
-
-            <!-- Col 4: Exam Utilities -->
-            <div class="seo-explorer-col">
-                <h4>Utilities Hub</h4>
-                <ul class="seo-explorer-list">
-                    @foreach($explorer['utilities'] as $utilTitle => $utilUrl)
-                        <li><a href="{{ $utilUrl }}">✓ {{ $utilTitle }}</a></li>
-                    @endforeach
-                </ul>
-            </div>
-        </div>
-    </section>
+    {{-- ─── Enhanced Internal Linking Explorer Component ────────────────── --}}
+    @include('components.internal-linking.landing-links', ['explorer' => $explorer])
 </div>
 
 <!-- Structured Schema Markup (JSON-LD) -->

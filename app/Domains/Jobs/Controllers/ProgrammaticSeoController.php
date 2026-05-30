@@ -8,16 +8,19 @@ use App\Models\District;
 use App\Models\JobPost;
 use App\Models\Category;
 use App\Domains\Jobs\Services\SeoService;
+use App\Domains\Jobs\Services\InternalLinkingService;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 
 class ProgrammaticSeoController extends Controller
 {
     protected SeoService $seoService;
+    protected InternalLinkingService $linkingService;
 
-    public function __construct(SeoService $seoService)
+    public function __construct(SeoService $seoService, InternalLinkingService $linkingService)
     {
         $this->seoService = $seoService;
+        $this->linkingService = $linkingService;
     }
 
     /**
@@ -31,8 +34,8 @@ class ProgrammaticSeoController extends Controller
         $this->logEvent('page_view', request()->getPathInfo());
         $funnelMetrics = $this->getFunnelMetrics(request()->getPathInfo(), $categoryName);
 
-        // Get internal links for footer explorer
-        $explorerData = $this->getExplorerLinks($type, $seoParams);
+        // Get enhanced internal links for footer explorer
+        $explorerData = $this->linkingService->getLinksForLandingPage($type, $seoParams);
 
         return view('seo_landing_dynamic', [
             'pageTitle' => $seo['meta_title'],
@@ -314,6 +317,9 @@ class ProgrammaticSeoController extends Controller
             app(\App\Services\AnalyticsService::class)->trackJobEvent($job->id, 'view');
         } catch (\Exception $e) {}
 
+        // Build automated internal links for this detail page
+        $internalLinks = $this->linkingService->getLinksForDetailPage($job);
+
         return view('seo_detail', [
             'job' => $job,
             'aiContent' => $aiContent,
@@ -322,7 +328,8 @@ class ProgrammaticSeoController extends Controller
             'metaKeywords' => $seo['meta_keywords'],
             'pageHeader' => $seo['page_header'],
             'breadcrumbs' => $seo['breadcrumbs'],
-            'schema' => $schema
+            'schema' => $schema,
+            'internalLinks' => $internalLinks,
         ]);
     }
 
@@ -383,41 +390,18 @@ class ProgrammaticSeoController extends Controller
     }
 
     /**
-     * Builds list of related internal links for bots (Internal Linking).
+     * Track internal link click events for analytics.
      */
-    protected function getExplorerLinks(string $type, array $params): array
+    public function trackLinkClick(Request $request)
     {
-        $states = State::where('code', '!=', 'CENTRAL')->limit(5)->get();
-        $districts = collect();
-        $categories = [
-            'Railway' => route('seo.dynamic_railway'),
-            'Banking' => route('seo.dynamic_banking'),
-            'SSC Board' => route('seo.dynamic_ssc'),
-            'UPSC Exams' => route('seo.dynamic_upsc'),
-            'Defence' => route('seo.dynamic_defence'),
-            'PSUs' => route('seo.dynamic_psu'),
-        ];
-        
-        $utilities = [
-            'Exam Results' => route('seo.results'),
-            'Admit Cards' => route('seo.admit_cards'),
-            'Answer Keys' => route('seo.answer_keys'),
-            'Syllabus PDF' => route('seo.syllabus'),
-        ];
+        $this->linkingService->trackClick([
+            'source_id'  => $request->input('source_id'),
+            'target_id'  => $request->input('target_id'),
+            'target_url' => $request->input('target_url', ''),
+            'section'    => $request->input('section', 'unknown'),
+            'anchor'     => $request->input('anchor', ''),
+        ]);
 
-        if ($type === 'state' || $type === 'district') {
-            $stateName = $params['state_name'] ?? '';
-            $state = State::where('name', $stateName)->first();
-            if ($state) {
-                $districts = District::where('state_id', $state->id)->get();
-            }
-        }
-
-        return [
-            'states' => $states,
-            'districts' => $districts,
-            'categories' => $categories,
-            'utilities' => $utilities
-        ];
+        return response()->json(['status' => 'tracked'], 200);
     }
 }

@@ -19,6 +19,7 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withCommands([
         \App\Domains\Scrapers\Commands\RunScraperCommand::class,
+        \App\Console\Commands\WarmInternalLinksCache::class,
     ])
     ->withMiddleware(function (Middleware $middleware): void {
         // Register security middleware aliases
@@ -29,6 +30,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'permission'         => \App\Http\Middleware\CheckPermission::class,
             'spatie_role'        => \Spatie\Permission\Middleware\RoleMiddleware::class,
             'spatie_permission'  => \Spatie\Permission\Middleware\PermissionMiddleware::class,
+            'internal_linking'   => \App\Http\Middleware\InternalLinkingHeaders::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
