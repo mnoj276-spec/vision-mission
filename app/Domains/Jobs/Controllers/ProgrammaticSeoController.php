@@ -262,17 +262,56 @@ class ProgrammaticSeoController extends Controller
     public function showJob(string $slug)
     {
         $job = JobPost::published()
-            ->with(['category', 'department', 'state', 'qualification', 'district', 'tags'])
+            ->with(['category', 'department', 'state', 'qualification', 'district', 'tags', 'aiContent'])
             ->where('slug', $slug)
             ->firstOrFail();
 
         $seo = $this->seoService->getMetadata('detail', ['job' => $job]);
         $schema = $this->seoService->getJobSchema($job);
 
+        // Retrieve and override using approved AI content
+        $aiContent = ($job->aiContent && $job->aiContent->status === 'approved') ? $job->aiContent : null;
+        if ($aiContent) {
+            if (!empty($aiContent->meta_title)) {
+                $seo['meta_title'] = $aiContent->meta_title;
+            }
+            if (!empty($aiContent->meta_description)) {
+                $seo['meta_description'] = $aiContent->meta_description;
+            }
+            if (!empty($aiContent->schema_content)) {
+                $schema = array_merge($schema, $aiContent->schema_content);
+            }
+            
+            // Inject FAQ Page schema if FAQs are defined
+            if (!empty($aiContent->faqs) && is_array($aiContent->faqs)) {
+                $faqSchema = [
+                    '@context' => 'https://schema.org',
+                    '@type' => 'FAQPage',
+                    'mainEntity' => []
+                ];
+                foreach ($aiContent->faqs as $faq) {
+                    if (!empty($faq['question']) && !empty($faq['answer'])) {
+                        $faqSchema['mainEntity'][] = [
+                            '@type' => 'Question',
+                            'name' => $faq['question'],
+                            'acceptedAnswer' => [
+                                '@type' => 'Answer',
+                                'text' => strip_tags($faq['answer'])
+                            ]
+                        ];
+                    }
+                }
+                
+                // Nest FAQ inside standard schema or pass it along
+                $schema['mainEntity'] = $faqSchema['mainEntity'];
+            }
+        }
+
         $this->logEvent('page_view', "/job/{$slug}");
 
         return view('seo_detail', [
             'job' => $job,
+            'aiContent' => $aiContent,
             'pageTitle' => $seo['meta_title'],
             'metaDescription' => $seo['meta_description'],
             'metaKeywords' => $seo['meta_keywords'],

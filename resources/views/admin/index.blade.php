@@ -21,6 +21,7 @@
             <button class="admin-nav-btn" data-block="queues"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="2" y="2" width="20" height="8" rx="2" ry="2"></rect><rect x="2" y="14" width="20" height="8" rx="2" ry="2"></rect><line x1="6" y1="6" x2="6.01" y2="6"></line><line x1="6" y1="18" x2="6.01" y2="18"></line></svg> Queue Engine & DLQ</button>
             <button class="admin-nav-btn" data-block="seo"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg> SEO & Content Cache</button>
             <button class="admin-nav-btn" data-block="audit"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg> Audit Activity Logs</button>
+            <button class="admin-nav-btn" data-block="ai-content"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="12 2 2 7 12 12 22 7 12 2"></polygon><polyline points="2 17 12 22 22 17"></polyline><polyline points="2 12 12 17 22 12"></polyline></svg> AI Content Manager</button>
         </div>
         
         <div style="margin-top: 3rem; text-align: center;">
@@ -460,6 +461,75 @@
                 <div class="pagination-container" id="queues-failed-pagination" style="margin-top: 1.5rem;"></div>
             </div>
         </section>
+
+        <!-- ================= PANEL 9: AI CONTENT MANAGER ================= -->
+        <section class="admin-panel-block" id="admin-ai-content" style="display: none;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                <h2 style="font-family: 'Outfit'; font-size: 1.75rem; margin: 0;">AI Content Generation Console</h2>
+                <div style="display: flex; gap: 0.75rem; align-items: center;">
+                    <span style="font-size: 0.85rem; color: var(--text-secondary);">Active AI Engine:</span>
+                    <span id="ai-telemetry-engine" class="badge" style="background: rgba(37, 99, 235, 0.15); color: var(--accent-color); font-weight: 700; padding: 0.4rem 0.8rem; border-radius: 6px; text-transform: uppercase;">GEMINI</span>
+                </div>
+            </div>
+
+            <!-- AI Telemetry Stats -->
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem; margin-bottom: 2rem;">
+                <div class="glass-panel stat-card-premium" style="border-left: 5px solid var(--accent-color);">
+                    <div class="label">Total AI Enriched Posts</div>
+                    <div class="number" id="ai-stat-total">0</div>
+                    <div class="subtext">Completed or pending generation</div>
+                </div>
+                <div class="glass-panel stat-card-premium" style="border-left: 5px solid #f59e0b;">
+                    <div class="label">Pending Approvals</div>
+                    <div class="number" id="ai-stat-pending" style="color: #f59e0b;">0</div>
+                    <div class="subtext">Awaiting administrative validation</div>
+                </div>
+                <div class="glass-panel stat-card-premium" style="border-left: 5px solid #10b981;">
+                    <div class="label">Approved & Public</div>
+                    <div class="number" id="ai-stat-approved" style="color: #10b981;">0</div>
+                    <div class="subtext">Enriching SEO details live</div>
+                </div>
+                <div class="glass-panel stat-card-premium" style="border-left: 5px solid #ef4444;">
+                    <div class="label">Rejected Variants</div>
+                    <div class="number" id="ai-stat-rejected" style="color: #ef4444;">0</div>
+                    <div class="subtext">Declined drafts</div>
+                </div>
+            </div>
+
+            <!-- Filter Console -->
+            <div class="glass-panel" style="padding: 1.5rem; border-radius: 16px; margin-bottom: 1.5rem; display: flex; gap: 1rem; flex-wrap: wrap; align-items: center;">
+                <input type="text" id="ai-search-input" placeholder="Search job title for AI drafts..." style="flex: 1; padding: 0.6rem 1rem; border-radius: 8px; background: var(--bg-primary); border: 1px solid var(--border-color); color: var(--text-primary);" autocomplete="off">
+                <select id="ai-status-filter" style="padding: 0.6rem; border-radius: 8px; background: var(--bg-primary); border: 1px solid var(--border-color); color: var(--text-primary);">
+                    <option value="all">All States</option>
+                    <option value="pending" selected>Pending Review</option>
+                    <option value="approved">Approved & Live</option>
+                    <option value="rejected">Rejected Drafts</option>
+                </select>
+                <button class="form-btn" id="btn-ai-filter-trigger" style="margin: 0; padding: 0.6rem 1.2rem;">Apply Filter</button>
+            </div>
+
+            <!-- Main Data Table -->
+            <div class="glass-panel" style="padding: 1.5rem; border-radius: 16px;">
+                <div class="responsive-table-container">
+                    <table class="portal-table">
+                        <thead>
+                            <tr>
+                                <th>Post ID</th>
+                                <th>Recruitment Title</th>
+                                <th>AI Engine</th>
+                                <th>Draft Status</th>
+                                <th>Creation Date</th>
+                                <th style="text-align: center;">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="ai-management-table-body">
+                            <!-- Populated dynamically via AJAX -->
+                        </tbody>
+                    </table>
+                </div>
+                <div class="pagination-container" id="ai-management-pagination" style="margin-top: 1.5rem;"></div>
+            </div>
+        </section>
     </main>
 </div>
 
@@ -656,6 +726,86 @@
     </form>
 </div>
 
+<!-- D. AI Content Review & Approval Drawer -->
+<div class="admin-drawer glass-panel" id="ai-review-drawer" style="position: fixed; right: -650px; top: 0; width: 620px; height: 100vh; background: var(--bg-secondary); border-left: 1px solid var(--border-color); z-index: 1001; transition: right 0.4s cubic-bezier(0.16, 1, 0.3, 1); padding: 2rem; overflow-y: auto; box-shadow: -10px 0 30px rgba(0,0,0,0.15);">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; border-bottom: 1px solid var(--border-color); padding-bottom: 1rem;">
+        <h3 style="font-family: 'Outfit'; font-size: 1.4rem; color: var(--accent-color); margin: 0;">AI Draft Editorial Console</h3>
+        <button class="btn-sm-danger" id="close-ai-drawer" style="padding: 0.25rem 0.5rem; cursor: pointer;">&times; Close</button>
+    </div>
+
+    <!-- Telemetry and Diagnostic Errors -->
+    <div id="ai-drawer-error-alert" class="glass-panel" style="display: none; padding: 1rem; border-radius: 8px; border-left: 5px solid #ef4444; background: rgba(239, 68, 68, 0.05); margin-bottom: 1.5rem;">
+        <div style="color: #ef4444; font-weight: 700; font-size: 0.9rem;">Diagnostic Error Registered:</div>
+        <p id="ai-drawer-error-text" style="font-size: 0.8rem; color: var(--text-secondary); margin: 0.25rem 0 0 0; line-height: 1.4;"></p>
+    </div>
+
+    <form id="ajax-ai-review-form">
+        @csrf
+        <input type="hidden" id="ai-review-id">
+        <input type="hidden" id="ai-review-post-id">
+
+        <div class="form-group">
+            <label style="font-weight: 800; color: var(--accent-color); font-size: 0.8rem; text-transform: uppercase;">Recruitment Title</label>
+            <div id="ai-review-title" style="font-size: 1.05rem; font-weight: 700; color: var(--text-primary); margin-top: 0.25rem; line-height: 1.4;"></div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.5rem;">
+            <div class="form-group">
+                <label for="ai-review-provider-select">Active AI Engine</label>
+                <select id="ai-review-provider-select" class="form-control">
+                    <option value="gemini">Google Gemini</option>
+                    <option value="openai">OpenAI GPT</option>
+                    <option value="claude">Anthropic Claude</option>
+                </select>
+            </div>
+            <div class="form-group" style="display: flex; align-items: flex-end;">
+                <button type="button" class="form-btn" id="btn-ai-regenerate" style="margin: 0; width: 100%; background: #8b5cf6; border: none;">⚡ Regenerate Draft</button>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="ai-edit-summary">Enriched Job Summary (HTML/Markdown)</label>
+            <textarea id="ai-edit-summary" class="form-control" rows="6" placeholder="2-3 paragraphs of job overview..." required></textarea>
+        </div>
+
+        <div class="form-group">
+            <label for="ai-edit-eligibility">Enriched Eligibility Section (Markdown List)</label>
+            <textarea id="ai-edit-eligibility" class="form-control" rows="5" placeholder="Bullet points of eligibility criteria..." required></textarea>
+        </div>
+
+        <div class="form-group">
+            <label for="ai-edit-selection">Selection Process Details</label>
+            <textarea id="ai-edit-selection" class="form-control" rows="4" placeholder="Rounds, stages, exam criteria..." required></textarea>
+        </div>
+
+        <div class="form-group">
+            <label>Frequently Asked Questions (FAQs)</label>
+            <div id="ai-edit-faqs-container" style="display: flex; flex-direction: column; gap: 0.75rem; margin-bottom: 0.5rem;">
+                <!-- Dynamically loaded questions -->
+            </div>
+            <button type="button" class="btn-view" id="btn-ai-add-faq" style="width: 100%; padding: 0.5rem; margin-top: 0.5rem;">+ Add FAQ Question</button>
+        </div>
+
+        <h4 style="font-family:'Outfit'; font-size:1.05rem; margin:1.5rem 0 0.75rem 0; border-top:1px dashed var(--border-color); padding-top:1rem; color:var(--accent-color);">Custom Hand-Crafted SEO Overrides</h4>
+
+        <div class="form-group">
+            <label for="ai-edit-meta-title">Hand-Crafted Meta Title (High CTR)</label>
+            <input type="text" id="ai-edit-meta-title" class="form-control" maxlength="100" required>
+        </div>
+
+        <div class="form-group">
+            <label for="ai-edit-meta-desc">Hand-Crafted Meta Description</label>
+            <textarea id="ai-edit-meta-desc" class="form-control" rows="3" maxlength="255" required></textarea>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 2rem;">
+            <button type="button" class="form-btn" id="btn-ai-drawer-reject" style="background: #ef4444; border: none; margin: 0;">Decline Draft</button>
+            <button type="button" class="form-btn" id="btn-ai-drawer-approve" style="background: #10b981; border: none; margin: 0;">Approve & Live</button>
+        </div>
+        <button type="submit" class="form-btn" style="width: 100%; margin-top: 0.75rem; background: var(--text-secondary); border: none;">Save Draft Changes Only</button>
+    </form>
+</div>
+
 <!-- C. Immersive Quarantine Rescue & Correct Modal Overlay -->
 <div class="modal-overlay" id="quarantineRescueModal">
     <div class="modal-box glass-panel" style="max-width: 650px;">
@@ -734,6 +884,8 @@
                 loadQueueDashboard(1);
             } else if (targetBlock === 'audit') {
                 loadAuditLogs(1);
+            } else if (targetBlock === 'ai-content') {
+                loadAiContentData(1);
             }
         });
 
@@ -931,7 +1083,10 @@
                                     <td style="font-weight:bold;">₹ ${Math.round(job.salary_max)}</td>
                                     <td><span class="badge badge-deadline" style="margin-bottom:0;">${job.last_date_to_apply ? job.last_date_to_apply.substring(0, 10) : 'N/A'}</span></td>
                                     <td>
-                                        <div style="display:flex; gap:0.5rem; justify-content:center;">
+                                        <div style="display:flex; gap:0.5rem; justify-content:center; align-items:center;">
+                                            <button class="btn-sm btn-trigger-ai-gen" data-id="${job.id}" style="background: #8b5cf6; border: none; border-radius: 4px; padding: 0.25rem 0.5rem; color: #fff; display: flex; align-items: center; gap: 0.25rem; font-size: 0.75rem; cursor: pointer;">
+                                                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg> Run AI
+                                            </button>
                                             <button class="btn-sm-view btn-edit-job" data-id="${job.id}" data-title="${job.title}" data-category="${job.category_id}" data-dept="${job.department_id}" data-state="${job.state_id}" data-qual="${job.qualification_id}" data-desc="${job.description}" data-min="${job.salary_min}" data-max="${job.salary_max}" data-vac="${job.vacancy_count}" data-fee="${job.application_fee}" data-deadline="${job.last_date_to_apply ? job.last_date_to_apply.substring(0, 10) : ''}" data-url="${job.official_website_link}">Edit</button>
                                             <button class="btn-sm-danger btn-delete-job" data-id="${job.id}">Delete</button>
                                         </div>
@@ -1883,6 +2038,372 @@
                 clickCallback(page);
             });
         }
+        }
+
+        // ─── AI CONTENT MANAGER ACTIONS & LOADER ─────────────────────────────
+
+        let aiContentsCache = [];
+
+        function escapeHtml(text) {
+            if (!text) return '';
+            return String(text)
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
+        }
+
+        // Main AJAX draft loader
+        window.loadAiContentData = function(page = 1) {
+            const status = $('#ai-status-filter').val();
+            const search = $('#ai-search-input').val();
+            const tableBody = $('#ai-management-table-body');
+            const paginationContainer = $('#ai-management-pagination');
+
+            tableBody.html('<tr><td colspan="6" style="text-align: center; padding: 3rem;"><div class="loading-spinner" style="margin: 0 auto 1rem auto;"></div>Retrieving AI draft copies...</td></tr>');
+
+            $.ajax({
+                url: '/api/admin/ai-contents',
+                method: 'GET',
+                data: {
+                    status: status,
+                    search: search,
+                    per_page: 10,
+                    page: page
+                },
+                success: function(res) {
+                    if (res.status === 'success') {
+                        const data = res.data;
+                        aiContentsCache = data.items;
+
+                        // Telemetry Stats Update
+                        const tel = data.telemetry;
+                        $('#ai-telemetry-engine').text(tel.active_provider.toUpperCase());
+                        $('#ai-stat-total').text(tel.total_generated);
+                        $('#ai-stat-pending').text(tel.pending_count);
+                        $('#ai-stat-approved').text(tel.approved_count);
+                        $('#ai-stat-rejected').text(tel.rejected_count);
+
+                        if (data.items.length === 0) {
+                            tableBody.html('<tr><td colspan="6" style="text-align: center; padding: 3rem; color: var(--text-secondary);">No AI content drafts matched your filters.</td></tr>');
+                            paginationContainer.empty();
+                            return;
+                        }
+
+                        let html = '';
+                        data.items.forEach(function(item) {
+                            let statusClass = 'status-badge-draft';
+                            if (item.status === 'approved') statusClass = 'status-badge-success';
+                            if (item.status === 'rejected') statusClass = 'status-badge-failed';
+
+                            const errorIndicator = item.error_message 
+                                ? `<span style="color: #ef4444; font-size: 0.75rem; margin-left: 0.5rem; cursor: help;" title="${escapeHtml(item.error_message)}">⚠ Error</span>` 
+                                : '';
+
+                            html += `
+                                <tr>
+                                    <td>#${item.job_post_id}</td>
+                                    <td style="font-weight: 700; color: var(--text-primary); max-width: 280px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+                                        ${escapeHtml(item.job_post ? item.job_post.title : 'Deleted Post')}
+                                    </td>
+                                    <td>
+                                        <span class="badge" style="background: rgba(139, 92, 246, 0.1); color: #8b5cf6; text-transform: uppercase; font-size: 0.75rem;">
+                                            ${escapeHtml(item.provider)}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <span class="status-badge ${statusClass}">
+                                            ${escapeHtml(item.status)}
+                                        </span>
+                                        ${errorIndicator}
+                                    </td>
+                                    <td style="font-size: 0.8rem; color: var(--text-secondary);">
+                                        ${new Date(item.created_at).toLocaleDateString('en-IN', {day: '2-digit', month: 'short', year: 'numeric'})}
+                                    </td>
+                                    <td style="text-align: center;">
+                                        <button class="btn-sm btn-review-ai" data-id="${item.id}" style="background: var(--accent-color); border: none; font-size: 0.75rem; padding: 0.4rem 0.8rem; border-radius: 6px; color: #fff;">
+                                            Review & Edit
+                                        </button>
+                                    </td>
+                                </tr>
+                            `;
+                        });
+
+                        tableBody.html(html);
+
+                        // Render Pagination
+                        renderCustomPagination(
+                            paginationContainer,
+                            data.pagination.current_page,
+                            data.pagination.last_page,
+                            loadAiContentData
+                        );
+                    }
+                },
+                error: function() {
+                    tableBody.html('<tr><td colspan="6" style="text-align: center; padding: 3rem; color: #ef4444;">Failed to load AI Content Registry. Please check connections.</td></tr>');
+                }
+            });
+        };
+
+        // Filter button trigger
+        $('#btn-ai-filter-trigger').on('click', function(e) {
+            e.preventDefault();
+            loadAiContentData(1);
+        });
+
+        // Review Drawer Trigger
+        $(document).on('click', '.btn-review-ai', function(e) {
+            e.preventDefault();
+            const id = $(this).data('id');
+            const item = aiContentsCache.find(x => x.id === id);
+            
+            if (!item) return;
+
+            // Seed drawer fields
+            $('#ai-review-id').val(item.id);
+            $('#ai-review-post-id').val(item.job_post_id);
+            $('#ai-review-title').text(item.job_post ? item.job_post.title : 'Deleted Posting');
+            $('#ai-review-provider-select').val(item.provider);
+            
+            $('#ai-edit-summary').val(item.summary || '');
+            $('#ai-edit-eligibility').val(item.eligibility || '');
+            $('#ai-edit-selection').val(item.selection_process || '');
+            
+            $('#ai-edit-meta-title').val(item.meta_title || '');
+            $('#ai-edit-meta-desc').val(item.meta_description || '');
+
+            // Load diagnostic error if present
+            if (item.error_message) {
+                $('#ai-drawer-error-text').text(item.error_message);
+                $('#ai-drawer-error-alert').slideDown(200);
+            } else {
+                $('#ai-drawer-error-alert').hide();
+            }
+
+            // Seed FAQs
+            const faqContainer = $('#ai-edit-faqs-container');
+            faqContainer.empty();
+            const faqs = Array.isArray(item.faqs) ? item.faqs : [];
+            
+            faqs.forEach(function(faq, idx) {
+                appendFaqInputs(faq.question, faq.answer);
+            });
+
+            if (faqs.length === 0) {
+                appendFaqInputs('', ''); // Seed one blank block
+            }
+
+            // Open slide drawer
+            $('#admin-drawer-backdrop').fadeIn(200);
+            $('#ai-review-drawer').css('right', '0px');
+        });
+
+        // FAQ input builder helper
+        function appendFaqInputs(question = '', answer = '') {
+            const faqContainer = $('#ai-edit-faqs-container');
+            const index = faqContainer.children().length;
+            const faqBlock = `
+                <div class="faq-input-block glass-panel" style="padding: 1rem; border-radius: 8px; position: relative; margin-bottom: 0.5rem;">
+                    <button type="button" class="btn-sm-danger btn-ai-remove-faq" style="position: absolute; top: 0.5rem; right: 0.5rem; padding: 0.15rem 0.4rem; font-size: 0.7rem; border-radius: 4px;">&times; Remove</button>
+                    <div class="form-group" style="margin-bottom: 0.5rem;">
+                        <label style="font-size: 0.75rem; font-weight: 700;">FAQ Question</label>
+                        <input type="text" class="form-control faq-question" value="${escapeHtml(question)}" placeholder="e.g. When is the exam date?" required style="padding: 0.4rem 0.8rem; font-size: 0.85rem;">
+                    </div>
+                    <div class="form-group" style="margin-bottom: 0;">
+                        <label style="font-size: 0.75rem; font-weight: 700;">FAQ Answer</label>
+                        <textarea class="form-control faq-answer" rows="2" placeholder="e.g. The exam date is scheduled for October." required style="padding: 0.4rem 0.8rem; font-size: 0.85rem;">${escapeHtml(answer)}</textarea>
+                    </div>
+                </div>
+            `;
+            faqContainer.append(faqBlock);
+        }
+
+        // Add FAQ button click
+        $('#btn-ai-add-faq').on('click', function(e) {
+            e.preventDefault();
+            appendFaqInputs('', '');
+        });
+
+        // Remove FAQ button click
+        $(document).on('click', '.btn-ai-remove-faq', function(e) {
+            e.preventDefault();
+            $(this).closest('.faq-input-block').slideUp(200, function() {
+                $(this).remove();
+            });
+        });
+
+        // Close AI drawer
+        $('#close-ai-drawer, #admin-drawer-backdrop').on('click', function(e) {
+            if (e.target === this || $(this).attr('id') === 'close-ai-drawer' || $(this).attr('id') === 'admin-drawer-backdrop') {
+                $('#ai-review-drawer').css('right', '-650px');
+                $('#admin-drawer-backdrop').fadeOut(200);
+            }
+        });
+
+        // Approve action from drawer
+        $('#btn-ai-drawer-approve').on('click', function(e) {
+            e.preventDefault();
+            const id = $('#ai-review-id').val();
+            const btn = $(this);
+            
+            btn.prop('disabled', true).text('Approving...');
+
+            $.ajax({
+                url: `/api/admin/ai-contents/${id}/approve`,
+                method: 'POST',
+                data: { _token: '{{ csrf_token() }}' },
+                success: function(res) {
+                    showToast(res.message, 'success');
+                    $('#ai-review-drawer').css('right', '-650px');
+                    $('#admin-drawer-backdrop').fadeOut(200);
+                    loadAiContentData($('#ai-management-pagination .pagination-btn.active').data('page') || 1);
+                },
+                error: function(err) {
+                    showToast('Failed to approve draft copy.', 'error');
+                },
+                complete: function() {
+                    btn.prop('disabled', false).text('Approve & Live');
+                }
+            });
+        });
+
+        // Decline/Reject action from drawer
+        $('#btn-ai-drawer-reject').on('click', function(e) {
+            e.preventDefault();
+            const id = $('#ai-review-id').val();
+            const btn = $(this);
+            
+            btn.prop('disabled', true).text('Declining...');
+
+            $.ajax({
+                url: `/api/admin/ai-contents/${id}/reject`,
+                method: 'POST',
+                data: { _token: '{{ csrf_token() }}' },
+                success: function(res) {
+                    showToast(res.message, 'success');
+                    $('#ai-review-drawer').css('right', '-650px');
+                    $('#admin-drawer-backdrop').fadeOut(200);
+                    loadAiContentData($('#ai-management-pagination .pagination-btn.active').data('page') || 1);
+                },
+                error: function() {
+                    showToast('Failed to decline draft copy.', 'error');
+                },
+                complete: function() {
+                    btn.prop('disabled', false).text('Decline Draft');
+                }
+            });
+        });
+
+        // Regenerate Draft action
+        $('#btn-ai-regenerate').on('click', function(e) {
+            e.preventDefault();
+            const postId = $('#ai-review-post-id').val();
+            const provider = $('#ai-review-provider-select').val();
+            const btn = $(this);
+            
+            btn.prop('disabled', true).text('Queueing...');
+
+            $.ajax({
+                url: `/api/admin/ai-contents/generate/${postId}`,
+                method: 'POST',
+                data: {
+                    _token: '{{ csrf_token() }}',
+                    provider: provider
+                },
+                success: function(res) {
+                    showToast(res.message, 'success');
+                    $('#ai-review-drawer').css('right', '-650px');
+                    $('#admin-drawer-backdrop').fadeOut(200);
+                    loadAiContentData(1);
+                },
+                error: function() {
+                    showToast('Failed to trigger AI generation task.', 'error');
+                },
+                complete: function() {
+                    btn.prop('disabled', false).text('⚡ Regenerate Draft');
+                }
+            });
+        });
+
+        // Save manual changes form
+        $('#ajax-ai-review-form').on('submit', function(e) {
+            e.preventDefault();
+            const id = $('#ai-review-id').val();
+            
+            // Gather FAQs array
+            const faqs = [];
+            $('#ai-edit-faqs-container .faq-input-block').each(function() {
+                const question = $(this).find('.faq-question').val();
+                const answer = $(this).find('.faq-answer').val();
+                if (question.trim() && answer.trim()) {
+                    faqs.push({ question: question, answer: answer });
+                }
+            });
+
+            const data = {
+                _token: '{{ csrf_token() }}',
+                summary: $('#ai-edit-summary').val(),
+                eligibility: $('#ai-edit-eligibility').val(),
+                selection_process: $('#ai-edit-selection').val(),
+                faqs: faqs,
+                meta_title: $('#ai-edit-meta-title').val(),
+                meta_description: $('#ai-edit-meta-desc').val(),
+            };
+
+            const submitBtn = $(this).find('button[type="submit"]');
+            submitBtn.prop('disabled', true).text('Saving Changes...');
+
+            $.ajax({
+                url: `/api/admin/ai-contents/${id}/update`,
+                method: 'POST',
+                data: data,
+                success: function(res) {
+                    showToast(res.message, 'success');
+                    $('#ai-review-drawer').css('right', '-650px');
+                    $('#admin-drawer-backdrop').fadeOut(200);
+                    loadAiContentData($('#ai-management-pagination .pagination-btn.active').data('page') || 1);
+                },
+                error: function(err) {
+                    if (err.status === 422) {
+                        showToast('Validation failed. Please check field inputs.', 'error');
+                    } else {
+                        showToast('Failed to save manual changes.', 'error');
+                    }
+                },
+                complete: function() {
+                    submitBtn.prop('disabled', false).text('Save Draft Changes Only');
+                }
+            });
+        });
+
+        // Hook Generate/Regenerate button inside Direct Job Registry table (adding a manual action inside Step 5)
+        // This makes manual triggers on normal job posts very easy from the main postings list!
+        $(document).on('click', '.btn-trigger-ai-gen', function(e) {
+            e.preventDefault();
+            const postId = $(this).data('id');
+            const btn = $(this);
+
+            btn.prop('disabled', true).text('Queueing...');
+            $.ajax({
+                url: `/api/admin/ai-contents/generate/${postId}`,
+                method: 'POST',
+                data: { _token: '{{ csrf_token() }}' },
+                success: function(res) {
+                    showToast(res.message, 'success');
+                },
+                error: function() {
+                    showToast('Failed to queue AI generation task.', 'error');
+                },
+                complete: function() {
+                    btn.prop('disabled', false).html('<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg> Run AI');
+                }
+            });
+        });
+
+        // ─── END AI CONTENT MANAGER ──────────────────────────────────────────
+
     });
 </script>
 @endsection

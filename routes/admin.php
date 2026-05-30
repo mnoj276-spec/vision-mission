@@ -41,6 +41,13 @@ Route::middleware(['auth', 'admin'])->prefix('api/admin')->group(function () {
     Route::post('/jobs/{id}',      [AdminJobController::class, 'update'])->name('admin.jobs.update');
     Route::delete('/jobs/{id}',    [AdminJobController::class, 'destroy'])->name('admin.jobs.destroy');
 
+    // ─── AI Content Management ────────────────────────────────────────────────
+    Route::get('/ai-contents',                         [\App\Domains\Admin\Controllers\AiContentManagementController::class, 'index'])->name('admin.ai-contents.index');
+    Route::post('/ai-contents/{id}/approve',           [\App\Domains\Admin\Controllers\AiContentManagementController::class, 'approve'])->name('admin.ai-contents.approve');
+    Route::post('/ai-contents/{id}/reject',            [\App\Domains\Admin\Controllers\AiContentManagementController::class, 'reject'])->name('admin.ai-contents.reject');
+    Route::post('/ai-contents/{id}/update',            [\App\Domains\Admin\Controllers\AiContentManagementController::class, 'update'])->name('admin.ai-contents.update');
+    Route::post('/ai-contents/generate/{job_post_id}', [\App\Domains\Admin\Controllers\AiContentManagementController::class, 'generate'])->name('admin.ai-contents.generate');
+
     // ─── Master Data ──────────────────────────────────────────────────────────
     Route::get('/categories',           [MasterDataController::class, 'getCategories']);
     Route::post('/categories',          [MasterDataController::class, 'storeCategory']);

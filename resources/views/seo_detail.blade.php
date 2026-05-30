@@ -128,6 +128,92 @@
         border-radius: 14px;
         padding: 2rem;
     }
+
+    /* AI Enriched Styles */
+    .ai-summary-card {
+        background: linear-gradient(135deg, rgba(139, 92, 246, 0.04) 0%, rgba(37, 99, 235, 0.03) 100%);
+        border: 1px dashed rgba(139, 92, 246, 0.4);
+        border-radius: 12px;
+        padding: 1.5rem 1.75rem;
+        margin-bottom: 2rem;
+        position: relative;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    }
+    .ai-badge {
+        position: absolute;
+        top: -12px;
+        right: 20px;
+        background: #8b5cf6;
+        color: #fff;
+        font-size: 0.65rem;
+        font-weight: 900;
+        padding: 3px 10px;
+        border-radius: 99px;
+        text-transform: uppercase;
+        letter-spacing: 0.07em;
+        box-shadow: 0 4px 12px rgba(139, 92, 246, 0.4);
+        display: flex;
+        align-items: center;
+        gap: 0.25rem;
+    }
+    .faq-accordion {
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+        margin-top: 1rem;
+    }
+    .faq-item {
+        background: rgba(255, 255, 255, 0.01);
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        overflow: hidden;
+        transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .faq-header {
+        padding: 1rem 1.25rem;
+        font-family: 'Outfit', sans-serif;
+        font-weight: 700;
+        font-size: 0.95rem;
+        color: var(--text-primary);
+        cursor: pointer;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        user-select: none;
+        transition: background 0.2s;
+    }
+    .faq-header:hover {
+        background: rgba(255, 255, 255, 0.03);
+    }
+    .faq-header::after {
+        content: '+';
+        font-size: 1.1rem;
+        color: var(--accent-color);
+        font-weight: bold;
+        transition: transform 0.3s;
+    }
+    .faq-item.active {
+        border-color: rgba(139, 92, 246, 0.4);
+        background: rgba(139, 92, 246, 0.02);
+    }
+    .faq-item.active .faq-header::after {
+        content: '-';
+        transform: rotate(180deg);
+    }
+    .faq-body {
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.3s ease-out, padding 0.3s ease, border-top 0.2s;
+        padding: 0 1.25rem;
+        color: var(--text-secondary);
+        font-size: 0.9rem;
+        line-height: 1.6;
+        border-top: 1px solid transparent;
+    }
+    .faq-item.active .faq-body {
+        padding: 1rem 1.25rem;
+        border-top: 1px solid var(--border-color);
+    }
 </style>
 
 <div style="max-width: 1000px; margin: 0 auto; padding: 0 5%;">
@@ -204,9 +290,32 @@
             </div>
         </div>
 
+        <!-- Enriched AI Summary Card -->
+        @if($aiContent && !empty($aiContent->summary))
+            <div class="ai-summary-card">
+                <div class="ai-badge">
+                    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
+                    AI Summary
+                </div>
+                <div style="font-size: 0.95rem; color: var(--text-primary); line-height: 1.7;">
+                    {!! $aiContent->summary !!}
+                </div>
+            </div>
+        @endif
+
         <!-- Description -->
         <section class="details-section">
-            <h4>Recruitment Overview & Eligibility</h4>
+            <h4>Recruitment Overview & Requirements</h4>
+            @if($aiContent && !empty($aiContent->eligibility))
+                <div style="margin-bottom: 1.5rem;">
+                    <h5 style="font-family: 'Outfit'; font-size: 1.05rem; font-weight: 700; color: var(--text-primary); margin-bottom: 0.5rem;">Detailed Eligibility Criteria</h5>
+                    <div style="font-size: 0.95rem; color: var(--text-secondary); line-height: 1.7;">
+                        {!! \Illuminate\Support\Str::markdown($aiContent->eligibility) !!}
+                    </div>
+                </div>
+            @endif
+            
+            <h5 style="font-family: 'Outfit'; font-size: 1.05rem; font-weight: 700; color: var(--text-primary); margin-bottom: 0.5rem; margin-top: 1rem;">Original Announcement Overview</h5>
             <div>{!! $job->description !!}</div>
         </section>
 
@@ -219,10 +328,34 @@
         @endif
 
         <!-- Selection Process -->
-        @if($job->selection_process)
+        @if($aiContent && !empty($aiContent->selection_process))
+            <section class="details-section">
+                <h4>Selection Process Details</h4>
+                <div style="font-size: 0.95rem; color: var(--text-secondary); line-height: 1.7;">
+                    {!! $aiContent->selection_process !!}
+                </div>
+            </section>
+        @elseif($job->selection_process)
             <section class="details-section">
                 <h4>Selection Process</h4>
                 <div>{!! $job->selection_process !!}</div>
+            </section>
+        @endif
+
+        <!-- Enriched AI FAQs -->
+        @if($aiContent && !empty($aiContent->faqs) && count($aiContent->faqs) > 0)
+            <section class="details-section">
+                <h4>Frequently Asked Questions (FAQs)</h4>
+                <div class="faq-accordion">
+                    @foreach($aiContent->faqs as $faq)
+                        @if(!empty($faq['question']) && !empty($faq['answer']))
+                            <div class="faq-item">
+                                <div class="faq-header">{{ $faq['question'] }}</div>
+                                <div class="faq-body">{!! nl2br(e($faq['answer'])) !!}</div>
+                            </div>
+                        @endif
+                    @endforeach
+                </div>
             </section>
         @endif
 
@@ -335,6 +468,24 @@
                     }
                 }
             });
+        });
+
+        // FAQ Accordion click transition handler
+        $(document).on('click', '.faq-header', function() {
+            const item = $(this).closest('.faq-item');
+            const body = item.find('.faq-body');
+            
+            if (item.hasClass('active')) {
+                item.removeClass('active');
+                body.css('max-height', '0');
+            } else {
+                // Close all other open items
+                $('.faq-item').removeClass('active');
+                $('.faq-body').css('max-height', '0');
+                
+                item.addClass('active');
+                body.css('max-height', body[0].scrollHeight + 'px');
+            }
         });
     });
 </script>

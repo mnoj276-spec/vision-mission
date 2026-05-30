@@ -281,6 +281,12 @@ class ScrapingService implements ScrapingServiceInterface
                     ScrapingLog::create(['scraping_source_id' => $source->id, 'job_post_id' => $jobPost->id, 'status' => 'success', 'items_found' => 1, 'raw_payload' => $rawLogPayload]);
                     return $jobPost;
                 });
+
+                // Auto-queue AI content generation framework pipeline asynchronously
+                if (!app()->environment('testing')) {
+                    \App\Jobs\GenerateJobContentJob::dispatch($jobPost->id);
+                }
+
             } catch (\Illuminate\Database\QueryException $e) {
                 // Race condition: another worker inserted the same fingerprint between
                 // our Stage 1 check and this INSERT. Treat as a fingerprint duplicate.
