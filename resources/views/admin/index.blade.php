@@ -14,6 +14,7 @@
         
         <div class="admin-nav-links" style="display: flex; flex-direction: column; gap: 0.5rem;">
             <button class="admin-nav-btn active" data-block="overview"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="3" width="7" height="9"></rect><rect x="14" y="3" width="7" height="5"></rect><rect x="14" y="12" width="7" height="9"></rect><rect x="3" y="16" width="7" height="5"></rect></svg> Dashboard Overview</button>
+            <button class="admin-nav-btn" data-block="analytics"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg> Telemetry & Analytics</button>
             <button class="admin-nav-btn" data-block="jobs"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path></svg> Recruitment Postings</button>
             <button class="admin-nav-btn" data-block="crawlers"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg> Crawler Target Configs</button>
             <button class="admin-nav-btn" data-block="master"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2L2 7l10 5 10-5-10-5z"></path><path d="M2 17l10 5 10-5"></path><path d="M2 12l10 5 10-5"></path></svg> Master Data Manager</button>
@@ -102,6 +103,120 @@
                 <h3 style="font-family: 'Outfit'; font-size: 1.25rem; color: #f59e0b; margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;"><span style="display:inline-block; width:10px; height:20px; background:#f59e0b; border-radius:3px;"></span> Quarantined Scraped Listings (Awaiting Approval)</h3>
                 <div id="admin-quarantine-override-canvas">
                     <!-- Populated dynamically via AJAX -->
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= PANEL 1B: TELEMETRY & ANALYTICS ================= -->
+        <section class="admin-panel-block" id="admin-analytics" style="display: none;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                <h2 style="font-family: 'Outfit'; font-size: 1.75rem; margin: 0;">Telemetry & Analytics Control Center</h2>
+                <div>
+                    <select id="analytics-timeframe" style="padding: 0.6rem; border-radius: 8px; background: var(--bg-primary); border: 1px solid var(--border-color); color: var(--text-primary); cursor: pointer;">
+                        <option value="7">Last 7 Days</option>
+                        <option value="14" selected>Last 14 Days</option>
+                        <option value="30">Last 30 Days</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- KPI Cards -->
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem; margin-bottom: 2.5rem;">
+                <div class="glass-panel stat-card-premium" style="border-left: 5px solid var(--accent-color);">
+                    <div class="label">Total Job Views</div>
+                    <div class="number" id="analytics-kpi-views">0</div>
+                    <div class="subtext">Active portal details loads</div>
+                </div>
+                <div class="glass-panel stat-card-premium" style="border-left: 5px solid #10b981;">
+                    <div class="label">Click-Through Rate (CTR)</div>
+                    <div class="number" id="analytics-kpi-ctr" style="color: #10b981;">0%</div>
+                    <div class="subtext">Views to applies/bookmarks</div>
+                </div>
+                <div class="glass-panel stat-card-premium" style="border-left: 5px solid #f59e0b;">
+                    <div class="label">Total Search Queries</div>
+                    <div class="number" id="analytics-kpi-searches" style="color: #f59e0b;">0</div>
+                    <div class="subtext">Keyword & filter searches</div>
+                </div>
+                <div class="glass-panel stat-card-premium" style="border-left: 5px solid #ef4444;">
+                    <div class="label">Estimated Ad Earnings</div>
+                    <div class="number" id="analytics-kpi-revenue" style="color: #ef4444;">$0.00</div>
+                    <div class="subtext">CPM impressions + CPC clicks</div>
+                </div>
+            </div>
+
+            <!-- Chart Row 1: Traffic and Revenue -->
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-bottom: 2.5rem;">
+                <div class="glass-panel" style="padding: 1.5rem; border-radius: 16px; min-height: 380px;">
+                    <h3 style="font-family: 'Outfit'; font-size: 1.15rem; color: var(--accent-color); margin-bottom: 1.5rem;">Daily Traffic Breakdown (Bots vs Organic vs Direct)</h3>
+                    <div style="position: relative; height: 280px; width: 100%;">
+                        <canvas id="trafficChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="glass-panel" style="padding: 1.5rem; border-radius: 16px; min-height: 380px;">
+                    <h3 style="font-family: 'Outfit'; font-size: 1.15rem; color: #ef4444; margin-bottom: 1.5rem;">Estimated Ad Monetization Revenue Stream ($)</h3>
+                    <div style="position: relative; height: 280px; width: 100%;">
+                        <canvas id="revenueChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Chart Row 2: Funnel and Top User Journeys -->
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-bottom: 2.5rem;">
+                <div class="glass-panel" style="padding: 1.5rem; border-radius: 16px; min-height: 380px;">
+                    <h3 style="font-family: 'Outfit'; font-size: 1.15rem; color: #10b981; margin-bottom: 1.5rem;">Conversions & Engagement Funnel</h3>
+                    <div style="position: relative; height: 280px; width: 100%;">
+                        <canvas id="funnelChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="glass-panel" style="padding: 1.5rem; border-radius: 16px;">
+                    <h3 style="font-family: 'Outfit'; font-size: 1.15rem; color: #f59e0b; margin-bottom: 1rem;">Frequent User Journey Pathways</h3>
+                    <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 1.5rem;">The most common sequence of page visits preceding conversion events.</p>
+                    <div id="analytics-journeys-container" style="display: flex; flex-direction: column; gap: 1rem;">
+                        <!-- Populated dynamically -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tables Row: Top Search Queries and Job CTR Performance -->
+            <div style="display: grid; grid-template-columns: 1fr 1.2fr; gap: 2rem;">
+                <div class="glass-panel" style="padding: 1.5rem; border-radius: 16px;">
+                    <h3 style="font-family: 'Outfit'; font-size: 1.15rem; margin-bottom: 1rem; color: var(--accent-color);">Top 10 Search Queries</h3>
+                    <div class="responsive-table-container">
+                        <table class="portal-table">
+                            <thead>
+                                <tr>
+                                    <th>Keyword Query</th>
+                                    <th>Hits</th>
+                                    <th>Avg Results</th>
+                                </tr>
+                            </thead>
+                            <tbody id="analytics-queries-table">
+                                <!-- Populated dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="glass-panel" style="padding: 1.5rem; border-radius: 16px;">
+                    <h3 style="font-family: 'Outfit'; font-size: 1.15rem; margin-bottom: 1rem; color: #10b981;">Job Post CTR Performance Leaderboard</h3>
+                    <div class="responsive-table-container">
+                        <table class="portal-table">
+                            <thead>
+                                <tr>
+                                    <th>Job Title</th>
+                                    <th>Views</th>
+                                    <th>Bookmarks</th>
+                                    <th>Applies</th>
+                                    <th>CTR</th>
+                                </tr>
+                            </thead>
+                            <tbody id="analytics-ctr-table">
+                                <!-- Populated dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </section>
@@ -986,6 +1101,7 @@
 @endsection
 
 @section('scripts')
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
     $(document).ready(function() {
         // Toggle Sidebar Dashboard Tabs/Panels
@@ -1014,6 +1130,8 @@
                 loadAuditLogs(1);
             } else if (targetBlock === 'ai-content') {
                 loadAiContentData(1);
+            } else if (targetBlock === 'analytics') {
+                loadAnalyticsDashboard();
             }
         });
 
@@ -1137,6 +1255,195 @@
                 }
             });
         }
+
+        // ===================================================================
+        // 1B. TELEMETRY & ANALYTICS DASHBOARD CHART ENGINE
+        // ===================================================================
+        let trafficChartInstance = null;
+        let revenueChartInstance = null;
+        let funnelChartInstance = null;
+
+        function loadAnalyticsDashboard() {
+            const days = $('#analytics-timeframe').val() || 14;
+            $.ajax({
+                url: '/api/admin/analytics/metrics',
+                method: 'GET',
+                data: { days: days },
+                success: function(res) {
+                    if (res.status === 'success') {
+                        const k = res.data.kpis;
+                        $('#analytics-kpi-views').text(k.job_views.toLocaleString());
+                        $('#analytics-kpi-ctr').text(k.overall_ctr + '%');
+                        $('#analytics-kpi-searches').text(k.search_queries.toLocaleString());
+                        $('#analytics-kpi-revenue').text('$' + k.estimated_revenue.toFixed(2));
+
+                        // 1. Traffic Chart (Line)
+                        const dates = res.data.charts.traffic.map(d => d.date);
+                        const organic = res.data.charts.traffic.map(d => d.organic);
+                        const direct = res.data.charts.traffic.map(d => d.direct);
+                        const bots = res.data.charts.traffic.map(d => d.bots);
+
+                        if (trafficChartInstance) trafficChartInstance.destroy();
+                        const ctxTraffic = document.getElementById('trafficChart').getContext('2d');
+                        trafficChartInstance = new Chart(ctxTraffic, {
+                            type: 'line',
+                            data: {
+                                labels: dates,
+                                datasets: [
+                                    {
+                                        label: 'Organic Traffic',
+                                        data: organic,
+                                        borderColor: '#10b981',
+                                        backgroundColor: 'rgba(16, 185, 129, 0.05)',
+                                        fill: true,
+                                        tension: 0.3
+                                    },
+                                    {
+                                        label: 'Direct Traffic',
+                                        data: direct,
+                                        borderColor: '#2563eb',
+                                        backgroundColor: 'rgba(37, 99, 235, 0.05)',
+                                        fill: true,
+                                        tension: 0.3
+                                    },
+                                    {
+                                        label: 'Bot Crawls (SEO)',
+                                        data: bots,
+                                        borderColor: '#f59e0b',
+                                        backgroundColor: 'rgba(245, 158, 11, 0.05)',
+                                        fill: true,
+                                        tension: 0.3
+                                    }
+                                ]
+                            },
+                            options: {
+                                responsive: true,
+                                maintainAspectRatio: false,
+                                plugins: {
+                                    legend: { labels: { color: '#9ca3af' } }
+                                },
+                                scales: {
+                                    x: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#9ca3af' } },
+                                    y: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#9ca3af' } }
+                                }
+                            }
+                        });
+
+                        // 2. Revenue Chart (Bar)
+                        const revDates = res.data.charts.revenue.map(d => d.date);
+                        const cpc = res.data.charts.revenue.map(d => d.cpc);
+                        const cpm = res.data.charts.revenue.map(d => d.cpm);
+
+                        if (revenueChartInstance) revenueChartInstance.destroy();
+                        const ctxRev = document.getElementById('revenueChart').getContext('2d');
+                        revenueChartInstance = new Chart(ctxRev, {
+                            type: 'bar',
+                            data: {
+                                labels: revDates,
+                                datasets: [
+                                    {
+                                        label: 'CPC (Ad Clicks)',
+                                        data: cpc,
+                                        backgroundColor: '#ef4444'
+                                    },
+                                    {
+                                        label: 'CPM (Impressions)',
+                                        data: cpm,
+                                        backgroundColor: '#a855f7'
+                                    }
+                                ]
+                            },
+                            options: {
+                                responsive: true,
+                                maintainAspectRatio: false,
+                                plugins: {
+                                    legend: { labels: { color: '#9ca3af' } }
+                                },
+                                scales: {
+                                    x: { stacked: true, grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#9ca3af' } },
+                                    y: { stacked: true, grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#9ca3af' } }
+                                }
+                            }
+                        });
+
+                        // 3. Funnel Chart (Horizontal Bar)
+                        const f = res.data.charts.funnel;
+                        if (funnelChartInstance) funnelChartInstance.destroy();
+                        const ctxFunnel = document.getElementById('funnelChart').getContext('2d');
+                        funnelChartInstance = new Chart(ctxFunnel, {
+                            type: 'bar',
+                            data: {
+                                labels: ['Job Views', 'Saved Bookmarks', 'Apply Clicks', 'Applications'],
+                                datasets: [{
+                                    label: 'Actions',
+                                    data: [f.views, f.bookmarks, f.clicks, f.submissions],
+                                    backgroundColor: ['#2563eb', '#8b5cf6', '#f59e0b', '#10b981'],
+                                    borderRadius: 6
+                                }]
+                            },
+                            options: {
+                                indexAxis: 'y',
+                                responsive: true,
+                                maintainAspectRatio: false,
+                                plugins: {
+                                    legend: { display: false }
+                                },
+                                scales: {
+                                    x: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#9ca3af' } },
+                                    y: { grid: { color: 'none' }, ticks: { color: '#9ca3af', font: { weight: 'bold' } } }
+                                }
+                            }
+                        });
+
+                        // 4. Populate Queries Table
+                        let qHtml = '';
+                        res.data.top_queries.forEach(q => {
+                            qHtml += `
+                                <tr>
+                                    <td><strong>"${q.query}"</strong></td>
+                                    <td><span class="badge" style="background:rgba(37,99,235,0.1); color:#2563eb; font-weight:700;">${q.frequency} hits</span></td>
+                                    <td style="font-weight:bold;">${q.avg_results}</td>
+                                </tr>
+                            `;
+                        });
+                        $('#analytics-queries-table').html(qHtml || '<tr><td colspan="3" style="text-align:center; color:#9ca3af;">No searches logged in timeframe.</td></tr>');
+
+                        // 5. Populate CTR Table
+                        let ctrHtml = '';
+                        res.data.job_performance.forEach(job => {
+                            ctrHtml += `
+                                <tr>
+                                    <td style="max-width:180px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;"><strong>${job.title}</strong></td>
+                                    <td>${job.views}</td>
+                                    <td>${job.bookmarks}</td>
+                                    <td>${job.clicks}</td>
+                                    <td><span class="badge" style="background:rgba(16,185,129,0.1); color:#10b981; font-weight:bold;">${job.ctr}%</span></td>
+                                </tr>
+                            `;
+                        });
+                        $('#analytics-ctr-table').html(ctrHtml || '<tr><td colspan="5" style="text-align:center; color:#9ca3af;">No job views tracked.</td></tr>');
+
+                        // 6. Populate User Journeys
+                        let journeyHtml = '';
+                        res.data.user_journeys.forEach((j, index) => {
+                            journeyHtml += `
+                                <div class="glass-panel" style="padding: 1rem; border-left: 4px solid #f59e0b; background: var(--bg-primary); display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                                    <div style="font-size: 0.85rem; font-family: monospace; color: var(--text-primary);">
+                                        <span style="color:#f59e0b; font-weight:bold; margin-right:0.5rem;">#${index + 1}</span> ${j.path}
+                                    </div>
+                                    <span class="badge" style="background:rgba(245,158,11,0.1); color:#f59e0b; font-weight:bold;">${j.count} runs</span>
+                                </div>
+                            `;
+                        });
+                        $('#analytics-journeys-container').html(journeyHtml || '<div style="text-align:center; color:#9ca3af; padding: 1rem 0;">Awaiting visitor pathways...</div>');
+                    }
+                }
+            });
+        }
+
+        $(document).on('change', '#analytics-timeframe', function() {
+            loadAnalyticsDashboard();
+        });
 
         // Trigger Quarantine Rescue Modal
         $(document).on('click', '.btn-rescue-trigger', function() {

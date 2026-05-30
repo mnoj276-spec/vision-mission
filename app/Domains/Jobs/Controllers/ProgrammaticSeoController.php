@@ -309,6 +309,11 @@ class ProgrammaticSeoController extends Controller
 
         $this->logEvent('page_view', "/job/{$slug}");
 
+        // Track job details view in analytics infrastructure
+        try {
+            app(\App\Services\AnalyticsService::class)->trackJobEvent($job->id, 'view');
+        } catch (\Exception $e) {}
+
         return view('seo_detail', [
             'job' => $job,
             'aiContent' => $aiContent,
@@ -349,6 +354,12 @@ class ProgrammaticSeoController extends Controller
         } catch (\Exception $e) {
             // Failsafe
         }
+
+        try {
+            if ($eventType === 'page_view') {
+                app(\App\Services\AnalyticsService::class)->trackPageView($pagePath, request()->header('referer'));
+            }
+        } catch (\Exception $e) {}
     }
 
     protected function getFunnelMetrics(string $pagePath, string $categoryName): array

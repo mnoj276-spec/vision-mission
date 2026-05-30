@@ -29,6 +29,7 @@ class ApplicationController extends Controller
             return response()->json(['status' => 'success', 'action' => 'removed', 'message' => 'Job removed from bookmarks.']);
         }
         Bookmark::create(['user_id' => $user->id, 'job_post_id' => $jobId]);
+        app(\App\Services\AnalyticsService::class)->trackJobEvent($jobId, 'bookmark');
         return response()->json(['status' => 'success', 'action' => 'added', 'message' => 'Job successfully bookmarked!']);
     }
 
@@ -103,6 +104,7 @@ class ApplicationController extends Controller
         }
 
         JobApplication::create(['user_id' => $user->id, 'job_post_id' => $job->id, 'resume_path' => $resumePath, 'status' => 'applied']);
+        app(\App\Services\AnalyticsService::class)->trackJobEvent($job->id, 'apply_submit');
         return response()->json(['status' => 'success', 'message' => 'Your application has been successfully submitted!']);
     }
 }

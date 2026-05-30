@@ -35,6 +35,12 @@ Route::get('/search/organization/{department_slug}', [SearchController::class, '
 Route::post('/api/growth/subscribe', [JobController::class, 'subscribeAlerts'])->name('growth.subscribe');
 Route::post('/api/growth/track',     [JobController::class, 'trackEvent'])->name('growth.track');
 
+// High-Performance Analytics Telemetry APIs
+use App\Http\Controllers\Api\AnalyticsApiController;
+Route::post('/api/analytics/page-view',  [AnalyticsApiController::class, 'trackPageView'])->name('analytics.page_view');
+Route::post('/api/analytics/job-event',  [AnalyticsApiController::class, 'trackJobInteraction'])->name('analytics.job_event');
+Route::post('/api/analytics/ad-event',   [AnalyticsApiController::class, 'trackAdEvent'])->name('analytics.ad_event');
+
 // ─── Programmatic SEO Engine Routes ──────────────────────────────────────────
 use App\Domains\Jobs\Controllers\ProgrammaticSeoController;
 

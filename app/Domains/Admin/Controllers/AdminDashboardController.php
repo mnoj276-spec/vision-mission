@@ -47,4 +47,11 @@ class AdminDashboardController extends Controller
         $this->adminService->updateSeoSettings($request->validated());
         return response()->json(['status' => 'success', 'message' => 'SEO Meta tags synchronized successfully!']);
     }
+
+    public function getAnalyticsData(Request $request, \App\Services\AnalyticsService $analyticsService): JsonResponse
+    {
+        $days = $request->integer('days', 14);
+        $data = $analyticsService->getDashboardAnalytics($days);
+        return response()->json(['status' => 'success', 'data' => $data]);
+    }
 }

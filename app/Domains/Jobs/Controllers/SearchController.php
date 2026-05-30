@@ -31,6 +31,9 @@ class SearchController extends Controller
         if ($request->ajax()) {
             $jobs = $this->searchService->searchJobs($filters, 8);
             
+            // Track search
+            app(\App\Services\AnalyticsService::class)->trackSearchQuery($request->input('search', ''), $filters, $jobs->total());
+            
             $formattedJobs = collect($jobs->items())->map(fn ($job) => [
                 'id'              => $job->id,
                 'title'           => $job->title,
@@ -64,6 +67,10 @@ class SearchController extends Controller
         $jobs = $this->searchService->searchJobs($filters, 8);
         $spellcheck = !empty($filters['search']) ? $this->searchService->getSpellCorrection($filters['search']) : null;
 
+        // Track page view and search query
+        app(\App\Services\AnalyticsService::class)->trackPageView('/search', $request->header('referer'));
+        app(\App\Services\AnalyticsService::class)->trackSearchQuery($request->input('search', ''), $filters, $jobs->total());
+
         return view('search', [
             'states' => State::all(),
             'categories' => Category::where('is_active', true)->get(),
@@ -88,6 +95,10 @@ class SearchController extends Controller
 
         $filters = ['state_slug' => $slug];
         $jobs = $this->searchService->searchJobs($filters, 8);
+
+        // Track state search view
+        app(\App\Services\AnalyticsService::class)->trackPageView('/search/state/' . $slug, request()->header('referer'));
+        app(\App\Services\AnalyticsService::class)->trackSearchQuery('', $filters, $jobs->total());
 
         return view('search', [
             'states' => State::all(),
@@ -114,6 +125,10 @@ class SearchController extends Controller
         $filters = ['category_slug' => $slug];
         $jobs = $this->searchService->searchJobs($filters, 8);
 
+        // Track category search view
+        app(\App\Services\AnalyticsService::class)->trackPageView('/search/category/' . $slug, request()->header('referer'));
+        app(\App\Services\AnalyticsService::class)->trackSearchQuery('', $filters, $jobs->total());
+
         return view('search', [
             'states' => State::all(),
             'categories' => Category::where('is_active', true)->get(),
@@ -139,6 +154,10 @@ class SearchController extends Controller
         $filters = ['qualification_slug' => $slug];
         $jobs = $this->searchService->searchJobs($filters, 8);
 
+        // Track qualification search view
+        app(\App\Services\AnalyticsService::class)->trackPageView('/search/qualification/' . $slug, request()->header('referer'));
+        app(\App\Services\AnalyticsService::class)->trackSearchQuery('', $filters, $jobs->total());
+
         return view('search', [
             'states' => State::all(),
             'categories' => Category::where('is_active', true)->get(),
@@ -163,6 +182,10 @@ class SearchController extends Controller
 
         $filters = ['department_slug' => $slug];
         $jobs = $this->searchService->searchJobs($filters, 8);
+
+        // Track organization search view
+        app(\App\Services\AnalyticsService::class)->trackPageView('/search/organization/' . $slug, request()->header('referer'));
+        app(\App\Services\AnalyticsService::class)->trackSearchQuery('', $filters, $jobs->total());
 
         return view('search', [
             'states' => State::all(),

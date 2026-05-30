@@ -675,6 +675,64 @@
                     sModal.removeClass('active');
                 }
             });
+
+            // ================== HIGH PERFORMANCE TELEMETRY TRACKER ==================
+            // 1. Auto Page View Track
+            if (!window.location.pathname.startsWith('/admin') && !window.location.pathname.startsWith('/api')) {
+                $.ajax({
+                    url: '/api/analytics/page-view',
+                    method: 'POST',
+                    data: {
+                        path: window.location.pathname,
+                        referer: document.referrer,
+                        _token: '{{ csrf_token() }}'
+                    }
+                });
+            }
+
+            // 2. Track Ad Slot Impressions
+            $('.ad-banner-placeholder').each(function() {
+                const slotName = $(this).attr('id') || 'home_sponsored_banner';
+                $.ajax({
+                    url: '/api/analytics/ad-event',
+                    method: 'POST',
+                    data: {
+                        event_type: 'ad_impression',
+                        slot_name: slotName,
+                        _token: '{{ csrf_token() }}'
+                    }
+                });
+            });
+
+            // 3. Track Ad Slot Clicks
+            $(document).on('click', '.ad-banner-placeholder', function() {
+                const slotName = $(this).attr('id') || 'home_sponsored_banner';
+                $.ajax({
+                    url: '/api/analytics/ad-event',
+                    method: 'POST',
+                    data: {
+                        event_type: 'ad_click',
+                        slot_name: slotName,
+                        _token: '{{ csrf_token() }}'
+                    }
+                });
+            });
+
+            // 4. Track External Apply link CTR Click
+            $(document).on('click', '#detailOfficialLink', function() {
+                const jobId = $('#applicationFormJobId').val();
+                if (jobId) {
+                    $.ajax({
+                        url: '/api/analytics/job-event',
+                        method: 'POST',
+                        data: {
+                            job_post_id: jobId,
+                            event_type: 'apply_click',
+                            _token: '{{ csrf_token() }}'
+                        }
+                    });
+                }
+            });
         });
     </script>
     

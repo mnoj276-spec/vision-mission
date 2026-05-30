@@ -20,6 +20,7 @@ Route::middleware(['auth', 'admin'])->prefix('api/admin')->group(function () {
     Route::middleware('permission:view_dashboard')->group(function () {
         Route::get('/dashboard',       [AdminDashboardController::class, 'dashboardView'])->name('admin.dashboard');
         Route::get('/data',            [AdminDashboardController::class, 'getAdminData'])->name('admin.data');
+        Route::get('/analytics/metrics', [AdminDashboardController::class, 'getAnalyticsData'])->name('admin.analytics.metrics');
     });
 
     // ─── Administrative Audit Logs ───────────────────────────────────────────

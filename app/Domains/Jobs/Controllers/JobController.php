@@ -24,6 +24,11 @@ class JobController extends Controller
             return $this->handleAjaxFilters($request);
         }
 
+        // Track homepage view
+        try {
+            app(\App\Services\AnalyticsService::class)->trackPageView('/', $request->header('referer'));
+        } catch (\Exception $e) {}
+
         $data = $this->jobService->getHomePageData();
         return view('home', $data);
     }
@@ -32,6 +37,13 @@ class JobController extends Controller
     {
         $filters = $request->only(['search', 'state_id', 'category_id', 'qualification_id', 'min_salary', 'has_no_fee']);
         $jobs    = $this->jobService->getFilteredJobs($filters, 6);
+
+        // Track AJAX search
+        try {
+            if ($request->filled('search') || !empty(array_filter($filters))) {
+                app(\App\Services\AnalyticsService::class)->trackSearchQuery($request->input('search', ''), $filters, $jobs->total());
+            }
+        } catch (\Exception $e) {}
 
         $formattedJobs = collect($jobs->items())->map(fn ($job) => [
             'id'              => $job->id,
@@ -57,6 +69,12 @@ class JobController extends Controller
     {
         $job = $this->jobService->getJobDetail($slug);
         if (!$job) return response()->json(['status' => 'error', 'message' => 'Job not found.'], 404);
+
+        // Track job views
+        try {
+            app(\App\Services\AnalyticsService::class)->trackJobEvent($job->id, 'view');
+            app(\App\Services\AnalyticsService::class)->trackPageView('/job/' . $slug, request()->header('referer'));
+        } catch (\Exception $e) {}
 
         return response()->json(['status' => 'success', 'data' => [
             'id'                    => $job->id,
@@ -247,6 +265,12 @@ class JobController extends Controller
             'event_type' => $eventType,
             'page_path'  => $pagePath
         ]);
+
+        try {
+            if ($eventType === 'page_view') {
+                app(\App\Services\AnalyticsService::class)->trackPageView($pagePath, request()->header('referer'));
+            }
+        } catch (\Exception $e) {}
     }
 
     protected function getFunnelMetrics(string $pagePath): array
