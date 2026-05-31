@@ -432,6 +432,34 @@
     .typo-banner a:hover {
         color: var(--accent-color);
     }
+
+    /* Systemic Reset of button styles inherited by inline text links using the btn-view class for event handling */
+    .sarkari-item-link.btn-view,
+    .ticker-item.btn-view {
+        background: none !important;
+        border: none !important;
+        padding: 0 !important;
+        border-radius: 0 !important;
+        box-shadow: none !important;
+        transform: none !important;
+        min-height: auto !important;
+        min-width: auto !important;
+    }
+    .sarkari-item-link.btn-view {
+        display: block !important;
+        width: 100% !important;
+    }
+    .ticker-item.btn-view {
+        display: inline-flex !important;
+    }
+    .sarkari-item-link.btn-view:hover,
+    .ticker-item.btn-view:hover {
+        background: none !important;
+        border: none !important;
+        box-shadow: none !important;
+        transform: none !important;
+        color: var(--accent-color) !important;
+    }
 </style>
 
 <div style="max-width: 1400px; margin: 0 auto; padding: 0 5%;">
