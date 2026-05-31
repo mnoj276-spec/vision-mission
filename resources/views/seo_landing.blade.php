@@ -1,3 +1,4 @@
+@inject('seoService', 'App\Domains\Jobs\Services\SeoService')
 @extends('layouts.app')
 
 @section('title', $pageTitle)
@@ -408,7 +409,15 @@
     </div>
 </div>
 
-<!-- Structured Schema Markup (JSON-LD) (Task 2) -->
+@endsection
+
+@section('schema')
+<!-- BreadcrumbList Schema -->
+<script type="application/ld+json">
+{!! json_encode($seoService->getSchemaService()->getBreadcrumbListSchema([$breadcrumb => request()->url()]), JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES) !!}
+</script>
+
+<!-- ItemList Schema -->
 @php
   $itemListSchema = [
       '@context' => 'https://schema.org',
@@ -417,7 +426,7 @@
       'itemListElement' => $jobs->map(fn($job, $index) => [
           '@type' => 'ListItem',
           'position' => $index + 1,
-          'url' => url('/') . '/#jobs/' . $job->slug,
+          'url' => route('seo.job_detail', ['slug' => $job->slug]),
           'name' => $job->title
       ])->toArray()
   ];
@@ -426,45 +435,12 @@
 {!! json_encode($itemListSchema, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES) !!}
 </script>
 
+<!-- JobPostings Schema -->
 @foreach($jobs as $job)
-@php
-  $jobSchema = [
-      '@context' => 'https://schema.org',
-      '@type' => 'JobPosting',
-      'title' => $job->title,
-      'description' => strip_tags($job->description),
-      'datePosted' => $job->published_at ? $job->published_at->toDateString() : now()->toDateString(),
-      'validThrough' => $job->last_date_to_apply ? $job->last_date_to_apply->toDateString() : now()->addDays(30)->toDateString(),
-      'hiringOrganization' => [
-          '@type' => 'Organization',
-          'name' => $job->department->name ?? 'Government Recruitment Board',
-          'sameAs' => $job->official_website_link ?? 'https://upsc.gov.in'
-      ],
-      'jobLocation' => [
-          '@type' => 'Place',
-          'address' => [
-              '@type' => 'PostalAddress',
-              'addressRegion' => $job->state->name ?? 'Pan India',
-              'addressCountry' => 'IN'
-          ]
-      ],
-      'baseSalary' => [
-          '@type' => 'MonetaryAmount',
-          'currency' => 'INR',
-          'value' => [
-              '@type' => 'QuantitativeValue',
-              'minValue' => (float)$job->salary_min,
-              'maxValue' => (float)$job->salary_max,
-              'unitText' => 'MONTH'
-          ]
-      ]
-  ];
-@endphp
 <script type="application/ld+json">
-{!! json_encode($jobSchema, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES) !!}
+{!! json_encode($seoService->getSchemaService()->getJobPostingSchema($job), JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES) !!}
 </script>
 @endforeach
-
 @endsection
 
 @section('scripts')

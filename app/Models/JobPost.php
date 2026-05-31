@@ -38,12 +38,14 @@ class JobPost extends Model
         'application_fee',
         'official_website_link',
         'apply_link',
+        'affiliate_link',
         'notification_pdf_path',
         'last_date_to_apply',
         'exam_date',
         'status',
         'published_at',
         'is_featured',
+        'is_sponsored',
         'is_historical',
         'fingerprint',
         'expires_at',
@@ -204,6 +206,14 @@ class JobPost extends Model
     public function scopeFeatured(Builder $query): Builder
     {
         return $query->where('is_featured', true);
+    }
+
+    /**
+     * Scope to retrieve sponsored posts.
+     */
+    public function scopeSponsored(Builder $query): Builder
+    {
+        return $query->where('is_sponsored', true);
     }
 
     /**

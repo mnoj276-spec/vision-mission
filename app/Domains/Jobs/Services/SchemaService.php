@@ -1,0 +1,220 @@
+<?php
+
+namespace App\Domains\Jobs\Services;
+
+use App\Models\JobPost;
+use Illuminate\Support\Facades\Request;
+
+class SchemaService
+{
+    /**
+     * Load SEO settings from json cache with defaults.
+     */
+    protected function getSeoSettings(): array
+    {
+        $seoPath = storage_path('app/seo_settings.json');
+        return file_exists($seoPath)
+            ? json_decode(file_get_contents($seoPath), true)
+            : [
+                'meta_title'       => 'GovJobs - Premium Government Jobs Portal',
+                'meta_description' => 'Browse and search live verified government recruitments across multiple departments.',
+                'meta_keywords'    => 'government jobs, state recruitments, dynamic portal',
+            ];
+    }
+
+    /**
+     * Generate dynamic Organization Schema.
+     */
+    public function getOrganizationSchema(): array
+    {
+        $settings = $this->getSeoSettings();
+        $name = str_replace(' - GovJobs', '', $settings['meta_title'] ?? 'GovJobs');
+        $url = request()->getSchemeAndHttpHost();
+
+        return [
+            '@context' => 'https://schema.org',
+            '@type' => 'Organization',
+            '@id' => $url . '/#organization',
+            'name' => $name,
+            'url' => $url,
+            'logo' => [
+                '@type' => 'ImageObject',
+                '@id' => $url . '/#logo',
+                'url' => $url . '/assets/css/portal.css', // Reference actual theme assets
+                'caption' => $name
+            ],
+            'sameAs' => [
+                'https://t.me/gov_job_alerts_mock',
+            ]
+        ];
+    }
+
+    /**
+     * Generate dynamic WebSite Schema.
+     */
+    public function getWebSiteSchema(): array
+    {
+        $settings = $this->getSeoSettings();
+        $name = str_replace(' - GovJobs', '', $settings['meta_title'] ?? 'GovJobs');
+        $url = request()->getSchemeAndHttpHost();
+
+        return [
+            '@context' => 'https://schema.org',
+            '@type' => 'WebSite',
+            '@id' => $url . '/#website',
+            'name' => $name,
+            'url' => $url,
+            'description' => $settings['meta_description'] ?? '',
+            'publisher' => [
+                '@id' => $url . '/#organization'
+            ],
+            'potentialAction' => [
+                $this->getSearchActionSchema()
+            ]
+        ];
+    }
+
+    /**
+     * Generate SearchAction Schema for Sitelinks Searchbox.
+     */
+    public function getSearchActionSchema(): array
+    {
+        $url = request()->getSchemeAndHttpHost();
+
+        return [
+            '@context' => 'https://schema.org',
+            '@type' => 'SearchAction',
+            'target' => [
+                '@type' => 'EntryPoint',
+                'urlTemplate' => $url . '/search?search={search_term_string}'
+            ],
+            'query-input' => 'required name=search_term_string'
+        ];
+    }
+
+    /**
+     * Generate dynamic BreadcrumbList Schema.
+     */
+    public function getBreadcrumbListSchema(array $breadcrumbs): array
+    {
+        $listElement = [];
+        $position = 1;
+        $baseUrl = request()->getSchemeAndHttpHost();
+
+        // Always prepend Home unless it's already there
+        $listElement[] = [
+            '@type' => 'ListItem',
+            'position' => $position++,
+            'name' => 'Home',
+            'item' => $baseUrl
+        ];
+
+        foreach ($breadcrumbs as $label => $url) {
+            if (empty($label)) continue;
+
+            $itemUrl = $url;
+            if ($itemUrl && !str_starts_with($itemUrl, 'http')) {
+                $itemUrl = str_starts_with($itemUrl, '/') ? $baseUrl . $itemUrl : $baseUrl . '/' . $itemUrl;
+            }
+
+            if (!$itemUrl) {
+                $itemUrl = request()->fullUrl();
+            }
+
+            $listElement[] = [
+                '@type' => 'ListItem',
+                'position' => $position++,
+                'name' => $label,
+                'item' => $itemUrl
+            ];
+        }
+
+        return [
+            '@context' => 'https://schema.org',
+            '@type' => 'BreadcrumbList',
+            'itemListElement' => $listElement
+        ];
+    }
+
+    /**
+     * Generate FAQPage Schema from dynamically supplied FAQs array.
+     */
+    public function getFAQPageSchema(array $faqs): array
+    {
+        $mainEntity = [];
+
+        foreach ($faqs as $faq) {
+            if (!empty($faq['question']) && !empty($faq['answer'])) {
+                $mainEntity[] = [
+                    '@type' => 'Question',
+                    'name' => trim($faq['question']),
+                    'acceptedAnswer' => [
+                        '@type' => 'Answer',
+                        'text' => strip_tags($faq['answer'])
+                    ]
+                ];
+            }
+        }
+
+        return [
+            '@context' => 'https://schema.org',
+            '@type' => 'FAQPage',
+            'mainEntity' => $mainEntity
+        ];
+    }
+
+    /**
+     * Generate dynamic, highly rich JobPosting Schema.
+     */
+    public function getJobPostingSchema(JobPost $job): array
+    {
+        $baseUrl = request()->getSchemeAndHttpHost();
+        $detailUrl = route('seo.job_detail', ['slug' => $job->slug]);
+
+        $schema = [
+            '@context' => 'https://schema.org',
+            '@type' => 'JobPosting',
+            '@id' => $detailUrl . '/#jobposting',
+            'title' => $job->title,
+            'description' => strip_tags($job->description),
+            'datePosted' => $job->published_at ? $job->published_at->toDateString() : ($job->created_at ? $job->created_at->toDateString() : now()->toDateString()),
+            'validThrough' => $job->last_date_to_apply ? $job->last_date_to_apply->toDateString() : now()->addDays(30)->toDateString(),
+            'employmentType' => 'FULL_TIME',
+            'hiringOrganization' => [
+                '@type' => 'Organization',
+                'name' => $job->department->name ?? 'Government Recruitment Board',
+                'sameAs' => $job->official_website_link ?? 'https://upsc.gov.in',
+                'logo' => $baseUrl . '/assets/css/portal.css'
+            ],
+            'jobLocation' => [
+                '@type' => 'Place',
+                'address' => [
+                    '@type' => 'PostalAddress',
+                    'addressRegion' => $job->state->name ?? 'Pan India',
+                    'addressCountry' => 'IN'
+                ]
+            ],
+            'industry' => 'Government',
+            'baseSalary' => [
+                '@type' => 'MonetaryAmount',
+                'currency' => 'INR',
+                'value' => [
+                    '@type' => 'QuantitativeValue',
+                    'minValue' => $job->salary_min > 0 ? (float)$job->salary_min : 15600.00,
+                    'maxValue' => $job->salary_max > 0 ? (float)$job->salary_max : 39100.00,
+                    'unitText' => 'MONTH'
+                ]
+            ],
+            'educationRequirements' => [
+                '@type' => 'EducationalOccupationalCredential',
+                'credentialCategory' => $job->qualification->name ?? 'Degree Required'
+            ]
+        ];
+
+        if ($job->apply_link) {
+            $schema['directApply'] = true;
+        }
+
+        return $schema;
+    }
+}

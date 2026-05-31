@@ -60,6 +60,8 @@ class JobController extends Controller
             'application_fee' => number_format($job->application_fee, 2),
             'last_date'       => $job->last_date_to_apply?->format('d M Y') ?? 'N/A',
             'is_featured'     => $job->is_featured,
+            'is_sponsored'    => (bool) $job->is_sponsored,
+            'affiliate_link'  => $job->affiliate_link,
         ]);
 
         return response()->json(['status' => 'success', 'data' => ['jobs' => $formattedJobs, 'current_page' => $jobs->currentPage(), 'last_page' => $jobs->lastPage(), 'total' => $jobs->total()]]);
@@ -93,6 +95,7 @@ class JobController extends Controller
             'exam_date'             => $job->exam_date?->format('d M Y') ?? 'Announced Soon',
             'official_website_link' => $job->official_website_link,
             'apply_link'            => $job->apply_link,
+            'affiliate_link'        => $job->affiliate_link,
             'description'           => $job->description,
             'exam_pattern'          => $job->exam_pattern     ?? 'Objective MCQs.',
             'selection_process'     => $job->selection_process ?? 'Written Exam.',
@@ -250,10 +253,12 @@ class JobController extends Controller
 
     public function sitemap()
     {
-        $jobs = \App\Models\JobPost::where('status', 'published')->orderBy('id', 'desc')->get();
-        $categories = \App\Models\Category::all();
+        $xml = \Illuminate\Support\Facades\Cache::remember('sitemap_xml', 3600, function () {
+            $jobs = \App\Models\JobPost::where('status', 'published')->orderBy('id', 'desc')->get();
+            $categories = \App\Models\Category::all();
 
-        $xml = view('seo.sitemap', compact('jobs', 'categories'))->render();
+            return view('seo.sitemap', compact('jobs', 'categories'))->render();
+        });
 
         return response($xml, 200)
             ->header('Content-Type', 'text/xml');
@@ -287,5 +292,17 @@ class JobController extends Controller
             'applies' => $applies,
             'conversion_rate' => $conversionRate
         ];
+    }
+
+    /**
+     * PWA Offline fallback view controller channel.
+     */
+    public function offline()
+    {
+        return view('offline', [
+            'pageTitle' => 'Offline Mode — GovJobs Recruitment Portal',
+            'metaDescription' => 'Your device is currently disconnected from the internet. Standby offline engine is running.',
+            'breadcrumbs' => ['Offline Mode' => null]
+        ]);
     }
 }

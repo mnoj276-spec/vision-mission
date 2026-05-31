@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Route;
 | URL prefix: /api/admin  (kept identical to original to avoid JS changes)
 */
 
-Route::middleware(['auth', 'admin'])->prefix('api/admin')->group(function () {
+Route::middleware(['auth', 'admin', 'permission:create_jobs'])->prefix('api/admin')->group(function () {
 
     // ─── Scraper Source CRUD ─────────────────────────────────────────────────
     Route::get('/scrapers',          [ScraperController::class, 'index'])->name('admin.scrapers.list');

@@ -1,3 +1,4 @@
+@inject('seoService', 'App\Domains\Jobs\Services\SeoService')
 @extends('layouts.app')
 
 @section('title', $pageTitle)
@@ -29,6 +30,7 @@
         backdrop-filter: blur(12px);
         -webkit-backdrop-filter: blur(12px);
         position: relative;
+        z-index: 100;
         box-shadow: var(--card-shadow);
     }
 
@@ -105,7 +107,7 @@
         margin-top: 0.5rem;
         max-height: 480px;
         overflow-y: auto;
-        z-index: 1000;
+        z-index: 1050;
         box-shadow: 0 15px 35px -5px rgba(0,0,0,0.25);
         display: none;
         backdrop-filter: blur(14px);
@@ -191,7 +193,19 @@
         gap: 0.4rem;
     }
 
-    .filter-select, .filter-input {
+    .filter-select {
+        width: 100%;
+        background-color: var(--bg-primary);
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        padding: 0.6rem 2.5rem 0.6rem 1rem;
+        color: var(--text-primary);
+        font-size: 0.88rem;
+        outline: none;
+        transition: border-color 0.2s;
+    }
+
+    .filter-input {
         width: 100%;
         background: var(--bg-primary);
         border: 1px solid var(--border-color);
@@ -496,7 +510,15 @@
     </div>
 </div>
 
-<!-- Structured Schema Markup (JSON-LD ItemList & JobPosting) -->
+@endsection
+
+@section('schema')
+<!-- BreadcrumbList Schema -->
+<script type="application/ld+json">
+{!! json_encode($seoService->getSchemaService()->getBreadcrumbListSchema($breadcrumbs), JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES) !!}
+</script>
+
+<!-- ItemList Schema -->
 @php
   $itemListSchema = [
       '@context' => 'https://schema.org',
@@ -514,35 +536,12 @@
 {!! json_encode($itemListSchema, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES) !!}
 </script>
 
+<!-- JobPostings Schema -->
 @foreach($jobs as $job)
-@php
-  $jobSchema = [
-      '@context' => 'https://schema.org',
-      '@type' => 'JobPosting',
-      'title' => $job->title,
-      'description' => strip_tags($job->description),
-      'datePosted' => $job->published_at ? $job->published_at->toDateString() : now()->toDateString(),
-      'validThrough' => $job->last_date_to_apply ? $job->last_date_to_apply->toDateString() : now()->addDays(30)->toDateString(),
-      'hiringOrganization' => [
-          '@type' => 'Organization',
-          'name' => $job->department->name ?? 'Government Recruitment Board',
-          'sameAs' => $job->official_website_link ?? 'https://upsc.gov.in'
-      ],
-      'jobLocation' => [
-          '@type' => 'Place',
-          'address' => [
-              '@type' => 'PostalAddress',
-              'addressRegion' => $job->state->name ?? 'Pan India',
-              'addressCountry' => 'IN'
-          ]
-      ]
-  ];
-@endphp
 <script type="application/ld+json">
-{!! json_encode($jobSchema, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES) !!}
+{!! json_encode($seoService->getSchemaService()->getJobPostingSchema($job), JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES) !!}
 </script>
 @endforeach
-
 @endsection
 
 @section('scripts')

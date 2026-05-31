@@ -21,6 +21,7 @@ class JobRepository implements JobRepositoryInterface
             ->search($filters['search'] ?? null)
             ->filterBy($filters)
             ->with(['category', 'department', 'state', 'qualification', 'source'])
+            ->orderBy('is_sponsored', 'desc')
             ->orderBy('is_featured', 'desc')
             ->orderBy('published_at', 'desc')
             ->paginate($perPage);

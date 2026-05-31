@@ -21,6 +21,7 @@ class User extends Authenticatable
         'phone',
         'password',
         'role',
+        'membership_plan',
         'otp_code',
         'otp_expires_at',
         'is_active',
@@ -54,6 +55,15 @@ class User extends Authenticatable
                         $user->update(['role' => $mappedRole]);
                     });
                 }
+            }
+        });
+
+        static::created(function ($user) {
+            if ($user->role === 'candidate' && !empty($user->email)) {
+                \App\Jobs\SendEmailJob::dispatch($user->email, 'welcome_1', [
+                    'user_id' => $user->id,
+                    'name' => $user->name,
+                ]);
             }
         });
     }

@@ -1,3 +1,4 @@
+@inject('seoService', 'App\Domains\Jobs\Services\SeoService')
 @php
     $seo = [
         'meta_title' => 'GovJobs - Premium Automated Government Jobs Portal',
@@ -25,8 +26,45 @@
     <meta name="keywords" content="{{ $seo['meta_keywords'] }}">
     <meta name="robots" content="index, follow">
     
+    <!-- Speed Optimization: Resource Hint Preconnects -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <!-- Speed Optimization: Async Web Fonts Loading -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+
     <!-- Custom Design Stylesheet -->
     <link rel="stylesheet" href="{{ asset('assets/css/portal.css') }}">
+
+    @if(!auth()->check() || !in_array(auth()->user()->membership_plan, ['premium', 'pro']))
+        @if(config('app.env') !== 'local' && config('app.env') !== 'testing')
+            <!-- Asynchronous Google AdSense Integrations -->
+            <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-mock-9876543210" crossorigin="anonymous" defer></script>
+        @endif
+        
+        <!-- Asynchronous Ezoic Standalone Head Integration -->
+        <script type="text/javascript" async defer>
+            window.ezstandalone = window.ezstandalone || {};
+            window.ezstandalone.cmd = window.ezstandalone.cmd || [];
+        </script>
+    @endif
+
+    <!-- Global Technical SEO Structured Data (Organization, WebSite, SearchAction) -->
+    <script type="application/ld+json">
+    {!! json_encode($seoService->getSchemaService()->getOrganizationSchema(), JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES) !!}
+    </script>
+    <script type="application/ld+json">
+    {!! json_encode($seoService->getSchemaService()->getWebSiteSchema(), JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES) !!}
+    </script>
+    @yield('schema')
+    <!-- Progressive Web Application (PWA) Manifest & Mobile Settings -->
+    <link rel="manifest" href="/manifest.json">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="GovJobs">
+    <link rel="apple-touch-icon" href="/assets/images/icons/pwa-icon-192.png">
+    <meta name="theme-color" content="#2563eb">
 </head>
 <body>
 
@@ -39,12 +77,12 @@
             </a>
             
             <ul class="nav-links">
-                <li><a href="/" class="nav-tab-trigger" data-target="jobs">Home</a></li>
+                <li><a href="/#jobs-search-section" class="nav-tab-trigger" data-target="jobs">Home</a></li>
                 <li><a href="/ssc-jobs" style="font-weight: 700;">SSC Board</a></li>
                 <li><a href="/railway-jobs" style="font-weight: 700;">Railways</a></li>
                 <li><a href="/upsc-jobs" style="font-weight: 700;">UPSC</a></li>
                 <li><a href="/state-jobs" style="font-weight: 700;">State Jobs</a></li>
-                <li><a href="#" class="nav-tab-trigger" data-target="info-hub">Info Hub</a></li>
+                <li><a href="/#info-hub-section" class="nav-tab-trigger" data-target="info-hub">Info Hub</a></li>
             </ul>
 
             <div class="header-actions" style="display: flex; gap: 0.75rem; align-items: center;">
@@ -60,10 +98,10 @@
                             <span style="max-width: 100px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">{{ auth()->user()->name }}</span>
                         </button>
                         <div class="dropdown-menu">
-                            <a href="#dashboard-section" class="dropdown-item nav-tab-trigger" data-target="dashboard">Dashboard</a>
-                            @if(auth()->user()->role === 'admin')
+                            <a href="/#dashboard-section" class="dropdown-item nav-tab-trigger" data-target="dashboard">Dashboard</a>
+                            @can('admin-access')
                                 <a href="{{ route('admin.dashboard') }}" class="dropdown-item">Admin Panel</a>
-                            @endif
+                            @endcan
                             <div class="dropdown-divider"></div>
                             <button class="dropdown-item" id="logoutBtn" style="border:none; background:none; width:100%; cursor:pointer;">Logout</button>
                         </div>
@@ -94,10 +132,25 @@
             <button class="drawer-close-btn" id="closeMobileDrawerBtn">&times;</button>
         </div>
         <ul class="mobile-drawer-links">
-            <li><a href="/" class="nav-tab-trigger mobile-drawer-link" data-target="jobs">Home</a></li>
-            <li><a href="#latest-jobs" class="nav-tab-trigger mobile-drawer-link" data-target="jobs">Jobs List</a></li>
-            <li><a href="#" class="nav-tab-trigger mobile-drawer-link" data-target="info-hub">Information Hub</a></li>
-            <li><a href="#admit-cards" class="mobile-drawer-link">Exam Utilities</a></li>
+            <li><a href="/#jobs-search-section" class="nav-tab-trigger mobile-drawer-link" data-target="jobs">Home</a></li>
+            <li><a href="/#jobs-search-section" class="nav-tab-trigger mobile-drawer-link" data-target="jobs">Jobs List</a></li>
+            <li><a href="/#info-hub-section" class="nav-tab-trigger mobile-drawer-link" data-target="info-hub">Information Hub</a></li>
+            <li><a href="/ssc-jobs" class="mobile-drawer-link">SSC Board</a></li>
+            <li><a href="/railway-jobs" class="mobile-drawer-link">Railways</a></li>
+            <li><a href="/upsc-jobs" class="mobile-drawer-link">UPSC</a></li>
+            <li><a href="/state-jobs" class="mobile-drawer-link">State Jobs</a></li>
+            <li><a href="/admit-cards" class="mobile-drawer-link">Exam Utilities</a></li>
+            @auth
+                <li style="border-top: 1px solid var(--border-color); margin-top: 0.5rem; padding-top: 0.5rem;">
+                    <a href="/#dashboard-section" class="nav-tab-trigger mobile-drawer-link" data-target="dashboard">Dashboard</a>
+                </li>
+                @can('admin-access')
+                    <li><a href="{{ route('admin.dashboard') }}" class="mobile-drawer-link">Admin Panel</a></li>
+                @endcan
+                <li>
+                    <button class="mobile-drawer-link" id="mobileLogoutBtn" style="background: none; border: none; color: inherit; cursor: pointer; width: 100%; text-align: left; font: inherit; padding: 0.6rem 0;">Logout</button>
+                </li>
+            @endauth
         </ul>
     </div>
 
@@ -116,9 +169,9 @@
             <div>
                 <h4 style="color: var(--text-primary); margin-bottom: 1rem; font-family: 'Outfit';">Portal Hubs</h4>
                 <ul style="list-style: none; display: grid; gap: 0.5rem;">
-                    <li><a href="#" class="nav-tab-trigger" data-target="jobs" style="color: var(--text-secondary); text-decoration: none;">Recruitments Board</a></li>
-                    <li><a href="#" class="nav-tab-trigger" data-target="info-hub" style="color: var(--text-secondary); text-decoration: none;">Information Hub</a></li>
-                    <li><a href="#" class="nav-tab-trigger" data-target="info-hub" style="color: var(--text-secondary); text-decoration: none;">FAQ Accordions</a></li>
+                    <li><a href="/#jobs-search-section" class="nav-tab-trigger" data-target="jobs" style="color: var(--text-secondary); text-decoration: none;">Recruitments Board</a></li>
+                    <li><a href="/#info-hub-section" class="nav-tab-trigger" data-target="info-hub" style="color: var(--text-secondary); text-decoration: none;">Information Hub</a></li>
+                    <li><a href="/#info-hub-section" class="nav-tab-trigger" data-target="info-hub" style="color: var(--text-secondary); text-decoration: none;">FAQ Accordions</a></li>
                 </ul>
             </div>
             <div>
@@ -358,8 +411,8 @@
     <!-- D. Sliding toast feedback alerts -->
     <div class="toast-container" id="toastContainer"></div>
 
-    <!-- 4. jQuery CDN and Theme JS Controller -->
-    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <!-- 4. Local Offline jQuery and Theme JS Controller -->
+    <script src="{{ asset('assets/js/jquery-3.7.1.min.js') }}"></script>
     <script>
         // Global Sliding Toast Dispenser
         function showToast(message, type = 'success') {
@@ -433,7 +486,102 @@
             }
 
             $('#hamburgerMenuBtn').on('click', openDrawer);
-            $('#closeMobileDrawerBtn, #mobileDrawerOverlay, .mobile-drawer-link').on('click', closeDrawer);
+            $('#closeMobileDrawerBtn, #mobileDrawerOverlay').on('click', closeDrawer);
+            $(document).on('click', '.mobile-drawer-link', closeDrawer);
+
+            // ================== USER DROPDOWN TOGGLE (CLICK-BASED) ==================
+            // Works on touch devices where CSS :hover is unreliable
+            const userDropdown = $('.user-menu-dropdown');
+            userDropdown.find('> button').on('click', function(e) {
+                e.stopPropagation();
+                userDropdown.toggleClass('show');
+            });
+
+            // Close dropdown when clicking outside
+            $(document).on('click', function(e) {
+                if (!$(e.target).closest('.user-menu-dropdown').length) {
+                    $('.user-menu-dropdown').removeClass('show');
+                    $('.user-menu-dropdown .dropdown-menu').css('display', '');
+                }
+            });
+
+            // Close dropdown when clicking any dropdown item inside it
+            $(document).on('click', '.user-menu-dropdown .dropdown-item', function() {
+                $('.user-menu-dropdown').removeClass('show');
+                $('.user-menu-dropdown .dropdown-menu').css('display', '');
+            });
+
+            // ================== GLOBAL NAV-TAB-TRIGGER HANDLER ==================
+            // Handles navigation from subpages (e.g., /ssc-jobs) to homepage sections
+            // On the homepage, the handler in home.blade.php takes over via e.preventDefault()
+            // On subpages, this ensures clicking navigates to the homepage with the correct hash
+            $(document).on('click', '.nav-tab-trigger', function(e) {
+                const target = $(this).data('target');
+                const isHomepage = window.location.pathname === '/' || window.location.pathname === '';
+
+                if (!isHomepage) {
+                    // On subpages: let the browser navigate via the href (e.g., /#dashboard-section)
+                    return; // Don't prevent default — let the <a href="/#..."> navigate naturally
+                }
+
+                // On homepage: prevent default browser jump and toggle the tab programmatically
+                e.preventDefault();
+
+                // Close mobile drawer if open
+                if (typeof closeDrawer === 'function') {
+                    closeDrawer();
+                } else {
+                    $('#mobileDrawer, #mobileDrawerOverlay').removeClass('active');
+                    $('body').css('overflow', '');
+                }
+
+                // Close user dropdown if open
+                $('.user-menu-dropdown').removeClass('show');
+                $('.user-menu-dropdown .dropdown-menu').css('display', '');
+
+                // Hide all homepage main tabs
+                $('.portal-main-tab').hide();
+
+                // Show and load selected tab
+                if (target === 'dashboard') {
+                    $('#dashboard-section').fadeIn();
+                    if (typeof loadDashboardData === 'function') {
+                        loadDashboardData();
+                    }
+                } else if (target === 'admin') {
+                    $('#admin-section').fadeIn();
+                    if (typeof loadAdminData === 'function') {
+                        loadAdminData();
+                    }
+                } else if (target === 'info-hub') {
+                    $('#info-hub-section').fadeIn();
+                } else {
+                    $('#jobs-search-section').fadeIn();
+                }
+
+                // Sync URL hash
+                window.location.hash = target + '-section';
+            });
+
+            // ================== MOBILE LOGOUT HANDLER ==================
+            $('#mobileLogoutBtn').on('click', function(e) {
+                e.preventDefault();
+                closeDrawer();
+                $.ajax({
+                    url: '/api/logout',
+                    method: 'POST',
+                    data: { _token: '{{ csrf_token() }}' },
+                    success: function(res) {
+                        showToast(res.message, 'success');
+                        setTimeout(() => {
+                            window.location.href = '/';
+                        }, 800);
+                    },
+                    error: function() {
+                        window.location.reload();
+                    }
+                });
+            });
 
 
             // ================== LOGIN MODAL TRIGGERS ==================
@@ -733,8 +881,142 @@
                     });
                 }
             });
+
+            // ================== PWA SERVICE WORKER & INSTALL MANAGER ==================
+            let deferredPrompt;
+            const installBanner = document.getElementById('pwaInstallBanner');
+
+            // 1. Service Worker Bootloader Registration
+            if ('serviceWorker' in navigator) {
+                window.addEventListener('load', () => {
+                    navigator.serviceWorker.register('/sw.js')
+                        .then((reg) => {
+                            console.log('[PWA Bootloader] Service Worker registered successfully: ', reg.scope);
+                            
+                            // Initialize Background Sync if supported
+                            if ('sync' in reg) {
+                                console.log('[PWA Bootloader] Background Sync engine is ready');
+                            }
+                        })
+                        .catch((err) => console.log('[PWA Bootloader] Service Worker registration failed: ', err));
+                });
+            }
+
+            // 2. Capture standalone install prompts
+            window.addEventListener('beforeinstallprompt', (e) => {
+                e.preventDefault();
+                deferredPrompt = e;
+                
+                // Show installation banner to the candidate
+                if (installBanner && localStorage.getItem('pwa_banner_dismissed') !== 'true') {
+                    setTimeout(() => {
+                        installBanner.style.display = 'flex';
+                    }, 3000);
+                }
+            });
+
+            // 3. Banner action click triggers browser installer
+            $('#pwaInstallBannerAction').on('click', function() {
+                if (!deferredPrompt) return;
+                installBanner.style.display = 'none';
+                
+                deferredPrompt.prompt();
+                deferredPrompt.userChoice.then((choiceResult) => {
+                    if (choiceResult.outcome === 'accepted') {
+                        console.log('[PWA Installer] Candidate accepted installer prompt');
+                        showToast('GovJobs successfully installed on your desktop/mobile!', 'success');
+                    } else {
+                        console.log('[PWA Installer] Candidate dismissed installer prompt');
+                    }
+                    deferredPrompt = null;
+                });
+            });
+
+            // 4. Banner close action
+            $('#pwaInstallBannerClose').on('click', function() {
+                installBanner.style.display = 'none';
+                localStorage.setItem('pwa_banner_dismissed', 'true');
+            });
+
+            // 5. Offline Job Alerts IndexedDB support:
+            // Intercept standard Email Alert activation forms to queue them offline if navigator is offline
+            $('#growthSubscribeForm').off('submit').on('submit', function(e) {
+                const form = $(this);
+                const emailInput = $('#subscriberEmail').val();
+                const categoryInput = $('input[name="category_name"]').val();
+                
+                if (!navigator.onLine) {
+                    e.preventDefault();
+                    
+                    // Queue subscription request into IndexedDB
+                    try {
+                        const dbReq = indexedDB.open('govjobs_offline_db', 1);
+                        dbReq.onupgradeneeded = function(event) {
+                            const db = event.target.result;
+                            if (!db.objectStoreNames.contains('subscriptions')) {
+                                db.createObjectStore('subscriptions', { keyPath: 'id', autoIncrement: true });
+                            }
+                        };
+                        
+                        dbReq.onsuccess = function(event) {
+                            const db = event.target.result;
+                            const tx = db.transaction(['subscriptions'], 'readwrite');
+                            const store = tx.objectStore('subscriptions');
+                            
+                            store.add({
+                                email: emailInput,
+                                category_name: categoryInput,
+                                token: $('input[name="_token"]').val(),
+                                created_at: new Date().toISOString()
+                            });
+                            
+                            tx.oncomplete = function() {
+                                // Request background synchronization via service worker if possible
+                                if ('serviceWorker' in navigator && 'SyncManager' in window) {
+                                    navigator.serviceWorker.ready.then((reg) => {
+                                        return reg.sync.register('sync-subscriptions');
+                                    }).then(() => {
+                                        console.log('[PWA Sync] Background sync token registered successfully');
+                                    });
+                                }
+                                
+                                showToast('Offline standby: Alert request queued in background sync!', 'warning');
+                                form.html(`
+                                    <div style="text-align: center; padding: 1rem 0; color: var(--accent-color);">
+                                        <svg width="32" height="32" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" style="margin-bottom: 0.5rem;"><path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                        <div style="font-weight: 700; font-size: 0.9rem;">Queued for Connection Sync!</div>
+                                    </div>
+                                `);
+                            };
+                        };
+                    } catch (err) {
+                        showToast('Standby error: IndexedDB support failed.', 'error');
+                    }
+                }
+            });
         });
     </script>
+
+    <!-- PWA Smart Install App Banner -->
+    <div id="pwaInstallBanner" style="position: fixed; bottom: 2rem; left: 2rem; right: 2rem; max-width: 500px; background: rgba(17, 24, 39, 0.95); border: 1px solid var(--border-color); box-shadow: var(--card-shadow); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border-radius: 16px; padding: 1.25rem; display: none; align-items: center; justify-content: space-between; gap: 1rem; z-index: 1050; margin: 0 auto; animation: slide-up-pwa 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);">
+        <style>
+            @keyframes slide-up-pwa {
+                from { transform: translateY(100px); opacity: 0; }
+                to { transform: translateY(0); opacity: 1; }
+            }
+        </style>
+        <div style="display: flex; align-items: center; gap: 0.75rem; text-align: left;">
+            <img src="/assets/images/icons/pwa-icon-96.png" width="48" height="48" alt="GovJobs Logo" style="border-radius: 10px;">
+            <div>
+                <h4 style="font-family: 'Outfit'; font-size: 0.95rem; font-weight: 800; color: #ffffff; margin: 0 0 0.15rem 0;">Install GovJobs App</h4>
+                <p style="font-size: 0.75rem; color: var(--text-secondary); margin: 0;">Add to your home screen for instant updates & offline search!</p>
+            </div>
+        </div>
+        <div style="display: flex; gap: 0.5rem;">
+            <button id="pwaInstallBannerClose" style="background: rgba(255,255,255,0.05); color: var(--text-secondary); border: none; padding: 0.5rem 0.75rem; border-radius: 8px; font-size: 0.8rem; font-weight: 600; cursor: pointer;">Not Now</button>
+            <button id="pwaInstallBannerAction" style="background: linear-gradient(135deg, var(--accent-color) 0%, var(--accent-hover) 100%); color: white; border: none; padding: 0.5rem 1rem; border-radius: 8px; font-size: 0.8rem; font-weight: 700; cursor: pointer; white-space: nowrap;">Install App</button>
+        </div>
+    </div>
     
     @yield('scripts')
 </body>

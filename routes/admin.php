@@ -18,7 +18,7 @@ Route::middleware(['auth', 'admin'])->prefix('api/admin')->group(function () {
 
     // ─── Admin Dashboard & Analytics (Dashboard View) ────────────────────────
     Route::middleware('permission:view_dashboard')->group(function () {
-        Route::get('/dashboard',       [AdminDashboardController::class, 'dashboardView'])->name('admin.dashboard');
+        Route::get('/dashboard',       [AdminDashboardController::class, 'dashboardView'])->name('admin.dashboard.api');
         Route::get('/data',            [AdminDashboardController::class, 'getAdminData'])->name('admin.data');
         Route::get('/analytics/metrics', [AdminDashboardController::class, 'getAnalyticsData'])->name('admin.analytics.metrics');
     });
@@ -41,6 +41,11 @@ Route::middleware(['auth', 'admin'])->prefix('api/admin')->group(function () {
         Route::post('/queues/failed/flush',     [\App\Domains\Admin\Controllers\QueueManagementController::class, 'flushAll'])->name('admin.queues.flush');
         Route::post('/queues/failed/{uuid}/retry', [\App\Domains\Admin\Controllers\QueueManagementController::class, 'retryJob'])->name('admin.queues.retry');
         Route::delete('/queues/failed/{uuid}',  [\App\Domains\Admin\Controllers\QueueManagementController::class, 'deleteJob'])->name('admin.queues.delete');
+
+        // ─── Marketing Automation & Email Tracking ───
+        Route::get('/marketing/stats',          [\App\Domains\Admin\Controllers\MarketingController::class, 'getStats'])->name('admin.marketing.stats');
+        Route::get('/marketing/logs',           [\App\Domains\Admin\Controllers\MarketingController::class, 'getLogs'])->name('admin.marketing.logs');
+        Route::post('/marketing/trigger-test',  [\App\Domains\Admin\Controllers\MarketingController::class, 'triggerTest'])->name('admin.marketing.trigger-test');
     });
 
     // ─── User Management ─────────────────────────────────────────────────────

@@ -84,6 +84,9 @@ class AppServiceProvider extends ServiceProvider
             !$this->app->isProduction()
         );
 
+        // Register JobPost observer for cache busting
+        \App\Models\JobPost::observe(\App\Observers\JobPostObserver::class);
+
         // ─── Custom Stateless JWT Request Guard ───────────────────────────────
         Auth::viaRequest('jwt', function (Request $request) {
             $token = $request->bearerToken();

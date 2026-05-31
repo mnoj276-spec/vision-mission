@@ -317,6 +317,39 @@
         border-radius: 4px;
         letter-spacing: 0.08em;
     }
+
+    /* Monetization Premium Styles */
+    .job-card.is-sponsored {
+        background: linear-gradient(135deg, rgba(217, 119, 6, 0.04) 0%, rgba(217, 119, 6, 0.01) 100%) !important;
+        border: 1.5px solid rgba(217, 119, 6, 0.35) !important;
+        box-shadow: 0 8px 30px rgba(217, 119, 6, 0.06);
+        position: relative;
+        animation: sponsor-glow-pulse 2.5s infinite alternate;
+    }
+    .job-card.is-sponsored::after {
+        content: 'SPONSORED MATCH';
+        position: absolute;
+        top: 0;
+        right: 0;
+        background: linear-gradient(90deg, #d97706 0%, #f59e0b 100%);
+        color: white;
+        font-size: 0.62rem;
+        font-weight: 800;
+        padding: 0.2rem 0.5rem;
+        border-radius: 0 0 0 8px;
+        letter-spacing: 0.05em;
+        z-index: 10;
+    }
+    @keyframes sponsor-glow-pulse {
+        0% { border-color: rgba(217, 119, 6, 0.25); box-shadow: 0 8px 30px rgba(217, 119, 6, 0.05); }
+        100% { border-color: rgba(217, 119, 6, 0.5); box-shadow: 0 8px 35px rgba(217, 119, 6, 0.12); }
+    }
+    .badge.badge-sponsored {
+        background: linear-gradient(90deg, #d97706 0%, #f59e0b 100%) !important;
+        color: white !important;
+        font-weight: 800;
+        letter-spacing: 0.03em;
+    }
     /* Autocomplete Suggestions Menu */
     .autocomplete-dropdown {
         position: absolute;
@@ -399,6 +432,34 @@
     .typo-banner a:hover {
         color: var(--accent-color);
     }
+
+    /* Systemic Reset of button styles inherited by inline text links using the btn-view class for event handling */
+    .sarkari-item-link.btn-view,
+    .ticker-item.btn-view {
+        background: none !important;
+        border: none !important;
+        padding: 0 !important;
+        border-radius: 0 !important;
+        box-shadow: none !important;
+        transform: none !important;
+        min-height: auto !important;
+        min-width: auto !important;
+    }
+    .sarkari-item-link.btn-view {
+        display: block !important;
+        width: 100% !important;
+    }
+    .ticker-item.btn-view {
+        display: inline-flex !important;
+    }
+    .sarkari-item-link.btn-view:hover,
+    .ticker-item.btn-view:hover {
+        background: none !important;
+        border: none !important;
+        box-shadow: none !important;
+        transform: none !important;
+        color: var(--accent-color) !important;
+    }
 </style>
 
 <div style="max-width: 1400px; margin: 0 auto; padding: 0 5%;">
@@ -406,7 +467,7 @@
 <!-- 1. Hero Welcome Segment -->
 <section class="hero" style="margin-bottom: 1.5rem;">
     <h1>Find Your Dream <span style="color: var(--accent-color);">Government Job</span> Today</h1>
-    <p>Discover real-time, highly validated recruitment alerts across UPSC, SSC, Banking, Railways, and individual states. Updated automatically, verified by AI, 100% accurate.</p>
+    <p>Discover real-time, highly validated recruitment alerts across UPSC, SSC, Banking, Railways, and individual states. Updated automatically, systematically verified, 100% accurate.</p>
 </section>
 
 <!-- 2. Scrolling Marquee Updates Ticker -->
@@ -477,7 +538,8 @@
     </div>
 
     <!-- 4. Monetization Responsive Ad Placeholder Row 1 -->
-    <div class="ad-banner-placeholder">
+    @if(!auth()->check() || !in_array(auth()->user()->membership_plan, ['premium', 'pro']))
+    <div class="ad-banner-placeholder" id="home_leaderboard_ad">
         <span class="ad-badge">Advertisement</span>
         <div style="font-size: 0.9rem; font-weight: 600; color: var(--text-secondary); display: flex; align-items: center; gap: 0.5rem;">
             <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
@@ -485,6 +547,7 @@
         </div>
         <div style="font-size: 0.75rem; color: var(--text-secondary); opacity: 0.8;">Supports GovJobs Free Auto-Extraction & Failsafe Processing Infrastructure</div>
     </div>
+    @endif
 
     <!-- 5. Sarkari Grid Row 1 (Jobs, Admit Cards, Results) -->
     <div class="sarkari-panels-container">
@@ -691,10 +754,10 @@
         <!-- Typo Correction Banner -->
         <div id="homeTypoBanner" style="display: none; grid-column: 1 / -1; margin-bottom: 1rem;"></div>
 
-        <div class="glass-panel search-compass" style="border-left: 4px solid var(--accent-color); overflow: visible;">
+        <div class="glass-panel search-compass" style="border-left: 4px solid var(--accent-color); overflow: visible; z-index: 100; position: relative;">
             <div style="position: relative;">
                 <input type="text" id="searchKeywords" placeholder="Search keywords (e.g. UPSC, RBI officer)..." autocomplete="off">
-                <div class="autocomplete-dropdown" id="autocompleteDropdown" style="position: absolute; top: 100%; left: 0; right: 0; background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: 12px; margin-top: 0.5rem; max-height: 350px; overflow-y: auto; z-index: 1000; box-shadow: 0 15px 35px -5px rgba(0,0,0,0.25); display: none; text-align: left; backdrop-filter: blur(14px);"></div>
+                <div class="autocomplete-dropdown" id="autocompleteDropdown" style="position: absolute; top: 100%; left: 0; right: 0; background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: 12px; margin-top: 0.5rem; max-height: 350px; overflow-y: auto; z-index: 1050; box-shadow: 0 15px 35px -5px rgba(0,0,0,0.25); display: none; text-align: left; backdrop-filter: blur(14px);"></div>
             </div>
             <div>
                 <select id="stateSelect">
@@ -777,9 +840,19 @@
                 <!-- Dynamic Jobs container -->
                 <div id="jobsListContainer">
                     @forelse($recentJobs as $rJob)
-                        <div class="glass-panel job-card">
+                        @php
+                            $applyTarget = $rJob->affiliate_link ? route('monetization.affiliate_redirect', ['slug' => $rJob->slug]) : '#';
+                        @endphp
+                        <div class="glass-panel job-card {{ $rJob->is_sponsored ? 'is-sponsored' : '' }} {{ $rJob->is_featured ? 'featured-premium' : '' }}">
                             <div class="job-info">
-                                <h3>{{ $rJob->title }}</h3>
+                                <h3 style="display:flex; align-items:center; gap:0.5rem;">
+                                    {{ $rJob->title }}
+                                    @if($rJob->is_sponsored)
+                                        <span class="badge badge-sponsored">SPONSORED</span>
+                                    @elseif($rJob->is_featured)
+                                        <span class="badge" style="background:var(--accent-color); color:#fff; font-size:0.75rem;">FEATURED</span>
+                                    @endif
+                                </h3>
                                 <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 0.5rem;">
                                     {{ $rJob->department->name ?? 'Government' }} &bull; {{ $rJob->state->name ?? 'Pan India' }}
                                 </p>
@@ -790,7 +863,7 @@
                                 </div>
                             </div>
                             <div style="display: flex; flex-direction: column; gap: 0.5rem; align-items: flex-end;">
-                                <a href="#" class="btn-view" data-slug="{{ $rJob->slug }}">View Details</a>
+                                <a href="{{ $applyTarget }}" class="btn-view" data-slug="{{ $rJob->slug }}">View Details</a>
                                 @auth
                                     <button class="btn-sm-danger toggle-bookmark-btn" data-id="{{ $rJob->id }}" style="background: rgba(37,99,235,0.06); color: var(--accent-color); border-color: rgba(37,99,235,0.15);">
                                         Save Job
@@ -1008,6 +1081,7 @@
     <div class="sub-tab-headers" style="margin-bottom: 1.5rem;">
         <button class="sub-tab-btn active dash-sub-trigger" data-target="dash-overview-block">Workspace Overview</button>
         <button class="sub-tab-btn dash-sub-trigger" data-target="dash-settings-block">Profile & Match Alerts Preferences</button>
+        <button class="sub-tab-btn dash-sub-trigger" data-target="dash-membership-block" id="dashMembershipTabTrigger">Premium Membership Plans</button>
     </div>
 
     <!-- Dash Block 1: Overview (Bookmarks and apps table) -->
@@ -1142,6 +1216,112 @@
             </form>
         </div>
     </div>
+
+    <!-- Dash Block 3: Membership Plans & Upgrades -->
+    <div id="dash-membership-block" class="dash-block-panel" style="display: none;">
+        <div class="glass-panel" style="padding: 2rem; max-width: 800px; margin: 0 auto;">
+            <h3 style="font-family:'Outfit'; color: var(--accent-color); margin-bottom: 0.5rem; text-align: center;">Premium Membership Plans</h3>
+            <p style="font-size:0.9rem; color:var(--text-secondary); text-align:center; margin-bottom:2rem;">
+                Unlock advanced automation alerts, early results access, and a completely <strong>ad-free experience</strong>.
+            </p>
+
+            <div style="display: flex; gap: 1rem; margin-bottom: 2rem; align-items: stretch; justify-content: center; flex-wrap: wrap;">
+                <!-- Plan 1: Free -->
+                <div class="glass-panel" style="flex: 1; min-width: 220px; padding: 1.5rem; display: flex; flex-direction: column; justify-content: space-between; border-top: 4px solid var(--text-secondary);">
+                    <div>
+                        <h4 style="font-family:'Outfit'; font-size:1.15rem; margin-bottom:0.5rem;">Basic Free Plan</h4>
+                        <div style="font-size:1.5rem; font-weight:800; margin-bottom:1rem; color:var(--text-primary);">₹0</div>
+                        <ul style="list-style:none; padding:0; margin:0; display:grid; gap:0.5rem; font-size:0.82rem; color:var(--text-secondary);">
+                            <li>✓ Standard job notifications</li>
+                            <li>✓ Web extraction portal access</li>
+                            <li>✗ Sponsored advertisements</li>
+                            <li>✗ Advanced SMS alerts</li>
+                        </ul>
+                    </div>
+                    <div style="margin-top:1.5rem;">
+                        <button class="btn-view" style="width:100%; text-align:center; cursor:default;" id="btnFreePlanIndicator" disabled>Active Plan</button>
+                    </div>
+                </div>
+
+                <!-- Plan 2: Premium -->
+                <div class="glass-panel" style="flex: 1; min-width: 220px; padding: 1.5rem; display: flex; flex-direction: column; justify-content: space-between; border-top: 4px solid var(--accent-color); background: rgba(37,99,235,0.02);">
+                    <div>
+                        <h4 style="font-family:'Outfit'; font-size:1.15rem; margin-bottom:0.5rem;">Premium Candidate</h4>
+                        <div style="font-size:1.5rem; font-weight:800; margin-bottom:1rem; color:var(--accent-color);">₹299 <span style="font-size:0.8rem; font-weight:normal;">/ month</span></div>
+                        <ul style="list-style:none; padding:0; margin:0; display:grid; gap:0.5rem; font-size:0.82rem; color:var(--text-secondary);">
+                            <li><strong>✓ Completely Ad-Free Experience</strong></li>
+                            <li>✓ Instant WhatsApp/SMS alerts</li>
+                            <li>✓ Early Access to Exam Results</li>
+                            <li>✓ Automated study guide matching</li>
+                        </ul>
+                    </div>
+                    <div style="margin-top:1.5rem;">
+                        <button class="form-btn select-membership-plan-btn" data-plan="premium" id="btnPremiumPlanIndicator" style="width:100%; margin:0; padding:0.6rem;">Upgrade Premium</button>
+                    </div>
+                </div>
+
+                <!-- Plan 3: Pro -->
+                <div class="glass-panel" style="flex: 1; min-width: 220px; padding: 1.5rem; display: flex; flex-direction: column; justify-content: space-between; border-top: 4px solid #10b981; background: rgba(16,185,129,0.02);">
+                    <div>
+                        <h4 style="font-family:'Outfit'; font-size:1.15rem; margin-bottom:0.5rem;">Pro Professional</h4>
+                        <div style="font-size:1.5rem; font-weight:800; margin-bottom:1rem; color:#10b981;">₹599 <span style="font-size:0.8rem; font-weight:normal;">/ month</span></div>
+                        <ul style="list-style:none; padding:0; margin:0; display:grid; gap:0.5rem; font-size:0.82rem; color:var(--text-secondary);">
+                            <li><strong>✓ Completely Ad-Free Experience</strong></li>
+                            <li>✓ Priority SMS and Call reminders</li>
+                            <li>✓ Access to premium Test Series</li>
+                            <li>✓ Downloadable PDF Syllabus guides</li>
+                        </ul>
+                    </div>
+                    <div style="margin-top:1.5rem;">
+                        <button class="form-btn select-membership-plan-btn" data-plan="pro" id="btnProPlanIndicator" style="width:100%; margin:0; padding:0.6rem; background:#10b981;">Upgrade Pro</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- UPI/Credit Card Simulated Payment Panel (hidden by default) -->
+            <div id="simulatedPaymentPanel" style="display: none; border-top: 1px solid var(--border-color); padding-top: 1.5rem; margin-top: 1.5rem;">
+                <h4 style="font-family:'Outfit'; font-size:1.1rem; color:var(--accent-color); margin-bottom:1rem; text-align:center;">Secure Mock Checkout Interface</h4>
+                <form id="ajaxSimulatedCheckoutForm" style="max-width: 450px; margin: 0 auto;">
+                    @csrf
+                    <input type="hidden" id="checkoutTargetPlan" name="plan">
+                    
+                    <div class="form-group">
+                        <label for="mockPaymentMethod">Payment Gateway Mode</label>
+                        <select id="mockPaymentMethod" class="form-control">
+                            <option value="upi">Instant UPI (Paytm/PhonePe/GPay)</option>
+                            <option value="card">Visa / Mastercard Credit Card</option>
+                        </select>
+                    </div>
+
+                    <!-- UPI ID field -->
+                    <div class="form-group" id="upiFieldBlock">
+                        <label for="mockUpiId">Enter UPI Address</label>
+                        <input type="text" id="mockUpiId" class="form-control" placeholder="username@upi" value="candidate@oksbi">
+                    </div>
+
+                    <!-- Card details block -->
+                    <div id="cardFieldBlock" style="display: none;">
+                        <div class="form-group">
+                            <label for="mockCardNumber">Card Number</label>
+                            <input type="text" id="mockCardNumber" class="form-control" placeholder="4111 2222 3333 4444" value="4111222233334444">
+                        </div>
+                        <div style="display: flex; gap: 0.75rem;">
+                            <div class="form-group" style="flex:1;">
+                                <label for="mockCardExpiry">Expiry Date</label>
+                                <input type="text" id="mockCardExpiry" class="form-control" placeholder="MM/YY" value="12/28">
+                            </div>
+                            <div class="form-group" style="flex:1;">
+                                <label for="mockCardCvv">CVV Code</label>
+                                <input type="password" id="mockCardCvv" class="form-control" placeholder="•••" value="123">
+                            </div>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="form-btn" id="paymentSubmitBtn">Authorize Secure Transaction</button>
+                </form>
+            </div>
+        </div>
+    </div>
 </div>
 
 <!-- TAB 4: ADMIN SCRAPER SCHEDULE & OVERRIDES PANEL -->
@@ -1153,6 +1333,7 @@
         <button class="sub-tab-btn admin-sub-trigger" data-target="admin-publisher-block">Manual Recruitment Publisher</button>
         <button class="sub-tab-btn admin-sub-trigger" data-target="admin-users-block">User Registry Elevations Board</button>
         <button class="sub-tab-btn admin-sub-trigger" data-target="admin-seo-block">SEO Caching Console</button>
+        <button class="sub-tab-btn admin-sub-trigger" data-target="admin-revenue-block" id="adminRevenueTabTrigger">Monetization & Revenue Dashboard</button>
     </div>
 
     <!-- Admin Block 1: Crawler Monitors -->
@@ -1392,6 +1573,74 @@
             </form>
         </div>
     </div>
+
+    <!-- Admin Block 5: Monetization & Revenue Dashboard -->
+    <div id="admin-revenue-block" class="admin-block-panel" style="display: none;">
+        <!-- KPI summary statistics cards -->
+        <div class="stats-grid" style="grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.25rem; margin-bottom: 2rem;">
+            <div class="glass-panel stat-card" style="background: rgba(37, 99, 235, 0.02); border: 1px solid var(--border-color); text-align:center;">
+                <div class="stat-num" id="revStatsAdsTotal" style="font-size:1.8rem; font-family:'Outfit'; color: var(--accent-color);">₹0.00</div>
+                <div class="stat-label" style="font-size:0.75rem;">Google AdSense CPM/CPC</div>
+            </div>
+            <div class="glass-panel stat-card" style="background: rgba(245, 158, 11, 0.02); border: 1px solid var(--border-color); text-align:center;">
+                <div class="stat-num" id="revStatsAffiliate" style="font-size:1.8rem; font-family:'Outfit'; color: #f59e0b;">₹0.00</div>
+                <div class="stat-label" style="font-size:0.75rem;">Cloaked Affiliate Clicks</div>
+            </div>
+            <div class="glass-panel stat-card" style="background: rgba(139, 92, 246, 0.02); border: 1px solid var(--border-color); text-align:center;">
+                <div class="stat-num" id="revStatsSponsorship" style="font-size:1.8rem; font-family:'Outfit'; color: #8b5cf6;">₹0.00</div>
+                <div class="stat-label" style="font-size:0.75rem;">Direct Sponsorship Fees</div>
+            </div>
+            <div class="glass-panel stat-card" style="background: rgba(16, 185, 129, 0.02); border: 1px solid var(--border-color); text-align:center;">
+                <div class="stat-num" id="revStatsSubscriptions" style="font-size:1.8rem; font-family:'Outfit'; color: #10b981;">₹0.00</div>
+                <div class="stat-label" style="font-size:0.75rem;">Premium Plan Signups</div>
+            </div>
+            <div class="glass-panel stat-card" style="background: var(--bg-primary); border: 1.5px solid var(--accent-color); text-align:center;">
+                <div class="stat-num" id="revStatsGrandTotal" style="font-size:1.8rem; font-family:'Outfit'; color: var(--text-primary); font-weight:800;">₹0.00</div>
+                <div class="stat-label" style="font-size:0.75rem; color:var(--accent-color); font-weight:700;">CONSOLIDATED EARNINGS</div>
+            </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 2fr 1.2fr; gap: 2rem; align-items: start;">
+            <!-- Column 1: Streams Daily Graph -->
+            <div class="glass-panel" style="padding: 1.5rem;">
+                <h3 style="font-size:1.25rem; margin-bottom:1.5rem; color:var(--accent-color); font-family:'Outfit';">Estimated Earnings Breakdown</h3>
+                
+                <div id="revenueStreamsGraphBlock" style="height: 250px; display: flex; align-items: flex-end; justify-content: space-between; gap: 0.5rem; border-left: 2px solid var(--border-color); border-bottom: 2px solid var(--border-color); padding: 1rem 0.5rem 0.5rem 1rem; margin-bottom: 1.5rem;">
+                    <!-- Drawn dynamically via JS -->
+                </div>
+                <div style="display:flex; justify-content:center; gap:1.5rem; font-size:0.8rem; color:var(--text-secondary);">
+                    <div style="display:flex; align-items:center; gap:0.4rem;">
+                        <span style="display:inline-block; width:12px; height:12px; background:var(--accent-color); border-radius:3px;"></span> AdSense CPC/CPM
+                    </div>
+                    <div style="display:flex; align-items:center; gap:0.4rem;">
+                        <span style="display:inline-block; width:12px; height:12px; background:#f59e0b; border-radius:3px;"></span> Affiliate Clicks
+                    </div>
+                    <div style="display:flex; align-items:center; gap:0.4rem;">
+                        <span style="display:inline-block; width:12px; height:12px; background:#10b981; border-radius:3px;"></span> Subscriptions
+                    </div>
+                </div>
+            </div>
+
+            <!-- Column 2: Leaderboard -->
+            <div class="glass-panel" style="padding: 1.5rem;">
+                <h3 style="font-size:1.25rem; margin-bottom:1rem; color:var(--text-primary); font-family:'Outfit';">Top Affiliate Performers</h3>
+                <div class="responsive-table-container">
+                    <table class="portal-table" id="adminRevenueLeaderboardTable">
+                        <thead>
+                            <tr>
+                                <th>Recruitment Guide</th>
+                                <th>Clicks</th>
+                                <th style="text-align: right;">Earned</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Loaded via AJAX -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
 @endsection
@@ -1450,7 +1699,7 @@
         });
 
         // Sub-tabs transitions inside Information Hub
-        $('.sub-tab-btn[data-sub]').on('click', function(e) {
+        $(document).on('click', '.sub-tab-btn[data-sub]', function(e) {
             e.preventDefault();
             $(this).siblings().removeClass('active');
             $(this).addClass('active');
@@ -1460,7 +1709,7 @@
         });
 
         // Sub-tabs transitions inside Candidate Dashboard settings
-        $('.dash-sub-trigger').on('click', function(e) {
+        $(document).on('click', '.dash-sub-trigger', function(e) {
             e.preventDefault();
             $('.dash-sub-trigger').removeClass('active');
             $(this).addClass('active');
@@ -1470,7 +1719,7 @@
         });
 
         // Sub-tabs transitions inside Administration Control panels
-        $('.admin-sub-trigger').on('click', function(e) {
+        $(document).on('click', '.admin-sub-trigger', function(e) {
             e.preventDefault();
             $('.admin-sub-trigger').removeClass('active');
             $(this).addClass('active');
@@ -1489,6 +1738,10 @@
             $('.nav-tab-trigger[data-target="dashboard"]').trigger('click');
         } else if (currentHash === '#admin-section') {
             $('.nav-tab-trigger[data-target="admin"]').trigger('click');
+        } else if (currentHash === '#info-hub-section') {
+            $('.nav-tab-trigger[data-target="info-hub"]').trigger('click');
+        } else if (currentHash === '#jobs-search-section') {
+            $('.nav-tab-trigger[data-target="jobs"]').trigger('click');
         }
 
         // ================== SEARCH AND PAGINATION SYSTEM ==================
@@ -1535,11 +1788,17 @@
                         let html = '';
                         jobs.forEach(function(job) {
                             const isFeaturedBadge = job.is_featured ? '<span class="badge" style="background:var(--accent-color); color:#fff; font-size:0.75rem;">FEATURED</span>' : '';
+                            const isSponsoredBadge = job.is_sponsored ? '<span class="badge badge-sponsored">SPONSORED</span>' : '';
+                            const sponsoredClass = job.is_sponsored ? 'is-sponsored' : '';
+                            const featuredClass = job.is_featured ? 'featured-premium' : '';
+                            const applyTarget = job.affiliate_link ? `/go/${job.slug}` : `#`;
+
                             html += `
-                                <div class="glass-panel job-card">
+                                <div class="glass-panel job-card ${sponsoredClass} ${featuredClass}">
                                     <div class="job-info">
                                         <h3 style="display:flex; align-items:center; gap:0.5rem;">
                                             ${job.title} 
+                                            ${isSponsoredBadge}
                                             ${isFeaturedBadge}
                                         </h3>
                                         <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 0.5rem;">
@@ -1552,7 +1811,7 @@
                                         </div>
                                     </div>
                                     <div style="display: flex; flex-direction: column; gap: 0.5rem; align-items: flex-end;">
-                                        <a href="#" class="btn-view" data-slug="${job.slug}">View Details</a>
+                                        <a href="${applyTarget}" class="btn-view" data-slug="${job.slug}">View Details</a>
                                         @auth
                                             <button class="btn-sm-danger toggle-bookmark-btn" data-id="${job.id}" style="background: rgba(37,99,235,0.06); color: var(--accent-color); border-color: rgba(37,99,235,0.15);">
                                                 Save Job
@@ -1869,11 +2128,11 @@
                                             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle;"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
                                             Official Advertisement
                                         </a>
-                                        \%isLoggedIn%
+                                        \\%isLoggedIn%
                                     </div>
                                 </div>
                             `;
-                            html = html.replace('\%isLoggedIn%', isLoggedIn ? `
+                            html = html.replace('\\%isLoggedIn%', isLoggedIn ? `
                                 <button id="modalApplyBtn" class="form-btn" style="flex:1.5; margin-top:0; padding: 0.8rem; background: var(--accent-color); font-weight:700;" data-id="${job.id}">
                                     Apply Recruitment Now
                                 </button>
@@ -2911,6 +3170,134 @@
                         showToast('Metadata validation failed.', 'error');
                     } else {
                         showToast('Server meta update failed.', 'error');
+                    }
+                }
+            });
+        });
+
+        // ================== MONETIZATION INTERACTIVE CONTROLS ==================
+        
+        // 1. Payment gateway fields toggling
+        $(document).on('change', '#mockPaymentMethod', function() {
+            if ($(this).val() === 'upi') {
+                $('#upiFieldBlock').show();
+                $('#cardFieldBlock').hide();
+            } else {
+                $('#upiFieldBlock').hide();
+                $('#cardFieldBlock').show();
+            }
+        });
+
+        // 2. Select plan checkout trigger
+        $(document).on('click', '.select-membership-plan-btn', function() {
+            const plan = $(this).data('plan');
+            $('#checkoutTargetPlan').val(plan);
+            $('#simulatedPaymentPanel').slideDown();
+            $('html, body').animate({
+                scrollTop: $("#simulatedPaymentPanel").offset().top - 150
+            }, 500);
+        });
+
+        // 3. Simulated Upgrade transaction submit
+        $('#ajaxSimulatedCheckoutForm').on('submit', function(e) {
+            e.preventDefault();
+            const btn = $('#paymentSubmitBtn');
+            btn.prop('disabled', true).text('Authorizing Secure UPI/Card Link...');
+            
+            $.ajax({
+                url: '/api/membership/upgrade',
+                method: 'POST',
+                data: {
+                    plan: $('#checkoutTargetPlan').val(),
+                    _token: '{{ csrf_token() }}'
+                },
+                success: function(res) {
+                    showToast(res.message, 'success');
+                    setTimeout(() => {
+                        window.location.reload();
+                    }, 1500);
+                },
+                error: function() {
+                    btn.prop('disabled', false).text('Authorize Secure Transaction');
+                    showToast('Transaction processing failed. Please retry.', 'error');
+                }
+            });
+        });
+
+        // 4. Render active user plan visual badges
+        const currentPlan = isLoggedIn ? @json(auth()->user()?->membership_plan) : 'free';
+        if (currentPlan === 'premium') {
+            $('#btnPremiumPlanIndicator').prop('disabled', true).text('Active Plan').css('background', 'var(--text-secondary)');
+            $('#btnFreePlanIndicator').hide();
+        } else if (currentPlan === 'pro') {
+            $('#btnProPlanIndicator').prop('disabled', true).text('Active Plan').css('background', 'var(--text-secondary)');
+            $('#btnFreePlanIndicator').hide();
+        }
+
+        // 5. Admin Revenue Analytics fetching & CSS chart drawing
+        $(document).on('click', '#adminRevenueTabTrigger', function() {
+            $.ajax({
+                url: '/api/admin/revenue-analytics',
+                method: 'GET',
+                success: function(res) {
+                    if (res.success) {
+                        const data = res.data;
+                        
+                        // Update KPI metrics
+                        $('#revStatsAdsTotal').text('₹' + Number(data.kpis.ads_cpc + data.kpis.ads_cpm).toFixed(2));
+                        $('#revStatsAffiliate').text('₹' + Number(data.kpis.affiliate).toFixed(2));
+                        $('#revStatsSponsorship').text('₹' + Number(data.kpis.sponsorship).toFixed(2));
+                        $('#revStatsSubscriptions').text('₹' + Number(data.kpis.subscriptions).toFixed(2));
+                        $('#revStatsGrandTotal').text('₹' + Number(data.kpis.total_revenue).toFixed(2));
+
+                        // Find maximum bar value for relative chart heights
+                        let maxVal = 100;
+                        data.charts.streams.forEach(function(day) {
+                            const total = day.ads + day.affiliate + day.subscriptions;
+                            if (total > maxVal) maxVal = total;
+                        });
+
+                        // Draw SVG/CSS composite bars
+                        let chartHtml = '';
+                        data.charts.streams.forEach(function(day) {
+                            const total = day.ads + day.affiliate + day.subscriptions;
+                            const adsHeight = total > 0 ? (day.ads / maxVal) * 180 : 0;
+                            const affHeight = total > 0 ? (day.affiliate / maxVal) * 180 : 0;
+                            const subHeight = total > 0 ? (day.subscriptions / maxVal) * 180 : 0;
+                            
+                            chartHtml += `
+                                <div style="flex:1; display:flex; flex-direction:column; align-items:center; height:100%; justify-content:flex-end;">
+                                    <div style="width:24px; display:flex; flex-direction:column-reverse; border-radius:4px; overflow:hidden; background:rgba(255,255,255,0.03); height:180px;">
+                                        <div style="height:${adsHeight}px; background:var(--accent-color); width:100%; transition:height 0.5s ease;" title="AdSense: ₹${day.ads}"></div>
+                                        <div style="height:${affHeight}px; background:#f59e0b; width:100%; transition:height 0.5s ease;" title="Affiliate: ₹${day.affiliate}"></div>
+                                        <div style="height:${subHeight}px; background:#10b981; width:100%; transition:height 0.5s ease;" title="Subscriptions: ₹${day.subscriptions}"></div>
+                                    </div>
+                                    <span style="font-size:0.68rem; margin-top:0.5rem; color:var(--text-secondary); text-align:center;">${day.date}</span>
+                                </div>
+                            `;
+                        });
+                        $('#revenueStreamsGraphBlock').html(chartHtml);
+
+                        // Draw Leaderboard
+                        let leaderboardHtml = '';
+                        if (data.leaderboard.length === 0) {
+                            leaderboardHtml = `
+                                <tr>
+                                    <td colspan="3" style="text-align:center; color:var(--text-secondary); font-size:0.8rem; padding: 2rem 0;">No affiliate clicks recorded.</td>
+                                </tr>
+                            `;
+                        } else {
+                            data.leaderboard.forEach(function(item) {
+                                leaderboardHtml += `
+                                    <tr>
+                                        <td style="font-size:0.8rem; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; max-width:200px;" title="${item.title}">${item.title}</td>
+                                        <td style="font-size:0.85rem; font-weight:700;">${item.clicks}</td>
+                                        <td style="font-size:0.85rem; font-weight:700; color:#10b981; text-align:right;">₹${item.earnings.toFixed(2)}</td>
+                                    </tr>
+                                `;
+                            });
+                        }
+                        $('#adminRevenueLeaderboardTable tbody').html(leaderboardHtml);
                     }
                 }
             });

@@ -10,12 +10,26 @@ use App\Models\Qualification;
 use App\Models\State;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 
 class SearchController extends Controller
 {
     public function __construct(
         protected SearchServiceInterface $searchService
     ) {}
+
+    /**
+     * Retrieve global lookup metadata cached for 24 hours.
+     */
+    protected function getSearchMetadata(): array
+    {
+        return [
+            'states'         => Cache::remember('metadata_states', 86400, fn() => State::all()),
+            'categories'     => Cache::remember('metadata_categories', 86400, fn() => Category::where('is_active', true)->get()),
+            'qualifications' => Cache::remember('metadata_qualifications', 86400, fn() => Qualification::all()),
+            'departments'    => Cache::remember('metadata_departments', 86400, fn() => Department::all()),
+        ];
+    }
 
     /**
      * Main unified search dashboard and AJAX JSON response channel.
@@ -71,11 +85,7 @@ class SearchController extends Controller
         app(\App\Services\AnalyticsService::class)->trackPageView('/search', $request->header('referer'));
         app(\App\Services\AnalyticsService::class)->trackSearchQuery($request->input('search', ''), $filters, $jobs->total());
 
-        return view('search', [
-            'states' => State::all(),
-            'categories' => Category::where('is_active', true)->get(),
-            'qualifications' => Qualification::all(),
-            'departments' => Department::all(),
+        return view('search', array_merge($this->getSearchMetadata(), [
             'jobs' => $jobs,
             'typoSuggestion' => $spellcheck,
             'activeFilters' => $filters,
@@ -83,7 +93,7 @@ class SearchController extends Controller
             'pageHeader' => 'Advanced Job Finder',
             'metaDescription' => 'Search, filter, and discover verified government jobs by category, state, qualification, and organization. Equipped with auto typo-corrections and sub-millisecond suggestions.',
             'breadcrumbs' => ['Search' => null]
-        ]);
+        ]));
     }
 
     /**
@@ -100,11 +110,7 @@ class SearchController extends Controller
         app(\App\Services\AnalyticsService::class)->trackPageView('/search/state/' . $slug, request()->header('referer'));
         app(\App\Services\AnalyticsService::class)->trackSearchQuery('', $filters, $jobs->total());
 
-        return view('search', [
-            'states' => State::all(),
-            'categories' => Category::where('is_active', true)->get(),
-            'qualifications' => Qualification::all(),
-            'departments' => Department::all(),
+        return view('search', array_merge($this->getSearchMetadata(), [
             'jobs' => $jobs,
             'typoSuggestion' => null,
             'activeFilters' => $filters,
@@ -112,7 +118,7 @@ class SearchController extends Controller
             'pageHeader' => "Government Jobs in {$state->name}",
             'metaDescription' => "Discover live, verified government jobs, syllabus, and results in {$state->name}. Find openings matching your qualification.",
             'breadcrumbs' => ['State Jobs' => route('seo.state'), $state->name => null]
-        ]);
+        ]));
     }
 
     /**
@@ -129,11 +135,7 @@ class SearchController extends Controller
         app(\App\Services\AnalyticsService::class)->trackPageView('/search/category/' . $slug, request()->header('referer'));
         app(\App\Services\AnalyticsService::class)->trackSearchQuery('', $filters, $jobs->total());
 
-        return view('search', [
-            'states' => State::all(),
-            'categories' => Category::where('is_active', true)->get(),
-            'qualifications' => Qualification::all(),
-            'departments' => Department::all(),
+        return view('search', array_merge($this->getSearchMetadata(), [
             'jobs' => $jobs,
             'typoSuggestion' => null,
             'activeFilters' => $filters,
@@ -141,7 +143,7 @@ class SearchController extends Controller
             'pageHeader' => "{$category->name} Board Jobs",
             'metaDescription' => "Get active vacancies and exam announcements from {$category->name}. Apply online directly with complete syllabus guidelines.",
             'breadcrumbs' => [$category->name => null]
-        ]);
+        ]));
     }
 
     /**
@@ -158,11 +160,7 @@ class SearchController extends Controller
         app(\App\Services\AnalyticsService::class)->trackPageView('/search/qualification/' . $slug, request()->header('referer'));
         app(\App\Services\AnalyticsService::class)->trackSearchQuery('', $filters, $jobs->total());
 
-        return view('search', [
-            'states' => State::all(),
-            'categories' => Category::where('is_active', true)->get(),
-            'qualifications' => Qualification::all(),
-            'departments' => Department::all(),
+        return view('search', array_merge($this->getSearchMetadata(), [
             'jobs' => $jobs,
             'typoSuggestion' => null,
             'activeFilters' => $filters,
@@ -170,7 +168,7 @@ class SearchController extends Controller
             'pageHeader' => "{$qual->name} Vacancy Board",
             'metaDescription' => "Filter government jobs that specifically require {$qual->name} eligibility. Instant apply guidelines, syllabus breakdowns, and dates.",
             'breadcrumbs' => ["{$qual->name} Jobs" => null]
-        ]);
+        ]));
     }
 
     /**
@@ -187,11 +185,7 @@ class SearchController extends Controller
         app(\App\Services\AnalyticsService::class)->trackPageView('/search/organization/' . $slug, request()->header('referer'));
         app(\App\Services\AnalyticsService::class)->trackSearchQuery('', $filters, $jobs->total());
 
-        return view('search', [
-            'states' => State::all(),
-            'categories' => Category::where('is_active', true)->get(),
-            'qualifications' => Qualification::all(),
-            'departments' => Department::all(),
+        return view('search', array_merge($this->getSearchMetadata(), [
             'jobs' => $jobs,
             'typoSuggestion' => null,
             'activeFilters' => $filters,
@@ -199,7 +193,7 @@ class SearchController extends Controller
             'pageHeader' => "{$dept->name} Vacancies",
             'metaDescription' => "Search active recruitments under {$dept->name}. Verify exam dates, age limits, syllabus, and application fee structures in real-time.",
             'breadcrumbs' => [$dept->code => null]
-        ]);
+        ]));
     }
 
     /**
