@@ -293,4 +293,16 @@ class JobController extends Controller
             'conversion_rate' => $conversionRate
         ];
     }
+
+    /**
+     * PWA Offline fallback view controller channel.
+     */
+    public function offline()
+    {
+        return view('offline', [
+            'pageTitle' => 'Offline Mode — GovJobs Recruitment Portal',
+            'metaDescription' => 'Your device is currently disconnected from the internet. Standby offline engine is running.',
+            'breadcrumbs' => ['Offline Mode' => null]
+        ]);
+    }
 }

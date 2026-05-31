@@ -22,6 +22,9 @@ Route::get('/state-jobs',   [JobController::class, 'stateJobs'])->name('seo.stat
 // Automated XML Sitemap
 Route::get('/sitemap.xml',  [JobController::class, 'sitemap'])->name('sitemap');
 
+// PWA Offline Fallback View
+Route::get('/offline',      [JobController::class, 'offline'])->name('pwa.offline');
+
 // ─── Advanced Search System Routes ──────────────────────────────────────────
 use App\Domains\Jobs\Controllers\SearchController;
 

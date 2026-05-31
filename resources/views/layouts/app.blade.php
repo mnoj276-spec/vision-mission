@@ -56,6 +56,13 @@
     {!! json_encode($seoService->getSchemaService()->getWebSiteSchema(), JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES) !!}
     </script>
     @yield('schema')
+    <!-- Progressive Web Application (PWA) Manifest & Mobile Settings -->
+    <link rel="manifest" href="/manifest.json">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="GovJobs">
+    <link rel="apple-touch-icon" href="/assets/images/icons/pwa-icon-192.png">
+    <meta name="theme-color" content="#2563eb">
 </head>
 <body>
 
@@ -762,8 +769,142 @@
                     });
                 }
             });
+
+            // ================== PWA SERVICE WORKER & INSTALL MANAGER ==================
+            let deferredPrompt;
+            const installBanner = document.getElementById('pwaInstallBanner');
+
+            // 1. Service Worker Bootloader Registration
+            if ('serviceWorker' in navigator) {
+                window.addEventListener('load', () => {
+                    navigator.serviceWorker.register('/sw.js')
+                        .then((reg) => {
+                            console.log('[PWA Bootloader] Service Worker registered successfully: ', reg.scope);
+                            
+                            // Initialize Background Sync if supported
+                            if ('sync' in reg) {
+                                console.log('[PWA Bootloader] Background Sync engine is ready');
+                            }
+                        })
+                        .catch((err) => console.log('[PWA Bootloader] Service Worker registration failed: ', err));
+                });
+            }
+
+            // 2. Capture standalone install prompts
+            window.addEventListener('beforeinstallprompt', (e) => {
+                e.preventDefault();
+                deferredPrompt = e;
+                
+                // Show installation banner to the candidate
+                if (installBanner && localStorage.getItem('pwa_banner_dismissed') !== 'true') {
+                    setTimeout(() => {
+                        installBanner.style.display = 'flex';
+                    }, 3000);
+                }
+            });
+
+            // 3. Banner action click triggers browser installer
+            $('#pwaInstallBannerAction').on('click', function() {
+                if (!deferredPrompt) return;
+                installBanner.style.display = 'none';
+                
+                deferredPrompt.prompt();
+                deferredPrompt.userChoice.then((choiceResult) => {
+                    if (choiceResult.outcome === 'accepted') {
+                        console.log('[PWA Installer] Candidate accepted installer prompt');
+                        showToast('GovJobs successfully installed on your desktop/mobile!', 'success');
+                    } else {
+                        console.log('[PWA Installer] Candidate dismissed installer prompt');
+                    }
+                    deferredPrompt = null;
+                });
+            });
+
+            // 4. Banner close action
+            $('#pwaInstallBannerClose').on('click', function() {
+                installBanner.style.display = 'none';
+                localStorage.setItem('pwa_banner_dismissed', 'true');
+            });
+
+            // 5. Offline Job Alerts IndexedDB support:
+            // Intercept standard Email Alert activation forms to queue them offline if navigator is offline
+            $('#growthSubscribeForm').off('submit').on('submit', function(e) {
+                const form = $(this);
+                const emailInput = $('#subscriberEmail').val();
+                const categoryInput = $('input[name="category_name"]').val();
+                
+                if (!navigator.onLine) {
+                    e.preventDefault();
+                    
+                    // Queue subscription request into IndexedDB
+                    try {
+                        const dbReq = indexedDB.open('govjobs_offline_db', 1);
+                        dbReq.onupgradeneeded = function(event) {
+                            const db = event.target.result;
+                            if (!db.objectStoreNames.contains('subscriptions')) {
+                                db.createObjectStore('subscriptions', { keyPath: 'id', autoIncrement: true });
+                            }
+                        };
+                        
+                        dbReq.onsuccess = function(event) {
+                            const db = event.target.result;
+                            const tx = db.transaction(['subscriptions'], 'readwrite');
+                            const store = tx.objectStore('subscriptions');
+                            
+                            store.add({
+                                email: emailInput,
+                                category_name: categoryInput,
+                                token: $('input[name="_token"]').val(),
+                                created_at: new Date().toISOString()
+                            });
+                            
+                            tx.oncomplete = function() {
+                                // Request background synchronization via service worker if possible
+                                if ('serviceWorker' in navigator && 'SyncManager' in window) {
+                                    navigator.serviceWorker.ready.then((reg) => {
+                                        return reg.sync.register('sync-subscriptions');
+                                    }).then(() => {
+                                        console.log('[PWA Sync] Background sync token registered successfully');
+                                    });
+                                }
+                                
+                                showToast('Offline standby: Alert request queued in background sync!', 'warning');
+                                form.html(`
+                                    <div style="text-align: center; padding: 1rem 0; color: var(--accent-color);">
+                                        <svg width="32" height="32" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" style="margin-bottom: 0.5rem;"><path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                        <div style="font-weight: 700; font-size: 0.9rem;">Queued for Connection Sync!</div>
+                                    </div>
+                                `);
+                            };
+                        };
+                    } catch (err) {
+                        showToast('Standby error: IndexedDB support failed.', 'error');
+                    }
+                }
+            });
         });
     </script>
+
+    <!-- PWA Smart Install App Banner -->
+    <div id="pwaInstallBanner" style="position: fixed; bottom: 2rem; left: 2rem; right: 2rem; max-width: 500px; background: rgba(17, 24, 39, 0.95); border: 1px solid var(--border-color); box-shadow: var(--card-shadow); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border-radius: 16px; padding: 1.25rem; display: none; align-items: center; justify-content: space-between; gap: 1rem; z-index: 1050; margin: 0 auto; animation: slide-up-pwa 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);">
+        <style>
+            @keyframes slide-up-pwa {
+                from { transform: translateY(100px); opacity: 0; }
+                to { transform: translateY(0); opacity: 1; }
+            }
+        </style>
+        <div style="display: flex; align-items: center; gap: 0.75rem; text-align: left;">
+            <img src="/assets/images/icons/pwa-icon-96.png" width="48" height="48" alt="GovJobs Logo" style="border-radius: 10px;">
+            <div>
+                <h4 style="font-family: 'Outfit'; font-size: 0.95rem; font-weight: 800; color: #ffffff; margin: 0 0 0.15rem 0;">Install GovJobs App</h4>
+                <p style="font-size: 0.75rem; color: var(--text-secondary); margin: 0;">Add to your home screen for instant updates & offline search!</p>
+            </div>
+        </div>
+        <div style="display: flex; gap: 0.5rem;">
+            <button id="pwaInstallBannerClose" style="background: rgba(255,255,255,0.05); color: var(--text-secondary); border: none; padding: 0.5rem 0.75rem; border-radius: 8px; font-size: 0.8rem; font-weight: 600; cursor: pointer;">Not Now</button>
+            <button id="pwaInstallBannerAction" style="background: linear-gradient(135deg, var(--accent-color) 0%, var(--accent-hover) 100%); color: white; border: none; padding: 0.5rem 1rem; border-radius: 8px; font-size: 0.8rem; font-weight: 700; cursor: pointer; white-space: nowrap;">Install App</button>
+        </div>
+    </div>
     
     @yield('scripts')
 </body>
