@@ -1234,6 +1234,29 @@ select.select-user-role {
     box-shadow: 0 4px 12px rgba(245, 158, 11, 0.15);
 }
 
+.btn-sm-ai {
+    padding: 0.4rem 0.8rem;
+    background: rgba(139, 92, 246, 0.08);
+    color: #8b5cf6;
+    border: 1px solid rgba(139, 92, 246, 0.15);
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.75rem;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    text-decoration: none;
+}
+.btn-sm-ai:hover {
+    background: #8b5cf6;
+    color: #ffffff;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(139, 92, 246, 0.25);
+}
+
+
 /* Administrative Overrides and Quarantine Dashboard */
 .admin-badge-status {
     padding: 0.25rem 0.5rem;
@@ -1288,6 +1311,10 @@ select.select-user-role {
 
 .toggle-switch input:checked + .toggle-slider {
     background-color: var(--accent-color);
+}
+
+.toggle-switch input:checked + .toggle-slider.slider-success {
+    background-color: #10b981;
 }
 
 .toggle-switch input:checked + .toggle-slider:before {
