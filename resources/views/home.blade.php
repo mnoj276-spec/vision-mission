@@ -1125,6 +1125,25 @@
                                 <!-- Loaded via AJAX -->
                             </tbody>
                         </table>
+                </div>
+
+                <!-- Recently Viewed Recruitments box -->
+                <div class="glass-panel" style="padding: 1.5rem; margin-top: 2rem;">
+                    <h3 style="font-size: 1.25rem; margin-bottom: 1rem; color: #8b5cf6; font-family: 'Outfit';">Recently Viewed Recruitments</h3>
+                    <div class="responsive-table-container">
+                        <table class="portal-table" id="dashboardRecentlyViewedTable">
+                            <thead>
+                                <tr>
+                                    <th>Recruitment Title</th>
+                                    <th>Region</th>
+                                    <th>Apply Deadline</th>
+                                    <th style="text-align: center;">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Loaded via AJAX -->
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>
@@ -2649,9 +2668,11 @@
         function loadDashboardData() {
             const bTable = $('#dashboardBookmarksTable tbody');
             const aTable = $('#dashboardApplicationsTable tbody');
+            const rTable = $('#dashboardRecentlyViewedTable tbody');
 
             bTable.html('<tr><td colspan="4" style="text-align:center;">Loading Saved bookmarks...</td></tr>');
             aTable.html('<tr><td colspan="4" style="text-align:center;">Loading Submitted applications...</td></tr>');
+            rTable.html('<tr><td colspan="4" style="text-align:center;">Loading recently viewed...</td></tr>');
 
             $.ajax({
                 url: '/api/dashboard',
@@ -2718,6 +2739,26 @@
                                 `;
                             });
                             aTable.html(aHtml);
+                        }
+
+                        // Render Recently Viewed
+                        if (!data.recently_viewed || data.recently_viewed.length === 0) {
+                            rTable.html('<tr><td colspan="4" style="text-align:center; color: var(--text-secondary);">No recently viewed recruitments.</td></tr>');
+                        } else {
+                            let rHtml = '';
+                            data.recently_viewed.forEach(recent => {
+                                rHtml += `
+                                    <tr>
+                                        <td style="font-weight:600;">${recent.title}</td>
+                                        <td>${recent.state}</td>
+                                        <td style="color:#ef4444; font-weight:500;">${recent.last_date}</td>
+                                        <td style="text-align:center;">
+                                            <a href="#" class="btn-view btn-view-sm" data-slug="${recent.slug}" style="padding: 0.35rem 0.75rem; font-size:0.75rem;">View</a>
+                                        </td>
+                                    </tr>
+                                `;
+                            });
+                            rTable.html(rHtml);
                         }
                     }
                 },

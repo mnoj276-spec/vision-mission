@@ -60,6 +60,7 @@ class JobPost extends Model
         'exam_date' => 'date',
         'published_at' => 'datetime',
         'is_featured' => 'boolean',
+        'is_sponsored' => 'boolean',
         'is_historical' => 'boolean',
         'expires_at' => 'date',
     ];

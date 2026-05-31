@@ -59,4 +59,36 @@ class AdminJobController extends Controller
         $this->adminService->logAction(Auth::id(), $request->ip(), $request->userAgent() ?? 'N/A', 'Delete Job Posting', "Deleted job '{$title}' (ID: {$id})");
         return response()->json(['status' => 'success', 'message' => 'Job posting deleted successfully!']);
     }
+
+    public function toggleFeatured(Request $request, int $id): JsonResponse
+    {
+        $jobPost = JobPost::findOrFail($id);
+        $jobPost->is_featured = !$jobPost->is_featured;
+        $jobPost->save();
+
+        $status = $jobPost->is_featured ? 'enabled' : 'disabled';
+        $this->adminService->logAction(Auth::id(), $request->ip(), $request->userAgent() ?? 'N/A', 'Toggle Featured Job', "Toggled featured for job '{$jobPost->title}' to {$status} (ID: {$jobPost->id})");
+
+        return response()->json([
+            'status' => 'success',
+            'message' => "Featured status has been {$status}!",
+            'is_featured' => $jobPost->is_featured
+        ]);
+    }
+
+    public function toggleSponsored(Request $request, int $id): JsonResponse
+    {
+        $jobPost = JobPost::findOrFail($id);
+        $jobPost->is_sponsored = !$jobPost->is_sponsored;
+        $jobPost->save();
+
+        $status = $jobPost->is_sponsored ? 'enabled' : 'disabled';
+        $this->adminService->logAction(Auth::id(), $request->ip(), $request->userAgent() ?? 'N/A', 'Toggle Sponsored Job', "Toggled sponsored for job '{$jobPost->title}' to {$status} (ID: {$jobPost->id})");
+
+        return response()->json([
+            'status' => 'success',
+            'message' => "Sponsored status has been {$status}!",
+            'is_sponsored' => $jobPost->is_sponsored
+        ]);
+    }
 }

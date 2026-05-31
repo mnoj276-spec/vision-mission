@@ -217,4 +217,51 @@ class SchemaService
 
         return $schema;
     }
+
+    /**
+     * Generate dynamic Article Schema for results/syllabi/admit cards.
+     */
+    public function getArticleSchema(JobPost $job): array
+    {
+        $baseUrl = request()->getSchemeAndHttpHost();
+        $detailUrl = route('seo.job_detail', ['slug' => $job->slug]);
+
+        return [
+            '@context' => 'https://schema.org',
+            '@type' => 'Article',
+            '@id' => $detailUrl . '/#article',
+            'headline' => $job->title,
+            'description' => strip_tags($job->description),
+            'datePublished' => $job->published_at ? $job->published_at->toDateString() : ($job->created_at ? $job->created_at->toDateString() : now()->toDateString()),
+            'dateModified' => $job->updated_at ? $job->updated_at->toDateString() : now()->toDateString(),
+            'mainEntityOfPage' => $detailUrl,
+            'author' => [
+                '@type' => 'Organization',
+                'name' => 'GovJobs Editorial Team',
+                'url' => $baseUrl
+            ],
+            'publisher' => [
+                '@id' => $baseUrl . '/#organization'
+            ],
+            'image' => $baseUrl . '/assets/css/portal.css'
+        ];
+    }
+
+    /**
+     * Generate dynamic WebPage Schema.
+     */
+    public function getWebPageSchema(string $title, string $description, string $url): array
+    {
+        return [
+            '@context' => 'https://schema.org',
+            '@type' => 'WebPage',
+            '@id' => $url . '/#webpage',
+            'name' => $title,
+            'description' => $description,
+            'url' => $url,
+            'isPartOf' => [
+                '@id' => request()->getSchemeAndHttpHost() . '/#website'
+            ]
+        ];
+    }
 }

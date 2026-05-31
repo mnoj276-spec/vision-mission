@@ -36,19 +36,47 @@ class DashboardController extends Controller
                 'last_date'   => $b->jobPost->last_date_to_apply?->format('d M Y') ?? 'N/A',
             ]);
 
-        $applications = JobApplication::where('user_id', $user->id)
-            ->with(['jobPost.category', 'jobPost.department'])
-            ->get()->map(fn ($a) => [
-                'application_id' => $a->id,
-                'job_id'         => $a->jobPost->id,
-                'title'          => $a->jobPost->title,
-                'slug'           => $a->jobPost->slug,
-                'department'     => $a->jobPost->department->name ?? 'Government',
-                'status'         => $a->status,
-                'applied_at'     => $a->created_at->format('d M Y'),
-            ]);
+        // Query recently viewed job detail pages using page view telemetry
+        $recentPaths = \App\Models\AnalyticsPageView::where('user_id', $user->id)
+            ->where('path', 'like', '/job/%')
+            ->orderBy('id', 'desc')
+            ->limit(15)
+            ->pluck('path')
+            ->unique()
+            ->map(fn($path) => str_replace('/job/', '', $path))
+            ->toArray();
 
-        return response()->json(['status' => 'success', 'data' => ['bookmarks' => $bookmarks, 'applications' => $applications, 'user' => ['name' => $user->name, 'email' => $user->email, 'phone' => $user->phone ?? 'Not Verified']]]);
+        $recentJobs = [];
+        if (!empty($recentPaths)) {
+            $recentJobs = \App\Models\JobPost::published()
+                ->whereIn('slug', $recentPaths)
+                ->with(['category', 'department', 'state'])
+                ->get()
+                ->sortBy(fn($job) => array_search($job->slug, $recentPaths))
+                ->values()
+                ->map(fn ($j) => [
+                    'id'          => $j->id,
+                    'title'       => $j->title,
+                    'slug'        => $j->slug,
+                    'department'  => $j->department->name ?? 'Government',
+                    'state'       => $j->state->name    ?? 'Pan India',
+                    'last_date'   => $j->last_date_to_apply?->format('d M Y') ?? 'N/A',
+                ]);
+        }
+
+        return response()->json([
+            'status' => 'success', 
+            'data' => [
+                'bookmarks' => $bookmarks, 
+                'applications' => $applications, 
+                'recently_viewed' => $recentJobs,
+                'user' => [
+                    'name' => $user->name, 
+                    'email' => $user->email, 
+                    'phone' => $user->phone ?? 'Not Verified'
+                ]
+            ]
+        ]);
     }
 
     public function updateProfile(UpdateProfileRequest $request): JsonResponse

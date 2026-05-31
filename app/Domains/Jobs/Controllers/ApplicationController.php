@@ -99,8 +99,8 @@ class ApplicationController extends Controller
 
         $resumePath = null;
         if ($request->hasFile('resume')) {
-            $fileName   = 'resume_' . $user->id . '_' . time() . '.' . $extension;
-            $resumePath = $file->storeAs('resumes', $fileName, 'public');
+            $fileName   = 'resume_' . \Illuminate\Support\Str::uuid() . '.' . $extension;
+            $resumePath = $file->storeAs('resumes', $fileName, 'local');
         }
 
         JobApplication::create(['user_id' => $user->id, 'job_post_id' => $job->id, 'resume_path' => $resumePath, 'status' => 'applied']);

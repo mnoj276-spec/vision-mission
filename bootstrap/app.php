@@ -25,6 +25,7 @@ return Application::configure(basePath: dirname(__DIR__))
         \App\Console\Commands\AlertsScheduler::class,
         \App\Console\Commands\WeeklyDigestScheduler::class,
         \App\Console\Commands\ReEngagementScheduler::class,
+        \App\Console\Commands\FeatureExpiryScheduler::class,
     ])
     ->withMiddleware(function (Middleware $middleware): void {
         // Register security middleware aliases
