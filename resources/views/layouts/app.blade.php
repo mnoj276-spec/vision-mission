@@ -26,6 +26,14 @@
     <meta name="keywords" content="{{ $seo['meta_keywords'] }}">
     <meta name="robots" content="index, follow">
     
+    <!-- Speed Optimization: Resource Hint Preconnects -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://code.jquery.com" crossorigin>
+
+    <!-- Speed Optimization: Async Web Fonts Loading -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+
     <!-- Custom Design Stylesheet -->
     <link rel="stylesheet" href="{{ asset('assets/css/portal.css') }}">
 

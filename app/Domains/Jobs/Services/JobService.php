@@ -30,24 +30,26 @@ class JobService implements JobServiceInterface
 
     public function getHomePageData(): array
     {
-        $relations = ['category', 'department', 'state', 'qualification', 'source'];
+        return \Illuminate\Support\Facades\Cache::remember('homepage_data', 600, function () {
+            $relations = ['category', 'department', 'state', 'qualification', 'source'];
 
-        return [
-            'states'        => State::all(),
-            'categories'    => Category::where('is_active', true)->get(),
-            'qualifications' => Qualification::all(),
-            'departments'   => Department::all(),
-            'featuredJobs'  => JobPost::published()->with($relations)->featured()->latest('published_at')->take(6)->get(),
-            'recentJobs'    => JobPost::published()->with($relations)->jobs()->latest('published_at')->take(12)->get(),
-            'admitCards'    => JobPost::published()->with($relations)->admitCards()->latest('published_at')->take(12)->get(),
-            'results'       => JobPost::published()->with($relations)->results()->latest('published_at')->take(12)->get(),
-            'answerKeys'    => JobPost::published()->with($relations)->answerKeys()->latest('published_at')->take(10)->get(),
-            'syllabi'       => JobPost::published()->with($relations)->syllabi()->latest('published_at')->take(10)->get(),
-            'admissions'    => JobPost::published()->with($relations)->admissions()->latest('published_at')->take(10)->get(),
-            'scholarships'  => JobPost::published()->with($relations)->scholarships()->latest('published_at')->take(10)->get(),
-            'notices'       => JobPost::published()->with($relations)->notices()->latest('published_at')->take(10)->get(),
-            'tickerNotices' => JobPost::published()->with($relations)->latest('published_at')->take(8)->get(),
-        ];
+            return [
+                'states'        => State::all(),
+                'categories'    => Category::where('is_active', true)->get(),
+                'qualifications' => Qualification::all(),
+                'departments'   => Department::all(),
+                'featuredJobs'  => JobPost::published()->with($relations)->featured()->latest('published_at')->take(6)->get(),
+                'recentJobs'    => JobPost::published()->with($relations)->jobs()->latest('published_at')->take(12)->get(),
+                'admitCards'    => JobPost::published()->with($relations)->admitCards()->latest('published_at')->take(12)->get(),
+                'results'       => JobPost::published()->with($relations)->results()->latest('published_at')->take(12)->get(),
+                'answerKeys'    => JobPost::published()->with($relations)->answerKeys()->latest('published_at')->take(10)->get(),
+                'syllabi'       => JobPost::published()->with($relations)->syllabi()->latest('published_at')->take(10)->get(),
+                'admissions'    => JobPost::published()->with($relations)->admissions()->latest('published_at')->take(10)->get(),
+                'scholarships'  => JobPost::published()->with($relations)->scholarships()->latest('published_at')->take(10)->get(),
+                'notices'       => JobPost::published()->with($relations)->notices()->latest('published_at')->take(10)->get(),
+                'tickerNotices' => JobPost::published()->with($relations)->latest('published_at')->take(8)->get(),
+            ];
+        });
     }
 
     /**

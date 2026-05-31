@@ -253,10 +253,12 @@ class JobController extends Controller
 
     public function sitemap()
     {
-        $jobs = \App\Models\JobPost::where('status', 'published')->orderBy('id', 'desc')->get();
-        $categories = \App\Models\Category::all();
+        $xml = \Illuminate\Support\Facades\Cache::remember('sitemap_xml', 3600, function () {
+            $jobs = \App\Models\JobPost::where('status', 'published')->orderBy('id', 'desc')->get();
+            $categories = \App\Models\Category::all();
 
-        $xml = view('seo.sitemap', compact('jobs', 'categories'))->render();
+            return view('seo.sitemap', compact('jobs', 'categories'))->render();
+        });
 
         return response($xml, 200)
             ->header('Content-Type', 'text/xml');

@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&display=swap');
+/* Speed Optimization: Font family import moved to HTML head preconnect link tags */
 
 :root {
     --bg-primary: #f8fafc;

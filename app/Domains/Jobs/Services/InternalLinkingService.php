@@ -91,10 +91,12 @@ class InternalLinkingService
             $maxStates = $this->config['max_state_recommendations'] ?? 6;
 
             // States with live job counts
-            $states = State::withCount(['jobPosts' => function ($q) {
+            $states = State::whereHas('jobPosts', function ($q) {
+                    $q->published();
+                })
+                ->withCount(['jobPosts' => function ($q) {
                     $q->published();
                 }])
-                ->having('job_posts_count', '>', 0)
                 ->orderByDesc('job_posts_count')
                 ->limit($maxStates)
                 ->get();
@@ -138,8 +140,8 @@ class InternalLinkingService
 
             // Trending categories (actual DB categories with counts)
             $trendingCategories = Category::where('is_active', true)
+                ->whereHas('jobPosts', fn($q) => $q->published())
                 ->withCount(['jobPosts' => fn($q) => $q->published()])
-                ->having('job_posts_count', '>', 0)
                 ->orderByDesc('job_posts_count')
                 ->limit($this->config['max_related_categories'] ?? 8)
                 ->get();

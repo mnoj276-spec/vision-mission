@@ -26,7 +26,7 @@ class ProgrammaticSeoController extends Controller
     /**
      * Helper to render dynamic landing page.
      */
-    protected function renderLandingPage(string $type, array $jobsQuery, array $seoParams, string $breadcrumb, string $categoryName)
+    protected function renderLandingPage(string $type, $jobsQuery, array $seoParams, string $breadcrumb, string $categoryName)
     {
         $jobs = $jobsQuery;
         $seo = $this->seoService->getMetadata($type, $seoParams);
@@ -98,7 +98,7 @@ class ProgrammaticSeoController extends Controller
     public function railwayJobs()
     {
         $jobs = JobPost::published()
-            ->with(['category', 'department', 'state', 'qualification'])
+            ->with(['category', 'department', 'state', 'qualification', 'district'])
             ->where(function ($q) {
                 $q->where('title', 'like', '%Railway%')
                   ->orWhere('title', 'like', '%RRB%')
@@ -119,7 +119,7 @@ class ProgrammaticSeoController extends Controller
     public function bankingJobs()
     {
         $jobs = JobPost::published()
-            ->with(['category', 'department', 'state', 'qualification'])
+            ->with(['category', 'department', 'state', 'qualification', 'district'])
             ->where(function ($q) {
                 $q->where('title', 'like', '%Bank%')
                   ->orWhere('title', 'like', '%RBI%')
@@ -143,7 +143,7 @@ class ProgrammaticSeoController extends Controller
     public function sscJobs()
     {
         $jobs = JobPost::published()
-            ->with(['category', 'department', 'state', 'qualification'])
+            ->with(['category', 'department', 'state', 'qualification', 'district'])
             ->where(function ($q) {
                 $q->where('title', 'like', '%SSC%')
                   ->orWhere('description', 'like', '%SSC%')
@@ -163,7 +163,7 @@ class ProgrammaticSeoController extends Controller
     public function upscJobs()
     {
         $jobs = JobPost::published()
-            ->with(['category', 'department', 'state', 'qualification'])
+            ->with(['category', 'department', 'state', 'qualification', 'district'])
             ->where(function ($q) {
                 $q->where('title', 'like', '%UPSC%')
                   ->orWhere('title', 'like', '%IAS%')
@@ -184,7 +184,7 @@ class ProgrammaticSeoController extends Controller
     public function defenceJobs()
     {
         $jobs = JobPost::published()
-            ->with(['category', 'department', 'state', 'qualification'])
+            ->with(['category', 'department', 'state', 'qualification', 'district'])
             ->where(function ($q) {
                 $q->where('title', 'like', '%Defence%')
                   ->orWhere('title', 'like', '%Police%')
@@ -209,7 +209,7 @@ class ProgrammaticSeoController extends Controller
     public function psuJobs()
     {
         $jobs = JobPost::published()
-            ->with(['category', 'department', 'state', 'qualification'])
+            ->with(['category', 'department', 'state', 'qualification', 'district'])
             ->where(function ($q) {
                 $q->where('title', 'like', '%PSU%')
                   ->orWhere('title', 'like', '%NTPC%')
@@ -228,7 +228,7 @@ class ProgrammaticSeoController extends Controller
      */
     public function results()
     {
-        $jobs = JobPost::published()->results()->orderBy('id', 'desc')->get();
+        $jobs = JobPost::published()->with(['category', 'department', 'state', 'qualification', 'district'])->results()->orderBy('id', 'desc')->get();
         return $this->renderLandingPage('results', $jobs, [], 'Exam Results', 'results');
     }
 
@@ -237,7 +237,7 @@ class ProgrammaticSeoController extends Controller
      */
     public function admitCards()
     {
-        $jobs = JobPost::published()->admitCards()->orderBy('id', 'desc')->get();
+        $jobs = JobPost::published()->with(['category', 'department', 'state', 'qualification', 'district'])->admitCards()->orderBy('id', 'desc')->get();
         return $this->renderLandingPage('admit_cards', $jobs, [], 'Admit Cards', 'admit_cards');
     }
 
@@ -246,7 +246,7 @@ class ProgrammaticSeoController extends Controller
      */
     public function answerKeys()
     {
-        $jobs = JobPost::published()->answerKeys()->orderBy('id', 'desc')->get();
+        $jobs = JobPost::published()->with(['category', 'department', 'state', 'qualification', 'district'])->answerKeys()->orderBy('id', 'desc')->get();
         return $this->renderLandingPage('answer_keys', $jobs, [], 'Answer Keys', 'answer_keys');
     }
 
@@ -255,7 +255,7 @@ class ProgrammaticSeoController extends Controller
      */
     public function syllabus()
     {
-        $jobs = JobPost::published()->syllabi()->orderBy('id', 'desc')->get();
+        $jobs = JobPost::published()->with(['category', 'department', 'state', 'qualification', 'district'])->syllabi()->orderBy('id', 'desc')->get();
         return $this->renderLandingPage('syllabus', $jobs, [], 'Syllabus Hub', 'syllabus');
     }
 
@@ -339,12 +339,14 @@ class ProgrammaticSeoController extends Controller
      */
     public function newsSitemap()
     {
-        $jobs = JobPost::published()
-            ->where('published_at', '>=', Carbon::now()->subHours(48))
-            ->orderBy('published_at', 'desc')
-            ->get();
+        $xml = \Illuminate\Support\Facades\Cache::remember('news_sitemap_xml', 600, function () {
+            $jobs = JobPost::published()
+                ->where('published_at', '>=', Carbon::now()->subHours(48))
+                ->orderBy('published_at', 'desc')
+                ->get();
 
-        $xml = view('seo.news_sitemap', compact('jobs'))->render();
+            return view('seo.news_sitemap', compact('jobs'))->render();
+        });
 
         return response($xml, 200)->header('Content-Type', 'text/xml');
     }
@@ -371,22 +373,26 @@ class ProgrammaticSeoController extends Controller
 
     protected function getFunnelMetrics(string $pagePath, string $categoryName): array
     {
-        try {
-            $views = \App\Models\GrowthAnalytic::where('event_type', 'page_view')->where('page_path', $pagePath)->count() + 145;
-            $subs = \App\Models\JobAlert::where('category_name', $categoryName)->count() + 42;
-            $applies = \App\Models\GrowthAnalytic::where('event_type', 'apply_click')->where('page_path', $pagePath)->count() + 21;
+        $cacheKey = "funnel_metrics_" . md5($pagePath . '_' . $categoryName);
 
-            $conversionRate = $views > 0 ? round(($subs / $views) * 100, 1) : 0;
+        return \Illuminate\Support\Facades\Cache::remember($cacheKey, 300, function () use ($pagePath, $categoryName) {
+            try {
+                $views = \App\Models\GrowthAnalytic::where('event_type', 'page_view')->where('page_path', $pagePath)->count() + 145;
+                $subs = \App\Models\JobAlert::where('category_name', $categoryName)->count() + 42;
+                $applies = \App\Models\GrowthAnalytic::where('event_type', 'apply_click')->where('page_path', $pagePath)->count() + 21;
 
-            return [
-                'views' => $views,
-                'subscribers' => $subs,
-                'applies' => $applies,
-                'conversion_rate' => $conversionRate
-            ];
-        } catch (\Exception $e) {
-            return ['views' => 150, 'subscribers' => 45, 'applies' => 20, 'conversion_rate' => 30];
-        }
+                $conversionRate = $views > 0 ? round(($subs / $views) * 100, 1) : 0;
+
+                return [
+                    'views' => $views,
+                    'subscribers' => $subs,
+                    'applies' => $applies,
+                    'conversion_rate' => $conversionRate
+                ];
+            } catch (\Exception $e) {
+                return ['views' => 150, 'subscribers' => 45, 'applies' => 20, 'conversion_rate' => 30];
+            }
+        });
     }
 
     /**
