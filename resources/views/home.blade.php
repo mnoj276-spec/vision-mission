@@ -1710,6 +1710,10 @@
             $('.nav-tab-trigger[data-target="dashboard"]').trigger('click');
         } else if (currentHash === '#admin-section') {
             $('.nav-tab-trigger[data-target="admin"]').trigger('click');
+        } else if (currentHash === '#info-hub-section') {
+            $('.nav-tab-trigger[data-target="info-hub"]').trigger('click');
+        } else if (currentHash === '#jobs-search-section') {
+            $('.nav-tab-trigger[data-target="jobs"]').trigger('click');
         }
 
         // ================== SEARCH AND PAGINATION SYSTEM ==================
@@ -2087,17 +2091,20 @@
                                     <div class="details-full-section" style="margin-top:1.5rem;">
                                         <h4 style="color: var(--accent-color); font-weight:700; font-family:'Outfit';">Exam Scheme & Syllabus Patterns</h4>
                                         <div class="details-syllabus-container" style="max-height: none; overflow: visible; margin-top:0.5rem; color:var(--text-secondary); line-height:1.75;">
-                                            ${job.exam_patter                                    <div style="display: flex; gap: 1rem; margin-top: 2rem; border-top: 1px solid var(--border-color); padding-top: 1.5rem; flex-wrap: wrap;">
-                                        <a href="${finalOfficialLink}" target="_blank" class="btn-view" style="flex:1; text-align:center; display:flex; align-items:center; justify-content:center; gap:0.4rem; font-weight:600; text-decoration:none;">
+                                            ${job.exam_pattern}
+                                        </div>
+                                    </div>
+
+                                    <div style="display: flex; gap: 1rem; margin-top: 2rem; border-top: 1px solid var(--border-color); padding-top: 1.5rem; flex-wrap: wrap;">
+                                        <a href="${job.official_website_link}" target="_blank" class="btn-view" style="flex:1; text-align:center; display:flex; align-items:center; justify-content:center; gap:0.4rem; font-weight:600; text-decoration:none;">
                                             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle;"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
                                             Official Advertisement
                                         </a>
-                                        %isLoggedIn%
-                                    </div>                                      \%isLoggedIn%
+                                        \\%isLoggedIn%
                                     </div>
                                 </div>
                             `;
-                            html = html.replace('\%isLoggedIn%', isLoggedIn ? `
+                            html = html.replace('\\%isLoggedIn%', isLoggedIn ? `
                                 <button id="modalApplyBtn" class="form-btn" style="flex:1.5; margin-top:0; padding: 0.8rem; background: var(--accent-color); font-weight:700;" data-id="${job.id}">
                                     Apply Recruitment Now
                                 </button>

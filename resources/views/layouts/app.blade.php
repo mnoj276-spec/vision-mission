@@ -75,12 +75,12 @@
             </a>
             
             <ul class="nav-links">
-                <li><a href="/" class="nav-tab-trigger" data-target="jobs">Home</a></li>
+                <li><a href="/#jobs-search-section" class="nav-tab-trigger" data-target="jobs">Home</a></li>
                 <li><a href="/ssc-jobs" style="font-weight: 700;">SSC Board</a></li>
                 <li><a href="/railway-jobs" style="font-weight: 700;">Railways</a></li>
                 <li><a href="/upsc-jobs" style="font-weight: 700;">UPSC</a></li>
                 <li><a href="/state-jobs" style="font-weight: 700;">State Jobs</a></li>
-                <li><a href="#" class="nav-tab-trigger" data-target="info-hub">Info Hub</a></li>
+                <li><a href="/#info-hub-section" class="nav-tab-trigger" data-target="info-hub">Info Hub</a></li>
             </ul>
 
             <div class="header-actions" style="display: flex; gap: 0.75rem; align-items: center;">
@@ -96,10 +96,10 @@
                             <span style="max-width: 100px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">{{ auth()->user()->name }}</span>
                         </button>
                         <div class="dropdown-menu">
-                            <a href="#dashboard-section" class="dropdown-item nav-tab-trigger" data-target="dashboard">Dashboard</a>
-                            @if(auth()->user()->role === 'admin')
+                            <a href="/#dashboard-section" class="dropdown-item nav-tab-trigger" data-target="dashboard">Dashboard</a>
+                            @can('admin-access')
                                 <a href="{{ route('admin.dashboard') }}" class="dropdown-item">Admin Panel</a>
-                            @endif
+                            @endcan
                             <div class="dropdown-divider"></div>
                             <button class="dropdown-item" id="logoutBtn" style="border:none; background:none; width:100%; cursor:pointer;">Logout</button>
                         </div>
@@ -130,10 +130,25 @@
             <button class="drawer-close-btn" id="closeMobileDrawerBtn">&times;</button>
         </div>
         <ul class="mobile-drawer-links">
-            <li><a href="/" class="nav-tab-trigger mobile-drawer-link" data-target="jobs">Home</a></li>
-            <li><a href="#latest-jobs" class="nav-tab-trigger mobile-drawer-link" data-target="jobs">Jobs List</a></li>
-            <li><a href="#" class="nav-tab-trigger mobile-drawer-link" data-target="info-hub">Information Hub</a></li>
-            <li><a href="#admit-cards" class="mobile-drawer-link">Exam Utilities</a></li>
+            <li><a href="/#jobs-search-section" class="nav-tab-trigger mobile-drawer-link" data-target="jobs">Home</a></li>
+            <li><a href="/#jobs-search-section" class="nav-tab-trigger mobile-drawer-link" data-target="jobs">Jobs List</a></li>
+            <li><a href="/#info-hub-section" class="nav-tab-trigger mobile-drawer-link" data-target="info-hub">Information Hub</a></li>
+            <li><a href="/ssc-jobs" class="mobile-drawer-link">SSC Board</a></li>
+            <li><a href="/railway-jobs" class="mobile-drawer-link">Railways</a></li>
+            <li><a href="/upsc-jobs" class="mobile-drawer-link">UPSC</a></li>
+            <li><a href="/state-jobs" class="mobile-drawer-link">State Jobs</a></li>
+            <li><a href="/admit-cards" class="mobile-drawer-link">Exam Utilities</a></li>
+            @auth
+                <li style="border-top: 1px solid var(--border-color); margin-top: 0.5rem; padding-top: 0.5rem;">
+                    <a href="/#dashboard-section" class="nav-tab-trigger mobile-drawer-link" data-target="dashboard">Dashboard</a>
+                </li>
+                @can('admin-access')
+                    <li><a href="{{ route('admin.dashboard') }}" class="mobile-drawer-link">Admin Panel</a></li>
+                @endcan
+                <li>
+                    <button class="mobile-drawer-link" id="mobileLogoutBtn" style="background: none; border: none; color: inherit; cursor: pointer; width: 100%; text-align: left; font: inherit; padding: 0.6rem 0;">Logout</button>
+                </li>
+            @endauth
         </ul>
     </div>
 
@@ -152,9 +167,9 @@
             <div>
                 <h4 style="color: var(--text-primary); margin-bottom: 1rem; font-family: 'Outfit';">Portal Hubs</h4>
                 <ul style="list-style: none; display: grid; gap: 0.5rem;">
-                    <li><a href="#" class="nav-tab-trigger" data-target="jobs" style="color: var(--text-secondary); text-decoration: none;">Recruitments Board</a></li>
-                    <li><a href="#" class="nav-tab-trigger" data-target="info-hub" style="color: var(--text-secondary); text-decoration: none;">Information Hub</a></li>
-                    <li><a href="#" class="nav-tab-trigger" data-target="info-hub" style="color: var(--text-secondary); text-decoration: none;">FAQ Accordions</a></li>
+                    <li><a href="/#jobs-search-section" class="nav-tab-trigger" data-target="jobs" style="color: var(--text-secondary); text-decoration: none;">Recruitments Board</a></li>
+                    <li><a href="/#info-hub-section" class="nav-tab-trigger" data-target="info-hub" style="color: var(--text-secondary); text-decoration: none;">Information Hub</a></li>
+                    <li><a href="/#info-hub-section" class="nav-tab-trigger" data-target="info-hub" style="color: var(--text-secondary); text-decoration: none;">FAQ Accordions</a></li>
                 </ul>
             </div>
             <div>
@@ -469,7 +484,61 @@
             }
 
             $('#hamburgerMenuBtn').on('click', openDrawer);
-            $('#closeMobileDrawerBtn, #mobileDrawerOverlay, .mobile-drawer-link').on('click', closeDrawer);
+            $('#closeMobileDrawerBtn, #mobileDrawerOverlay').on('click', closeDrawer);
+            $(document).on('click', '.mobile-drawer-link', closeDrawer);
+
+            // ================== USER DROPDOWN TOGGLE (CLICK-BASED) ==================
+            // Works on touch devices where CSS :hover is unreliable
+            const userDropdown = $('.user-menu-dropdown');
+            userDropdown.find('> button').on('click', function(e) {
+                e.stopPropagation();
+                const menu = userDropdown.find('.dropdown-menu');
+                const isVisible = menu.css('display') === 'flex';
+                menu.css('display', isVisible ? 'none' : 'flex');
+            });
+
+            // Close dropdown when clicking outside
+            $(document).on('click', function(e) {
+                if (!$(e.target).closest('.user-menu-dropdown').length) {
+                    $('.user-menu-dropdown .dropdown-menu').css('display', '');
+                }
+            });
+
+            // ================== GLOBAL NAV-TAB-TRIGGER HANDLER ==================
+            // Handles navigation from subpages (e.g., /ssc-jobs) to homepage sections
+            // On the homepage, the handler in home.blade.php takes over via e.preventDefault()
+            // On subpages, this ensures clicking navigates to the homepage with the correct hash
+            $(document).on('click', '.nav-tab-trigger', function(e) {
+                const target = $(this).data('target');
+                const isHomepage = window.location.pathname === '/' || window.location.pathname === '';
+
+                if (!isHomepage) {
+                    // On subpages: let the browser navigate via the href (e.g., /#dashboard-section)
+                    // The href already includes the correct path and hash
+                    return; // Don't prevent default — let the <a href="/#..."> navigate naturally
+                }
+                // On homepage: home.blade.php's handler will take over (it has its own e.preventDefault)
+            });
+
+            // ================== MOBILE LOGOUT HANDLER ==================
+            $('#mobileLogoutBtn').on('click', function(e) {
+                e.preventDefault();
+                closeDrawer();
+                $.ajax({
+                    url: '/api/logout',
+                    method: 'POST',
+                    data: { _token: '{{ csrf_token() }}' },
+                    success: function(res) {
+                        showToast(res.message, 'success');
+                        setTimeout(() => {
+                            window.location.href = '/';
+                        }, 800);
+                    },
+                    error: function() {
+                        window.location.reload();
+                    }
+                });
+            });
 
 
             // ================== LOGIN MODAL TRIGGERS ==================

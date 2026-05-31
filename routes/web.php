@@ -1,6 +1,9 @@
 <?php
 
 use App\Domains\Jobs\Controllers\JobController;
+use App\Domains\Jobs\Controllers\ApplicationController;
+use App\Domains\Users\Controllers\AuthController;
+use App\Domains\Users\Controllers\DashboardController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -94,4 +97,29 @@ use App\Http\Controllers\MonetizationController;
 Route::get('/go/{slug}', [MonetizationController::class, 'redirectAffiliate'])->name('monetization.affiliate_redirect');
 Route::post('/api/membership/upgrade', [MonetizationController::class, 'upgradeMembership'])->middleware('auth')->name('monetization.membership_upgrade');
 Route::get('/api/admin/revenue-analytics', [MonetizationController::class, 'getRevenueAnalytics'])->middleware(['auth', 'admin'])->name('monetization.revenue_analytics');
+
+// ─── Stateful AJAX Front-end APIs (Session & CSRF Protected) ─────────────────
+Route::prefix('api')->group(function () {
+    // Public AJAX Endpoints
+    Route::get('/jobs/{slug}',       [JobController::class, 'show'])->name('jobs.show');
+    Route::get('/search/autocomplete', [\App\Domains\Jobs\Controllers\SearchController::class, 'apiAutocomplete'])->name('api.search.autocomplete');
+    Route::get('/search/typo',         [\App\Domains\Jobs\Controllers\SearchController::class, 'apiTypoCorrection'])->name('api.search.typo');
+
+    // Authentication
+    Route::post('/register',         [AuthController::class, 'register'])->name('register');
+    Route::post('/login',            [AuthController::class, 'login'])->name('login');
+    Route::post('/logout',           [AuthController::class, 'logout'])->name('logout');
+    Route::post('/forgot-password',  [AuthController::class, 'forgotPassword'])->name('password.forgot');
+    Route::post('/reset-password',   [AuthController::class, 'resetPassword'])->name('password.reset');
+
+    // Candidate Authenticated Actions
+    Route::middleware(['auth', 'active'])->group(function () {
+        Route::get('/dashboard',             [DashboardController::class,  'getDashboardData'])->name('dashboard.data');
+        Route::post('/jobs/{id}/bookmark',   [ApplicationController::class,'toggleBookmark'])->name('jobs.bookmark');
+        Route::post('/jobs/{id}/apply',      [ApplicationController::class,'applyJob'])->name('jobs.apply');
+        Route::post('/profile/update',       [DashboardController::class,  'updateProfile'])->name('profile.update');
+        Route::post('/profile/preferences',  [DashboardController::class,  'updatePreferences'])->name('profile.preferences');
+    });
+});
+
 

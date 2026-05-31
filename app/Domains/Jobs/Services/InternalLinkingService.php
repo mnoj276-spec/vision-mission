@@ -268,7 +268,7 @@ class InternalLinkingService
                   ->orWhere('category_id', $job->category_id)
                   ->orWhere('state_id', $job->state_id);
             })
-            ->orderByRaw('CASE WHEN exam_date >= CURDATE() THEN 0 ELSE 1 END') // Upcoming first
+            ->orderByRaw('CASE WHEN exam_date >= ? THEN 0 ELSE 1 END', [\Carbon\Carbon::today()->toDateString()]) // Upcoming first
             ->orderBy('exam_date', 'asc')
             ->limit($limit)
             ->get();
@@ -285,23 +285,24 @@ class InternalLinkingService
         $limit = $limit ?? ($this->config['max_related_categories'] ?? 8);
 
         $categories = Category::where('is_active', true)
+            ->whereHas('jobPosts', fn($q) => $q->published())
             ->withCount(['jobPosts' => fn($q) => $q->published()])
-            ->having('job_posts_count', '>', 0)
             ->orderByDesc('job_posts_count')
             ->limit($limit)
             ->get();
 
         return $categories->map(function ($cat) {
+            $slug = $cat->slug ?: Str::slug($cat->name);
             // Try to match to a sector route, fallback to search by category
-            $sectorKey = $this->matchCategoryToSector($cat->slug);
+            $sectorKey = $this->matchCategoryToSector($slug);
             $url = $sectorKey
-                ? route($this->config['sector_routes'][$sectorKey]['route'] ?? 'search.category', ['category_slug' => $cat->slug])
-                : route('search.category', ['category_slug' => $cat->slug]);
+                ? route($this->config['sector_routes'][$sectorKey]['route'] ?? 'search.category', ['category_slug' => $slug])
+                : route('search.category', ['category_slug' => $slug]);
 
             return [
                 'id'    => $cat->id,
                 'name'  => $cat->name,
-                'slug'  => $cat->slug,
+                'slug'  => $slug,
                 'count' => $cat->job_posts_count,
                 'url'   => $url,
             ];
@@ -318,8 +319,8 @@ class InternalLinkingService
     {
         $limit = $limit ?? ($this->config['max_state_recommendations'] ?? 6);
 
-        $states = State::withCount(['jobPosts' => fn($q) => $q->published()])
-            ->having('job_posts_count', '>', 0)
+        $states = State::whereHas('jobPosts', fn($q) => $q->published())
+            ->withCount(['jobPosts' => fn($q) => $q->published()])
             ->orderByRaw(
                 $job->state_id
                     ? "CASE WHEN id = {$job->state_id} THEN 0 ELSE 1 END, job_posts_count DESC"
@@ -329,12 +330,13 @@ class InternalLinkingService
             ->get();
 
         return $states->map(function ($state) {
+            $slug = $state->slug ?: Str::slug($state->name);
             return [
                 'id'    => $state->id,
                 'name'  => $state->name,
-                'slug'  => $state->slug,
+                'slug'  => $slug,
                 'count' => $state->job_posts_count,
-                'url'   => route('seo.dynamic_state', ['state_slug' => $state->slug]),
+                'url'   => route('seo.dynamic_state', ['state_slug' => $slug]),
             ];
         });
     }
@@ -377,7 +379,7 @@ class InternalLinkingService
                     'type'   => $postType,
                     'label'  => $labelMap[$postType] ?? ucfirst(str_replace('_', ' ', $postType)),
                     'title'  => $related->title,
-                    'url'    => route($routeMap[$postType], ['slug' => $related->slug]),
+                    'url'    => route($routeMap[$postType], ['slug' => $related->slug ?: Str::slug($related->title)]),
                     'anchor' => $this->generateAnchor($related),
                     'date'   => $related->published_at,
                 ];
@@ -430,9 +432,9 @@ class InternalLinkingService
         $routeName = $routeMap[$job->post_type] ?? 'seo.job_detail';
 
         try {
-            return route($routeName, ['slug' => $job->slug]);
+            return route($routeName, ['slug' => $job->slug ?: Str::slug($job->title)]);
         } catch (\Exception $e) {
-            return url("/job/{$job->slug}");
+            return url("/job/" . ($job->slug ?: Str::slug($job->title)));
         }
     }
 

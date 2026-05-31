@@ -83,7 +83,7 @@ class MonetizationController extends Controller
     public function getRevenueAnalytics(Request $request): JsonResponse
     {
         // Restrict to admins
-        if (!auth()->check() || auth()->user()->role !== 'admin') {
+        if (!auth()->check() || !\Illuminate\Support\Facades\Gate::allows('admin-access')) {
             return response()->json([
                 'success' => false,
                 'message' => 'Forbidden. Administrative access required.',
