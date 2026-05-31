@@ -30,6 +30,7 @@
         backdrop-filter: blur(12px);
         -webkit-backdrop-filter: blur(12px);
         position: relative;
+        z-index: 100;
         box-shadow: var(--card-shadow);
     }
 
@@ -106,7 +107,7 @@
         margin-top: 0.5rem;
         max-height: 480px;
         overflow-y: auto;
-        z-index: 1000;
+        z-index: 1050;
         box-shadow: 0 15px 35px -5px rgba(0,0,0,0.25);
         display: none;
         backdrop-filter: blur(14px);
@@ -192,7 +193,19 @@
         gap: 0.4rem;
     }
 
-    .filter-select, .filter-input {
+    .filter-select {
+        width: 100%;
+        background-color: var(--bg-primary);
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        padding: 0.6rem 2.5rem 0.6rem 1rem;
+        color: var(--text-primary);
+        font-size: 0.88rem;
+        outline: none;
+        transition: border-color 0.2s;
+    }
+
+    .filter-input {
         width: 100%;
         background: var(--bg-primary);
         border: 1px solid var(--border-color);

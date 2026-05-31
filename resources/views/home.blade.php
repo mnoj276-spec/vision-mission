@@ -754,10 +754,10 @@
         <!-- Typo Correction Banner -->
         <div id="homeTypoBanner" style="display: none; grid-column: 1 / -1; margin-bottom: 1rem;"></div>
 
-        <div class="glass-panel search-compass" style="border-left: 4px solid var(--accent-color); overflow: visible;">
+        <div class="glass-panel search-compass" style="border-left: 4px solid var(--accent-color); overflow: visible; z-index: 100; position: relative;">
             <div style="position: relative;">
                 <input type="text" id="searchKeywords" placeholder="Search keywords (e.g. UPSC, RBI officer)..." autocomplete="off">
-                <div class="autocomplete-dropdown" id="autocompleteDropdown" style="position: absolute; top: 100%; left: 0; right: 0; background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: 12px; margin-top: 0.5rem; max-height: 350px; overflow-y: auto; z-index: 1000; box-shadow: 0 15px 35px -5px rgba(0,0,0,0.25); display: none; text-align: left; backdrop-filter: blur(14px);"></div>
+                <div class="autocomplete-dropdown" id="autocompleteDropdown" style="position: absolute; top: 100%; left: 0; right: 0; background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: 12px; margin-top: 0.5rem; max-height: 350px; overflow-y: auto; z-index: 1050; box-shadow: 0 15px 35px -5px rgba(0,0,0,0.25); display: none; text-align: left; backdrop-filter: blur(14px);"></div>
             </div>
             <div>
                 <select id="stateSelect">
