@@ -20,7 +20,7 @@ class AdminUserController extends Controller
 
     public function getUsersList(): JsonResponse
     {
-        $users = User::orderBy('id', 'desc')->get()->map(fn ($u) => [
+        $users = User::with('roles')->orderBy('id', 'desc')->get()->map(fn ($u) => [
             'id'        => $u->id,
             'name'      => $u->name,
             'email'     => $u->email,

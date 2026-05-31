@@ -33,9 +33,11 @@ class User extends Authenticatable
      */
     public function getRoleAttribute($value)
     {
-        $spatieRole = $this->roles->first()?->name;
-        if ($spatieRole) {
-            return strtolower(str_replace(' ', '_', $spatieRole));
+        if ($this->relationLoaded('roles')) {
+            $spatieRole = $this->roles->first()?->name;
+            if ($spatieRole) {
+                return strtolower(str_replace(' ', '_', $spatieRole));
+            }
         }
         return $value ?? 'candidate';
     }
