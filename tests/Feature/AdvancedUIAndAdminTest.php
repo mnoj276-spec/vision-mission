@@ -225,4 +225,95 @@ class AdvancedUIAndAdminTest extends TestCase
         $this->assertEquals('Custom Automated Title Tag', $cachedData['meta_title']);
         $this->assertEquals('Custom Meta Description', $cachedData['meta_description']);
     }
+
+    /**
+     * Verify Admin RBAC Submenus and API access control permissions.
+     */
+    public function test_rbac_panel_access_rights_by_role(): void
+    {
+        // 1. Create Spatie roles and permissions
+        $this->artisan('db:seed', ['--class' => 'RoleAndPermissionSeeder']);
+
+        // 2. Create an Editor User
+        $editorUser = User::create([
+            'name' => 'Editor User',
+            'email' => 'editor@test.gov.in',
+            'phone' => '1234567890',
+            'password' => bcrypt('password123'),
+            'role' => 'editor',
+            'is_active' => true,
+        ]);
+        $editorUser->syncRoles(['Editor']);
+
+        // 3. Create a Reviewer User
+        $reviewerUser = User::create([
+            'name' => 'Reviewer User',
+            'email' => 'reviewer@test.gov.in',
+            'phone' => '0987654321',
+            'password' => bcrypt('password123'),
+            'role' => 'reviewer',
+            'is_active' => true,
+        ]);
+        $reviewerUser->syncRoles(['Reviewer']);
+
+        // 4. Editor access validation:
+        $this->actingAs($editorUser);
+
+        // Editor CAN load jobs
+        $response = $this->getJson('/api/admin/jobs');
+        $response->assertStatus(200);
+
+        // Editor CAN load AI content
+        $response = $this->getJson('/api/admin/ai-contents');
+        $response->assertStatus(200);
+
+        // Editor CAN load categories (Master Data)
+        $response = $this->getJson('/api/admin/categories');
+        $response->assertStatus(200);
+
+        // Editor CAN load scrapers/crawlers (since crawlers has permission:create_jobs)
+        $response = $this->getJson('/api/admin/scrapers');
+        $response->assertStatus(200);
+
+        // Editor CANNOT load users list
+        $response = $this->getJson('/api/admin/users');
+        $response->assertStatus(403);
+
+        // Editor CANNOT load activity logs
+        $response = $this->getJson('/api/admin/activity-logs');
+        $response->assertStatus(403);
+
+        // Editor CANNOT load queue metrics
+        $response = $this->getJson('/api/admin/queues/metrics');
+        $response->assertStatus(403);
+
+
+        // 5. Reviewer access validation:
+        $this->actingAs($reviewerUser);
+
+        // Reviewer CAN load jobs
+        $response = $this->getJson('/api/admin/jobs');
+        $response->assertStatus(200);
+
+        // Reviewer CAN load categories (Master Data)
+        $response = $this->getJson('/api/admin/categories');
+        $response->assertStatus(200);
+
+        // Reviewer CANNOT load scrapers (crawlers) because they lack permission
+        $response = $this->getJson('/api/admin/scrapers');
+        $response->assertStatus(403);
+
+        // Reviewer CANNOT load users list
+        $response = $this->getJson('/api/admin/users');
+        $response->assertStatus(403);
+
+        // Reviewer CANNOT load activity logs
+        $response = $this->getJson('/api/admin/activity-logs');
+        $response->assertStatus(403);
+
+        // Reviewer CANNOT load queue metrics
+        $response = $this->getJson('/api/admin/queues/metrics');
+        $response->assertStatus(403);
+    }
 }
+

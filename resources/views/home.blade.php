@@ -1671,7 +1671,7 @@
         });
 
         // Sub-tabs transitions inside Information Hub
-        $('.sub-tab-btn[data-sub]').on('click', function(e) {
+        $(document).on('click', '.sub-tab-btn[data-sub]', function(e) {
             e.preventDefault();
             $(this).siblings().removeClass('active');
             $(this).addClass('active');
@@ -1681,7 +1681,7 @@
         });
 
         // Sub-tabs transitions inside Candidate Dashboard settings
-        $('.dash-sub-trigger').on('click', function(e) {
+        $(document).on('click', '.dash-sub-trigger', function(e) {
             e.preventDefault();
             $('.dash-sub-trigger').removeClass('active');
             $(this).addClass('active');
@@ -1691,7 +1691,7 @@
         });
 
         // Sub-tabs transitions inside Administration Control panels
-        $('.admin-sub-trigger').on('click', function(e) {
+        $(document).on('click', '.admin-sub-trigger', function(e) {
             e.preventDefault();
             $('.admin-sub-trigger').removeClass('active');
             $(this).addClass('active');

@@ -1034,7 +1034,7 @@ header {
 .dropdown-menu {
     position: absolute;
     right: 0;
-    top: 110%;
+    top: 100%;
     background: var(--glass-bg);
     border: 1px solid var(--glass-border);
     backdrop-filter: blur(20px);
@@ -1048,7 +1048,8 @@ header {
     padding: 0.5rem 0;
 }
 
-.user-menu-dropdown:hover .dropdown-menu {
+.user-menu-dropdown:hover .dropdown-menu,
+.user-menu-dropdown.show .dropdown-menu {
     display: flex;
 }
 

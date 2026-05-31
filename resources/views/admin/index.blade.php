@@ -2,6 +2,31 @@
 
 @section('title', 'Enterprise Control Center - GovJobs Admin')
 
+@php
+    $sidebarMenu = [
+        ['block' => 'overview',   'permission' => 'view_dashboard',    'label' => 'Dashboard Overview',       'icon' => '<rect x="3" y="3" width="7" height="9"></rect><rect x="14" y="3" width="7" height="5"></rect><rect x="14" y="12" width="7" height="9"></rect><rect x="3" y="16" width="7" height="5"></rect>'],
+        ['block' => 'analytics',  'permission' => 'view_dashboard',    'label' => 'Telemetry & Analytics',    'icon' => '<line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line>'],
+        ['block' => 'jobs',       'permission' => 'view_jobs',         'label' => 'Recruitment Postings',     'icon' => '<rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>'],
+        ['block' => 'crawlers',   'permission' => 'create_jobs',       'label' => 'Crawler Target Configs',   'icon' => '<path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line>'],
+        ['block' => 'master',     'permission' => 'view_master_data',  'label' => 'Master Data Manager',      'icon' => '<path d="M12 2L2 7l10 5 10-5-10-5z"></path><path d="M2 17l10 5 10-5"></path><path d="M2 12l10 5 10-5"></path>'],
+        ['block' => 'users',      'permission' => 'manage_users',      'label' => 'User Access Panel',        'icon' => '<path d="M17 21v-2a4 4 0 0 0-3-3.87"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path>'],
+        ['block' => 'queues',     'permission' => 'manage_queues',     'label' => 'Queue Engine & DLQ',       'icon' => '<rect x="2" y="2" width="20" height="8" rx="2" ry="2"></rect><rect x="2" y="14" width="20" height="8" rx="2" ry="2"></rect><line x1="6" y1="6" x2="6.01" y2="6"></line><line x1="6" y1="18" x2="6.01" y2="18"></line>'],
+        ['block' => 'marketing',  'permission' => 'manage_queues',     'label' => 'Email Automation',         'icon' => '<path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline>'],
+        ['block' => 'seo',        'permission' => 'manage_seo',        'label' => 'SEO & Content Cache',      'icon' => '<circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>'],
+        ['block' => 'audit',      'permission' => 'view_audit_logs',   'label' => 'Audit Activity Logs',      'icon' => '<circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline>'],
+        ['block' => 'ai-content', 'permission' => 'view_ai_content',   'label' => 'AI Content Manager',       'icon' => '<polygon points="12 2 2 7 12 12 22 7 12 2"></polygon><polyline points="2 17 12 22 22 17"></polyline><polyline points="2 12 12 17 22 12"></polyline>'],
+        ['block' => 'rbac',       'permission' => 'manage_users',      'label' => 'RBAC Clearance Matrix',    'icon' => '<rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path>'],
+    ];
+
+    $activeBlock = null;
+    foreach ($sidebarMenu as $item) {
+        if (auth()->user()->can($item['permission'])) {
+            $activeBlock = $item['block'];
+            break;
+        }
+    }
+@endphp
+
 @section('content')
 <div class="admin-container" style="display: grid; grid-template-columns: 260px 1fr; min-height: 100vh; gap: 2rem; padding: 0 5%; max-width: 1600px; margin: 2rem auto 0 auto;">
     
@@ -13,18 +38,14 @@
         </div>
         
         <div class="admin-nav-links" style="display: flex; flex-direction: column; gap: 0.5rem;">
-            <button class="admin-nav-btn active" data-block="overview"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="3" width="7" height="9"></rect><rect x="14" y="3" width="7" height="5"></rect><rect x="14" y="12" width="7" height="9"></rect><rect x="3" y="16" width="7" height="5"></rect></svg> Dashboard Overview</button>
-            <button class="admin-nav-btn" data-block="analytics"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg> Telemetry & Analytics</button>
-            <button class="admin-nav-btn" data-block="jobs"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path></svg> Recruitment Postings</button>
-            <button class="admin-nav-btn" data-block="crawlers"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg> Crawler Target Configs</button>
-            <button class="admin-nav-btn" data-block="master"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2L2 7l10 5 10-5-10-5z"></path><path d="M2 17l10 5 10-5"></path><path d="M2 12l10 5 10-5"></path></svg> Master Data Manager</button>
-            <button class="admin-nav-btn" data-block="users"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M17 21v-2a4 4 0 0 0-3-3.87"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg> User Access Panel</button>
-            <button class="admin-nav-btn" data-block="queues"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="2" y="2" width="20" height="8" rx="2" ry="2"></rect><rect x="2" y="14" width="20" height="8" rx="2" ry="2"></rect><line x1="6" y1="6" x2="6.01" y2="6"></line><line x1="6" y1="18" x2="6.01" y2="18"></line></svg> Queue Engine & DLQ</button>
-            <button class="admin-nav-btn" data-block="marketing"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg> Email Automation</button>
-            <button class="admin-nav-btn" data-block="seo"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg> SEO & Content Cache</button>
-            <button class="admin-nav-btn" data-block="audit"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg> Audit Activity Logs</button>
-            <button class="admin-nav-btn" data-block="ai-content"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="12 2 2 7 12 12 22 7 12 2"></polygon><polyline points="2 17 12 22 22 17"></polyline><polyline points="2 12 12 17 22 12"></polyline></svg> AI Content Manager</button>
-            <button class="admin-nav-btn" data-block="rbac"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg> RBAC Clearance Matrix</button>
+            @foreach ($sidebarMenu as $item)
+                @can($item['permission'])
+                    <button class="admin-nav-btn {{ $activeBlock === $item['block'] ? 'active' : '' }}" data-block="{{ $item['block'] }}">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">{!! $item['icon'] !!}</svg>
+                        {{ $item['label'] }}
+                    </button>
+                @endcan
+            @endforeach
         </div>
         
         <div style="margin-top: 3rem; text-align: center;">
@@ -1207,7 +1228,7 @@
 <script>
     $(document).ready(function() {
         // Toggle Sidebar Dashboard Tabs/Panels
-        $('.admin-nav-btn').on('click', function() {
+        $(document).on('click', '.admin-nav-btn', function() {
             $('.admin-nav-btn').removeClass('active');
             $(this).addClass('active');
 
@@ -1240,7 +1261,7 @@
         });
 
         // Toggle Master Data nested tabs
-        $('.master-sub-trigger').on('click', function() {
+        $(document).on('click', '.master-sub-trigger', function() {
             $('.master-sub-trigger').removeClass('active');
             $(this).addClass('active');
 
@@ -1249,8 +1270,34 @@
             $(`#${targetTab}`).fadeIn(300);
         });
 
-        // Initialize dynamic sidebar overview statistics on first launch
-        loadOverviewData();
+        // Initialize dynamic sidebar statistics on first launch based on active block
+        const initialBlock = '{{ $activeBlock }}';
+        $('.admin-nav-btn').removeClass('active');
+        $(`.admin-nav-btn[data-block="${initialBlock}"]`).addClass('active');
+        $('.admin-panel-block').hide().removeClass('active');
+        $(`#admin-${initialBlock}`).fadeIn(300).addClass('active');
+
+        if (initialBlock === 'overview') {
+            loadOverviewData();
+        } else if (initialBlock === 'jobs') {
+            loadJobsData(1);
+        } else if (initialBlock === 'crawlers') {
+            loadCrawlersData();
+        } else if (initialBlock === 'master') {
+            loadMasterData();
+        } else if (initialBlock === 'users') {
+            loadUsersData();
+        } else if (initialBlock === 'queues') {
+            loadQueueDashboard(1);
+        } else if (initialBlock === 'audit') {
+            loadAuditLogs(1);
+        } else if (initialBlock === 'ai-content') {
+            loadAiContentData(1);
+        } else if (initialBlock === 'marketing') {
+            loadMarketingDashboard(1);
+        } else if (initialBlock === 'analytics') {
+            loadAnalyticsDashboard();
+        }
 
         // Close Slide-out drawers and backdrops
         function closeAllDrawers() {
@@ -1356,6 +1403,9 @@
                         });
                         $('#admin-quarantine-override-canvas').html(qHtml || '<div style="text-align:center; color:var(--text-secondary); padding: 1rem 0;">Excellent! 0 quarantined listings require manual rescue.</div>');
                     }
+                },
+                error: function(err) {
+                    showToast(err.responseJSON?.message || 'Access Denied: Unable to retrieve overview metrics.', 'error');
                 }
             });
         }
@@ -1541,6 +1591,9 @@
                         });
                         $('#analytics-journeys-container').html(journeyHtml || '<div style="text-align:center; color:#9ca3af; padding: 1rem 0;">Awaiting visitor pathways...</div>');
                     }
+                },
+                error: function(err) {
+                    showToast(err.responseJSON?.message || 'Access Denied: Unable to retrieve telemetry metrics.', 'error');
                 }
             });
         }
@@ -1638,6 +1691,9 @@
                         // Setup pagination
                         buildPagination('#jobs-management-pagination', res.data.current_page, res.data.last_page, loadJobsData);
                     }
+                },
+                error: function(err) {
+                    showToast(err.responseJSON?.message || 'Access Denied: Unable to load recruitment postings.', 'error');
                 }
             });
         }
@@ -1765,6 +1821,9 @@
                         // Style slider switch checked status in DOM
                         applySwitchStyles();
                     }
+                },
+                error: function(err) {
+                    showToast(err.responseJSON?.message || 'Access Denied: Unable to load crawler configurations.', 'error');
                 }
             });
         }
@@ -1943,6 +2002,9 @@
                         `;
                     });
                     $('#categories-table-body').html(trs || '<tr><td colspan="4" style="text-align:center;">No categories indexed.</td></tr>');
+                },
+                error: function(err) {
+                    showToast(err.responseJSON?.message || 'Access Denied: Unable to load categories list.', 'error');
                 }
             });
         }
@@ -2031,6 +2093,9 @@
                         `;
                     });
                     $('#departments-table-body').html(trs || '<tr><td colspan="4" style="text-align:center;">No departments indexed.</td></tr>');
+                },
+                error: function(err) {
+                    showToast(err.responseJSON?.message || 'Access Denied: Unable to load departments list.', 'error');
                 }
             });
         }
@@ -2120,6 +2185,9 @@
                         `;
                     });
                     $('#qualifications-table-body').html(trs || '<tr><td colspan="4" style="text-align:center;">No qualifications indexed.</td></tr>');
+                },
+                error: function(err) {
+                    showToast(err.responseJSON?.message || 'Access Denied: Unable to load qualifications list.', 'error');
                 }
             });
         }
@@ -2206,6 +2274,9 @@
                         `;
                     });
                     $('#states-table-body').html(trs || '<tr><td colspan="4" style="text-align:center;">No states indexed.</td></tr>');
+                },
+                error: function(err) {
+                    showToast(err.responseJSON?.message || 'Access Denied: Unable to load states list.', 'error');
                 }
             });
         }
@@ -2334,6 +2405,9 @@
                         });
                         $('#users-table-body').html(trs || '<tr><td colspan="6" style="text-align:center;">No users registered.</td></tr>');
                     }
+                },
+                error: function(err) {
+                    showToast(err.responseJSON?.message || 'Access Denied: Unable to load users registry.', 'error');
                 }
             });
         }
@@ -2451,6 +2525,9 @@
                         
                         buildPagination('#queues-failed-pagination', res.data.current_page, res.data.last_page, loadQueueDashboard);
                     }
+                },
+                error: function(err) {
+                    showToast(err.responseJSON?.message || 'Access Denied: Unable to load failed jobs registry.', 'error');
                 }
             });
         }
@@ -2567,6 +2644,9 @@
 
                         buildPagination('#audit-logs-pagination', res.data.current_page, res.data.last_page, loadAuditLogs);
                     }
+                },
+                error: function(err) {
+                    showToast(err.responseJSON?.message || 'Access Denied: Unable to load activity logs.', 'error');
                 }
             });
         }
@@ -2606,7 +2686,6 @@
                 const page = $(this).data('page');
                 clickCallback(page);
             });
-        }
         }
 
         // ─── AI CONTENT MANAGER ACTIONS & LOADER ─────────────────────────────
@@ -2710,8 +2789,9 @@
                         );
                     }
                 },
-                error: function() {
+                error: function(err) {
                     tableBody.html('<tr><td colspan="6" style="text-align: center; padding: 3rem; color: #ef4444;">Failed to load AI Content Registry. Please check connections.</td></tr>');
+                    showToast(err.responseJSON?.message || 'Access Denied: Unable to load AI Content Registry.', 'error');
                 }
             });
         };
@@ -3071,8 +3151,9 @@
                         renderMktLogsPagination(res.data);
                     }
                 },
-                error: function() {
+                error: function(err) {
                     $('#mkt-logs-table-body').html(`<tr><td colspan="6" style="text-align: center; color: #ef4444; padding: 2rem 0;">Failed to load audit logs.</td></tr>`);
+                    showToast(err.responseJSON?.message || 'Access Denied: Unable to load marketing logs.', 'error');
                 }
             });
         };

@@ -492,16 +492,21 @@
             const userDropdown = $('.user-menu-dropdown');
             userDropdown.find('> button').on('click', function(e) {
                 e.stopPropagation();
-                const menu = userDropdown.find('.dropdown-menu');
-                const isVisible = menu.css('display') === 'flex';
-                menu.css('display', isVisible ? 'none' : 'flex');
+                userDropdown.toggleClass('show');
             });
 
             // Close dropdown when clicking outside
             $(document).on('click', function(e) {
                 if (!$(e.target).closest('.user-menu-dropdown').length) {
+                    $('.user-menu-dropdown').removeClass('show');
                     $('.user-menu-dropdown .dropdown-menu').css('display', '');
                 }
+            });
+
+            // Close dropdown when clicking any dropdown item inside it
+            $(document).on('click', '.user-menu-dropdown .dropdown-item', function() {
+                $('.user-menu-dropdown').removeClass('show');
+                $('.user-menu-dropdown .dropdown-menu').css('display', '');
             });
 
             // ================== GLOBAL NAV-TAB-TRIGGER HANDLER ==================
@@ -514,10 +519,46 @@
 
                 if (!isHomepage) {
                     // On subpages: let the browser navigate via the href (e.g., /#dashboard-section)
-                    // The href already includes the correct path and hash
                     return; // Don't prevent default — let the <a href="/#..."> navigate naturally
                 }
-                // On homepage: home.blade.php's handler will take over (it has its own e.preventDefault)
+
+                // On homepage: prevent default browser jump and toggle the tab programmatically
+                e.preventDefault();
+
+                // Close mobile drawer if open
+                if (typeof closeDrawer === 'function') {
+                    closeDrawer();
+                } else {
+                    $('#mobileDrawer, #mobileDrawerOverlay').removeClass('active');
+                    $('body').css('overflow', '');
+                }
+
+                // Close user dropdown if open
+                $('.user-menu-dropdown').removeClass('show');
+                $('.user-menu-dropdown .dropdown-menu').css('display', '');
+
+                // Hide all homepage main tabs
+                $('.portal-main-tab').hide();
+
+                // Show and load selected tab
+                if (target === 'dashboard') {
+                    $('#dashboard-section').fadeIn();
+                    if (typeof loadDashboardData === 'function') {
+                        loadDashboardData();
+                    }
+                } else if (target === 'admin') {
+                    $('#admin-section').fadeIn();
+                    if (typeof loadAdminData === 'function') {
+                        loadAdminData();
+                    }
+                } else if (target === 'info-hub') {
+                    $('#info-hub-section').fadeIn();
+                } else {
+                    $('#jobs-search-section').fadeIn();
+                }
+
+                // Sync URL hash
+                window.location.hash = target + '-section';
             });
 
             // ================== MOBILE LOGOUT HANDLER ==================
