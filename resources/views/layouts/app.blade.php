@@ -29,6 +29,17 @@
     <!-- Custom Design Stylesheet -->
     <link rel="stylesheet" href="{{ asset('assets/css/portal.css') }}">
 
+    @if(!auth()->check() || !in_array(auth()->user()->membership_plan, ['premium', 'pro']))
+        <!-- Asynchronous Google AdSense Integrations -->
+        <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-mock-9876543210" crossorigin="anonymous" defer></script>
+        
+        <!-- Asynchronous Ezoic Standalone Head Integration -->
+        <script type="text/javascript" async defer>
+            window.ezstandalone = window.ezstandalone || {};
+            window.ezstandalone.cmd = window.ezstandalone.cmd || [];
+        </script>
+    @endif
+
     <!-- Global Technical SEO Structured Data (Organization, WebSite, SearchAction) -->
     <script type="application/ld+json">
     {!! json_encode($seoService->getSchemaService()->getOrganizationSchema(), JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES) !!}

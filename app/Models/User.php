@@ -21,6 +21,7 @@ class User extends Authenticatable
         'phone',
         'password',
         'role',
+        'membership_plan',
         'otp_code',
         'otp_expires_at',
         'is_active',

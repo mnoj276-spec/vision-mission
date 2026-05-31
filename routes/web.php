@@ -86,3 +86,9 @@ use App\Http\Controllers\EmailTrackingController;
 Route::get('/email/track/open/{token}', [EmailTrackingController::class, 'trackOpen'])->name('email.track.open');
 Route::get('/email/track/click/{token}', [EmailTrackingController::class, 'trackClick'])->name('email.track.click');
 
+// ─── Monetization & Revenue Infrastructure Routes ───────────────────────────
+use App\Http\Controllers\MonetizationController;
+Route::get('/go/{slug}', [MonetizationController::class, 'redirectAffiliate'])->name('monetization.affiliate_redirect');
+Route::post('/api/membership/upgrade', [MonetizationController::class, 'upgradeMembership'])->middleware('auth')->name('monetization.membership_upgrade');
+Route::get('/api/admin/revenue-analytics', [MonetizationController::class, 'getRevenueAnalytics'])->middleware(['auth', 'admin'])->name('monetization.revenue_analytics');
+
