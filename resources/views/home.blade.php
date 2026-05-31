@@ -439,7 +439,7 @@
 <!-- 1. Hero Welcome Segment -->
 <section class="hero" style="margin-bottom: 1.5rem;">
     <h1>Find Your Dream <span style="color: var(--accent-color);">Government Job</span> Today</h1>
-    <p>Discover real-time, highly validated recruitment alerts across UPSC, SSC, Banking, Railways, and individual states. Updated automatically, verified by AI, 100% accurate.</p>
+    <p>Discover real-time, highly validated recruitment alerts across UPSC, SSC, Banking, Railways, and individual states. Updated automatically, systematically verified, 100% accurate.</p>
 </section>
 
 <!-- 2. Scrolling Marquee Updates Ticker -->
@@ -1259,7 +1259,7 @@
                     
                     <div class="form-group">
                         <label for="mockPaymentMethod">Payment Gateway Mode</label>
-                        <select id="mockPaymentMethod" class="form-control" style="background: var(--bg-primary);">
+                        <select id="mockPaymentMethod" class="form-control">
                             <option value="upi">Instant UPI (Paytm/PhonePe/GPay)</option>
                             <option value="card">Visa / Mastercard Credit Card</option>
                         </select>

@@ -29,7 +29,6 @@
     <!-- Speed Optimization: Resource Hint Preconnects -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="preconnect" href="https://code.jquery.com" crossorigin>
 
     <!-- Speed Optimization: Async Web Fonts Loading -->
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
@@ -38,8 +37,10 @@
     <link rel="stylesheet" href="{{ asset('assets/css/portal.css') }}">
 
     @if(!auth()->check() || !in_array(auth()->user()->membership_plan, ['premium', 'pro']))
-        <!-- Asynchronous Google AdSense Integrations -->
-        <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-mock-9876543210" crossorigin="anonymous" defer></script>
+        @if(config('app.env') !== 'local' && config('app.env') !== 'testing')
+            <!-- Asynchronous Google AdSense Integrations -->
+            <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-mock-9876543210" crossorigin="anonymous" defer></script>
+        @endif
         
         <!-- Asynchronous Ezoic Standalone Head Integration -->
         <script type="text/javascript" async defer>
@@ -59,6 +60,7 @@
     <!-- Progressive Web Application (PWA) Manifest & Mobile Settings -->
     <link rel="manifest" href="/manifest.json">
     <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="GovJobs">
     <link rel="apple-touch-icon" href="/assets/images/icons/pwa-icon-192.png">
@@ -409,8 +411,8 @@
     <!-- D. Sliding toast feedback alerts -->
     <div class="toast-container" id="toastContainer"></div>
 
-    <!-- 4. jQuery CDN and Theme JS Controller -->
-    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <!-- 4. Local Offline jQuery and Theme JS Controller -->
+    <script src="{{ asset('assets/js/jquery-3.7.1.min.js') }}"></script>
     <script>
         // Global Sliding Toast Dispenser
         function showToast(message, type = 'success') {

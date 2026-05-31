@@ -14,7 +14,7 @@
         ['block' => 'marketing',  'permission' => 'manage_queues',     'label' => 'Email Automation',         'icon' => '<path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline>'],
         ['block' => 'seo',        'permission' => 'manage_seo',        'label' => 'SEO & Content Cache',      'icon' => '<circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>'],
         ['block' => 'audit',      'permission' => 'view_audit_logs',   'label' => 'Audit Activity Logs',      'icon' => '<circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline>'],
-        ['block' => 'ai-content', 'permission' => 'view_ai_content',   'label' => 'AI Content Manager',       'icon' => '<polygon points="12 2 2 7 12 12 22 7 12 2"></polygon><polyline points="2 17 12 22 22 17"></polyline><polyline points="2 12 12 17 22 12"></polyline>'],
+        ['block' => 'ai-content', 'permission' => 'view_ai_content',   'label' => 'Content Verification Hub',       'icon' => '<polyline points="9 11 12 14 22 4"></polyline><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>'],
         ['block' => 'rbac',       'permission' => 'manage_users',      'label' => 'RBAC Clearance Matrix',    'icon' => '<rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path>'],
     ];
 
@@ -134,7 +134,7 @@
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
                 <h2 style="font-family: 'Outfit'; font-size: 1.75rem; margin: 0;">Telemetry & Analytics Control Center</h2>
                 <div>
-                    <select id="analytics-timeframe" style="padding: 0.6rem; border-radius: 8px; background: var(--bg-primary); border: 1px solid var(--border-color); color: var(--text-primary); cursor: pointer;">
+                    <select id="analytics-timeframe" style="width: auto; font-size: 0.85rem; padding-top: 0.4rem !important; padding-bottom: 0.4rem !important;">
                         <option value="7">Last 7 Days</option>
                         <option value="14" selected>Last 14 Days</option>
                         <option value="30">Last 30 Days</option>
@@ -252,7 +252,7 @@
 
             <div class="glass-panel" style="padding: 1.5rem; border-radius: 16px; margin-bottom: 1.5rem; display: flex; gap: 1rem; flex-wrap: wrap; align-items: center;">
                 <input type="text" id="jobs-search-input" placeholder="Live search announcements title..." style="flex: 1; padding: 0.6rem 1rem; border-radius: 8px; background: var(--bg-primary); border: 1px solid var(--border-color); color: var(--text-primary);" autocomplete="off">
-                <select id="jobs-per-page" style="padding: 0.6rem; border-radius: 8px; background: var(--bg-primary); border: 1px solid var(--border-color); color: var(--text-primary);">
+                <select id="jobs-per-page" style="width: auto; font-size: 0.85rem; padding-top: 0.4rem !important; padding-bottom: 0.4rem !important;">
                     <option value="10">10 Per Page</option>
                     <option value="25">25 Per Page</option>
                     <option value="50">50 Per Page</option>
@@ -701,22 +701,23 @@
             </div>
         </section>
 
-        <!-- ================= PANEL 9: AI CONTENT MANAGER ================= -->
+        <!-- ================= PANEL 9: CONTENT VERIFICATION HUB ================= -->
         <section class="admin-panel-block" id="admin-ai-content" style="display: none;">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
-                <h2 style="font-family: 'Outfit'; font-size: 1.75rem; margin: 0;">AI Content Generation Console</h2>
+                <h2 style="font-family: 'Outfit'; font-size: 1.75rem; margin: 0;">Content Verification Hub Console</h2>
                 <div style="display: flex; gap: 0.75rem; align-items: center;">
-                    <span style="font-size: 0.85rem; color: var(--text-secondary);">Active AI Engine:</span>
+                    <span style="font-size: 0.85rem; color: var(--text-secondary);">Active Verification Engine:</span>
                     <span id="ai-telemetry-engine" class="badge" style="background: rgba(37, 99, 235, 0.15); color: var(--accent-color); font-weight: 700; padding: 0.4rem 0.8rem; border-radius: 6px; text-transform: uppercase;">GEMINI</span>
                 </div>
             </div>
 
             <!-- AI Telemetry Stats -->
+            <!-- AI Telemetry Stats -->
             <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem; margin-bottom: 2rem;">
                 <div class="glass-panel stat-card-premium" style="border-left: 5px solid var(--accent-color);">
-                    <div class="label">Total AI Enriched Posts</div>
+                    <div class="label">Total Enriched Posts</div>
                     <div class="number" id="ai-stat-total">0</div>
-                    <div class="subtext">Completed or pending generation</div>
+                    <div class="subtext">Completed or pending verification</div>
                 </div>
                 <div class="glass-panel stat-card-premium" style="border-left: 5px solid #f59e0b;">
                     <div class="label">Pending Approvals</div>
@@ -737,14 +738,14 @@
 
             <!-- Filter Console -->
             <div class="glass-panel" style="padding: 1.5rem; border-radius: 16px; margin-bottom: 1.5rem; display: flex; gap: 1rem; flex-wrap: wrap; align-items: center;">
-                <input type="text" id="ai-search-input" placeholder="Search job title for AI drafts..." style="flex: 1; padding: 0.6rem 1rem; border-radius: 8px; background: var(--bg-primary); border: 1px solid var(--border-color); color: var(--text-primary);" autocomplete="off">
-                <select id="ai-status-filter" style="padding: 0.6rem; border-radius: 8px; background: var(--bg-primary); border: 1px solid var(--border-color); color: var(--text-primary);">
+                <input type="text" id="ai-search-input" placeholder="Search job title for enriched drafts..." style="flex: 1; padding: 0.6rem 1rem; border-radius: 8px; background: var(--bg-primary); border: 1px solid var(--border-color); color: var(--text-primary);" autocomplete="off">
+                <select id="ai-status-filter" style="width: auto; font-size: 0.85rem; padding-top: 0.4rem !important; padding-bottom: 0.4rem !important;">
                     <option value="all">All States</option>
                     <option value="pending" selected>Pending Review</option>
                     <option value="approved">Approved & Live</option>
                     <option value="rejected">Rejected Drafts</option>
                 </select>
-                <button class="form-btn" id="btn-ai-filter-trigger" style="margin: 0; padding: 0.6rem 1.2rem;">Apply Filter</button>
+                <button class="btn-primary" id="btn-ai-filter-trigger" style="margin: 0; padding: 0.6rem 1.2rem;">Apply Filter</button>
             </div>
 
             <!-- Main Data Table -->
@@ -1095,7 +1096,7 @@
 <!-- D. AI Content Review & Approval Drawer -->
 <div class="admin-drawer glass-panel" id="ai-review-drawer" style="position: fixed; right: -650px; top: 0; width: 620px; height: 100vh; background: var(--bg-secondary); border-left: 1px solid var(--border-color); z-index: 1001; transition: right 0.4s cubic-bezier(0.16, 1, 0.3, 1); padding: 2rem; overflow-y: auto; box-shadow: -10px 0 30px rgba(0,0,0,0.15);">
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; border-bottom: 1px solid var(--border-color); padding-bottom: 1rem;">
-        <h3 style="font-family: 'Outfit'; font-size: 1.4rem; color: var(--accent-color); margin: 0;">AI Draft Editorial Console</h3>
+        <h3 style="font-family: 'Outfit'; font-size: 1.4rem; color: var(--accent-color); margin: 0;">Verification & Editorial Console</h3>
         <button class="btn-sm-danger" id="close-ai-drawer" style="padding: 0.25rem 0.5rem; cursor: pointer;">&times; Close</button>
     </div>
 
@@ -1125,7 +1126,7 @@
                 </select>
             </div>
             <div class="form-group" style="display: flex; align-items: flex-end;">
-                <button type="button" class="form-btn" id="btn-ai-regenerate" style="margin: 0; width: 100%; background: #8b5cf6; border: none;">⚡ Regenerate Draft</button>
+                <button type="button" class="btn-primary" id="btn-ai-regenerate" style="margin: 0; width: 100%; background: #8b5cf6; border-color: #8b5cf6;">⚡ Regenerate Verification</button>
             </div>
         </div>
 
@@ -1165,10 +1166,10 @@
         </div>
 
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 2rem;">
-            <button type="button" class="form-btn" id="btn-ai-drawer-reject" style="background: #ef4444; border: none; margin: 0;">Decline Draft</button>
-            <button type="button" class="form-btn" id="btn-ai-drawer-approve" style="background: #10b981; border: none; margin: 0;">Approve & Live</button>
+            <button type="button" class="btn-danger" id="btn-ai-drawer-reject" style="margin: 0;">Reject Announcement</button>
+            <button type="button" class="btn-success" id="btn-ai-drawer-approve" style="margin: 0;">Publish Verification</button>
         </div>
-        <button type="submit" class="form-btn" style="width: 100%; margin-top: 0.75rem; background: var(--text-secondary); border: none;">Save Draft Changes Only</button>
+        <button type="submit" class="btn-secondary" style="width: 100%; margin-top: 0.75rem;">Save Draft Changes Only</button>
     </form>
 </div>
 
@@ -1224,7 +1225,8 @@
 @endsection
 
 @section('scripts')
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<!-- Load local offline Chart.js to prevent Service Worker network fetch errors on localhost -->
+<script src="{{ asset('assets/js/chart.js') }}"></script>
 <script>
     $(document).ready(function() {
         // Toggle Sidebar Dashboard Tabs/Panels
@@ -1676,8 +1678,8 @@
                                     <td><span class="badge badge-deadline" style="margin-bottom:0;">${job.last_date_to_apply ? job.last_date_to_apply.substring(0, 10) : 'N/A'}</span></td>
                                     <td>
                                         <div style="display:flex; gap:0.5rem; justify-content:center; align-items:center;">
-                                            <button class="btn-sm btn-trigger-ai-gen" data-id="${job.id}" style="background: #8b5cf6; border: none; border-radius: 4px; padding: 0.25rem 0.5rem; color: #fff; display: flex; align-items: center; gap: 0.25rem; font-size: 0.75rem; cursor: pointer;">
-                                                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg> Run AI
+                                            <button class="btn-sm-primary btn-trigger-ai-gen" data-id="${job.id}" style="background: #8b5cf6; border-color: #8b5cf6;">
+                                                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg> Verify Listing
                                             </button>
                                             <button class="btn-sm-view btn-edit-job" data-id="${job.id}" data-title="${job.title}" data-category="${job.category_id}" data-dept="${job.department_id}" data-state="${job.state_id}" data-qual="${job.qualification_id}" data-desc="${job.description}" data-min="${job.salary_min}" data-max="${job.salary_max}" data-vac="${job.vacancy_count}" data-fee="${job.application_fee}" data-deadline="${job.last_date_to_apply ? job.last_date_to_apply.substring(0, 10) : ''}" data-url="${job.official_website_link}">Edit</button>
                                             <button class="btn-sm-danger btn-delete-job" data-id="${job.id}">Delete</button>
@@ -2380,7 +2382,7 @@
                                 { value: 'candidate', label: 'Candidate' }
                             ];
 
-                            let roleSelect = `<select class="select-user-role" data-id="${u.id}" style="background:var(--bg-card); color:var(--text-primary); border:1px solid var(--border-color); padding:0.3rem 0.5rem; border-radius:6px; font-size:0.8rem; cursor:pointer;">`;
+                            let roleSelect = `<select class="select-user-role" data-id="${u.id}">`;
                             rolesList.forEach(r => {
                                 const selected = u.role === r.value ? 'selected' : '';
                                 roleSelect += `<option value="${r.value}" ${selected}>${r.label}</option>`;
@@ -2910,10 +2912,10 @@
                     loadAiContentData($('#ai-management-pagination .pagination-btn.active').data('page') || 1);
                 },
                 error: function(err) {
-                    showToast('Failed to approve draft copy.', 'error');
+                    showToast('Failed to publish verification.', 'error');
                 },
                 complete: function() {
-                    btn.prop('disabled', false).text('Approve & Live');
+                    btn.prop('disabled', false).text('Publish Verification');
                 }
             });
         });
@@ -2924,7 +2926,7 @@
             const id = $('#ai-review-id').val();
             const btn = $(this);
             
-            btn.prop('disabled', true).text('Declining...');
+            btn.prop('disabled', true).text('Rejecting...');
 
             $.ajax({
                 url: `/api/admin/ai-contents/${id}/reject`,
@@ -2937,10 +2939,10 @@
                     loadAiContentData($('#ai-management-pagination .pagination-btn.active').data('page') || 1);
                 },
                 error: function() {
-                    showToast('Failed to decline draft copy.', 'error');
+                    showToast('Failed to reject announcement.', 'error');
                 },
                 complete: function() {
-                    btn.prop('disabled', false).text('Decline Draft');
+                    btn.prop('disabled', false).text('Reject Announcement');
                 }
             });
         });
@@ -2952,7 +2954,7 @@
             const provider = $('#ai-review-provider-select').val();
             const btn = $(this);
             
-            btn.prop('disabled', true).text('Queueing...');
+            btn.prop('disabled', true).text('Verifying...');
 
             $.ajax({
                 url: `/api/admin/ai-contents/generate/${postId}`,
@@ -2968,10 +2970,10 @@
                     loadAiContentData(1);
                 },
                 error: function() {
-                    showToast('Failed to trigger AI generation task.', 'error');
+                    showToast('Failed to trigger verification task.', 'error');
                 },
                 complete: function() {
-                    btn.prop('disabled', false).text('⚡ Regenerate Draft');
+                    btn.prop('disabled', false).text('⚡ Regenerate Verification');
                 }
             });
         });
@@ -3034,7 +3036,7 @@
             const postId = $(this).data('id');
             const btn = $(this);
 
-            btn.prop('disabled', true).text('Queueing...');
+            btn.prop('disabled', true).text('Verifying...');
             $.ajax({
                 url: `/api/admin/ai-contents/generate/${postId}`,
                 method: 'POST',
@@ -3043,10 +3045,10 @@
                     showToast(res.message, 'success');
                 },
                 error: function() {
-                    showToast('Failed to queue AI generation task.', 'error');
+                    showToast('Failed to queue verification task.', 'error');
                 },
                 complete: function() {
-                    btn.prop('disabled', false).html('<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg> Run AI');
+                    btn.prop('disabled', false).html('<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg> Verify Listing');
                 }
             });
         });
