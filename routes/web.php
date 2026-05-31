@@ -81,3 +81,8 @@ Route::get('/docs', [\App\Http\Controllers\Api\DocsController::class, 'index'])-
 Route::post('/api/internal-link/click', [ProgrammaticSeoController::class, 'trackLinkClick'])
     ->name('internal_link.track');
 
+// ─── Email Automation Tracking Routes ───────────────────────────────────────
+use App\Http\Controllers\EmailTrackingController;
+Route::get('/email/track/open/{token}', [EmailTrackingController::class, 'trackOpen'])->name('email.track.open');
+Route::get('/email/track/click/{token}', [EmailTrackingController::class, 'trackClick'])->name('email.track.click');
+

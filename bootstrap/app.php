@@ -20,6 +20,10 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withCommands([
         \App\Domains\Scrapers\Commands\RunScraperCommand::class,
         \App\Console\Commands\WarmInternalLinksCache::class,
+        \App\Console\Commands\WelcomeSeriesScheduler::class,
+        \App\Console\Commands\AlertsScheduler::class,
+        \App\Console\Commands\WeeklyDigestScheduler::class,
+        \App\Console\Commands\ReEngagementScheduler::class,
     ])
     ->withMiddleware(function (Middleware $middleware): void {
         // Register security middleware aliases

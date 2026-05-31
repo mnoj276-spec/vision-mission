@@ -20,6 +20,7 @@
             <button class="admin-nav-btn" data-block="master"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2L2 7l10 5 10-5-10-5z"></path><path d="M2 17l10 5 10-5"></path><path d="M2 12l10 5 10-5"></path></svg> Master Data Manager</button>
             <button class="admin-nav-btn" data-block="users"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M17 21v-2a4 4 0 0 0-3-3.87"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg> User Access Panel</button>
             <button class="admin-nav-btn" data-block="queues"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="2" y="2" width="20" height="8" rx="2" ry="2"></rect><rect x="2" y="14" width="20" height="8" rx="2" ry="2"></rect><line x1="6" y1="6" x2="6.01" y2="6"></line><line x1="6" y1="18" x2="6.01" y2="18"></line></svg> Queue Engine & DLQ</button>
+            <button class="admin-nav-btn" data-block="marketing"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg> Email Automation</button>
             <button class="admin-nav-btn" data-block="seo"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg> SEO & Content Cache</button>
             <button class="admin-nav-btn" data-block="audit"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg> Audit Activity Logs</button>
             <button class="admin-nav-btn" data-block="ai-content"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="12 2 2 7 12 12 22 7 12 2"></polygon><polyline points="2 17 12 22 22 17"></polyline><polyline points="2 12 12 17 22 12"></polyline></svg> AI Content Manager</button>
@@ -578,6 +579,107 @@
             </div>
         </section>
 
+        <!-- ================= PANEL 8B: EMAIL MARKETING AUTOMATION ================= -->
+        <section class="admin-panel-block" id="admin-marketing" style="display: none;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                <h2 style="font-family: 'Outfit'; font-size: 1.75rem; margin: 0;">Marketing & Email Automation Panel</h2>
+                <div style="display: flex; gap: 0.75rem; align-items: center;">
+                    <span style="font-size: 0.85rem; color: var(--text-secondary);">Active Queue Engine:</span>
+                    <span class="badge" style="background: rgba(37, 99, 235, 0.15); color: var(--accent-color); font-weight: 700; padding: 0.4rem 0.8rem; border-radius: 6px; text-transform: uppercase;">DATABASE QUEUE</span>
+                </div>
+            </div>
+
+            <!-- Aggregated Performance Analytics Cards -->
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem; margin-bottom: 2rem;">
+                <div class="glass-panel stat-card-premium" style="border-left: 5px solid var(--accent-color); padding: 1.5rem; border-radius: 12px;">
+                    <div class="label" style="font-size:0.85rem; text-transform:uppercase; color:var(--text-secondary); margin-bottom:0.5rem;">Total Emails Queued/Sent</div>
+                    <div class="number" id="mkt-stat-sent" style="font-size:2rem; font-weight:bold; font-family:'Outfit';">0</div>
+                    <div class="subtext" style="font-size:0.75rem; color:var(--text-secondary); margin-top:0.25rem;">Active automation dispatches</div>
+                </div>
+                <div class="glass-panel stat-card-premium" style="border-left: 5px solid #10b981; padding: 1.5rem; border-radius: 12px;">
+                    <div class="label" style="font-size:0.85rem; text-transform:uppercase; color:var(--text-secondary); margin-bottom:0.5rem;">Average Open Rate</div>
+                    <div class="number" id="mkt-stat-open-rate" style="font-size:2rem; font-weight:bold; font-family:'Outfit'; color: #10b981;">0%</div>
+                    <div class="subtext" id="mkt-stat-opened" style="font-size:0.75rem; color:var(--text-secondary); margin-top:0.25rem;">0 total opens logged</div>
+                </div>
+                <div class="glass-panel stat-card-premium" style="border-left: 5px solid #f59e0b; padding: 1.5rem; border-radius: 12px;">
+                    <div class="label" style="font-size:0.85rem; text-transform:uppercase; color:var(--text-secondary); margin-bottom:0.5rem;">Click-Through Rate (CTR)</div>
+                    <div class="number" id="mkt-stat-ctr" style="font-size:2rem; font-weight:bold; font-family:'Outfit'; color: #f59e0b;">0%</div>
+                    <div class="subtext" id="mkt-stat-clicked" style="font-size:0.75rem; color:var(--text-secondary); margin-top:0.25rem;">0 total link clicks logged</div>
+                </div>
+                <div class="glass-panel stat-card-premium" style="border-left: 5px solid #ef4444; padding: 1.5rem; border-radius: 12px;">
+                    <div class="label" style="font-size:0.85rem; text-transform:uppercase; color:var(--text-secondary); margin-bottom:0.5rem;">Delivery Failures (DLQ)</div>
+                    <div class="number" id="mkt-stat-failed" style="font-size:2rem; font-weight:bold; font-family:'Outfit'; color: #ef4444;">0</div>
+                    <div class="subtext" style="font-size:0.75rem; color:var(--text-secondary); margin-top:0.25rem;">SMTP/Network errors caught</div>
+                </div>
+            </div>
+
+            <!-- Middle Layout: Campaign breakdown & Test trigger suite -->
+            <div style="display: grid; grid-template-columns: 1.2fr 1fr; gap: 2rem; margin-bottom: 2rem; align-items: start;">
+                
+                <!-- Campaign Breakdown Performance list -->
+                <div class="glass-panel" style="padding: 1.5rem; border-radius: 16px;">
+                    <h3 style="font-family: 'Outfit'; font-size: 1.2rem; color: var(--accent-color); margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.5rem;"><span style="display:inline-block; width:4px; height:18px; background:var(--accent-color); border-radius:2px;"></span> Campaign Performance Breakdown</h3>
+                    <div id="mkt-campaigns-list" style="display: flex; flex-direction: column; gap: 1.25rem;">
+                        <div style="text-align:center; color:var(--text-secondary); font-size:0.9rem; padding: 2rem 0;">Loading campaign datasets...</div>
+                    </div>
+                </div>
+
+                <!-- Manual dispatch/testing suite -->
+                <div class="glass-panel" style="padding: 1.5rem; border-radius: 16px;">
+                    <h3 style="font-family: 'Outfit'; font-size: 1.2rem; color: #f59e0b; margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.5rem;"><span style="display:inline-block; width:4px; height:18px; background:#f59e0b; border-radius:2px;"></span> Administrative Campaign Testing</h3>
+                    <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 1.5rem; line-height: 1.4;">
+                        Select a campaign type and enter a recipient address to manually queue a high-fidelity test email. Links and open trackers will be fully active.
+                    </p>
+                    <form id="mkt-test-form">
+                        @csrf
+                        <div class="form-group" style="margin-bottom: 1rem;">
+                            <label for="mkt-test-email" style="display:block; margin-bottom:0.5rem; font-size:0.85rem; font-weight:600;">Recipient Email Address</label>
+                            <input type="email" id="mkt-test-email" class="form-control" placeholder="e.g. candidate@example.com" required style="width:100%; box-sizing:border-box;">
+                        </div>
+                        <div class="form-group" style="margin-bottom: 1.5rem;">
+                            <label for="mkt-test-campaign" style="display:block; margin-bottom:0.5rem; font-size:0.85rem; font-weight:600;">Campaign Blueprint Template</label>
+                            <select id="mkt-test-campaign" class="form-control" style="width:100%; box-sizing:border-box;">
+                                <option value="welcome_1">Welcome Series Part 1: Instant Intro</option>
+                                <option value="welcome_2">Welcome Series Part 2: Preference Setup</option>
+                                <option value="welcome_3">Welcome Series Part 3: Portal Walkthrough</option>
+                                <option value="job_alert">Instant Matched Job Alerts</option>
+                                <option value="result_alert">Official Results Declared Notification</option>
+                                <option value="admit_card_alert">Hall Ticket / Admit Card Release Notification</option>
+                                <option value="weekly_digest">Weekly Careers Collation Digest</option>
+                                <option value="re_engagement">Winback Re-engagement (We Miss You!)</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="form-btn" id="mkt-test-submit" style="width:100%; margin:0; background: linear-gradient(135deg, #f59e0b, #d97706); border:none; font-weight:700;">Queue Test Campaign Dispatch</button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Dynamic logs audit trail -->
+            <div class="glass-panel" style="padding: 1.5rem; border-radius: 16px;">
+                <h3 style="font-family: 'Outfit'; font-size: 1.25rem; color: var(--text-primary); margin-bottom: 1.2rem; display: flex; align-items: center; gap: 0.5rem;"><span style="display:inline-block; width:4px; height:18px; background:var(--text-primary); border-radius:2px;"></span> Real-time Automation Dispatch Logs</h3>
+                <div class="responsive-table-container">
+                    <table class="portal-table" id="mkt-logs-table">
+                        <thead>
+                            <tr>
+                                <th>Log ID</th>
+                                <th>Recipient Address</th>
+                                <th>Campaign Type</th>
+                                <th>Status</th>
+                                <th>Telemetry Tracker</th>
+                                <th>Sent Time</th>
+                            </tr>
+                        </thead>
+                        <tbody id="mkt-logs-table-body">
+                            <tr>
+                                <td colspan="6" style="text-align: center; color: var(--text-secondary); padding: 2rem 0;">No logs retrieved. Click the dashboard tab to load logs.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="pagination-container" id="mkt-logs-pagination" style="margin-top: 1.5rem;"></div>
+            </div>
+        </section>
+
         <!-- ================= PANEL 9: AI CONTENT MANAGER ================= -->
         <section class="admin-panel-block" id="admin-ai-content" style="display: none;">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
@@ -1130,6 +1232,8 @@
                 loadAuditLogs(1);
             } else if (targetBlock === 'ai-content') {
                 loadAiContentData(1);
+            } else if (targetBlock === 'marketing') {
+                loadMarketingDashboard(1);
             } else if (targetBlock === 'analytics') {
                 loadAnalyticsDashboard();
             }
@@ -2868,6 +2972,164 @@
         });
 
         // ─── END AI CONTENT MANAGER ──────────────────────────────────────────
+
+        // ─── EMAIL AUTOMATION WORKSPACE ───
+        window.loadMarketingDashboard = function(page = 1) {
+            // 1. Fetch Stats
+            $.ajax({
+                url: '/api/admin/marketing/stats',
+                method: 'GET',
+                success: function(res) {
+                    if (res.status === 'success') {
+                        const o = res.data.overall;
+                        $('#mkt-stat-sent').text(o.sent.toLocaleString());
+                        $('#mkt-stat-open-rate').text(o.open_rate + '%');
+                        $('#mkt-stat-opened').text(o.opened.toLocaleString() + ' total opens logged');
+                        $('#mkt-stat-ctr').text(o.ctr + '%');
+                        $('#mkt-stat-clicked').text(o.clicked.toLocaleString() + ' total clicks logged');
+                        $('#mkt-stat-failed').text(o.failed.toLocaleString());
+
+                        // Render Breakdown Progress Bars
+                        let html = '';
+                        if (res.data.campaigns.length === 0) {
+                            html = '<div style="text-align:center; color:var(--text-secondary); padding: 1rem 0;">No active dispatches tracked yet.</div>';
+                        } else {
+                            res.data.campaigns.forEach(c => {
+                                let label = c.campaign_type;
+                                // Clean label for human viewing
+                                if (label.startsWith('welcome_')) label = 'Welcome Series ' + label.replace('welcome_', 'Part ');
+                                else label = label.split('_').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+
+                                html += `
+                                    <div style="margin-bottom: 1rem;">
+                                        <div style="display:flex; justify-content:space-between; font-size:0.85rem; margin-bottom:0.4rem; font-weight:600;">
+                                            <span>${label} <span style="font-size:0.75rem; font-weight:normal; color:var(--text-secondary);">(${c.sent.toLocaleString()} sent)</span></span>
+                                            <span>Opens: ${c.open_rate}% | CTR: ${c.ctr}%</span>
+                                        </div>
+                                        <div style="width:100%; height:8px; background:var(--border-color); border-radius:99px; overflow:hidden; display:flex;">
+                                            <div style="width:${c.open_rate}%; height:100%; background:#10b981; transition:width 0.4s ease;" title="Open Rate: ${c.open_rate}%"></div>
+                                            <div style="width:${c.ctr}%; height:100%; background:#f59e0b; transition:width 0.4s ease;" title="Click CTR: ${c.ctr}%"></div>
+                                        </div>
+                                    </div>
+                                `;
+                            });
+                        }
+                        $('#mkt-campaigns-list').html(html);
+                    }
+                },
+                error: function() {
+                    showToast('Failed to load email automation stats.', 'error');
+                }
+            });
+
+            // 2. Fetch Logs
+            $.ajax({
+                url: `/api/admin/marketing/logs?page=${page}`,
+                method: 'GET',
+                success: function(res) {
+                    if (res.status === 'success') {
+                        const logs = res.data.data;
+                        let tbodyHtml = '';
+
+                        if (logs.length === 0) {
+                            tbodyHtml = `<tr><td colspan="6" style="text-align: center; color: var(--text-secondary); padding: 2rem 0;">No dispatches logged in DB.</td></tr>`;
+                        } else {
+                            logs.forEach(log => {
+                                // Resolve email
+                                const email = log.user ? `${log.user.name} &lt;${log.user.email}&gt;` : log.subscriber_email;
+                                
+                                // Clean campaign label
+                                let typeLabel = log.campaign_type;
+                                if (typeLabel.startsWith('welcome_')) typeLabel = 'Welcome Series ' + typeLabel.replace('welcome_', 'Part ');
+                                else typeLabel = typeLabel.split('_').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+
+                                // Resolve Status Badge
+                                let statusBadge = '';
+                                if (log.status === 'sent') statusBadge = '<span class="badge" style="background:rgba(16,185,129,0.12); color:#10b981; font-weight:700;">Delivered</span>';
+                                else if (log.status === 'failed') statusBadge = `<span class="badge" style="background:rgba(239,68,68,0.12); color:#ef4444; font-weight:700; cursor:pointer;" title="${log.error_message || 'SMTP Crash'}">Failed ⚠️</span>`;
+                                else statusBadge = '<span class="badge" style="background:rgba(37,99,235,0.12); color:#2563eb; font-weight:700;">Queued</span>';
+
+                                // Telemetry icons
+                                const opened = log.opened_at ? '<span style="color:#10b981; font-weight:bold; margin-right:8px;" title="Opened at ' + log.opened_at + '">👁️ Opened</span>' : '<span style="color:var(--text-secondary); margin-right:8px;">👁️ -</span>';
+                                const clicked = log.clicked_at ? '<span style="color:#f59e0b; font-weight:bold;" title="Clicked at ' + log.clicked_at + '">🖱️ Clicked</span>' : '<span style="color:var(--text-secondary);">🖱️ -</span>';
+
+                                tbodyHtml += `
+                                    <tr>
+                                        <td>#${log.id}</td>
+                                        <td><strong>${email}</strong></td>
+                                        <td><span class="badge" style="background:rgba(100,116,139,0.08); color:var(--text-primary);">${typeLabel}</span></td>
+                                        <td>${statusBadge}</td>
+                                        <td><div style="display:flex; align-items:center;">${opened} ${clicked}</div></td>
+                                        <td>${new Date(log.created_at).toLocaleString()}</td>
+                                    </tr>
+                                `;
+                            });
+                        }
+                        $('#mkt-logs-table-body').html(tbodyHtml);
+
+                        // Draw Pagination
+                        renderMktLogsPagination(res.data);
+                    }
+                },
+                error: function() {
+                    $('#mkt-logs-table-body').html(`<tr><td colspan="6" style="text-align: center; color: #ef4444; padding: 2rem 0;">Failed to load audit logs.</td></tr>`);
+                }
+            });
+        };
+
+        function renderMktLogsPagination(data) {
+            let pagHtml = '';
+            if (data.last_page > 1) {
+                pagHtml += `<div style="display:flex; gap:0.5rem; justify-content:center; align-items:center; flex-wrap:wrap; margin-top:1.5rem;">`;
+                for (let i = 1; i <= data.last_page; i++) {
+                    const activeClass = i === data.current_page ? 'active' : '';
+                    pagHtml += `<button class="pagination-btn ${activeClass} mkt-pag-btn" data-page="${i}" style="padding:0.4rem 0.8rem; border-radius:6px; background:var(--bg-primary); border:1px solid var(--border-color); color:var(--text-primary); cursor:pointer;">${i}</button>`;
+                }
+                pagHtml += `</div>`;
+            }
+            $('#mkt-logs-pagination').html(pagHtml);
+        }
+
+        // Delegate pagination button clicks
+        $(document).on('click', '.mkt-pag-btn', function(e) {
+            e.preventDefault();
+            const page = $(this).data('page');
+            loadMarketingDashboard(page);
+        });
+
+        // Trigger manual test form submission
+        $('#mkt-test-form').on('submit', function(e) {
+            e.preventDefault();
+            const submitBtn = $('#mkt-test-submit');
+            const originalText = submitBtn.text();
+
+            submitBtn.prop('disabled', true).text('Dispatching onto Queue...');
+
+            $.ajax({
+                url: '/api/admin/marketing/trigger-test',
+                method: 'POST',
+                data: {
+                    _token: '{{ csrf_token() }}',
+                    email: $('#mkt-test-email').val(),
+                    campaign_type: $('#mkt-test-campaign').val(),
+                },
+                success: function(res) {
+                    showToast(res.message, 'success');
+                    $('#mkt-test-email').val(''); // Clear target
+                    
+                    // Reload dashboard statistics and logs list after 1 second delay
+                    setTimeout(() => {
+                        loadMarketingDashboard(1);
+                    }, 1000);
+                },
+                error: function(err) {
+                    showToast('Failed to trigger test email.', 'error');
+                },
+                complete: function() {
+                    submitBtn.prop('disabled', false).text(originalText);
+                }
+            });
+        });
 
     });
 </script>

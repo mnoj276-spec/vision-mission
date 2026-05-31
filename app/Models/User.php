@@ -56,6 +56,15 @@ class User extends Authenticatable
                 }
             }
         });
+
+        static::created(function ($user) {
+            if ($user->role === 'candidate' && !empty($user->email)) {
+                \App\Jobs\SendEmailJob::dispatch($user->email, 'welcome_1', [
+                    'user_id' => $user->id,
+                    'name' => $user->name,
+                ]);
+            }
+        });
     }
 
     /**
