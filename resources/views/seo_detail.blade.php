@@ -1,3 +1,4 @@
+@inject('seoService', 'App\Domains\Jobs\Services\SeoService')
 @extends('layouts.app')
 
 @section('title', $pageTitle)
@@ -416,11 +417,25 @@
     @endif
 </div>
 
-<!-- Render Schema Markup (JSON-LD) -->
+@endsection
+
+@section('schema')
+<!-- BreadcrumbList Schema -->
+<script type="application/ld+json">
+{!! json_encode($seoService->getSchemaService()->getBreadcrumbListSchema($breadcrumbs), JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES) !!}
+</script>
+
+<!-- JobPosting Schema -->
 <script type="application/ld+json">
 {!! json_encode($schema, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES) !!}
 </script>
 
+@if($aiContent && !empty($aiContent->faqs) && count($aiContent->faqs) > 0)
+<!-- FAQPage Schema -->
+<script type="application/ld+json">
+{!! json_encode($seoService->getSchemaService()->getFAQPageSchema($aiContent->faqs), JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES) !!}
+</script>
+@endif
 @endsection
 
 @section('scripts')

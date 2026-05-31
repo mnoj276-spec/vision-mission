@@ -1,3 +1,4 @@
+@inject('seoService', 'App\Domains\Jobs\Services\SeoService')
 @php
     $seo = [
         'meta_title' => 'GovJobs - Premium Automated Government Jobs Portal',
@@ -27,6 +28,15 @@
     
     <!-- Custom Design Stylesheet -->
     <link rel="stylesheet" href="{{ asset('assets/css/portal.css') }}">
+
+    <!-- Global Technical SEO Structured Data (Organization, WebSite, SearchAction) -->
+    <script type="application/ld+json">
+    {!! json_encode($seoService->getSchemaService()->getOrganizationSchema(), JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES) !!}
+    </script>
+    <script type="application/ld+json">
+    {!! json_encode($seoService->getSchemaService()->getWebSiteSchema(), JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES) !!}
+    </script>
+    @yield('schema')
 </head>
 <body>
 

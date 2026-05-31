@@ -4,6 +4,13 @@ namespace App\Domains\Jobs\Services;
 
 class SeoService
 {
+    protected SchemaService $schemaService;
+
+    public function __construct(SchemaService $schemaService)
+    {
+        $this->schemaService = $schemaService;
+    }
+
     /**
      * Get dynamic SEO metadata for a page.
      *
@@ -149,43 +156,22 @@ class SeoService
 
     /**
      * Generate Schema Markup for a single JobPost.
+     * Delegates to SchemaService.
      *
      * @param \App\Models\JobPost $job
      * @return array
      */
     public function getJobSchema(\App\Models\JobPost $job): array
     {
-        return [
-            '@context' => 'https://schema.org',
-            '@type' => 'JobPosting',
-            'title' => $job->title,
-            'description' => strip_tags($job->description),
-            'datePosted' => $job->published_at ? $job->published_at->toDateString() : now()->toDateString(),
-            'validThrough' => $job->last_date_to_apply ? $job->last_date_to_apply->toDateString() : now()->addDays(30)->toDateString(),
-            'hiringOrganization' => [
-                '@type' => 'Organization',
-                'name' => $job->department->name ?? 'Government Recruitment Board',
-                'sameAs' => $job->official_website_link ?? 'https://upsc.gov.in'
-            ],
-            'jobLocation' => [
-                '@type' => 'Place',
-                'address' => [
-                    '@type' => 'PostalAddress',
-                    'addressRegion' => $job->state->name ?? 'Pan India',
-                    'addressCountry' => 'IN'
-                ]
-            ],
-            'baseSalary' => [
-                '@type' => 'MonetaryAmount',
-                'currency' => 'INR',
-                'value' => [
-                    '@type' => 'QuantitativeValue',
-                    'minValue' => (float)$job->salary_min,
-                    'maxValue' => (float)$job->salary_max,
-                    'unitText' => 'MONTH'
-                ]
-            ]
-        ];
+        return $this->schemaService->getJobPostingSchema($job);
+    }
+
+    /**
+     * Expose internal SchemaService instance.
+     */
+    public function getSchemaService(): SchemaService
+    {
+        return $this->schemaService;
     }
 
     /**
