@@ -88,7 +88,7 @@ class ScrapingService implements ScrapingServiceInterface
         }
     }
 
-    protected function processScrapedItem(ScrapingSource $source, array $rawData): array
+    public function processScrapedItem(ScrapingSource $source, array $rawData): array
     {
         $rawLogPayload = $rawData;
         try {

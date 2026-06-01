@@ -25,6 +25,23 @@
     <meta name="description" content="{{ $seo['meta_description'] }}">
     <meta name="keywords" content="{{ $seo['meta_keywords'] }}">
     <meta name="robots" content="index, follow">
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="{{ request()->url() }}">
+    <meta property="og:title" content="@yield('title', $seo['meta_title'])">
+    <meta property="og:description" content="{{ $seo['meta_description'] }}">
+    <meta property="og:image" content="{{ request()->getSchemeAndHttpHost() }}/assets/images/icons/pwa-icon-192.png">
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="{{ request()->url() }}">
+    <meta property="twitter:title" content="@yield('title', $seo['meta_title'])">
+    <meta property="twitter:description" content="{{ $seo['meta_description'] }}">
+    <meta property="twitter:image" content="{{ request()->getSchemeAndHttpHost() }}/assets/images/icons/pwa-icon-192.png">
+
+    <!-- Canonical URL -->
+    <link rel="canonical" href="{{ request()->url() }}">
     
     <!-- Speed Optimization: Resource Hint Preconnects -->
     <link rel="preconnect" href="https://fonts.googleapis.com">

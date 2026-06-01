@@ -235,4 +235,44 @@ class AuthAndDashboardTest extends TestCase
             'status' => 'success'
         ]);
     }
+
+    /**
+     * Test admin user registry access under strict lazy loading prevention.
+     */
+    public function test_admin_user_registry_access_under_lazy_loading_prevention(): void
+    {
+        // Act as admin
+        $this->actingAs($this->admin);
+
+        // Access the user access panel API endpoint
+        $response = $this->getJson(route('admin.users.list'));
+
+        // Assert response status is 200 OK and structure is correct
+        $response->assertStatus(200)
+            ->assertJsonPath('status', 'success')
+            ->assertJsonStructure([
+                'status',
+                'data' => [
+                    'users' => [
+                        '*' => [
+                            'id',
+                            'name',
+                            'email',
+                            'phone',
+                            'role',
+                            'is_active',
+                        ]
+                    ]
+                ]
+            ]);
+
+        // Assert that the listed roles are returned correctly
+        $users = $response->json('data.users');
+        $this->assertNotEmpty($users);
+
+        // Find the admin user in the returned list and assert their role is 'admin'
+        $adminInList = collect($users)->firstWhere('email', $this->admin->email);
+        $this->assertNotNull($adminInList);
+        $this->assertEquals('admin', $adminInList['role']);
+    }
 }

@@ -2,6 +2,7 @@
 
 use App\Domains\Admin\Controllers\AdminDashboardController;
 use App\Domains\Admin\Controllers\MasterDataController;
+use App\Domains\Admin\Controllers\AdManagementController;
 use App\Domains\Jobs\Controllers\AdminJobController;
 use App\Domains\Users\Controllers\AdminUserController;
 use Illuminate\Support\Facades\Route;
@@ -28,10 +29,13 @@ Route::middleware(['auth', 'admin'])->prefix('api/admin')->group(function () {
         ->middleware('permission:view_audit_logs')
         ->name('admin.activity-logs');
 
-    // ─── Global SEO Settings ─────────────────────────────────────────────────
-    Route::post('/seo/update', [AdminDashboardController::class, 'updateSeoSettings'])
-        ->middleware('permission:manage_seo')
-        ->name('admin.seo.update');
+    // ─── Global SEO & Ad Settings ─────────────────────────────────────────────
+    Route::middleware('permission:manage_seo')->group(function () {
+        Route::post('/seo/update', [AdminDashboardController::class, 'updateSeoSettings'])->name('admin.seo.update');
+        Route::get('/advertisements', [AdManagementController::class, 'index'])->name('admin.ads.index');
+        Route::post('/advertisements', [AdManagementController::class, 'storeOrUpdate'])->name('admin.ads.store_update');
+        Route::post('/advertisements/{id}/toggle', [AdManagementController::class, 'toggleActive'])->name('admin.ads.toggle');
+    });
 
     // ─── Queue & DLQ Management ──────────────────────────────────────────────
     Route::middleware('permission:manage_queues')->group(function () {
@@ -59,6 +63,10 @@ Route::middleware(['auth', 'admin'])->prefix('api/admin')->group(function () {
         ->middleware('permission:view_jobs')
         ->name('admin.jobs.index');
 
+    Route::get('/applications/{id}/resume', [\App\Domains\Admin\Controllers\ResumeDownloadController::class, 'download'])
+        ->middleware('permission:view_jobs')
+        ->name('admin.applications.resume.download');
+
     Route::middleware('permission:create_jobs')->group(function () {
         Route::post('/jobs/store', [AdminJobController::class, 'store'])->name('admin.jobs.store');
         Route::post('/jobs',       [AdminJobController::class, 'store'])->name('admin.jobs.store_new');
@@ -71,6 +79,14 @@ Route::middleware(['auth', 'admin'])->prefix('api/admin')->group(function () {
     Route::delete('/jobs/{id}', [AdminJobController::class, 'destroy'])
         ->middleware('permission:delete_jobs')
         ->name('admin.jobs.destroy');
+
+    Route::post('/jobs/{id}/toggle-featured', [AdminJobController::class, 'toggleFeatured'])
+        ->middleware('permission:edit_jobs')
+        ->name('admin.jobs.toggle-featured');
+
+    Route::post('/jobs/{id}/toggle-sponsored', [AdminJobController::class, 'toggleSponsored'])
+        ->middleware('permission:edit_jobs')
+        ->name('admin.jobs.toggle-sponsored');
 
     // ─── AI Content Management ────────────────────────────────────────────────
     Route::get('/ai-contents', [\App\Domains\Admin\Controllers\AiContentManagementController::class, 'index'])

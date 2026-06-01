@@ -54,7 +54,7 @@
     </aside>
 
     <!-- 2. Main Administration Canvas -->
-    <main class="admin-content-canvas" style="display: flex; flex-direction: column; gap: 2rem;">
+    <main class="admin-content-canvas" style="display: flex; flex-direction: column; gap: 2rem; min-width: 0;">
         
         <!-- ================= PANEL 1: DASHBOARD OVERVIEW ================= -->
         <section class="admin-panel-block active" id="admin-overview">
@@ -247,7 +247,7 @@
         <section class="admin-panel-block" id="admin-jobs" style="display: none;">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
                 <h2 style="font-family: 'Outfit'; font-size: 1.75rem; margin: 0;">Recruitment Postings Manager</h2>
-                <button class="form-btn" id="btn-create-job-drawer" style="margin: 0; padding: 0.6rem 1.2rem; display: flex; align-items: center; gap: 0.5rem;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg> Publish Recruitment</button>
+                <button class="btn-primary" id="btn-create-job-drawer" style="margin: 0; padding: 0.6rem 1.2rem; display: flex; align-items: center; gap: 0.5rem;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg> Publish Recruitment</button>
             </div>
 
             <div class="glass-panel" style="padding: 1.5rem; border-radius: 16px; margin-bottom: 1.5rem; display: flex; gap: 1rem; flex-wrap: wrap; align-items: center;">
@@ -286,7 +286,7 @@
         <section class="admin-panel-block" id="admin-crawlers" style="display: none;">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
                 <h2 style="font-family: 'Outfit'; font-size: 1.75rem; margin: 0;">Web Crawler Monitor Profiles</h2>
-                <button class="form-btn" id="btn-create-crawler-drawer" style="margin: 0; padding: 0.6rem 1.2rem; display: flex; align-items: center; gap: 0.5rem;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg> Add Scraper Target</button>
+                <button class="btn-primary" id="btn-create-crawler-drawer" style="margin: 0; padding: 0.6rem 1.2rem; display: flex; align-items: center; gap: 0.5rem;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg> Add Scraper Target</button>
             </div>
 
             <div class="glass-panel" style="padding: 1.5rem; border-radius: 16px;">
@@ -546,9 +546,9 @@
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
                 <h2 style="font-family: 'Outfit'; font-size: 1.75rem; margin: 0;">Distributed Queue Control Center</h2>
                 <div style="display: flex; gap: 0.75rem;">
-                    <a href="/horizon" target="_blank" class="form-btn" style="margin: 0; padding: 0.6rem 1.2rem; background: var(--accent-color); border: none; text-decoration: none; display: flex; align-items: center; gap: 0.5rem;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg> Open Horizon Console</a>
-                    <button class="form-btn" id="btn-queues-retry-all" style="margin: 0; padding: 0.6rem 1.2rem; background: #10b981; border: none; display: flex; align-items: center; gap: 0.5rem;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="23 4 23 10 17 10"></polyline><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path></svg> Retry All Failures</button>
-                    <button class="form-btn" id="btn-queues-clear-all" style="margin: 0; padding: 0.6rem 1.2rem; background: #ef4444; border: none; display: flex; align-items: center; gap: 0.5rem;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg> Flush DLQ Store</button>
+                    <a href="/horizon" target="_blank" class="btn-primary" style="margin: 0; padding: 0.6rem 1.2rem; border: none; text-decoration: none; display: flex; align-items: center; gap: 0.5rem;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg> Open Horizon Console</a>
+                    <button class="btn-success" id="btn-queues-retry-all" style="margin: 0; padding: 0.6rem 1.2rem; border: none; display: flex; align-items: center; gap: 0.5rem;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="23 4 23 10 17 10"></polyline><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path></svg> Retry All Failures</button>
+                    <button class="btn-danger" id="btn-queues-clear-all" style="margin: 0; padding: 0.6rem 1.2rem; border: none; display: flex; align-items: center; gap: 0.5rem;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg> Flush DLQ Store</button>
                 </div>
             </div>
 
@@ -1303,7 +1303,8 @@
 
         // Close Slide-out drawers and backdrops
         function closeAllDrawers() {
-            $('.admin-drawer').css('right', '-480px');
+            $('#job-post-drawer, #crawler-drawer').css('right', '-480px');
+            $('#ai-review-drawer').css('right', '-650px');
             $('#admin-drawer-backdrop').fadeOut(300);
         }
 
@@ -1670,15 +1671,15 @@
                         res.data.jobs.forEach(job => {
                             trs += `
                                 <tr>
-                                    <td>${job.id}</td>
-                                    <td><strong>${job.title}</strong><br><span style="font-size:0.75rem; color:var(--text-secondary);">${job.department ? job.department.name : 'Unknown Department'}</span></td>
-                                    <td><span class="badge" style="margin-bottom:0;">${job.category ? job.category.name : 'Unassigned'}</span></td>
-                                    <td><span class="badge badge-dept" style="margin-bottom:0;">${job.state ? job.state.name : 'Pan India'}</span></td>
-                                    <td style="font-weight:bold;">₹ ${Math.round(job.salary_max)}</td>
-                                    <td><span class="badge badge-deadline" style="margin-bottom:0;">${job.last_date_to_apply ? job.last_date_to_apply.substring(0, 10) : 'N/A'}</span></td>
-                                    <td>
-                                        <div style="display:flex; gap:0.5rem; justify-content:center; align-items:center;">
-                                            <button class="btn-sm-primary btn-trigger-ai-gen" data-id="${job.id}" style="background: #8b5cf6; border-color: #8b5cf6;">
+                                    <td class="text-nowrap">${job.id}</td>
+                                    <td style="min-width: 240px; max-width: 320px; word-break: break-word;"><strong>${job.title}</strong><br><span style="font-size:0.75rem; color:var(--text-secondary);">${job.department ? job.department.name : 'Unknown Department'}</span></td>
+                                    <td class="text-nowrap"><span class="badge" style="margin-bottom:0;">${job.category ? job.category.name : 'Unassigned'}</span></td>
+                                    <td class="text-nowrap"><span class="badge badge-dept" style="margin-bottom:0;">${job.state ? job.state.name : 'Pan India'}</span></td>
+                                    <td class="text-nowrap" style="font-weight:bold;">₹ ${Math.round(job.salary_max)}</td>
+                                    <td class="text-nowrap"><span class="badge badge-deadline" style="margin-bottom:0;">${job.last_date_to_apply ? job.last_date_to_apply.substring(0, 10) : 'N/A'}</span></td>
+                                    <td class="text-nowrap" style="text-align:center; width: 1%;">
+                                        <div style="display:flex; gap:0.5rem; justify-content:center; align-items:center; flex-wrap:nowrap; flex-shrink:0;">
+                                            <button class="btn-sm-ai btn-trigger-ai-gen" data-id="${job.id}">
                                                 <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg> Verify Listing
                                             </button>
                                             <button class="btn-sm-view btn-edit-job" data-id="${job.id}" data-title="${job.title}" data-category="${job.category_id}" data-dept="${job.department_id}" data-state="${job.state_id}" data-qual="${job.qualification_id}" data-desc="${job.description}" data-min="${job.salary_min}" data-max="${job.salary_max}" data-vac="${job.vacancy_count}" data-fee="${job.application_fee}" data-deadline="${job.last_date_to_apply ? job.last_date_to_apply.substring(0, 10) : ''}" data-url="${job.official_website_link}">Edit</button>
@@ -1797,20 +1798,20 @@
                             
                             trs += `
                                 <tr>
-                                    <td><strong>${src.name}</strong></td>
+                                    <td style="min-width: 150px; max-width: 250px; word-break: break-word;"><strong>${src.name}</strong></td>
                                     <td><span style="font-size:0.75rem; color:var(--text-secondary); word-break:break-all;">${src.source_url}</span></td>
-                                    <td style="font-family:monospace; font-size:0.8rem;">${src.cron_expression}</td>
-                                    <td style="text-align:center;">
-                                        <label class="switch" style="position:relative; display:inline-block; width:40px; height:20px; vertical-align:middle;">
-                                            <input type="checkbox" class="toggle-scraper-active-switch" data-id="${src.id}" ${isActChecked} style="opacity:0; width:0; height:0;">
-                                            <span style="position:absolute; cursor:pointer; top:0; left:0; right:0; bottom:0; background-color:#ccc; border-radius:34px; transition:0.3s; display:inline-block; width:100%; height:100%;"></span>
+                                    <td class="text-nowrap" style="font-family:monospace; font-size:0.8rem;">${src.cron_expression}</td>
+                                    <td class="text-nowrap" style="text-align:center;">
+                                        <label class="toggle-switch" style="vertical-align:middle;">
+                                            <input type="checkbox" class="toggle-scraper-active-switch" data-id="${src.id}" ${isActChecked}>
+                                            <span class="toggle-slider slider-success"></span>
                                         </label>
                                     </td>
-                                    <td style="text-align:center;">
-                                        <button class="form-btn btn-run-scraper" data-id="${src.id}" style="margin:0; padding:0.4rem 0.8rem; font-size:0.75rem; background:#10b981;">Crawl Now</button>
+                                    <td class="text-nowrap" style="text-align:center;">
+                                        <button class="btn-sm-success btn-run-scraper" data-id="${src.id}">Crawl Now</button>
                                     </td>
-                                    <td>
-                                        <div style="display:flex; gap:0.5rem; justify-content:center;">
+                                    <td class="text-nowrap">
+                                        <div style="display:flex; gap:0.5rem; justify-content:center; flex-wrap:nowrap; flex-shrink:0;">
                                             <button class="btn-sm-view btn-edit-crawler" data-id="${src.id}" data-name="${src.name}" data-url="${src.source_url}" data-cron="${src.cron_expression}" data-active="${src.is_active}" data-row="${selectors.row_selector || ''}" data-title="${selectors.title_selector || ''}" data-link="${selectors.link_selector || ''}" data-cat="${selectors.default_category_id || 1}" data-dept="${selectors.default_department_id || 1}" data-state="${selectors.default_state_id || 1}" data-qual="${selectors.default_qualification_id || 1}">Edit</button>
                                             <button class="btn-sm-danger btn-delete-crawler" data-id="${src.id}">Delete</button>
                                         </div>
@@ -1819,9 +1820,6 @@
                             `;
                         });
                         $('#crawlers-management-table-body').html(trs || '<tr><td colspan="6" style="text-align:center; color:var(--text-secondary);">No crawling configurations mapped.</td></tr>');
-                        
-                        // Style slider switch checked status in DOM
-                        applySwitchStyles();
                     }
                 },
                 error: function(err) {
@@ -1830,23 +1828,10 @@
             });
         }
 
-        // Apply dynamic styled visual for our switches
-        function applySwitchStyles() {
-            $('.toggle-scraper-active-switch').each(function() {
-                const checked = $(this).prop('checked');
-                const slider = $(this).siblings('span');
-                if (checked) {
-                    slider.css('background-color', '#10b981');
-                } else {
-                    slider.css('background-color', '#ccc');
-                }
-            });
-        }
-
         // Toggle Switch Active Crawl Targets
         $(document).on('change', '.toggle-scraper-active-switch', function() {
             const id = $(this).data('id');
-            const slider = $(this).siblings('span');
+            const checkbox = $(this);
             
             $.ajax({
                 url: `/api/admin/scraper/${id}/toggle`,
@@ -1854,13 +1839,9 @@
                 data: { _token: '{{ csrf_token() }}' },
                 success: function(res) {
                     showToast(res.message, 'success');
-                    if (res.is_active) {
-                        slider.css('background-color', '#10b981');
-                    } else {
-                        slider.css('background-color', '#ccc');
-                    }
                 },
                 error: function() {
+                    checkbox.prop('checked', !checkbox.prop('checked'));
                     showToast('Failed to toggle active configuration state.', 'error');
                 }
             });
@@ -1991,11 +1972,11 @@
                     res.data.forEach(c => {
                         trs += `
                             <tr>
-                                <td>${c.id}</td>
-                                <td><strong>${c.name}</strong></td>
-                                <td><span style="font-size:0.8rem; color:var(--text-secondary);">${c.slug}</span></td>
-                                <td>
-                                    <div style="display:flex; gap:0.5rem; justify-content:center;">
+                                <td class="text-nowrap">${c.id}</td>
+                                <td style="min-width: 150px; max-width: 250px; word-break: break-word;"><strong>${c.name}</strong></td>
+                                <td class="text-nowrap"><span style="font-size:0.8rem; color:var(--text-secondary);">${c.slug}</span></td>
+                                <td class="text-nowrap" style="text-align:center; width: 1%;">
+                                    <div style="display:flex; gap:0.5rem; justify-content:center; align-items:center; flex-wrap:nowrap; flex-shrink:0;">
                                         <button class="btn-sm-view btn-edit-category" data-id="${c.id}" data-name="${c.name}">Edit</button>
                                         <button class="btn-sm-danger btn-delete-category" data-id="${c.id}">Delete</button>
                                     </div>
@@ -2082,11 +2063,11 @@
                     res.data.forEach(d => {
                         trs += `
                             <tr>
-                                <td>${d.id}</td>
-                                <td><strong>${d.name}</strong></td>
-                                <td style="font-weight:bold;">${d.code}</td>
-                                <td>
-                                    <div style="display:flex; gap:0.5rem; justify-content:center;">
+                                <td class="text-nowrap">${d.id}</td>
+                                <td style="min-width: 150px; max-width: 250px; word-break: break-word;"><strong>${d.name}</strong></td>
+                                <td class="text-nowrap" style="font-weight:bold;">${d.code}</td>
+                                <td class="text-nowrap" style="text-align:center; width: 1%;">
+                                    <div style="display:flex; gap:0.5rem; justify-content:center; align-items:center; flex-wrap:nowrap; flex-shrink:0;">
                                         <button class="btn-sm-view btn-edit-dept" data-id="${d.id}" data-name="${d.name}" data-code="${d.code}">Edit</button>
                                         <button class="btn-sm-danger btn-delete-dept" data-id="${d.id}">Delete</button>
                                     </div>
@@ -2174,11 +2155,11 @@
                     res.data.forEach(q => {
                         trs += `
                             <tr>
-                                <td>${q.id}</td>
-                                <td><strong>${q.name}</strong></td>
-                                <td><span style="font-size:0.8rem; color:var(--text-secondary);">${q.slug}</span></td>
-                                <td>
-                                    <div style="display:flex; gap:0.5rem; justify-content:center;">
+                                <td class="text-nowrap">${q.id}</td>
+                                <td style="min-width: 150px; max-width: 250px; word-break: break-word;"><strong>${q.name}</strong></td>
+                                <td class="text-nowrap"><span style="font-size:0.8rem; color:var(--text-secondary);">${q.slug}</span></td>
+                                <td class="text-nowrap" style="text-align:center; width: 1%;">
+                                    <div style="display:flex; gap:0.5rem; justify-content:center; align-items:center; flex-wrap:nowrap; flex-shrink:0;">
                                         <button class="btn-sm-view btn-edit-qual" data-id="${q.id}" data-name="${q.name}">Edit</button>
                                         <button class="btn-sm-danger btn-delete-qual" data-id="${q.id}">Delete</button>
                                     </div>
@@ -2263,11 +2244,11 @@
                     res.data.forEach(s => {
                         trs += `
                             <tr>
-                                <td>${s.id}</td>
-                                <td><strong>${s.name}</strong></td>
-                                <td style="font-weight:bold;">${s.code}</td>
-                                <td>
-                                    <div style="display:flex; gap:0.5rem; justify-content:center;">
+                                <td class="text-nowrap">${s.id}</td>
+                                <td style="min-width: 150px; max-width: 250px; word-break: break-word;"><strong>${s.name}</strong></td>
+                                <td class="text-nowrap" style="font-weight:bold;">${s.code}</td>
+                                <td class="text-nowrap" style="text-align:center; width: 1%;">
+                                    <div style="display:flex; gap:0.5rem; justify-content:center; align-items:center; flex-wrap:nowrap; flex-shrink:0;">
                                         <button class="btn-sm-view btn-edit-state" data-id="${s.id}" data-name="${s.name}" data-code="${s.code}">Edit</button>
                                         <button class="btn-sm-danger btn-delete-state" data-id="${s.id}">Delete</button>
                                     </div>
@@ -2391,13 +2372,13 @@
 
                             trs += `
                                 <tr>
-                                    <td>${u.id}</td>
-                                    <td><strong>${u.name}</strong></td>
-                                    <td><span style="font-size:0.8rem; color:var(--text-secondary);">${u.email}</span></td>
-                                    <td>${badgeRole}</td>
-                                    <td style="text-align:center;">${badgeState}</td>
-                                    <td>
-                                        <div style="display:flex; gap:0.5rem; justify-content:center; align-items:center;">
+                                    <td class="text-nowrap">${u.id}</td>
+                                    <td class="text-nowrap"><strong>${u.name}</strong></td>
+                                    <td class="text-nowrap"><span style="font-size:0.8rem; color:var(--text-secondary);">${u.email}</span></td>
+                                    <td class="text-nowrap">${badgeRole}</td>
+                                    <td class="text-nowrap" style="text-align:center;">${badgeState}</td>
+                                    <td class="text-nowrap" style="text-align:center; width: 1%;">
+                                        <div style="display:flex; gap:0.5rem; justify-content:center; align-items:center; flex-wrap:nowrap; flex-shrink:0;">
                                             ${roleSelect}
                                             <button class="${u.is_active ? 'btn-sm-danger' : 'btn-sm-success'} btn-toggle-status" data-id="${u.id}" data-active="${u.is_active}">${u.is_active ? 'Suspend' : 'Activate'}</button>
                                         </div>
@@ -2511,14 +2492,16 @@
                         res.data.items.forEach(job => {
                             trs += `
                                 <tr id="dlq-row-${job.uuid}">
-                                    <td style="font-family:monospace; font-size:0.8rem; font-weight:bold; color:var(--text-secondary);">${job.uuid}</td>
-                                    <td><strong style="color:var(--accent-color);">${job.job_name}</strong></td>
-                                    <td><span class="badge" style="background:rgba(37,99,235,0.08); color:var(--accent-color);">${job.queue}</span></td>
-                                    <td><span style="font-size:0.8rem; color:#ef4444; font-family:monospace;">${job.exception}</span></td>
-                                    <td><span style="font-size:0.8rem; color:var(--text-secondary);">${job.failed_at}</span></td>
-                                    <td style="text-align:center; display:flex; gap:0.5rem; justify-content:center;">
-                                        <button class="btn-sm btn-queue-retry" data-uuid="${job.uuid}" style="background:#10b981; color:#fff; border:none; padding:0.4rem 0.8rem; border-radius:4px; font-size:0.75rem; cursor:pointer;">Retry</button>
-                                        <button class="btn-sm btn-queue-delete" data-uuid="${job.uuid}" style="background:#ef4444; color:#fff; border:none; padding:0.4rem 0.8rem; border-radius:4px; font-size:0.75rem; cursor:pointer;">Forget</button>
+                                    <td class="text-nowrap" style="font-family:monospace; font-size:0.8rem; font-weight:bold; color:var(--text-secondary);">${job.uuid}</td>
+                                    <td class="text-nowrap"><strong style="color:var(--accent-color);">${job.job_name}</strong></td>
+                                    <td class="text-nowrap"><span class="badge" style="background:rgba(37,99,235,0.08); color:var(--accent-color);">${job.queue}</span></td>
+                                    <td style="min-width: 250px; max-width: 400px; word-break: break-all;"><span style="font-size:0.8rem; color:#ef4444; font-family:monospace;">${job.exception}</span></td>
+                                    <td class="text-nowrap"><span style="font-size:0.8rem; color:var(--text-secondary);">${job.failed_at}</span></td>
+                                    <td class="text-nowrap" style="text-align:center; width: 1%;">
+                                        <div style="display:flex; gap:0.5rem; justify-content:center; align-items:center; flex-wrap:nowrap; flex-shrink:0;">
+                                            <button class="btn-sm-success btn-queue-retry" data-uuid="${job.uuid}">Retry</button>
+                                            <button class="btn-sm-danger btn-queue-delete" data-uuid="${job.uuid}">Forget</button>
+                                        </div>
                                     </td>
                                 </tr>
                             `;
@@ -2753,26 +2736,26 @@
 
                             html += `
                                 <tr>
-                                    <td>#${item.job_post_id}</td>
-                                    <td style="font-weight: 700; color: var(--text-primary); max-width: 280px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+                                    <td class="text-nowrap">#${item.job_post_id}</td>
+                                    <td style="font-weight: 700; color: var(--text-primary); min-width: 200px; max-width: 280px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
                                         ${escapeHtml(item.job_post ? item.job_post.title : 'Deleted Post')}
                                     </td>
-                                    <td>
+                                    <td class="text-nowrap">
                                         <span class="badge" style="background: rgba(139, 92, 246, 0.1); color: #8b5cf6; text-transform: uppercase; font-size: 0.75rem;">
                                             ${escapeHtml(item.provider)}
                                         </span>
                                     </td>
-                                    <td>
+                                    <td class="text-nowrap">
                                         <span class="status-badge ${statusClass}">
                                             ${escapeHtml(item.status)}
                                         </span>
                                         ${errorIndicator}
                                     </td>
-                                    <td style="font-size: 0.8rem; color: var(--text-secondary);">
+                                    <td class="text-nowrap" style="font-size: 0.8rem; color: var(--text-secondary);">
                                         ${new Date(item.created_at).toLocaleDateString('en-IN', {day: '2-digit', month: 'short', year: 'numeric'})}
                                     </td>
-                                    <td style="text-align: center;">
-                                        <button class="btn-sm btn-review-ai" data-id="${item.id}" style="background: var(--accent-color); border: none; font-size: 0.75rem; padding: 0.4rem 0.8rem; border-radius: 6px; color: #fff;">
+                                    <td class="text-nowrap" style="text-align: center;">
+                                        <button class="btn-sm-primary btn-review-ai" data-id="${item.id}">
                                             Review & Edit
                                         </button>
                                     </td>
@@ -3137,12 +3120,12 @@
 
                                 tbodyHtml += `
                                     <tr>
-                                        <td>#${log.id}</td>
-                                        <td><strong>${email}</strong></td>
-                                        <td><span class="badge" style="background:rgba(100,116,139,0.08); color:var(--text-primary);">${typeLabel}</span></td>
-                                        <td>${statusBadge}</td>
-                                        <td><div style="display:flex; align-items:center;">${opened} ${clicked}</div></td>
-                                        <td>${new Date(log.created_at).toLocaleString()}</td>
+                                        <td class="text-nowrap">#${log.id}</td>
+                                        <td style="min-width: 200px; max-width: 320px; word-break: break-all;"><strong>${email}</strong></td>
+                                        <td class="text-nowrap"><span class="badge" style="background:rgba(100,116,139,0.08); color:var(--text-primary);">${typeLabel}</span></td>
+                                        <td class="text-nowrap">${statusBadge}</td>
+                                        <td class="text-nowrap"><div style="display:flex; align-items:center;">${opened} ${clicked}</div></td>
+                                        <td class="text-nowrap">${new Date(log.created_at).toLocaleString()}</td>
                                     </tr>
                                 `;
                             });

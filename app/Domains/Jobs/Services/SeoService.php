@@ -122,6 +122,27 @@ class SeoService
                 $breadcrumbs = ['Syllabus Hub' => null];
                 break;
 
+            case 'cutoffs':
+                $title = "Latest Sarkari Exam Cutoffs {$year} - Expected & Official - GovJobs";
+                $h1 = "Sarkari Exam Cutoff Marks & Qualifying Lists";
+                $description = "Check official cutoffs, qualifying lists, and category-wise cutoff marks for UPSC, SSC, Banking, Railways, and State PSC exams.";
+                $breadcrumbs = ['Cutoff Marks' => null];
+                break;
+
+            case 'exam_calendars':
+                $title = "Government Exam Calendars {$year} - Dates & Schedules - GovJobs";
+                $h1 = "Sarkari Exam Schedules & Dates";
+                $description = "Plan your preparation with the official government exam calendars, upcoming notification releases, and recruitment schedules.";
+                $breadcrumbs = ['Exam Calendars' => null];
+                break;
+
+            case 'previous_year_papers':
+                $title = "Sarkari Previous Year Papers {$year} - Free PDF Downloads - GovJobs";
+                $h1 = "Download Government Exam Previous Year Papers & Solved Keys";
+                $description = "Download UPSC, SSC, Banking, Railways, and PSC solved previous year question papers in PDF format. Practice and boost your score.";
+                $breadcrumbs = ['Previous Year Papers' => null];
+                break;
+
             case 'detail':
                 $job = $params['job'] ?? null;
                 if ($job) {
@@ -187,6 +208,9 @@ class SeoService
             'notice' => 'Notices',
             'admission' => 'Admissions',
             'scholarship' => 'Scholarships',
+            'cutoff' => 'Cutoffs',
+            'exam_calendar' => 'Exam Calendar',
+            'prev_paper' => 'Previous Year Papers',
             default => 'Jobs',
         };
     }

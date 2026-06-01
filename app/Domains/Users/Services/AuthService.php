@@ -42,14 +42,32 @@ class AuthService implements AuthServiceInterface
     public function attemptLogin(string $email, string $password): ?User
     {
         if (!Auth::attempt(['email' => $email, 'password' => $password])) {
+            \App\Models\AuditLog::create([
+                'user_id'    => null,
+                'ip_address' => request()->ip(),
+                'user_agent' => request()->userAgent() ?? 'N/A',
+                'action'     => 'auth_failure',
+                'details'    => "Failed login attempt for email: {$email}",
+            ]);
             return null;
         }
 
         $user = Auth::user();
 
         if (!$user->is_active) {
+            \App\Models\AuditLog::create([
+                'user_id'    => $user->id,
+                'ip_address' => request()->ip(),
+                'user_agent' => request()->userAgent() ?? 'N/A',
+                'action'     => 'account_suspended_attempt',
+                'details'    => "Suspended user '{$user->email}' attempted login",
+            ]);
             Auth::logout();
             return null;
+        }
+
+        if (request()->hasSession()) {
+            request()->session()->regenerate();
         }
 
         return $user;

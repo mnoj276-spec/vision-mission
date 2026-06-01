@@ -51,6 +51,16 @@ class CheckPermission
 
         // Validate user permission using Laravel's native can() gate
         if (!$user->can($permission)) {
+            try {
+                \App\Models\AuditLog::create([
+                    'user_id'    => $user->id,
+                    'ip_address' => $request->ip(),
+                    'user_agent' => $request->userAgent() ?? 'N/A',
+                    'action'     => 'permission_denied',
+                    'details'    => "Denied action requiring '{$permission}' on URI: " . $request->getRequestUri(),
+                ]);
+            } catch (\Exception $e) {}
+
             if ($request->expectsJson() || $request->ajax()) {
                 return response()->json([
                     'status' => 'error',

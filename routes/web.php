@@ -37,6 +37,15 @@ Route::get('/search/category/{category_slug}', [SearchController::class, 'catego
 Route::get('/search/qualification/{qualification_slug}', [SearchController::class, 'qualificationSearch'])->name('search.qualification');
 Route::get('/search/organization/{department_slug}', [SearchController::class, 'organizationSearch'])->name('search.organization');
 
+// Eligibility Checker Hub
+use App\Domains\Jobs\Controllers\EligibilityController;
+Route::get('/eligibility-checker', [EligibilityController::class, 'index'])->name('eligibility.index');
+Route::get('/api/jobs/eligibility-check', [EligibilityController::class, 'check'])->name('eligibility.check');
+
+// Salary Information Hub
+use App\Domains\Jobs\Controllers\SalaryInfoController;
+Route::get('/salary-information', [SalaryInfoController::class, 'index'])->name('salary.index');
+
 // Lead Capture & Growth Analytics APIs
 Route::post('/api/growth/subscribe', [JobController::class, 'subscribeAlerts'])->name('growth.subscribe');
 Route::post('/api/growth/track',     [JobController::class, 'trackEvent'])->name('growth.track');
@@ -55,6 +64,9 @@ Route::get('/results', [ProgrammaticSeoController::class, 'results'])->name('seo
 Route::get('/admit-cards', [ProgrammaticSeoController::class, 'admitCards'])->name('seo.admit_cards');
 Route::get('/answer-keys', [ProgrammaticSeoController::class, 'answerKeys'])->name('seo.answer_keys');
 Route::get('/syllabus', [ProgrammaticSeoController::class, 'syllabus'])->name('seo.syllabus');
+Route::get('/cutoffs', [ProgrammaticSeoController::class, 'cutoffs'])->name('seo.cutoffs');
+Route::get('/exam-calendars', [ProgrammaticSeoController::class, 'examCalendars'])->name('seo.exam_calendars');
+Route::get('/previous-year-papers', [ProgrammaticSeoController::class, 'previousYearPapers'])->name('seo.previous_year_papers');
 
 // Dynamic Job Categories
 Route::get('/jobs/railway', [ProgrammaticSeoController::class, 'railwayJobs'])->name('seo.dynamic_railway');
@@ -75,6 +87,9 @@ Route::middleware('internal_linking')->group(function () {
     Route::get('/admit-card/{slug}', [ProgrammaticSeoController::class, 'showJob'])->name('seo.admit_card_detail');
     Route::get('/answer-key/{slug}', [ProgrammaticSeoController::class, 'showJob'])->name('seo.answer_key_detail');
     Route::get('/syllabus/{slug}', [ProgrammaticSeoController::class, 'showJob'])->name('seo.syllabus_detail');
+    Route::get('/cutoff/{slug}', [ProgrammaticSeoController::class, 'showJob'])->name('seo.cutoff_detail');
+    Route::get('/exam-calendar/{slug}', [ProgrammaticSeoController::class, 'showJob'])->name('seo.exam_calendar_detail');
+    Route::get('/previous-year-paper/{slug}', [ProgrammaticSeoController::class, 'showJob'])->name('seo.prev_paper_detail');
 });
 
 // Dynamic Google News Compliant News Sitemap

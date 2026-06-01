@@ -16,4 +16,13 @@ class SeoSettingsRequest extends FormRequest
             'meta_keywords'    => 'required|string|max:255',
         ];
     }
+
+    protected function prepareForValidation(): void
+    {
+        $this->merge([
+            'meta_title'       => \App\Services\HtmlSanitizer::sanitizeString($this->meta_title),
+            'meta_description' => \App\Services\HtmlSanitizer::sanitizeString($this->meta_description),
+            'meta_keywords'    => \App\Services\HtmlSanitizer::sanitizeString($this->meta_keywords),
+        ]);
+    }
 }

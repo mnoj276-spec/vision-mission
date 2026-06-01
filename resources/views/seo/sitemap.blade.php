@@ -80,6 +80,32 @@
         <changefreq>daily</changefreq>
         <priority>0.85</priority>
     </url>
+    <url>
+        <loc>{{ route('seo.cutoffs') }}</loc>
+        <changefreq>daily</changefreq>
+        <priority>0.85</priority>
+    </url>
+    <url>
+        <loc>{{ route('seo.exam_calendars') }}</loc>
+        <changefreq>daily</changefreq>
+        <priority>0.85</priority>
+    </url>
+    <url>
+        <loc>{{ route('seo.previous_year_papers') }}</loc>
+        <changefreq>daily</changefreq>
+        <priority>0.85</priority>
+    </url>
+
+    <!-- Dynamic Category Search Landing Pages -->
+    @foreach($categories as $cat)
+        @if($cat->slug)
+            <url>
+                <loc>{{ route('search.category', ['category_slug' => $cat->slug]) }}</loc>
+                <changefreq>daily</changefreq>
+                <priority>0.80</priority>
+            </url>
+        @endif
+    @endforeach
 
     <!-- Programmatic SEO Location Landing Pages -->
     @php
@@ -111,6 +137,9 @@
                 'admit_card' => route('seo.admit_card_detail', ['slug' => $job->slug]),
                 'answer_key' => route('seo.answer_key_detail', ['slug' => $job->slug]),
                 'syllabus' => route('seo.syllabus_detail', ['slug' => $job->slug]),
+                'cutoff' => route('seo.cutoff_detail', ['slug' => $job->slug]),
+                'exam_calendar' => route('seo.exam_calendar_detail', ['slug' => $job->slug]),
+                'prev_paper' => route('seo.prev_paper_detail', ['slug' => $job->slug]),
                 default => route('seo.job_detail', ['slug' => $job->slug]),
             };
         @endphp

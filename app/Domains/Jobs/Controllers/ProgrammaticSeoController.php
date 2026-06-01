@@ -260,6 +260,33 @@ class ProgrammaticSeoController extends Controller
     }
 
     /**
+     * Exam Cutoffs Page
+     */
+    public function cutoffs()
+    {
+        $jobs = JobPost::published()->with(['category', 'department', 'state', 'qualification', 'district'])->where('post_type', 'cutoff')->orderBy('id', 'desc')->get();
+        return $this->renderLandingPage('cutoffs', $jobs, [], 'Exam Cutoffs', 'cutoffs');
+    }
+
+    /**
+     * Exam Calendars Page
+     */
+    public function examCalendars()
+    {
+        $jobs = JobPost::published()->with(['category', 'department', 'state', 'qualification', 'district'])->where('post_type', 'exam_calendar')->orderBy('id', 'desc')->get();
+        return $this->renderLandingPage('exam_calendars', $jobs, [], 'Exam Calendars', 'exam_calendars');
+    }
+
+    /**
+     * Previous Year Papers Page
+     */
+    public function previousYearPapers()
+    {
+        $jobs = JobPost::published()->with(['category', 'department', 'state', 'qualification', 'district'])->where('post_type', 'prev_paper')->orderBy('id', 'desc')->get();
+        return $this->renderLandingPage('previous_year_papers', $jobs, [], 'Previous Year Papers', 'previous_year_papers');
+    }
+
+    /**
      * Standalone individual crawler-friendly page.
      */
     public function showJob(string $slug)

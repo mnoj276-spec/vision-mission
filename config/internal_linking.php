@@ -97,12 +97,16 @@ return [
         'admit_card' => 'seo.admit_card_detail',
         'answer_key' => 'seo.answer_key_detail',
         'syllabus'   => 'seo.syllabus_detail',
+        'cutoff'     => 'seo.cutoff_detail',
+        'exam_calendar' => 'seo.exam_calendar_detail',
+        'prev_paper' => 'seo.prev_paper_detail',
     ],
 
     /*
     |--------------------------------------------------------------------------
     | Post Type Display Names
     |--------------------------------------------------------------------------
+    |
     */
 
     'post_type_labels' => [
@@ -114,6 +118,9 @@ return [
         'notice'     => 'Notices',
         'admission'  => 'Admissions',
         'scholarship'=> 'Scholarships',
+        'cutoff'     => 'Cutoffs',
+        'exam_calendar' => 'Exam Calendar',
+        'prev_paper' => 'Previous Year Papers',
     ],
 
     /*

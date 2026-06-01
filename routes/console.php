@@ -20,3 +20,4 @@ Schedule::command('email:welcome-series-scheduler')->daily()->withoutOverlapping
 Schedule::command('email:send-alerts')->hourly()->withoutOverlapping(10)->onOneServer();
 Schedule::command('email:send-weekly-digest')->weeklyOn(1, '09:00')->withoutOverlapping(10)->onOneServer();
 Schedule::command('email:send-reengagement')->daily()->withoutOverlapping(10)->onOneServer();
+Schedule::command('monetization:expire-features')->daily()->withoutOverlapping(10)->onOneServer();

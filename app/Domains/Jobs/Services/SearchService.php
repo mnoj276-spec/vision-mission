@@ -103,6 +103,11 @@ class SearchService implements SearchServiceInterface
                 $query->where('application_fee', 0);
             }
 
+            // 7. Exam Filter (post_type filtering)
+            if (!empty($filters['exam_filter'])) {
+                $query->where('post_type', $filters['exam_filter']);
+            }
+
             // Eager-load relations to prevent N+1 queries
             $query->with(['category', 'department', 'state', 'qualification', 'district']);
 

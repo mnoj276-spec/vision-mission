@@ -32,7 +32,8 @@ class MasterDataController extends Controller
     public function storeCategory(Request $request): JsonResponse
     {
         $request->validate(['name' => 'required|string|max:100|unique:categories,name']);
-        $category = Category::create(['name' => $request->name, 'slug' => str()->slug($request->name)]);
+        $name = \App\Services\HtmlSanitizer::sanitizeString($request->name);
+        $category = Category::create(['name' => $name, 'slug' => str()->slug($name)]);
         $this->log($request, 'Create Category', "Created '{$category->name}' (ID: {$category->id})");
         return response()->json(['status' => 'success', 'message' => 'Category created!', 'data' => $category]);
     }
@@ -41,7 +42,8 @@ class MasterDataController extends Controller
     {
         $category = Category::findOrFail($id);
         $request->validate(['name' => "required|string|max:100|unique:categories,name,{$id}"]);
-        $category->update(['name' => $request->name, 'slug' => str()->slug($request->name)]);
+        $name = \App\Services\HtmlSanitizer::sanitizeString($request->name);
+        $category->update(['name' => $name, 'slug' => str()->slug($name)]);
         $this->log($request, 'Update Category', "Updated '{$category->name}' (ID: {$id})");
         return response()->json(['status' => 'success', 'message' => 'Category updated!', 'data' => $category]);
     }
@@ -66,7 +68,9 @@ class MasterDataController extends Controller
     public function storeDepartment(Request $request): JsonResponse
     {
         $request->validate(['name' => 'required|string|max:150|unique:departments,name', 'code' => 'required|string|max:20|unique:departments,code']);
-        $dept = Department::create(['name' => $request->name, 'code' => strtoupper($request->code)]);
+        $name = \App\Services\HtmlSanitizer::sanitizeString($request->name);
+        $code = \App\Services\HtmlSanitizer::sanitizeString($request->code);
+        $dept = Department::create(['name' => $name, 'code' => strtoupper($code), 'slug' => str()->slug($name)]);
         $this->log($request, 'Create Department', "Created '{$dept->name}' ({$dept->code})");
         return response()->json(['status' => 'success', 'message' => 'Department created!', 'data' => $dept]);
     }
@@ -75,7 +79,9 @@ class MasterDataController extends Controller
     {
         $dept = Department::findOrFail($id);
         $request->validate(['name' => "required|string|max:150|unique:departments,name,{$id}", 'code' => "required|string|max:20|unique:departments,code,{$id}"]);
-        $dept->update(['name' => $request->name, 'code' => strtoupper($request->code)]);
+        $name = \App\Services\HtmlSanitizer::sanitizeString($request->name);
+        $code = \App\Services\HtmlSanitizer::sanitizeString($request->code);
+        $dept->update(['name' => $name, 'code' => strtoupper($code), 'slug' => str()->slug($name)]);
         $this->log($request, 'Update Department', "Updated '{$dept->name}' ({$dept->code})");
         return response()->json(['status' => 'success', 'message' => 'Department updated!', 'data' => $dept]);
     }
@@ -100,7 +106,8 @@ class MasterDataController extends Controller
     public function storeQualification(Request $request): JsonResponse
     {
         $request->validate(['name' => 'required|string|max:100|unique:qualifications,name']);
-        $qual = Qualification::create(['name' => $request->name, 'slug' => str()->slug($request->name)]);
+        $name = \App\Services\HtmlSanitizer::sanitizeString($request->name);
+        $qual = Qualification::create(['name' => $name, 'slug' => str()->slug($name)]);
         $this->log($request, 'Create Qualification', "Created '{$qual->name}'");
         return response()->json(['status' => 'success', 'message' => 'Qualification created!', 'data' => $qual]);
     }
@@ -109,7 +116,8 @@ class MasterDataController extends Controller
     {
         $qual = Qualification::findOrFail($id);
         $request->validate(['name' => "required|string|max:100|unique:qualifications,name,{$id}"]);
-        $qual->update(['name' => $request->name, 'slug' => str()->slug($request->name)]);
+        $name = \App\Services\HtmlSanitizer::sanitizeString($request->name);
+        $qual->update(['name' => $name, 'slug' => str()->slug($name)]);
         $this->log($request, 'Update Qualification', "Updated '{$qual->name}'");
         return response()->json(['status' => 'success', 'message' => 'Qualification updated!', 'data' => $qual]);
     }
@@ -134,7 +142,9 @@ class MasterDataController extends Controller
     public function storeState(Request $request): JsonResponse
     {
         $request->validate(['name' => 'required|string|max:100|unique:states,name', 'code' => 'required|string|max:20|unique:states,code']);
-        $state = State::create(['name' => $request->name, 'code' => strtoupper($request->code)]);
+        $name = \App\Services\HtmlSanitizer::sanitizeString($request->name);
+        $code = \App\Services\HtmlSanitizer::sanitizeString($request->code);
+        $state = State::create(['name' => $name, 'code' => strtoupper($code), 'slug' => str()->slug($name)]);
         $this->log($request, 'Create State', "Created '{$state->name}' ({$state->code})");
         return response()->json(['status' => 'success', 'message' => 'State created!', 'data' => $state]);
     }
@@ -143,7 +153,9 @@ class MasterDataController extends Controller
     {
         $state = State::findOrFail($id);
         $request->validate(['name' => "required|string|max:100|unique:states,name,{$id}", 'code' => "required|string|max:20|unique:states,code,{$id}"]);
-        $state->update(['name' => $request->name, 'code' => strtoupper($request->code)]);
+        $name = \App\Services\HtmlSanitizer::sanitizeString($request->name);
+        $code = \App\Services\HtmlSanitizer::sanitizeString($request->code);
+        $state->update(['name' => $name, 'code' => strtoupper($code), 'slug' => str()->slug($name)]);
         $this->log($request, 'Update State', "Updated '{$state->name}' ({$state->code})");
         return response()->json(['status' => 'success', 'message' => 'State updated!', 'data' => $state]);
     }
@@ -163,5 +175,9 @@ class MasterDataController extends Controller
     private function log(Request $request, string $action, string $details): void
     {
         $this->adminService->logAction(Auth::id(), $request->ip(), $request->userAgent() ?? 'N/A', $action, $details);
+        try {
+            \Illuminate\Support\Facades\Cache::forget('sitemap_xml');
+            \Illuminate\Support\Facades\Cache::forget('homepage_data');
+        } catch (\Exception $e) {}
     }
 }

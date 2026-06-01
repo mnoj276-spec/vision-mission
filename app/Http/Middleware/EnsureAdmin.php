@@ -22,6 +22,17 @@ class EnsureAdmin
     public function handle(Request $request, Closure $next): Response
     {
         if (!Auth::check() || Gate::denies('admin-access') || !Auth::user()->is_active) {
+            // Log access denial event
+            try {
+                \App\Models\AuditLog::create([
+                    'user_id'    => Auth::id(),
+                    'ip_address' => $request->ip(),
+                    'user_agent' => $request->userAgent() ?? 'N/A',
+                    'action'     => 'admin_unauthorized_access',
+                    'details'    => "Denied admin access to URI: " . $request->getRequestUri(),
+                ]);
+            } catch (\Exception $e) {}
+
             // Immediate session termination if admin user is suspended
             if (Auth::check() && !Auth::user()->is_active) {
                 Auth::logout();
