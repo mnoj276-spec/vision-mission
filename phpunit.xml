@@ -32,5 +32,6 @@
         <env name="PULSE_ENABLED" value="false"/>
         <env name="TELESCOPE_ENABLED" value="false"/>
         <env name="NIGHTWATCH_ENABLED" value="false"/>
+        <env name="ALLOW_SCRAPER_MOCK_FALLBACK" value="true"/>
     </php>
 </phpunit>

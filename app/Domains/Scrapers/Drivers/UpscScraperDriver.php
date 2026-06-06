@@ -24,28 +24,31 @@ class UpscScraperDriver extends AbstractScraperDriver
         $extracted = $this->parseWithSelectors($content, $config);
 
         if (empty($extracted)) {
-            return [
-                [
-                    'title'         => 'UPSC Civil Services IAS Preliminary Exam 2026',
-                    'deadline_raw'  => '15-08-2026',
-                    'fee_raw'       => 'Rs 100',
-                    'official_link' => 'https://upsc.gov.in',
-                    'apply_link'    => 'https://upsconline.nic.in',
-                    'category_name' => 'UPSC & SSC Jobs',
-                    'department_name'=> 'Union Public Service Commission',
-                    'raw_text'      => 'UPSC Civil Services Examination 2026. IAS, IPS, IFS recruitment. Required Graduate Degree. Last date: 15-08-2026. Fee Rs 100.',
-                ],
-                [
-                    'title'         => 'UPSC Combined Defence Services Exam 2026',
-                    'deadline_raw'  => '10-11-2026',
-                    'fee_raw'       => 'Rs 200',
-                    'official_link' => 'https://upsc.gov.in',
-                    'apply_link'    => 'https://upsconline.nic.in',
-                    'category_name' => 'UPSC & SSC Jobs',
-                    'department_name'=> 'Union Public Service Commission',
-                    'raw_text'      => 'UPSC Combined Defence Services Examination II 2026. Graduate required. Last date: 10-11-2026. Fee Rs 200.',
-                ]
-            ];
+            if ($this->shouldAllowMockFallback()) {
+                return [
+                    [
+                        'title'         => 'UPSC Civil Services IAS Preliminary Exam 2026',
+                        'deadline_raw'  => '15-08-2026',
+                        'fee_raw'       => 'Rs 100',
+                        'official_link' => 'https://upsc.gov.in',
+                        'apply_link'    => 'https://upsconline.nic.in',
+                        'category_name' => 'UPSC & SSC Jobs',
+                        'department_name'=> 'Union Public Service Commission',
+                        'raw_text'      => 'UPSC Civil Services Examination 2026. IAS, IPS, IFS recruitment. Required Graduate Degree. Last date: 15-08-2026. Fee Rs 100.',
+                    ],
+                    [
+                        'title'         => 'UPSC Combined Defence Services Exam 2026',
+                        'deadline_raw'  => '10-11-2026',
+                        'fee_raw'       => 'Rs 200',
+                        'official_link' => 'https://upsc.gov.in',
+                        'apply_link'    => 'https://upsconline.nic.in',
+                        'category_name' => 'UPSC & SSC Jobs',
+                        'department_name'=> 'Union Public Service Commission',
+                        'raw_text'      => 'UPSC Combined Defence Services Examination II 2026. Graduate required. Last date: 10-11-2026. Fee Rs 200.',
+                    ]
+                ];
+            }
+            throw new \App\Domains\Scrapers\Exceptions\ParserValidationException("UPSC scraper driver failed to parse content: Selectors yielded no matching elements.");
         }
 
         return $extracted;

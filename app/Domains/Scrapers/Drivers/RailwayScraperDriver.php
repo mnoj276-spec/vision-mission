@@ -25,28 +25,31 @@ class RailwayScraperDriver extends AbstractScraperDriver
         $extracted = $this->parseWithSelectors($content, $config);
 
         if (empty($extracted)) {
-            return [
-                [
-                    'title'         => 'Railway RRB ALP Assistant Loco Pilot Recruitment 2026',
-                    'deadline_raw'  => '28-09-2026',
-                    'fee_raw'       => 'Rs 500',
-                    'official_link' => 'https://indianrailways.gov.in',
-                    'apply_link'    => 'https://rrbapply.gov.in',
-                    'category_name' => 'Railways (RRB)',
-                    'department_name'=> 'Railway Recruitment Board',
-                    'raw_text'      => 'Railway Recruitment Board (RRB) Assistant Loco Pilot (ALP) Vacancies 2026. Age: 18-30. Required 10th pass or ITI. Apply online by 28-09-2026. Application Fee Rs 500.',
-                ],
-                [
-                    'title'         => 'Railway RRB NTPC Non-Technical Popular Categories 2026',
-                    'deadline_raw'  => '15-10-2026',
-                    'fee_raw'       => 'Rs 500',
-                    'official_link' => 'https://indianrailways.gov.in',
-                    'apply_link'    => 'https://rrbapply.gov.in',
-                    'category_name' => 'Railways (RRB)',
-                    'department_name'=> 'Railway Recruitment Board',
-                    'raw_text'      => 'Railway RRB NTPC recruitment for Under Graduate & Graduate posts. Junior Clerk, Goods Guard, Station Master. Apply before 15-10-2026. Fee Rs 500.',
-                ]
-            ];
+            if ($this->shouldAllowMockFallback()) {
+                return [
+                    [
+                        'title'         => 'Railway RRB ALP Assistant Loco Pilot Recruitment 2026',
+                        'deadline_raw'  => '28-09-2026',
+                        'fee_raw'       => 'Rs 500',
+                        'official_link' => 'https://indianrailways.gov.in',
+                        'apply_link'    => 'https://rrbapply.gov.in',
+                        'category_name' => 'Railways (RRB)',
+                        'department_name'=> 'Railway Recruitment Board',
+                        'raw_text'      => 'Railway Recruitment Board (RRB) Assistant Loco Pilot (ALP) Vacancies 2026. Age: 18-30. Required 10th pass or ITI. Apply online by 28-09-2026. Application Fee Rs 500.',
+                    ],
+                    [
+                        'title'         => 'Railway RRB NTPC Non-Technical Popular Categories 2026',
+                        'deadline_raw'  => '15-10-2026',
+                        'fee_raw'       => 'Rs 500',
+                        'official_link' => 'https://indianrailways.gov.in',
+                        'apply_link'    => 'https://rrbapply.gov.in',
+                        'category_name' => 'Railways (RRB)',
+                        'department_name'=> 'Railway Recruitment Board',
+                        'raw_text'      => 'Railway RRB NTPC recruitment for Under Graduate & Graduate posts. Junior Clerk, Goods Guard, Station Master. Apply before 15-10-2026. Fee Rs 500.',
+                    ]
+                ];
+            }
+            throw new \App\Domains\Scrapers\Exceptions\ParserValidationException("Railway scraper driver failed to parse content: Selectors yielded no matching elements.");
         }
 
         return $extracted;
