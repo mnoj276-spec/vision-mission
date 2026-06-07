@@ -1,17 +1,16 @@
 @inject('seoService', 'App\Domains\Jobs\Services\SeoService')
 @php
     $seo = [
-        'meta_title' => 'GovJobs - Premium Automated Government Jobs Portal',
-        'meta_description' => 'Discover real-time, highly validated recruitment alerts verified by AI across UPSC, SSC, Banking, and Railways. Fast, mobile responsive, and fully automated.',
-        'meta_keywords' => 'government jobs, upsc, ssc, banking, railways, rrb, admit cards, results'
+        'meta_title' => seo_setting('meta_title', 'GovJobs - Premium Automated Government Jobs Portal'),
+        'meta_description' => seo_setting('meta_description', 'Discover real-time, highly validated recruitment alerts verified by AI across UPSC, SSC, Banking, and Railways. Fast, mobile responsive, and fully automated.'),
+        'meta_keywords' => seo_setting('meta_keywords', 'government jobs, upsc, ssc, banking, railways, rrb, admit cards, results'),
+        'og_title' => seo_setting('og_title', seo_setting('meta_title', 'GovJobs')),
+        'og_description' => seo_setting('og_description', seo_setting('meta_description', 'Discover real-time...')),
+        'og_image' => seo_setting('og_image', asset('assets/images/icons/pwa-icon-192.png')),
+        'twitter_title' => seo_setting('twitter_title', seo_setting('meta_title', 'GovJobs')),
+        'twitter_description' => seo_setting('twitter_description', seo_setting('meta_description', 'Discover real-time...')),
+        'twitter_image' => seo_setting('twitter_image', seo_setting('og_image')),
     ];
-    $settingsPath = storage_path('app/seo_settings.json');
-    if (file_exists($settingsPath)) {
-        $settings = json_decode(file_get_contents($settingsPath), true);
-        if (is_array($settings)) {
-            $seo = array_merge($seo, $settings);
-        }
-    }
 @endphp
 <!DOCTYPE html>
 <html lang="en">
@@ -24,21 +23,21 @@
     <!-- Meta SEO Binds -->
     <meta name="description" content="{{ $seo['meta_description'] }}">
     <meta name="keywords" content="{{ $seo['meta_keywords'] }}">
-    <meta name="robots" content="index, follow">
+    <meta name="robots" content="{{ seo_setting('robots_txt', 'index, follow') }}">
 
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website">
     <meta property="og:url" content="{{ request()->url() }}">
-    <meta property="og:title" content="@yield('title', $seo['meta_title'])">
-    <meta property="og:description" content="{{ $seo['meta_description'] }}">
-    <meta property="og:image" content="{{ request()->getSchemeAndHttpHost() }}/assets/images/icons/pwa-icon-192.png">
+    <meta property="og:title" content="@yield('title', $seo['og_title'])">
+    <meta property="og:description" content="{{ $seo['og_description'] }}">
+    <meta property="og:image" content="{{ $seo['og_image'] }}">
 
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image">
     <meta property="twitter:url" content="{{ request()->url() }}">
-    <meta property="twitter:title" content="@yield('title', $seo['meta_title'])">
-    <meta property="twitter:description" content="{{ $seo['meta_description'] }}">
-    <meta property="twitter:image" content="{{ request()->getSchemeAndHttpHost() }}/assets/images/icons/pwa-icon-192.png">
+    <meta property="twitter:title" content="@yield('title', $seo['twitter_title'])">
+    <meta property="twitter:description" content="{{ $seo['twitter_description'] }}">
+    <meta property="twitter:image" content="{{ $seo['twitter_image'] }}">
 
     <!-- Canonical URL -->
     <link rel="canonical" href="{{ request()->url() }}">
@@ -49,6 +48,9 @@
 
     <!-- Speed Optimization: Async Web Fonts Loading -->
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&family=Hind:wght@400;500;600;700&family=Noto+Sans+Devanagari:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <!-- Custom Design Stylesheet -->
     <link rel="stylesheet" href="{{ asset('assets/css/portal.css') }}">
@@ -98,6 +100,48 @@
             }
         })();
     </script>
+    <!-- Dynamic theme custom properties injection -->
+    <style>
+        :root {
+            @if(theme_setting('accent_color')) --accent-color: {{ theme_setting('accent_color') }}; @endif
+            @if(theme_setting('accent_color')) --accent-hover: {{ theme_setting('accent_color') }}dd; @endif
+            @if(theme_setting('background_color')) --bg-primary: {{ theme_setting('background_color') }}; @endif
+            @if(theme_setting('text_color')) --text-primary: {{ theme_setting('text_color') }}; @endif
+        }
+        .dark-theme {
+            --bg-primary: #090d16;
+            --bg-secondary: #111827;
+            --text-primary: #f3f4f6;
+            --text-secondary: #9ca3af;
+            --accent-color: #3b82f6;
+            --accent-hover: #60a5fa;
+            --border-color: rgba(37, 99, 235, 0.15);
+            --glass-bg: rgba(17, 24, 39, 0.65);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --card-shadow: 0 15px 35px -12px rgba(0, 0, 0, 0.5);
+            --pulse-bg: #1f2937;
+
+            @if(theme_setting('dark_primary_color')) --accent-color: {{ theme_setting('dark_primary_color') }}; @endif
+            @if(theme_setting('dark_primary_color')) --accent-hover: {{ theme_setting('dark_primary_color') }}dd; @endif
+            @if(theme_setting('dark_background_color')) --bg-primary: {{ theme_setting('dark_background_color') }}; @endif
+        }
+        
+        /* Dropdown styling */
+        .nav-links li:hover .dropdown-menu-list {
+            display: block !important;
+        }
+        .dropdown-menu-list {
+            background: var(--bg-secondary) !important;
+            border: 1px solid var(--border-color) !important;
+        }
+        .dropdown-menu-list a:hover {
+            background: rgba(37,99,235,0.08) !important;
+            color: var(--accent-color) !important;
+        }
+    </style>
+
+    <!-- Custom Injected Header Scripts -->
+    {!! setting('header_scripts') !!}
 </head>
 <body>
 
@@ -105,17 +149,74 @@
     <header class="glass-panel">
         <nav class="navbar">
             <a href="/" class="logo">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="color: var(--accent-color);"><path d="M12 2L2 7l10 5 10-5-10-5z"></path><path d="M2 17l10 5 10-5"></path><path d="M2 12l10 5 10-5"></path></svg>
-                <span data-i18n-html="logo_html">Gov<span>Jobs</span></span>
+                @if(setting('header_logo'))
+                    <img src="{{ asset(setting('header_logo')) }}" alt="{{ setting('website_name', 'GovJobs') }}" style="max-height: 40px; border-radius: 4px;">
+                @else
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="color: var(--accent-color);"><path d="M12 2L2 7l10 5 10-5-10-5z"></path><path d="M2 17l10 5 10-5"></path><path d="M2 12l10 5 10-5"></path></svg>
+                @endif
+                <span>{!! setting('website_name', 'Gov<span>Jobs</span>') !!}</span>
             </a>
             
             <ul class="nav-links">
-                <li><a href="/#jobs-search-section" class="nav-tab-trigger" data-target="jobs" data-i18n="nav_home">Home</a></li>
-                <li><a href="/ssc-jobs" style="font-weight: 700;" data-i18n="nav_ssc">SSC Board</a></li>
-                <li><a href="/railway-jobs" style="font-weight: 700;" data-i18n="nav_railway">Railways</a></li>
-                <li><a href="/upsc-jobs" style="font-weight: 700;" data-i18n="nav_upsc">UPSC</a></li>
-                <li><a href="/state-jobs" style="font-weight: 700;" data-i18n="nav_state">State Jobs</a></li>
-                <li><a href="/#info-hub-section" class="nav-tab-trigger" data-target="info-hub" data-i18n="nav_info">Info Hub</a></li>
+                @forelse($headerMenu as $mItem)
+                    @if($mItem->children->count() > 0)
+                        <li class="nav-item-dropdown" style="position: relative;">
+                            <a href="{{ $mItem->url }}" target="{{ $mItem->target }}" class="dropdown-trigger" style="font-weight: 700; display: flex; align-items: center; gap: 0.25rem;">
+                                @if($mItem->icon)
+                                    <span class="menu-icon">
+                                        @if(str_starts_with(trim($mItem->icon), '<'))
+                                            {!! $mItem->icon !!}
+                                        @else
+                                            <i class="{{ $mItem->icon }}"></i>
+                                        @endif
+                                    </span>
+                                @endif
+                                {{ $mItem->title }}
+                                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                            </a>
+                            <ul class="dropdown-menu-list glass-panel" style="display: none; position: absolute; top: 100%; left: 0; min-width: 200px; list-style: none; padding: 0.5rem; border-radius: 8px; box-shadow: var(--card-shadow); z-index: 100;">
+                                @foreach($mItem->children as $childItem)
+                                    <li>
+                                        <a href="{{ $childItem->url }}" target="{{ $childItem->target }}" class="dropdown-item" style="padding: 0.5rem 1rem; display: block; border-radius: 6px; font-weight: 500; font-size: 0.85rem;">
+                                            @if($childItem->icon)
+                                                <span class="menu-icon">
+                                                    @if(str_starts_with(trim($childItem->icon), '<'))
+                                                        {!! $childItem->icon !!}
+                                                    @else
+                                                        <i class="{{ $childItem->icon }}"></i>
+                                                    @endif
+                                                </span>
+                                            @endif
+                                            {{ $childItem->title }}
+                                        </a>
+                                    </li>
+                                @endforeach
+                            </ul>
+                        </li>
+                    @else
+                        <li>
+                            <a href="{{ $mItem->url }}" target="{{ $mItem->target }}" style="font-weight: 700;">
+                                @if($mItem->icon)
+                                    <span class="menu-icon">
+                                        @if(str_starts_with(trim($mItem->icon), '<'))
+                                            {!! $mItem->icon !!}
+                                        @else
+                                            <i class="{{ $mItem->icon }}"></i>
+                                        @endif
+                                    </span>
+                                @endif
+                                {{ $mItem->title }}
+                            </a>
+                        </li>
+                    @endif
+                @empty
+                    <li><a href="/#jobs-search-section" class="nav-tab-trigger" data-target="jobs" data-i18n="nav_home">Home</a></li>
+                    <li><a href="/ssc-jobs" style="font-weight: 700;" data-i18n="nav_ssc">SSC Board</a></li>
+                    <li><a href="/railway-jobs" style="font-weight: 700;" data-i18n="nav_railway">Railways</a></li>
+                    <li><a href="/upsc-jobs" style="font-weight: 700;" data-i18n="nav_upsc">UPSC</a></li>
+                    <li><a href="/state-jobs" style="font-weight: 700;" data-i18n="nav_state">State Jobs</a></li>
+                    <li><a href="/#info-hub-section" class="nav-tab-trigger" data-target="info-hub" data-i18n="nav_info">Info Hub</a></li>
+                @endforelse
             </ul>
 
             <div class="header-actions" style="display: flex; gap: 0.75rem; align-items: center;">
@@ -166,20 +267,41 @@
     <div class="mobile-drawer glass-panel" id="mobileDrawer">
         <div class="mobile-drawer-header">
             <a href="/" class="logo">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="color: var(--accent-color);"><path d="M12 2L2 7l10 5 10-5-10-5z"></path><path d="M2 17l10 5 10-5"></path><path d="M2 12l10 5 10-5"></path></svg>
-                <span data-i18n-html="logo_html">Gov<span>Jobs</span></span>
+                @if(setting('header_logo'))
+                    <img src="{{ asset(setting('header_logo')) }}" alt="{{ setting('website_name', 'GovJobs') }}" style="max-height: 40px; border-radius: 4px;">
+                @else
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="color: var(--accent-color);"><path d="M12 2L2 7l10 5 10-5-10-5z"></path><path d="M2 17l10 5 10-5"></path><path d="M2 12l10 5 10-5"></path></svg>
+                @endif
+                <span>{!! setting('website_name', 'Gov<span>Jobs</span>') !!}</span>
             </a>
             <button class="drawer-close-btn" id="closeMobileDrawerBtn" aria-label="Close navigation menu">&times;</button>
         </div>
         <ul class="mobile-drawer-links">
-            <li><a href="/#jobs-search-section" class="nav-tab-trigger mobile-drawer-link" data-target="jobs" data-i18n="nav_home">Home</a></li>
-            <li><a href="/#jobs-search-section" class="nav-tab-trigger mobile-drawer-link" data-target="jobs" data-i18n="nav_jobs_list">Jobs List</a></li>
-            <li><a href="/#info-hub-section" class="nav-tab-trigger mobile-drawer-link" data-target="info-hub" data-i18n="nav_info">Information Hub</a></li>
-            <li><a href="/ssc-jobs" class="mobile-drawer-link" data-i18n="nav_ssc">SSC Board</a></li>
-            <li><a href="/railway-jobs" class="mobile-drawer-link" data-i18n="nav_railway">Railways</a></li>
-            <li><a href="/upsc-jobs" class="mobile-drawer-link" data-i18n="nav_upsc">UPSC</a></li>
-            <li><a href="/state-jobs" class="mobile-drawer-link" data-i18n="nav_state">State Jobs</a></li>
-            <li><a href="/admit-cards" class="mobile-drawer-link" data-i18n="nav_utilities">Exam Utilities</a></li>
+            @forelse($headerMenu as $mItem)
+                <li>
+                    <a href="{{ $mItem->url }}" target="{{ $mItem->target }}" class="mobile-drawer-link">
+                        @if($mItem->icon)
+                            <span class="menu-icon">
+                                @if(str_starts_with(trim($mItem->icon), '<'))
+                                    {!! $mItem->icon !!}
+                                @else
+                                    <i class="{{ $mItem->icon }}"></i>
+                                @endif
+                            </span>
+                        @endif
+                        {{ $mItem->title }}
+                    </a>
+                </li>
+            @empty
+                <li><a href="/#jobs-search-section" class="nav-tab-trigger mobile-drawer-link" data-target="jobs" data-i18n="nav_home">Home</a></li>
+                <li><a href="/#jobs-search-section" class="nav-tab-trigger mobile-drawer-link" data-target="jobs" data-i18n="nav_jobs_list">Jobs List</a></li>
+                <li><a href="/#info-hub-section" class="nav-tab-trigger mobile-drawer-link" data-target="info-hub" data-i18n="nav_info">Information Hub</a></li>
+                <li><a href="/ssc-jobs" class="mobile-drawer-link" data-i18n="nav_ssc">SSC Board</a></li>
+                <li><a href="/railway-jobs" class="mobile-drawer-link" data-i18n="nav_railway">Railways</a></li>
+                <li><a href="/upsc-jobs" class="mobile-drawer-link" data-i18n="nav_upsc">UPSC</a></li>
+                <li><a href="/state-jobs" class="mobile-drawer-link" data-i18n="nav_state">State Jobs</a></li>
+                <li><a href="/admit-cards" class="mobile-drawer-link" data-i18n="nav_utilities">Exam Utilities</a></li>
+            @endforelse
             @auth
                 <li style="border-top: 1px solid var(--border-color); margin-top: 0.5rem; padding-top: 0.5rem;">
                     <a href="/#dashboard-section" class="nav-tab-trigger mobile-drawer-link" data-target="dashboard" data-i18n="dropdown_dashboard">Dashboard</a>
@@ -211,28 +333,66 @@
     <footer style="background-color: var(--bg-secondary); border-top: 1px solid var(--border-color); padding: 3rem 5% 2rem 5%; font-size: 0.9rem; color: var(--text-secondary); margin-top: 4rem;">
         <div style="max-width: 1400px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 2rem; margin-bottom: 2rem;">
             <div>
-                <h3 style="color: var(--text-primary); margin-bottom: 1rem; font-family: 'Outfit';">GovJobs</h3>
-                <p data-i18n="footer_desc">An advanced, fully automated Government Recruitment Job Portal featuring low-temperature validation engines and zero full page refreshes.</p>
+                <h3 style="color: var(--text-primary); margin-bottom: 1rem; font-family: 'Outfit';">{{ setting('website_name', 'GovJobs') }}</h3>
+                <p>{{ setting('footer_about_text', 'An advanced, fully automated Government Recruitment Job Portal featuring low-temperature validation engines and zero full page refreshes.') }}</p>
+                
+                @if($socialLinks->count() > 0)
+                    <div class="social-links-row" style="margin-top: 1.5rem; display: flex; gap: 0.75rem;">
+                        @foreach($socialLinks as $sLink)
+                            <a href="{{ $sLink->url }}" target="_blank" title="{{ $sLink->platform }}" style="display: flex; align-items: center; justify-content: center; width: 32px; height: 32px; border-radius: 50%; background: var(--bg-primary); border: 1px solid var(--border-color); color: var(--text-primary); text-decoration: none; font-size: 1rem;">
+                                @if($sLink->icon)
+                                    @if(str_starts_with(trim($sLink->icon), '<'))
+                                        {!! $sLink->icon !!}
+                                    @else
+                                        <i class="{{ $sLink->icon }}"></i>
+                                    @endif
+                                @else
+                                    <span style="font-size: 0.8rem; font-weight: bold;">{{ strtoupper(substr($sLink->platform, 0, 2)) }}</span>
+                                @endif
+                            </a>
+                        @endforeach
+                    </div>
+                @endif
             </div>
             <div>
-                <h4 style="color: var(--text-primary); margin-bottom: 1rem; font-family: 'Outfit';" data-i18n="footer_hubs">Portal Hubs</h4>
-                <ul style="list-style: none; display: grid; gap: 0.5rem;">
-                    <li><a href="/#jobs-search-section" class="nav-tab-trigger" data-target="jobs" style="color: var(--text-secondary); text-decoration: none;" data-i18n="footer_rec_board">Recruitments Board</a></li>
-                    <li><a href="/#info-hub-section" class="nav-tab-trigger" data-target="info-hub" style="color: var(--text-secondary); text-decoration: none;" data-i18n="footer_info_hub">Information Hub</a></li>
-                    <li><a href="/#info-hub-section" class="nav-tab-trigger" data-target="info-hub" style="color: var(--text-secondary); text-decoration: none;" data-i18n="footer_faq">FAQ Accordions</a></li>
+                <h4 style="color: var(--text-primary); margin-bottom: 1rem; font-family: 'Outfit';">Quick Links</h4>
+                <ul style="list-style: none; display: grid; gap: 0.5rem; padding: 0;">
+                    @forelse($footerMenu1 as $mItem)
+                        <li><a href="{{ $mItem->url }}" target="{{ $mItem->target }}" style="color: var(--text-secondary); text-decoration: none;">{{ $mItem->title }}</a></li>
+                    @empty
+                        <li><a href="/#jobs-search-section" class="nav-tab-trigger" data-target="jobs" style="color: var(--text-secondary); text-decoration: none;">Recruitments Board</a></li>
+                        <li><a href="/#info-hub-section" class="nav-tab-trigger" data-target="info-hub" style="color: var(--text-secondary); text-decoration: none;">Information Hub</a></li>
+                        <li><a href="/#info-hub-section" class="nav-tab-trigger" data-target="info-hub" style="color: var(--text-secondary); text-decoration: none;">FAQ Accordions</a></li>
+                    @endforelse
                 </ul>
             </div>
             <div>
-                <h4 style="color: var(--text-primary); margin-bottom: 1rem; font-family: 'Outfit';" data-i18n="footer_partners">Recruitment Partners</h4>
-                <ul style="list-style: none; display: grid; gap: 0.5rem;">
-                    <li><a href="#" style="color: var(--text-secondary); text-decoration: none;">Union Public Service Commission (UPSC)</a></li>
-                    <li><a href="#" style="color: var(--text-secondary); text-decoration: none;">Staff Selection Commission (SSC)</a></li>
-                    <li><a href="#" style="color: var(--text-secondary); text-decoration: none;">Reserve Bank of India (RBI)</a></li>
+                <h4 style="color: var(--text-primary); margin-bottom: 1rem; font-family: 'Outfit';">Useful Links</h4>
+                <ul style="list-style: none; display: grid; gap: 0.5rem; padding: 0;">
+                    @forelse($footerMenu2 as $mItem)
+                        <li><a href="{{ $mItem->url }}" target="{{ $mItem->target }}" style="color: var(--text-secondary); text-decoration: none;">{{ $mItem->title }}</a></li>
+                    @empty
+                        <li><a href="#" style="color: var(--text-secondary); text-decoration: none;">Union Public Service Commission (UPSC)</a></li>
+                        <li><a href="#" style="color: var(--text-secondary); text-decoration: none;">Staff Selection Commission (SSC)</a></li>
+                        <li><a href="#" style="color: var(--text-secondary); text-decoration: none;">Reserve Bank of India (RBI)</a></li>
+                    @endforelse
+                </ul>
+            </div>
+            <div>
+                <h4 style="color: var(--text-primary); margin-bottom: 1rem; font-family: 'Outfit';">Legal & Info</h4>
+                <ul style="list-style: none; display: grid; gap: 0.5rem; padding: 0;">
+                    @forelse($cmsPagesList as $cmsPage)
+                        <li><a href="/p/{{ $cmsPage->slug }}" style="color: var(--text-secondary); text-decoration: none;">{{ $cmsPage->title }}</a></li>
+                    @empty
+                        <li><a href="/p/about-us" style="color: var(--text-secondary); text-decoration: none;">About Us</a></li>
+                        <li><a href="/p/privacy-policy" style="color: var(--text-secondary); text-decoration: none;">Privacy Policy</a></li>
+                        <li><a href="/p/terms-and-conditions" style="color: var(--text-secondary); text-decoration: none;">Terms & Conditions</a></li>
+                    @endforelse
                 </ul>
             </div>
         </div>
         <div style="max-width: 1400px; margin: 0 auto; border-top: 1px solid var(--border-color); padding-top: 1.5rem; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 1rem;">
-            <p>&copy; 2026 GovJobs Portal Automation Inc. All rights reserved.</p>
+            <p>{!! setting('copyright_text', '&copy; 2026 GovJobs Portal Automation Inc. All rights reserved.') !!}</p>
             <p>Developed with robust MVC + Service-Repository architecture.</p>
         </div>
     </footer>
@@ -1099,5 +1259,7 @@
     </div>
     
     @yield('scripts')
+    <!-- Custom Injected Footer Scripts -->
+    {!! setting('footer_scripts') !!}
 </body>
 </html>

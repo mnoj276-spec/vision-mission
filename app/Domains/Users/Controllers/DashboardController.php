@@ -26,7 +26,9 @@ class DashboardController extends Controller
 
         $bookmarks = Bookmark::where('user_id', $user->id)
             ->with(['jobPost.category', 'jobPost.department', 'jobPost.state'])
-            ->get()->map(fn ($b) => [
+            ->get()
+            ->filter(fn ($b) => !empty($b->jobPost))
+            ->map(fn ($b) => [
                 'bookmark_id' => $b->id,
                 'job_id'      => $b->jobPost->id,
                 'title'       => $b->jobPost->title,
@@ -34,7 +36,23 @@ class DashboardController extends Controller
                 'department'  => $b->jobPost->department->name ?? 'Government',
                 'state'       => $b->jobPost->state->name    ?? 'Pan India',
                 'last_date'   => $b->jobPost->last_date_to_apply?->format('d M Y') ?? 'N/A',
-            ]);
+            ])
+            ->values();
+
+        // Query submitted job applications
+        $applications = JobApplication::where('user_id', $user->id)
+            ->with(['jobPost.department'])
+            ->get()
+            ->filter(fn ($app) => !empty($app->jobPost))
+            ->map(fn ($app) => [
+                'application_id' => $app->id,
+                'job_id'         => $app->jobPost->id,
+                'title'          => $app->jobPost->title,
+                'department'     => $app->jobPost->department->name ?? 'Government',
+                'applied_at'     => $app->created_at->format('d M Y'),
+                'status'         => $app->status,
+            ])
+            ->values();
 
         // Query recently viewed job detail pages using page view telemetry
         $recentPaths = \App\Models\AnalyticsPageView::where('user_id', $user->id)

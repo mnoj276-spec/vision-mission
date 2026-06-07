@@ -35,6 +35,10 @@ class AdManagementController extends Controller
             ['ad_code' => $request->ad_code, 'is_active' => $request->is_active]
         );
 
+        if (function_exists('settings_clear_cache')) {
+            settings_clear_cache();
+        }
+
         $status = $ad->is_active ? 'active' : 'inactive';
         $this->adminService->logAction(
             Auth::id(),
@@ -56,6 +60,10 @@ class AdManagementController extends Controller
         $ad = Advertisement::findOrFail($id);
         $ad->is_active = !$ad->is_active;
         $ad->save();
+
+        if (function_exists('settings_clear_cache')) {
+            settings_clear_cache();
+        }
 
         $status = $ad->is_active ? 'active' : 'inactive';
         $this->adminService->logAction(

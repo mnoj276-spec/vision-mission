@@ -1089,8 +1089,8 @@
 
 <!-- 1. Hero Welcome Segment -->
 <section class="hero" style="margin-bottom: 1.5rem;">
-    <h1 data-i18n-html="hero_title">Find Your Dream <span style="color: var(--accent-color);">Government Job</span> Today</h1>
-    <p data-i18n="hero_desc">Discover real-time, highly validated recruitment alerts across UPSC, SSC, Banking, Railways, and individual states. Updated automatically, systematically verified, 100% accurate.</p>
+    <h1 data-i18n-html="hero_title">{!! setting('homepage_hero_title', 'Find Your Dream <span style="color: var(--accent-color);">Government Job</span> Today') !!}</h1>
+    <p data-i18n="hero_desc">{{ setting('homepage_hero_description', 'Discover real-time, highly validated recruitment alerts across UPSC, SSC, Banking, Railways, and individual states. Updated automatically, systematically verified, 100% accurate.') }}</p>
 </section>
 
 <!-- 2. Scrolling Marquee Updates Ticker -->

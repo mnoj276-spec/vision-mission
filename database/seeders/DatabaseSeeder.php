@@ -321,5 +321,7 @@ class DatabaseSeeder extends Seeder
                 'is_featured' => false
             ]
         );
+
+        $this->call(SettingsSeeder::class);
     }
 }
