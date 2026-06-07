@@ -468,6 +468,621 @@
         transform: none !important;
         color: var(--accent-color) !important;
     }
+
+    /* ==================== REDESIGNED SINGLE ROW SEARCH & FILTER SYSTEM ==================== */
+    .search-toolbar-wrapper {
+        background: linear-gradient(135deg, rgba(255, 255, 255, 0.02) 0%, rgba(255, 255, 255, 0.01) 100%);
+        border: 1px solid var(--border-color);
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+        border-radius: 16px;
+        padding: 1.25rem;
+        box-shadow: var(--card-shadow);
+        margin-bottom: 1.5rem;
+        position: relative;
+        z-index: 100;
+    }
+
+    .search-toolbar-main {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        width: 100%;
+    }
+
+    .search-input-col {
+        flex: 2.5;
+        position: relative;
+        min-width: 200px;
+    }
+
+    .search-input-container {
+        position: relative;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        background: var(--bg-primary);
+        border: 2px solid var(--border-color);
+        border-radius: 10px;
+        padding: 0.25rem 0.5rem;
+        transition: all 0.25s ease;
+    }
+
+    .search-input-container:focus-within {
+        border-color: var(--accent-color);
+        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+    }
+
+    .search-input-container input {
+        flex: 1;
+        border: none;
+        background: transparent;
+        padding: 0.65rem 0.5rem;
+        color: var(--text-primary);
+        font-size: 1rem;
+        font-weight: 500;
+        outline: none;
+    }
+
+    .search-input-container svg.search-icon {
+        color: var(--text-secondary);
+        margin-left: 0.5rem;
+        flex-shrink: 0;
+    }
+
+    .clear-search-btn {
+        background: var(--bg-secondary);
+        border: none;
+        color: var(--text-secondary);
+        cursor: pointer;
+        padding: 0.35rem 0.5rem;
+        border-radius: 6px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.2s;
+    }
+
+    .clear-search-btn:hover {
+        color: #ef4444;
+        background: rgba(239, 68, 68, 0.08);
+    }
+
+    .search-dropdown-col {
+        flex: 1.2;
+        min-width: 180px;
+        position: relative;
+    }
+
+    .search-btn-col {
+        flex-shrink: 0;
+    }
+
+    /* Primary CTA Search Button */
+    .btn-search-primary {
+        background: linear-gradient(135deg, var(--accent-color) 0%, #1e40af 100%);
+        color: #ffffff;
+        border: none;
+        border-radius: 10px;
+        padding: 0.75rem 1.5rem;
+        font-size: 0.95rem;
+        font-weight: 700;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        transition: all 0.25s ease;
+        box-shadow: 0 4px 15px rgba(37, 99, 235, 0.2);
+    }
+
+    .btn-search-primary:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 6px 20px rgba(37, 99, 235, 0.3);
+        filter: brightness(1.1);
+    }
+
+    .btn-search-primary:active {
+        transform: translateY(0);
+    }
+
+    /* Custom Searchable Dropdowns */
+    .searchable-dropdown {
+        position: relative;
+        width: 100%;
+    }
+
+    .dropdown-selected {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background: var(--bg-primary);
+        border: 2px solid var(--border-color);
+        border-radius: 10px;
+        padding: 0.65rem 1rem;
+        color: var(--text-primary);
+        font-size: 0.95rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        user-select: none;
+    }
+
+    .dropdown-selected:focus {
+        border-color: var(--accent-color);
+        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+        outline: none;
+    }
+
+    .searchable-dropdown.open .dropdown-selected {
+        border-color: var(--accent-color);
+        border-bottom-left-radius: 0;
+        border-bottom-right-radius: 0;
+    }
+
+    .caret-icon {
+        color: var(--text-secondary);
+        transition: transform 0.2s ease;
+        flex-shrink: 0;
+    }
+
+    .searchable-dropdown.open .caret-icon {
+        transform: rotate(180deg);
+    }
+
+    .dropdown-panel {
+        display: none;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        background: var(--bg-secondary);
+        border: 2px solid var(--accent-color);
+        border-top: none;
+        border-bottom-left-radius: 10px;
+        border-bottom-right-radius: 10px;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+        z-index: 1010;
+        backdrop-filter: blur(14px);
+        -webkit-backdrop-filter: blur(14px);
+    }
+
+    .searchable-dropdown.open .dropdown-panel {
+        display: block;
+    }
+
+    .dropdown-search {
+        padding: 0.5rem;
+        border-bottom: 1px solid var(--border-color);
+    }
+
+    .dropdown-search-input {
+        width: 100%;
+        background: var(--bg-primary);
+        border: 1px solid var(--border-color);
+        border-radius: 6px;
+        padding: 0.5rem;
+        color: var(--text-primary);
+        font-size: 0.9rem;
+        outline: none;
+    }
+
+    .dropdown-search-input:focus {
+        border-color: var(--accent-color);
+    }
+
+    .dropdown-list {
+        max-height: 200px;
+        overflow-y: auto;
+        padding: 0.25rem 0;
+    }
+
+    .dropdown-list::-webkit-scrollbar {
+        width: 6px;
+    }
+
+    .dropdown-list::-webkit-scrollbar-thumb {
+        background: rgba(255, 255, 255, 0.15);
+        border-radius: 3px;
+    }
+
+    .dropdown-option {
+        padding: 0.6rem 1rem;
+        color: var(--text-secondary);
+        font-size: 0.9rem;
+        cursor: pointer;
+        transition: all 0.15s ease;
+    }
+
+    .dropdown-option:hover, .dropdown-option.highlighted {
+        background: rgba(37, 99, 235, 0.08);
+        color: var(--text-primary);
+        padding-left: 1.25rem;
+    }
+
+    .dropdown-option.selected {
+        background: var(--accent-color);
+        color: #ffffff;
+        font-weight: 600;
+    }
+
+    /* Quick suggestions row */
+    .quick-suggestions-row {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        margin-top: 1rem;
+        font-size: 0.85rem;
+    }
+
+    .suggestion-label {
+        font-weight: 600;
+        color: var(--text-secondary);
+        white-space: nowrap;
+        display: flex;
+        align-items: center;
+        gap: 0.25rem;
+    }
+
+    .suggestions-chips-container {
+        display: flex;
+        gap: 0.5rem;
+        overflow-x: auto;
+        scrollbar-width: none;
+        -webkit-overflow-scrolling: touch;
+        padding-bottom: 2px;
+    }
+
+    .suggestions-chips-container::-webkit-scrollbar {
+        display: none;
+    }
+
+    .suggestion-chip-item {
+        flex-shrink: 0;
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid var(--border-color);
+        padding: 0.35rem 0.85rem;
+        border-radius: 20px;
+        color: var(--text-secondary);
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+
+    .suggestion-chip-item:hover {
+        border-color: var(--accent-color);
+        color: var(--text-primary);
+        transform: translateY(-1px);
+        background: rgba(37, 99, 235, 0.05);
+    }
+
+    /* Sub-toolbar */
+    .search-sub-toolbar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
+        margin-top: 1rem;
+        padding-top: 1rem;
+        border-top: 1px dashed var(--border-color);
+        flex-wrap: wrap;
+    }
+
+    .sub-toolbar-left-group {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+
+    .btn-advanced-trigger {
+        background: var(--bg-secondary);
+        border: 1px solid var(--border-color);
+        color: var(--text-primary);
+        font-size: 0.85rem;
+        font-weight: 600;
+        padding: 0.5rem 0.85rem;
+        border-radius: 8px;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.35rem;
+        transition: all 0.2s;
+    }
+
+    .btn-advanced-trigger:hover {
+        border-color: var(--accent-color);
+        background: rgba(37, 99, 235, 0.04);
+    }
+
+    .btn-advanced-trigger.active {
+        background: rgba(37, 99, 235, 0.08);
+        border-color: var(--accent-color);
+        color: var(--accent-color);
+    }
+
+    .btn-reset-trigger {
+        background: transparent;
+        border: 1px solid transparent;
+        color: #ef4444;
+        font-size: 0.85rem;
+        font-weight: 600;
+        padding: 0.5rem 0.85rem;
+        border-radius: 8px;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.35rem;
+        transition: all 0.2s;
+    }
+
+    .btn-reset-trigger:hover {
+        background: rgba(239, 68, 68, 0.08);
+        border-color: rgba(239, 68, 68, 0.15);
+    }
+
+    /* Active Filter Summary tags */
+    .active-filter-chips-list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        align-items: center;
+    }
+
+    .active-filter-chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.35rem;
+        background: rgba(37, 99, 235, 0.06);
+        border: 1px solid rgba(37, 99, 235, 0.15);
+        border-radius: 16px;
+        padding: 0.3rem 0.7rem;
+        font-size: 0.8rem;
+        font-weight: 600;
+        color: var(--accent-color);
+    }
+
+    .active-filter-chip .remove-filter-btn {
+        cursor: pointer;
+        font-size: 1rem;
+        font-weight: 700;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 14px;
+        height: 14px;
+        border-radius: 50%;
+        transition: all 0.15s;
+    }
+
+    .active-filter-chip .remove-filter-btn:hover {
+        background: #ef4444;
+        color: #ffffff;
+    }
+
+    /* Collapsible Advanced Filters Drawer */
+    .advanced-drawer-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.6);
+        backdrop-filter: blur(4px);
+        -webkit-backdrop-filter: blur(4px);
+        z-index: 1999;
+        opacity: 0;
+        visibility: hidden;
+        transition: opacity 0.3s ease, visibility 0.3s ease;
+    }
+
+    .advanced-drawer-overlay.open {
+        opacity: 1;
+        visibility: visible;
+    }
+
+    .advanced-drawer {
+        position: fixed;
+        top: 0;
+        right: -420px;
+        width: 400px;
+        height: 100%;
+        background: var(--bg-secondary);
+        border-left: 1px solid var(--border-color);
+        box-shadow: -10px 0 30px rgba(0, 0, 0, 0.25);
+        z-index: 2000;
+        display: flex;
+        flex-direction: column;
+        transition: right 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .advanced-drawer.open {
+        right: 0;
+    }
+
+    .drawer-header {
+        padding: 1.25rem 1.5rem;
+        border-bottom: 1px solid var(--border-color);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .drawer-header h3 {
+        margin: 0;
+        font-family: 'Outfit', sans-serif;
+        font-size: 1.2rem;
+        font-weight: 700;
+        color: var(--text-primary);
+    }
+
+    .close-drawer-btn {
+        background: none;
+        border: none;
+        color: var(--text-secondary);
+        font-size: 1.5rem;
+        cursor: pointer;
+        line-height: 1;
+        padding: 0.25rem;
+        transition: color 0.2s;
+    }
+
+    .close-drawer-btn:hover {
+        color: #ef4444;
+    }
+
+    .drawer-body {
+        padding: 1.5rem 1.5rem 8rem 1.5rem;
+        flex: 1;
+        overflow-y: auto;
+    }
+
+    .filter-group {
+        margin-bottom: 1.25rem;
+    }
+
+    .filter-label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-size: 0.88rem;
+        font-weight: 600;
+        color: var(--text-secondary);
+    }
+
+    /* User-friendly clearly visible custom toggle switch */
+    .custom-switch {
+        position: relative;
+        display: inline-block;
+        width: 46px !important;
+        height: 26px !important;
+    }
+
+    .slider-switch {
+        position: absolute;
+        cursor: pointer;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: rgba(255, 255, 255, 0.18) !important;
+        border: 1.5px solid var(--border-color);
+        transition: .3s;
+        border-radius: 26px !important;
+    }
+
+    .slider-switch:before {
+        position: absolute;
+        content: "";
+        height: 18px !important;
+        width: 18px !important;
+        left: 3px !important;
+        bottom: 2.5px !important;
+        background-color: #ffffff !important;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.4);
+        transition: .3s;
+        border-radius: 50% !important;
+    }
+
+    .custom-switch input:checked + .slider-switch {
+        background-color: #10b981 !important;
+        border-color: #10b981;
+    }
+
+    .custom-switch input:checked + .slider-switch:before {
+        transform: translateX(18px) !important;
+    }
+
+    .drawer-footer {
+        padding: 1.25rem 1.5rem;
+        border-top: 1px solid var(--border-color);
+        display: flex;
+        gap: 0.75rem;
+        background: rgba(255, 255, 255, 0.01);
+    }
+
+    .btn-reset-drawer {
+        flex: 1;
+        background: rgba(239, 68, 68, 0.08);
+        border: 1px solid rgba(239, 68, 68, 0.15);
+        color: #ef4444;
+        border-radius: 8px;
+        padding: 0.75rem;
+        font-weight: 700;
+        font-size: 0.9rem;
+        cursor: pointer;
+        transition: all 0.2s;
+        text-align: center;
+    }
+
+    .btn-reset-drawer:hover {
+        background: #ef4444;
+        color: white;
+    }
+
+    .btn-apply-drawer {
+        flex: 2;
+        background: var(--accent-color);
+        border: none;
+        color: white;
+        border-radius: 8px;
+        padding: 0.75rem;
+        font-weight: 700;
+        font-size: 0.9rem;
+        cursor: pointer;
+        transition: all 0.2s;
+        text-align: center;
+    }
+
+    .btn-apply-drawer:hover {
+        filter: brightness(1.1);
+    }
+
+    /* Media Queries */
+    @media (max-width: 992px) {
+        .search-toolbar-main {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.75rem;
+        }
+        .search-input-col {
+            grid-column: span 2;
+        }
+        .search-dropdown-col {
+            grid-column: span 1;
+        }
+        .search-btn-col {
+            grid-column: span 2;
+        }
+        .btn-search-primary {
+            width: 100%;
+            justify-content: center;
+        }
+    }
+
+    @media (max-width: 576px) {
+        .search-toolbar-main {
+            display: flex;
+            flex-direction: column;
+            align-items: stretch;
+            gap: 0.75rem;
+        }
+        .search-input-col, .search-dropdown-col, .search-btn-col {
+            width: 100%;
+        }
+        .advanced-drawer {
+            width: 100%;
+            height: auto;
+            max-height: 85vh;
+            bottom: -100%;
+            top: auto;
+            right: 0;
+            border-left: none;
+            border-radius: 20px 20px 0 0;
+            box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.25);
+            transition: bottom 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .advanced-drawer.open {
+            bottom: 0;
+        }
+    }
 </style>
 
 <div style="max-width: 1400px; margin: 0 auto; padding: 0 5%;">
@@ -726,73 +1341,161 @@
         </div>
     </div>
 
-    <!-- State & Qualification Explorer Grids -->
-    <div class="explorer-deck-title">
-        <svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" style="color: var(--accent-color);"><path d="M12 2a8 8 0 00-8 8c0 5.25 8 12 8 12s8-6.75 8-12a8 8 0 00-8-8z"></path><circle cx="12" cy="10" r="3"></circle></svg>
-        <span data-i18n="explore_state">Explore by State / Region</span>
-    </div>
-    <div class="explorer-chips-container" id="stateExplorerChips">
-        <div class="explorer-chip active" data-id="">
-            🌐 <span data-i18n="all_regions">All Regions</span>
-        </div>
-        @foreach($states as $state)
-            <div class="explorer-chip" data-id="{{ $state->id }}">
-                📍 <span data-translate-lookup="{{ $state->name }}">{{ $state->name }}</span>
-            </div>
-        @endforeach
-    </div>
-
-    <div class="explorer-deck-title" style="margin-top: 1rem;">
-        <svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" style="color: #10b981;"><path d="M12 14l9-5-9-5-9 5 9 5z"></path><path d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z"></path></svg>
-        <span data-i18n="explore_qual">Explore by Qualification</span>
-    </div>
-    <div class="explorer-chips-container" id="qualExplorerChips">
-        <div class="explorer-chip active" data-id="">
-            🎓 <span data-i18n="all_quals">All Qualifications</span>
-        </div>
-        @foreach($qualifications as $qual)
-            <div class="explorer-chip" data-id="{{ $qual->id }}">
-                📚 <span data-translate-lookup="{{ $qual->name }}">{{ $qual->name }}</span>
-            </div>
-        @endforeach
-    </div>
-
-    <!-- 8. Interactive Search Filters Panel (original Search Compass) -->
-    <div class="main-grid" style="margin-bottom: 0px; padding-bottom: 0px;" id="interactive-finder">
+    <!-- Redesigned Single Row Search Bar Layout -->
+    <div class="search-toolbar-wrapper" id="interactive-finder">
         <!-- Typo Correction Banner -->
-        <div id="homeTypoBanner" style="display: none; grid-column: 1 / -1; margin-bottom: 1rem;"></div>
+        <div id="homeTypoBanner" style="display: none; margin-bottom: 1rem;"></div>
 
-        <div class="glass-panel search-compass" style="border-left: 4px solid var(--accent-color); overflow: visible; z-index: 100; position: relative;">
-            <div style="position: relative;">
-                <input type="text" id="searchKeywords" placeholder="Search keywords (e.g. UPSC, RBI officer)..." data-i18n="search_placeholder" autocomplete="off">
-                <div class="autocomplete-dropdown" id="autocompleteDropdown" style="position: absolute; top: 100%; left: 0; right: 0; background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: 12px; margin-top: 0.5rem; max-height: 350px; overflow-y: auto; z-index: 1050; box-shadow: 0 15px 35px -5px rgba(0,0,0,0.25); display: none; text-align: left; backdrop-filter: blur(14px);"></div>
+        <div class="search-toolbar-main">
+            <!-- 1. Search Input Column -->
+            <div class="search-input-col">
+                <div class="search-input-container">
+                    <svg class="search-icon" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                        <path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                    </svg>
+                    <input type="text" id="searchKeywords" placeholder="Search Government Jobs, UPSC, SSC, Railway..." data-i18n="search_placeholder" autocomplete="off">
+                    <button type="button" id="clearSearchBtn" class="clear-search-btn" style="display: none;">
+                        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M6 18L18 6M6 6l12 12"></path></svg>
+                    </button>
+                </div>
+                <!-- Autocomplete Dropdown -->
+                <div class="autocomplete-dropdown" id="autocompleteDropdown"></div>
             </div>
-            <div>
-                <select id="stateSelect">
-                    <option value="" data-i18n="select_state">Select Region/State</option>
-                    @foreach($states as $state)
-                        <option value="{{ $state->id }}">{{ $state->name }}</option>
-                    @endforeach
-                </select>
+
+            <!-- 2. State searchable dropdown -->
+            <div class="search-dropdown-col">
+                <div class="searchable-dropdown" id="stateDropdownWrapper">
+                    <div class="dropdown-selected" tabindex="0" role="combobox" aria-haspopup="listbox" aria-expanded="false" aria-label="Select Region">
+                        <span class="selected-text">All Regions</span>
+                        <svg class="caret-icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                    </div>
+                    <div class="dropdown-panel">
+                        <div class="dropdown-search">
+                            <input type="text" placeholder="Search region..." class="dropdown-search-input" aria-label="Search region">
+                        </div>
+                        <div class="dropdown-list" role="listbox"></div>
+                    </div>
+                </div>
             </div>
-            <div>
-                <select id="qualificationSelect">
-                    <option value="" data-i18n="select_qual">Select Qualification</option>
-                    @foreach($qualifications as $qual)
-                        <option value="{{ $qual->id }}">{{ $qual->name }}</option>
-                    @endforeach
-                </select>
+
+            <!-- 3. Qualification searchable dropdown -->
+            <div class="search-dropdown-col">
+                <div class="searchable-dropdown" id="qualificationDropdownWrapper">
+                    <div class="dropdown-selected" tabindex="0" role="combobox" aria-haspopup="listbox" aria-expanded="false" aria-label="Select Qualification">
+                        <span class="selected-text">All Qualifications</span>
+                        <svg class="caret-icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                    </div>
+                    <div class="dropdown-panel">
+                        <div class="dropdown-search">
+                            <input type="text" placeholder="Search qualification..." class="dropdown-search-input" aria-label="Search qualification">
+                        </div>
+                        <div class="dropdown-list" role="listbox"></div>
+                    </div>
+                </div>
             </div>
-            <div>
-                <select id="categorySelect">
-                    <option value="" data-i18n="select_cat">Select Category</option>
+
+            <!-- 4. Search Submit Button -->
+            <div class="search-btn-col">
+                <button type="button" class="btn-search-primary" id="searchSubmitBtn">
+                    <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                        <path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                    </svg>
+                    <span>Search</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Hidden/Sync dropdown elements -->
+        <select id="stateSelect" style="display: none;">
+            <option value="" data-i18n="select_state">Select Region/State</option>
+            @foreach($states as $state)
+                <option value="{{ $state->id }}">{{ $state->name }}</option>
+            @endforeach
+        </select>
+        <select id="qualificationSelect" style="display: none;">
+            <option value="" data-i18n="select_qual">Select Qualification</option>
+            @foreach($qualifications as $qual)
+                <option value="{{ $qual->id }}">{{ $qual->name }}</option>
+            @endforeach
+        </select>
+
+        <!-- Quick Suggestions Row -->
+        <div class="quick-suggestions-row">
+            <span class="suggestion-label"><span class="fire-icon">🔥</span> Quick Search:</span>
+            <div class="suggestions-chips-container">
+                <span class="suggestion-chip-item" data-query="UPSC">🔥 UPSC</span>
+                <span class="suggestion-chip-item" data-query="SSC">🔥 SSC</span>
+                <span class="suggestion-chip-item" data-query="Railway">🔥 Railway</span>
+                <span class="suggestion-chip-item" data-query="Banking">🔥 Banking</span>
+                <span class="suggestion-chip-item" data-query="Teaching">🔥 Teaching</span>
+                <span class="suggestion-chip-item" data-query="Bihar Police">🔥 Bihar Police</span>
+            </div>
+        </div>
+
+        <!-- Sub-toolbar containing Advanced Filters toggle and active tags summary -->
+        <div class="search-sub-toolbar">
+            <div class="sub-toolbar-left-group">
+                <button type="button" class="btn-advanced-trigger" id="toggleAdvancedFiltersBtn">
+                    <span>⚙ Advanced Filters</span>
+                </button>
+                <button type="button" class="btn-reset-trigger" id="resetFiltersTriggerBtn">
+                    <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                    <span data-i18n="btn_reset">Reset All</span>
+                </button>
+            </div>
+            <div class="active-filter-chips-list" id="activeFilterChipsContainer"></div>
+        </div>
+    </div>
+
+    <!-- Advanced Filters Drawer overlay & container -->
+    <div class="advanced-drawer-overlay" id="advancedDrawerOverlay"></div>
+    <div class="advanced-drawer" id="advancedDrawer">
+        <div class="drawer-header">
+            <h3>⚙ Advanced Filters</h3>
+            <button type="button" class="close-drawer-btn" id="closeDrawerBtn">&times;</button>
+        </div>
+        <div class="drawer-body">
+            <!-- Category Filter -->
+            <div class="filter-group">
+                <label class="filter-label">🏢 Category / Sector</label>
+                <div class="searchable-dropdown" id="categoryDropdownWrapper">
+                    <div class="dropdown-selected" tabindex="0" role="combobox" aria-haspopup="listbox" aria-expanded="false" aria-label="Select Category">
+                        <span class="selected-text" data-i18n="all_streams">All Streams</span>
+                        <svg class="caret-icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                    </div>
+                    <div class="dropdown-panel">
+                        <div class="dropdown-search">
+                            <input type="text" placeholder="Search category..." class="dropdown-search-input" aria-label="Search category">
+                        </div>
+                        <div class="dropdown-list" role="listbox"></div>
+                    </div>
+                </div>
+                <!-- Hidden select input to preserve all existing logic/APIs -->
+                <select class="filter-select" id="categorySelect" style="display: none;">
+                    <option value="" data-i18n="all_streams">All Streams</option>
                     @foreach($categories as $category)
                         <option value="{{ $category->id }}">{{ $category->name }}</option>
                     @endforeach
                 </select>
             </div>
+
+            <!-- Free Application Toggle Switch -->
+            <div class="filter-group">
+                <div class="switch-wrapper" style="width: 100%; min-height: 48px; display: flex; justify-content: space-between; align-items: center; background: var(--bg-primary); border: 1px solid var(--border-color); padding: 0.75rem 1rem; border-radius: 10px;">
+                    <span style="font-size: 0.88rem; font-weight: 600; color: var(--text-secondary);" data-i18n="filter_free_app">Free Applications Only (₹0)</span>
+                    <label class="custom-switch" style="position: relative; display: inline-block; width: 44px; height: 24px;">
+                        <input type="checkbox" id="noFeeCheck" style="opacity: 0; width: 0; height: 0;">
+                        <span class="slider-switch" style="position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: var(--border-color); transition: .3s; border-radius: 24px;"></span>
+                    </label>
+                </div>
+            </div>
+        </div>
+        <div class="drawer-footer">
+            <button type="button" class="btn-reset-drawer" id="resetFiltersDrawerBtn">Reset All</button>
+            <button type="button" class="btn-apply-drawer" id="applyFiltersDrawerBtn">Apply Filters</button>
         </div>
     </div>
+
 
     <!-- Main Workspace Split Grid -->
     <div class="main-grid">
@@ -1776,6 +2479,7 @@
         // ================== SEARCH AND PAGINATION SYSTEM ==================
         let currentPage = 1;
 
+        // Fetch jobs from server
         function fetchJobs(page = 1) {
             currentPage = page;
             const queryData = {
@@ -1783,6 +2487,7 @@
                 state_id: $('#stateSelect').val(),
                 qualification_id: $('#qualificationSelect').val(),
                 category_id: $('#categorySelect').val(),
+                has_no_fee: $('#noFeeCheck').is(':checked'),
                 page: page
             };
 
@@ -1884,45 +2589,321 @@
             $('#paginationContainer').html(html);
         }
 
-        // Trigger filters
-        $('#stateSelect, #qualificationSelect, #categorySelect').on('change', function() {
+        // Initialize custom searchable dropdowns
+        function initSearchableDropdown(wrapperId, hiddenSelectId, placeholderText) {
+            const $wrapper = $(wrapperId);
+            const $hiddenSelect = $(hiddenSelectId);
+            const $selectedText = $wrapper.find('.selected-text');
+            const $selectedDiv = $wrapper.find('.dropdown-selected');
+            const $searchInput = $wrapper.find('.dropdown-search-input');
+            const $panel = $wrapper.find('.dropdown-panel');
+            const $list = $wrapper.find('.dropdown-list');
+            const defaultI18nKey = $selectedText.attr('data-i18n') || '';
+
+            function populateOptions() {
+                $list.empty();
+                $hiddenSelect.find('option').each(function() {
+                    const val = $(this).val();
+                    let text = $(this).text().trim();
+                    if (!val) {
+                        text = placeholderText;
+                    }
+                    const isSelected = $(this).is(':selected');
+                    const lookup = $(this).attr('data-translate-lookup');
+                    const prefix = $(this).attr('data-translate-prefix');
+                    const suffix = $(this).attr('data-translate-suffix');
+                    const i18nKey = $(this).attr('data-i18n');
+                    
+                    const optionAttr = {
+                        class: 'dropdown-option' + (isSelected ? ' selected' : ''),
+                        'data-value': val,
+                        text: text,
+                        role: 'option',
+                        tabindex: '-1'
+                    };
+                    
+                    if (lookup) { optionAttr['data-translate-lookup'] = lookup; }
+                    if (prefix) { optionAttr['data-translate-prefix'] = prefix; }
+                    if (suffix) { optionAttr['data-translate-suffix'] = suffix; }
+                    if (i18nKey) { optionAttr['data-i18n'] = i18nKey; }
+
+                    const $option = $('<div>', optionAttr);
+                    $list.append($option);
+                    if (isSelected) {
+                        $selectedText.text(text);
+                        if (val) {
+                            $selectedText.removeAttr('data-i18n');
+                        } else {
+                            if (defaultI18nKey) {
+                                $selectedText.attr('data-i18n', defaultI18nKey);
+                            }
+                        }
+                        if (lookup) {
+                            $selectedText.attr('data-translate-lookup', lookup);
+                        } else {
+                            $selectedText.removeAttr('data-translate-lookup');
+                        }
+                        if (prefix) {
+                            $selectedText.attr('data-translate-prefix', prefix);
+                        } else {
+                            $selectedText.removeAttr('data-translate-prefix');
+                        }
+                        if (suffix) {
+                            $selectedText.attr('data-translate-suffix', suffix);
+                        } else {
+                            $selectedText.removeAttr('data-translate-suffix');
+                        }
+                    }
+                });
+            }
+
+            populateOptions();
+
+            // Toggle panel
+            $selectedDiv.on('click', function(e) {
+                e.stopPropagation();
+                const isOpen = $wrapper.hasClass('open');
+                $('.searchable-dropdown').not($wrapper).removeClass('open');
+                $wrapper.toggleClass('open');
+                if (!isOpen) {
+                    $searchInput.val('').trigger('input');
+                    $searchInput.focus();
+                }
+            });
+
+            // Handle option click
+            $list.on('click', '.dropdown-option', function(e) {
+                e.stopPropagation();
+                const val = $(this).attr('data-value') || '';
+                const text = $(this).text();
+                $hiddenSelect.val(val).trigger('change');
+                $selectedText.text(text);
+                $wrapper.removeClass('open');
+                $selectedDiv.focus();
+            });
+
+            // Handle search input filtering
+            $searchInput.on('input', function() {
+                const query = $(this).val().toLowerCase();
+                $list.find('.dropdown-option').each(function() {
+                    const text = $(this).text().toLowerCase();
+                    if (text.includes(query)) {
+                        $(this).show();
+                    } else {
+                        $(this).hide();
+                    }
+                });
+            });
+
+            // Keyboard accessibility
+            $selectedDiv.on('keydown', function(e) {
+                if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    $(this).trigger('click');
+                }
+            });
+
+            $searchInput.on('keydown', function(e) {
+                const $visibleOptions = $list.find('.dropdown-option:visible');
+                let activeIdx = $visibleOptions.index($list.find('.dropdown-option.highlighted'));
+                
+                if (e.key === 'ArrowDown') {
+                    e.preventDefault();
+                    activeIdx = (activeIdx + 1) % $visibleOptions.length;
+                    $visibleOptions.removeClass('highlighted');
+                    $visibleOptions.eq(activeIdx).addClass('highlighted');
+                    $visibleOptions.eq(activeIdx)[0].scrollIntoView({ block: 'nearest' });
+                } else if (e.key === 'ArrowUp') {
+                    e.preventDefault();
+                    activeIdx = (activeIdx - 1 + $visibleOptions.length) % $visibleOptions.length;
+                    $visibleOptions.removeClass('highlighted');
+                    $visibleOptions.eq(activeIdx).addClass('highlighted');
+                    $visibleOptions.eq(activeIdx)[0].scrollIntoView({ block: 'nearest' });
+                } else if (e.key === 'Enter') {
+                    e.preventDefault();
+                    const $highlighted = $list.find('.dropdown-option.highlighted');
+                    if ($highlighted.length > 0) {
+                        $highlighted.trigger('click');
+                    } else if ($visibleOptions.length > 0) {
+                        $visibleOptions.first().trigger('click');
+                    }
+                } else if (e.key === 'Escape') {
+                    $wrapper.removeClass('open');
+                    $selectedDiv.focus();
+                }
+            });
+
+            // Sync from hidden select changes
+            $hiddenSelect.on('change', function() {
+                const val = $(this).val();
+                let selectedTextVal = placeholderText;
+                let activeLookup = null;
+                let activePrefix = null;
+                let activeSuffix = null;
+                
+                $list.find('.dropdown-option').removeClass('selected').each(function() {
+                    if (($(this).attr('data-value') || '') == val) {
+                        $(this).addClass('selected');
+                        selectedTextVal = $(this).text();
+                        activeLookup = $(this).attr('data-translate-lookup');
+                        activePrefix = $(this).attr('data-translate-prefix');
+                        activeSuffix = $(this).attr('data-translate-suffix');
+                    }
+                });
+                
+                $selectedText.text(selectedTextVal);
+                if (val) {
+                    $selectedText.removeAttr('data-i18n');
+                } else {
+                    if (defaultI18nKey) {
+                        $selectedText.attr('data-i18n', defaultI18nKey);
+                    }
+                }
+                
+                if (activeLookup) {
+                    $selectedText.attr('data-translate-lookup', activeLookup);
+                } else {
+                    $selectedText.removeAttr('data-translate-lookup');
+                }
+                if (activePrefix) {
+                    $selectedText.attr('data-translate-prefix', activePrefix);
+                } else {
+                    $selectedText.removeAttr('data-translate-prefix');
+                }
+                if (activeSuffix) {
+                    $selectedText.attr('data-translate-suffix', activeSuffix);
+                } else {
+                    $selectedText.removeAttr('data-translate-suffix');
+                }
+            });
+        }
+
+        // Initialize custom dropdowns
+        initSearchableDropdown('#stateDropdownWrapper', '#stateSelect', 'All Regions');
+        initSearchableDropdown('#qualificationDropdownWrapper', '#qualificationSelect', 'All Qualifications');
+        initSearchableDropdown('#categoryDropdownWrapper', '#categorySelect', 'All Streams');
+
+        // Render initial chips on load
+        updateFilterChips();
+
+        // Close dropdowns clicking outside
+        $(document).on('click', function(e) {
+            if (!$(e.target).closest('.searchable-dropdown').length) {
+                $('.searchable-dropdown').removeClass('open');
+            }
+        });
+
+        // Advanced filter drawer toggle
+        $('#toggleAdvancedFiltersBtn').on('click', function() {
+            $('#advancedDrawer, #advancedDrawerOverlay').addClass('open');
+            $(this).addClass('active');
+            $('#advancedDrawer').find('select, input').first().focus();
+        });
+
+        $('#closeDrawerBtn, #advancedDrawerOverlay, #applyFiltersDrawerBtn').on('click', function() {
+            $('#advancedDrawer, #advancedDrawerOverlay').removeClass('open');
+            $('#toggleAdvancedFiltersBtn').removeClass('active');
+        });
+
+        // Selected Active Filter tag chips manager
+        function updateFilterChips() {
+            const container = $('#activeFilterChipsContainer');
+            container.empty();
+            let hasFilters = false;
+
+            const stateVal = $('#stateSelect').val();
+            if (stateVal) {
+                const text = $(`#stateSelect option[value="${stateVal}"]`).text().trim();
+                container.append(`<div class="active-filter-chip">📍 ${text} <span class="remove-filter-btn" data-type="state" role="button" aria-label="Remove ${text} filter">&times;</span></div>`);
+                hasFilters = true;
+            }
+
+            const qualVal = $('#qualificationSelect').val();
+            if (qualVal) {
+                const text = $(`#qualificationSelect option[value="${qualVal}"]`).text().trim();
+                container.append(`<div class="active-filter-chip">🎓 ${text} <span class="remove-filter-btn" data-type="qualification" role="button" aria-label="Remove ${text} filter">&times;</span></div>`);
+                hasFilters = true;
+            }
+
+            const catVal = $('#categorySelect').val();
+            if (catVal) {
+                const text = $(`#categorySelect option[value="${catVal}"]`).text().trim();
+                container.append(`<div class="active-filter-chip">🏢 ${text} <span class="remove-filter-btn" data-type="category" role="button" aria-label="Remove ${text} filter">&times;</span></div>`);
+                hasFilters = true;
+            }
+
+            const noFeeVal = $('#noFeeCheck').is(':checked');
+            if (noFeeVal) {
+                container.append(`<div class="active-filter-chip">💸 Free Application <span class="remove-filter-btn" data-type="nofee" role="button" aria-label="Remove free applications filter">&times;</span></div>`);
+                hasFilters = true;
+            }
+
+            if (hasFilters) {
+                container.append(`<a href="#" id="clearAllFiltersBtn" style="font-size: 0.85rem; color: #ef4444; font-weight: 600; text-decoration: none; margin-left: 0.5rem;">Clear All</a>`);
+            }
+        }
+
+        // Dismiss active filter chips handler
+        $('#activeFilterChipsContainer').on('click', '.remove-filter-btn', function() {
+            const type = $(this).data('type');
+            if (type === 'state') {
+                $('#stateSelect').val('').trigger('change');
+            } else if (type === 'qualification') {
+                $('#qualificationSelect').val('').trigger('change');
+            } else if (type === 'category') {
+                $('#categorySelect').val('').trigger('change');
+            } else if (type === 'nofee') {
+                $('#noFeeCheck').prop('checked', false).trigger('change');
+            }
+        });
+
+        $(document).on('click', '#clearAllFiltersBtn', function(e) {
+            e.preventDefault();
+            $('#resetFiltersTriggerBtn').trigger('click');
+        });
+
+        // Trigger filters on changes
+        $('#stateSelect, #qualificationSelect, #categorySelect, #noFeeCheck').on('change', function() {
+            updateFilterChips();
             fetchJobs(1);
         });
 
-        // State Explorer Chips click handler
-        $('#stateExplorerChips').on('click', '.explorer-chip', function() {
-            $(this).addClass('active').siblings().removeClass('active');
-            const stateId = $(this).data('id');
-            $('#stateSelect').val(stateId);
+        // Try searching suggestions click
+        $(document).on('click', '.suggestion-chip-item', function() {
+            const query = $(this).data('query');
+            $('#searchKeywords').val(query);
+            $('#clearSearchBtn').show();
             fetchJobs(1);
         });
 
-        // Qualification Explorer Chips click handler
-        $('#qualExplorerChips').on('click', '.explorer-chip', function() {
-            $(this).addClass('active').siblings().removeClass('active');
-            const qualId = $(this).data('id');
-            $('#qualificationSelect').val(qualId);
+        // Submit search on button click
+        $('#searchSubmitBtn').on('click', function() {
+            clearTimeout(searchTimeout);
             fetchJobs(1);
         });
 
-        // Sync dropdown changes back to explorer chips
-        $('#stateSelect').on('change', function() {
-            const val = $(this).val();
-            $(`#stateExplorerChips .explorer-chip[data-id="${val || ''}"]`).addClass('active').siblings().removeClass('active');
-        });
-
-        // Sync dropdown changes back to explorer chips
-        $('#qualificationSelect').on('change', function() {
-            const val = $(this).val();
-            $(`#qualExplorerChips .explorer-chip[data-id="${val || ''}"]`).addClass('active').siblings().removeClass('active');
+        // Submit search on Enter keypress
+        $('#searchKeywords').on('keypress', function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                clearTimeout(searchTimeout);
+                fetchJobs(1);
+                $('#autocompleteDropdown').hide();
+            }
         });
 
         // Search Input Keyup Debouncing
         let searchTimeout = null;
         let autocompleteTimeout = null;
 
-        $('#searchKeywords').on('keyup', function() {
+        $('#searchKeywords').on('input keyup', function() {
             const query = $(this).val();
+
+            if (query.length > 0) {
+                $('#clearSearchBtn').show();
+            } else {
+                $('#clearSearchBtn').hide();
+            }
 
             clearTimeout(searchTimeout);
             searchTimeout = setTimeout(function() {
@@ -2020,6 +3001,15 @@
             }, 150);
         });
 
+        // Clear search text
+        $(document).on('click', '#clearSearchBtn', function() {
+            $('#searchKeywords').val('');
+            $(this).hide();
+            $('#autocompleteDropdown').hide().empty();
+            $('#homeTypoBanner').hide().empty();
+            fetchJobs(1);
+        });
+
         // Autocomplete click actions on homepage
         $(document).on('click', '.select-suggest-job', function() {
             const slug = $(this).data('slug');
@@ -2045,7 +3035,27 @@
             const query = $(this).data('query');
             $('#searchKeywords').val(query);
             $('#homeTypoBanner').hide().empty();
+            $('#clearSearchBtn').show();
             fetchJobs(1);
+        });
+
+        // Reset all filters trigger
+        $('#resetFiltersTriggerBtn').on('click', function() {
+            $('#searchKeywords').val('');
+            $('#stateSelect').val('').trigger('change');
+            $('#qualificationSelect').val('').trigger('change');
+            $('#categorySelect').val('').trigger('change');
+            $('#noFeeCheck').prop('checked', false).trigger('change');
+            $('#clearSearchBtn').hide();
+            $('#autocompleteDropdown').hide().empty();
+            $('#homeTypoBanner').hide().empty();
+            $('#advancedDrawer, #advancedDrawerOverlay').removeClass('open');
+            $('#toggleAdvancedFiltersBtn').removeClass('active');
+            fetchJobs(1);
+        });
+
+        $('#resetFiltersDrawerBtn').on('click', function() {
+            $('#resetFiltersTriggerBtn').trigger('click');
         });
 
         $(document).on('click', '.page-link', function(e) {

@@ -41,9 +41,9 @@ class JobController extends Controller
         // Track AJAX search
         try {
             if ($request->filled('search') || !empty(array_filter($filters))) {
-                app(\App\Services\AnalyticsService::class)->trackSearchQuery($request->input('search', ''), $filters, $jobs->total());
+                app(\App\Services\AnalyticsService::class)->trackSearchQuery((string) ($request->input('search') ?? ''), $filters, $jobs->total());
             }
-        } catch (\Exception $e) {}
+        } catch (\Throwable $e) {}
 
         $formattedJobs = collect($jobs->items())->map(fn ($job) => [
             'id'              => $job->id,
