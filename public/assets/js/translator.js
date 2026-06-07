@@ -828,11 +828,18 @@
     // 4. Global Translation Helpers
     window.t = function(key, defaultVal) {
         const lang = localStorage.getItem(LANG_STORAGE_KEY) || 'en';
+        
+        // First try to look up in the active language dictionary
+        const dict = window.translations[lang];
+        if (dict && dict[key] !== undefined) {
+            return dict[key];
+        }
+
         if (lang === 'en') return defaultVal || key;
 
-        const dict = window.translations['hi'];
-        if (dict && dict[key]) {
-            return dict[key];
+        const hiDict = window.translations['hi'];
+        if (hiDict && hiDict[key] !== undefined) {
+            return hiDict[key];
         }
         
         if (dynamicLookups[key]) {
@@ -1129,10 +1136,8 @@
             // Translate jQuery templates immediately on AJAX complete
             jQuery(document).ajaxComplete(function(event, xhr, settings) {
                 const currentLang = localStorage.getItem(LANG_STORAGE_KEY) || 'en';
-                if (currentLang === 'hi') {
-                    // Walk newly created DOM fields that might have data-i18n
-                    translatePage('hi');
-                }
+                // Walk newly created DOM fields that might have data-i18n
+                translatePage(currentLang);
             });
         }
     });

@@ -126,7 +126,7 @@
                     <button type="button" class="lang-btn" data-lang="hi" aria-label="Switch to Hindi" aria-current="false">हिन्दी</button>
                 </div>
 
-                <button class="theme-toggle-btn" id="themeToggle">
+                <button class="theme-toggle-btn" id="themeToggle" aria-label="Toggle Theme Mode">
                     <svg id="themeIcon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></svg>
                     <span id="themeText" data-i18n="theme_night">Night Mode</span>
                 </button>
@@ -169,7 +169,7 @@
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="color: var(--accent-color);"><path d="M12 2L2 7l10 5 10-5-10-5z"></path><path d="M2 17l10 5 10-5"></path><path d="M2 12l10 5 10-5"></path></svg>
                 <span data-i18n-html="logo_html">Gov<span>Jobs</span></span>
             </a>
-            <button class="drawer-close-btn" id="closeMobileDrawerBtn">&times;</button>
+            <button class="drawer-close-btn" id="closeMobileDrawerBtn" aria-label="Close navigation menu">&times;</button>
         </div>
         <ul class="mobile-drawer-links">
             <li><a href="/#jobs-search-section" class="nav-tab-trigger mobile-drawer-link" data-target="jobs" data-i18n="nav_home">Home</a></li>
@@ -242,7 +242,7 @@
     <!-- A. Authenticatable Login/Register Modal -->
     <div class="modal-overlay" id="authModal">
         <div class="modal-box glass-panel">
-            <button class="modal-close-btn" id="closeAuthModal">&times;</button>
+            <button class="modal-close-btn" id="closeAuthModal" aria-label="Close Authentication Dialog">&times;</button>
             <div class="auth-tabs">
                 <button class="auth-tab-btn active" data-tab="loginFormContainer" data-i18n="auth_tab_signin">Sign In</button>
                 <button class="auth-tab-btn" data-tab="registerFormContainer" data-i18n="auth_tab_register">Register</button>
@@ -341,7 +341,7 @@
     <!-- B. Asynchronous Job Details Modal -->
     <div class="modal-overlay" id="jobDetailsModal">
         <div class="modal-box glass-panel" style="max-width: 800px;">
-            <button class="modal-close-btn" id="closeJobDetailsModal">&times;</button>
+            <button class="modal-close-btn" id="closeJobDetailsModal" aria-label="Close Details Dialog">&times;</button>
             
             <!-- Skeleton Loader placeholder inside modal -->
             <div id="modalSkeletonLoader" class="skeleton-modal">
@@ -448,7 +448,7 @@
     <!-- C. Sidebar/Utilities Details Modal (Admit Cards / Results / Syllabus Detail) -->
     <div class="modal-overlay" id="sidebarDetailsModal">
         <div class="modal-box glass-panel" style="max-width: 600px;">
-            <button class="modal-close-btn" id="closeSidebarDetailsModal">&times;</button>
+            <button class="modal-close-btn" id="closeSidebarDetailsModal" aria-label="Close Sidebar Details Dialog">&times;</button>
             <h3 style="font-family: 'Outfit'; font-size: 1.4rem; margin-bottom: 1.25rem; color: var(--accent-color);" id="sidebarDetailTitle">Exam Utility Info</h3>
             <div id="sidebarDetailBody" style="color: var(--text-secondary); font-size: 0.95rem; line-height: 1.75;">
                 <!-- Loaded dynamically -->

@@ -817,9 +817,9 @@
                                     <span data-translate-lookup="{{ $fJob->department->name ?? 'Government' }}">{{ $fJob->department->name ?? 'Government' }}</span> &bull; <span data-translate-lookup="{{ $fJob->state->name ?? 'Pan India' }}">{{ $fJob->state->name ?? 'Pan India' }}</span>
                                 </p>
                             </div>
-                            <div style="display: flex; justify-content: space-between; align-items: center;">
-                                <span class="badge badge-deadline" data-translate-key="apply_by" data-translate-suffix=" {{ $fJob->last_date_to_apply ? $fJob->last_date_to_apply->format('d M') : 'N/A' }}">Apply by {{ $fJob->last_date_to_apply ? $fJob->last_date_to_apply->format('d M') : 'N/A' }}</span>
-                                <a href="#" class="btn-view" data-i18n="btn_view_details" data-slug="{{ $fJob->slug }}">Details</a>
+                            <div style="display: flex; justify-content: space-between; align-items: center; width: 100%; gap: 0.5rem;">
+                                <span class="badge badge-deadline" data-translate-key="apply_by" data-translate-prefix="📅 " data-translate-suffix=": {{ $fJob->last_date_to_apply ? $fJob->last_date_to_apply->format('d M') : 'N/A' }}">📅 Apply by: {{ $fJob->last_date_to_apply ? $fJob->last_date_to_apply->format('d M') : 'N/A' }}</span>
+                                <a href="#" class="btn-view" data-i18n="btn_view_details" data-slug="{{ $fJob->slug }}" aria-label="View details for {{ $fJob->title }}" style="padding: 0.4rem 0.8rem; font-size: 0.8rem; height: auto;">Details</a>
                             </div>
                         </div>
                     @empty
@@ -867,15 +867,15 @@
                                     <span data-translate-lookup="{{ $rJob->department->name ?? 'Government' }}">{{ $rJob->department->name ?? 'Government' }}</span> &bull; <span data-translate-lookup="{{ $rJob->state->name ?? 'Pan India' }}">{{ $rJob->state->name ?? 'Pan India' }}</span>
                                 </p>
                                 <div class="job-tags">
-                                    <span class="badge badge-dept" data-translate-lookup="{{ $rJob->qualification->name ?? 'Degree Required' }}">{{ $rJob->qualification->name ?? 'Degree Required' }}</span>
-                                    <span class="badge" data-translate-key="vacancies_count" data-translate-suffix=": {{ $rJob->vacancy_count }}" style="background: rgba(16, 185, 129, 0.08); color: #10b981;">Vacancies: {{ $rJob->vacancy_count }}</span>
-                                    <span class="badge badge-deadline" data-translate-key="apply_by" data-translate-suffix=" {{ $rJob->last_date_to_apply ? $rJob->last_date_to_apply->format('d M Y') : 'N/A' }}">Apply by {{ $rJob->last_date_to_apply ? $rJob->last_date_to_apply->format('d M Y') : 'N/A' }}</span>
+                                    <span class="badge badge-dept" data-translate-lookup="{{ $rJob->qualification->name ?? 'Degree Required' }}" data-translate-prefix="🎓 ">🎓 {{ $rJob->qualification->name ?? 'Degree Required' }}</span>
+                                    <span class="badge" data-translate-key="vacancies_count" data-translate-prefix="👥 " data-translate-suffix=": {{ number_format($rJob->vacancy_count) }}" style="background: rgba(16, 185, 129, 0.08); color: #10b981;">👥 Vacancies: {{ number_format($rJob->vacancy_count) }}</span>
+                                    <span class="badge badge-deadline" data-translate-key="apply_by" data-translate-prefix="📅 " data-translate-suffix=": {{ $rJob->last_date_to_apply ? $rJob->last_date_to_apply->format('d M Y') : 'N/A' }}">📅 Apply by: {{ $rJob->last_date_to_apply ? $rJob->last_date_to_apply->format('d M Y') : 'N/A' }}</span>
                                 </div>
                             </div>
-                            <div style="display: flex; flex-direction: column; gap: 0.5rem; align-items: flex-end;">
-                                <a href="{{ $applyTarget }}" class="btn-view" data-i18n="btn_view_details" data-slug="{{ $rJob->slug }}">View Details</a>
+                            <div class="job-card-actions">
+                                <a href="{{ $applyTarget }}" class="btn-view" data-i18n="btn_view_details" data-slug="{{ $rJob->slug }}" aria-label="View details for {{ $rJob->title }}">View Details</a>
                                 @auth
-                                    <button class="btn-sm-danger toggle-bookmark-btn" data-i18n="btn_save_job" data-id="{{ $rJob->id }}" style="background: rgba(37,99,235,0.06); color: var(--accent-color); border-color: rgba(37,99,235,0.15);">
+                                    <button class="toggle-bookmark-btn" data-i18n="btn_save_job" data-id="{{ $rJob->id }}" aria-label="Save {{ $rJob->title }} to bookmarks">
                                         Save Job
                                     </button>
                                 @endauth
@@ -1834,15 +1834,15 @@
                                             ${window.t(job.department, job.department)} &bull; ${window.t(job.state, job.state)}
                                         </p>
                                         <div class="job-tags">
-                                            <span class="badge badge-dept">${window.t(job.qualification, job.qualification)}</span>
-                                            <span class="badge" style="background: rgba(16, 185, 129, 0.08); color: #10b981;">${window.t('vacancies_count', 'Vacancies')}: ${job.vacancy_count}</span>
-                                            <span class="badge badge-deadline">${window.t('apply_by', 'Apply by')} ${job.last_date}</span>
+                                            <span class="badge badge-dept">🎓 ${window.t(job.qualification, job.qualification)}</span>
+                                            <span class="badge" style="background: rgba(16, 185, 129, 0.08); color: #10b981;">👥 ${window.t('vacancies_count', 'Vacancies')}: ${Number(job.vacancy_count).toLocaleString('en-IN')}</span>
+                                            <span class="badge badge-deadline">📅 ${window.t('apply_by', 'Apply by')}: ${job.last_date}</span>
                                         </div>
                                     </div>
-                                    <div style="display: flex; flex-direction: column; gap: 0.5rem; align-items: flex-end;">
-                                        <a href="${applyTarget}" class="btn-view" data-slug="${job.slug}">${window.t('btn_view_details', 'View Details')}</a>
+                                    <div class="job-card-actions">
+                                        <a href="${applyTarget}" class="btn-view" data-slug="${job.slug}" aria-label="View details for ${job.title}">${window.t('btn_view_details', 'View Details')}</a>
                                         @auth
-                                            <button class="btn-sm-danger toggle-bookmark-btn" data-id="${job.id}" style="background: rgba(37,99,235,0.06); color: var(--accent-color); border-color: rgba(37,99,235,0.15);">
+                                            <button class="toggle-bookmark-btn" data-id="${job.id}" aria-label="Save ${job.title}">
                                                 ${window.t('btn_save_job', 'Save Job')}
                                             </button>
                                         @endauth

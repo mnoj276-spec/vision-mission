@@ -467,20 +467,20 @@
                                 @if($job->district) &bull; <span>{{ $job->district->name }}</span> @endif
                             </p>
                             <div class="job-tags">
-                                <span class="badge badge-dept" data-translate-lookup="{{ $job->qualification->name ?? 'Eligibility Required' }}">{{ $job->qualification->name ?? 'Eligibility Required' }}</span>
-                                <span class="badge" style="background: rgba(16, 185, 129, 0.08); color: #10b981; font-weight:700;" data-translate-key="vacancies_count" data-translate-prefix="" data-translate-suffix=": {{ $job->vacancy_count }}">Vacancies: {{ $job->vacancy_count }}</span>
+                                <span class="badge badge-dept" data-translate-lookup="{{ $job->qualification->name ?? 'Eligibility Required' }}" data-translate-prefix="🎓 ">🎓 {{ $job->qualification->name ?? 'Eligibility Required' }}</span>
+                                <span class="badge" style="background: rgba(16, 185, 129, 0.08); color: #10b981; font-weight:700;" data-translate-key="vacancies_count" data-translate-prefix="👥 " data-translate-suffix=": {{ number_format($job->vacancy_count) }}">👥 Vacancies: {{ number_format($job->vacancy_count) }}</span>
                                 <span class="badge" style="background: rgba(139, 92, 246, 0.08); color: #8b5cf6; font-weight:700;">
                                     @if($job->salary_min > 0)
-                                        ₹{{ number_format($job->salary_min, 0) }} - ₹{{ number_format($job->salary_max, 0) }}
+                                        💸 ₹{{ number_format($job->salary_min, 0) }} - ₹{{ number_format($job->salary_max, 0) }}
                                     @else
-                                        <span data-i18n="govt_scale">Govt Scale</span>
+                                        💸 <span data-i18n="govt_scale">Govt Scale</span>
                                     @endif
                                 </span>
                             </div>
                         </div>
-                        <div style="display: flex; flex-direction: column; gap: 0.5rem; align-items: flex-end; justify-content: space-between;">
-                            <a href="{{ $detailRoute }}" class="btn-view" style="text-decoration:none;" data-i18n="btn_view_details">View Details</a>
-                            <span class="badge badge-deadline" style="margin-top:0.5rem;" data-translate-key="apply_by" data-translate-suffix=": {{ $job->last_date_to_apply ? $job->last_date_to_apply->format('d M Y') : 'N/A' }}">Deadline: {{ $job->last_date_to_apply ? $job->last_date_to_apply->format('d M Y') : 'N/A' }}</span>
+                        <div class="job-card-actions">
+                            <a href="{{ $detailRoute }}" class="btn-view" style="text-decoration:none;" data-i18n="btn_view_details" aria-label="View details for {{ $job->title }}">View Details</a>
+                            <span class="badge badge-deadline" style="text-align:center; width:100%; box-sizing:border-box;" data-translate-key="apply_by" data-translate-prefix="📅 " data-translate-suffix=": {{ $job->last_date_to_apply ? $job->last_date_to_apply->format('d M Y') : 'N/A' }}">📅 Apply by: {{ $job->last_date_to_apply ? $job->last_date_to_apply->format('d M Y') : 'N/A' }}</span>
                         </div>
                     </div>
                 @empty
@@ -626,16 +626,16 @@
                                             <span data-translate-lookup="${job.department}">${window.t(job.department, job.department)}</span> &bull; <span data-translate-lookup="${job.state}">${window.t(job.state, job.state)}</span>
                                         </p>
                                         <div class="job-tags">
-                                            <span class="badge badge-dept" data-translate-lookup="${job.qualification}">${window.t(job.qualification, job.qualification)}</span>
-                                            <span class="badge" style="background: rgba(16, 185, 129, 0.08); color: #10b981; font-weight:700;" data-translate-key="vacancies_count" data-translate-suffix=": ${job.vacancy_count}">${window.t('vacancies_count', 'Vacancies')}: ${job.vacancy_count}</span>
+                                            <span class="badge badge-dept" data-translate-lookup="${job.qualification}">🎓 ${window.t(job.qualification, job.qualification)}</span>
+                                            <span class="badge" style="background: rgba(16, 185, 129, 0.08); color: #10b981; font-weight:700;" data-translate-key="vacancies_count" data-translate-prefix="👥 " data-translate-suffix=": ${Number(job.vacancy_count).toLocaleString('en-IN')}">👥 ${window.t('vacancies_count', 'Vacancies')}: ${Number(job.vacancy_count).toLocaleString('en-IN')}</span>
                                             <span class="badge" style="background: rgba(139, 92, 246, 0.08); color: #8b5cf6; font-weight:700;">
-                                                ${job.salary_min > 0 ? `₹ ${job.salary_min} - ₹ ${job.salary_max}` : `<span data-i18n="govt_scale">${window.t('govt_scale', 'Govt Scale')}</span>`}
+                                                💸 ${job.salary_min > 0 ? `₹ ${Number(job.salary_min).toLocaleString('en-IN')} - ₹ ${Number(job.salary_max).toLocaleString('en-IN')}` : `<span data-i18n="govt_scale">${window.t('govt_scale', 'Govt Scale')}</span>`}
                                             </span>
                                         </div>
                                     </div>
-                                    <div style="display: flex; flex-direction: column; gap: 0.5rem; align-items: flex-end; justify-content: space-between;">
-                                        <a href="${detailUrl}" class="btn-view" style="text-decoration:none;" data-i18n="btn_view_details">${window.t('btn_view_details', 'View Details')}</a>
-                                        <span class="badge badge-deadline" style="margin-top:0.5rem;" data-translate-key="apply_by" data-translate-suffix=": ${job.last_date}">${window.t('apply_by', 'Apply by')}: ${job.last_date}</span>
+                                    <div class="job-card-actions">
+                                        <a href="${detailUrl}" class="btn-view" style="text-decoration:none;" data-i18n="btn_view_details" aria-label="View details for ${job.title}">${window.t('btn_view_details', 'View Details')}</a>
+                                        <span class="badge badge-deadline" style="text-align:center; width:100%; box-sizing:border-box;" data-translate-key="apply_by" data-translate-prefix="📅 " data-translate-suffix=": ${job.last_date}">📅 ${window.t('apply_by', 'Apply by')}: ${job.last_date}</span>
                                     </div>
                                 </div>
                             `;

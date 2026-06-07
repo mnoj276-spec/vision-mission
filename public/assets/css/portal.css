@@ -513,6 +513,73 @@ header {
     box-shadow: 0 4px 12px rgba(37, 99, 235, 0.15);
 }
 
+/* Card Actions Container */
+.job-card-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    align-items: stretch;
+    justify-content: center;
+    width: 140px;
+    flex-shrink: 0;
+}
+
+/* Ensure buttons inside job-card-actions are perfectly aligned and sized */
+.job-card-actions .btn-view,
+.job-card-actions .toggle-bookmark-btn {
+    width: 100% !important;
+    padding: 0.6rem 1rem !important;
+    font-size: 0.85rem !important;
+    height: 38px !important;
+    border-radius: 8px !important;
+    box-sizing: border-box !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    font-weight: 600 !important;
+    margin: 0 !important;
+}
+
+.job-card-actions .toggle-bookmark-btn {
+    background: rgba(37, 99, 235, 0.06) !important;
+    color: var(--accent-color) !important;
+    border: 1px solid rgba(37, 99, 235, 0.15) !important;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.job-card-actions .toggle-bookmark-btn:hover {
+    background: var(--accent-color) !important;
+    color: #ffffff !important;
+    border-color: var(--accent-color) !important;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.15);
+}
+
+@media (max-width: 600px) {
+    .job-card-actions {
+        width: 100% !important;
+        flex-direction: row !important;
+        align-items: center !important;
+        gap: 0.75rem !important;
+        margin-top: 0.5rem;
+    }
+    .job-card-actions .btn-view,
+    .job-card-actions .toggle-bookmark-btn {
+        flex: 1 !important;
+    }
+}
+
+/* Accessibility Focus States */
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+    outline: 3px solid var(--accent-color) !important;
+    outline-offset: 2px !important;
+}
+
 /* Unified Button Design System */
 .btn-primary {
     padding: 0.6rem 1.2rem;
