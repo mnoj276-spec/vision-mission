@@ -319,7 +319,7 @@
     <div class="search-bar-glass-panel">
         <div class="search-input-wrapper">
             <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
-            <input type="text" id="searchKeywords" placeholder="Search government postings (e.g. UPSC, RBI Grade B, Banking)..." value="{{ $activeFilters['search'] ?? '' }}" autocomplete="off">
+            <input type="text" id="searchKeywords" data-i18n="search_placeholder" placeholder="Search government postings (e.g. UPSC, RBI Grade B, Banking)..." value="{{ $activeFilters['search'] ?? '' }}" autocomplete="off">
             @if(!empty($activeFilters['search']))
                 <button id="clearSearchBtn" style="background:none; border:none; color:var(--text-secondary); cursor:pointer; font-size:1.2rem; padding:0 0.5rem;">&times;</button>
             @endif
@@ -334,7 +334,7 @@
         @if(!empty($typoSuggestion))
             <div class="typo-banner">
                 <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
-                <span>Did you mean: <a id="suggestedQueryLink" data-query="{{ $typoSuggestion }}">{{ $typoSuggestion }}</a> ?</span>
+                <span><span data-i18n="did_you_mean">Did you mean:</span> <a id="suggestedQueryLink" data-query="{{ $typoSuggestion }}">{{ $typoSuggestion }}</a> ?</span>
             </div>
         @endif
     </div>
@@ -347,58 +347,58 @@
             <div class="filter-sidebar-panel">
                 <h3 style="font-family:'Outfit'; font-size:1.15rem; margin-bottom:1.25rem; display:flex; align-items:center; gap:0.5rem;">
                     <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"></path></svg>
-                    Filter Listings
+                    <span data-i18n="filter_title">Filter Listings</span>
                 </h3>
 
                 <!-- 1. State Filter -->
                 <div class="filter-group">
-                    <label class="filter-label">📍 State / Region</label>
+                    <label class="filter-label" data-i18n="filter_state">📍 State / Region</label>
                     <select class="filter-select" id="stateSelectFilter">
-                        <option value="">All Regions</option>
+                        <option value="" data-i18n="all_regions">All Regions</option>
                         @foreach($states as $state)
-                            <option value="{{ $state->id }}" {{ (isset($activeFilters['state_id']) && $activeFilters['state_id'] == $state->id) || (isset($activeFilters['state_slug']) && $activeFilters['state_slug'] == $state->slug) ? 'selected' : '' }}>{{ $state->name }}</option>
+                            <option value="{{ $state->id }}" data-translate-lookup="{{ $state->name }}" {{ (isset($activeFilters['state_id']) && $activeFilters['state_id'] == $state->id) || (isset($activeFilters['state_slug']) && $activeFilters['state_slug'] == $state->slug) ? 'selected' : '' }}>{{ $state->name }}</option>
                         @endforeach
                     </select>
                 </div>
 
                 <!-- 2. Category Filter -->
                 <div class="filter-group">
-                    <label class="filter-label">💼 Stream / Sector</label>
+                    <label class="filter-label" data-i18n="filter_stream">💼 Stream / Sector</label>
                     <select class="filter-select" id="categorySelectFilter">
-                        <option value="">All Streams</option>
+                        <option value="" data-i18n="all_streams">All Streams</option>
                         @foreach($categories as $cat)
-                            <option value="{{ $cat->id }}" {{ (isset($activeFilters['category_id']) && $activeFilters['category_id'] == $cat->id) || (isset($activeFilters['category_slug']) && $activeFilters['category_slug'] == $cat->slug) ? 'selected' : '' }}>{{ $cat->name }}</option>
+                            <option value="{{ $cat->id }}" data-translate-lookup="{{ $cat->name }}" {{ (isset($activeFilters['category_id']) && $activeFilters['category_id'] == $cat->id) || (isset($activeFilters['category_slug']) && $activeFilters['category_slug'] == $cat->slug) ? 'selected' : '' }}>{{ $cat->name }}</option>
                         @endforeach
                     </select>
                 </div>
 
                 <!-- 3. Qualification Filter -->
                 <div class="filter-group">
-                    <label class="filter-label">🎓 Candidate Degree</label>
+                    <label class="filter-label" data-i18n="filter_degree">🎓 Candidate Degree</label>
                     <select class="filter-select" id="qualSelectFilter">
-                        <option value="">All Degrees</option>
+                        <option value="" data-i18n="all_degrees">All Degrees</option>
                         @foreach($qualifications as $qual)
-                            <option value="{{ $qual->id }}" {{ (isset($activeFilters['qualification_id']) && $activeFilters['qualification_id'] == $qual->id) || (isset($activeFilters['qualification_slug']) && $activeFilters['qualification_slug'] == $qual->slug) ? 'selected' : '' }}>{{ $qual->name }}</option>
+                            <option value="{{ $qual->id }}" data-translate-lookup="{{ $qual->name }}" {{ (isset($activeFilters['qualification_id']) && $activeFilters['qualification_id'] == $qual->id) || (isset($activeFilters['qualification_slug']) && $activeFilters['qualification_slug'] == $qual->slug) ? 'selected' : '' }}>{{ $qual->name }}</option>
                         @endforeach
                     </select>
                 </div>
 
                 <!-- 4. Organization/Department Filter -->
                 <div class="filter-group">
-                    <label class="filter-label">🏢 Recruitment Board</label>
+                    <label class="filter-label" data-i18n="filter_board">🏢 Recruitment Board</label>
                     <select class="filter-select" id="deptSelectFilter">
-                        <option value="">All Boards</option>
+                        <option value="" data-i18n="all_boards">All Boards</option>
                         @foreach($departments as $dept)
-                            <option value="{{ $dept->id }}" {{ (isset($activeFilters['department_id']) && $activeFilters['department_id'] == $dept->id) || (isset($activeFilters['department_slug']) && $activeFilters['department_slug'] == $dept->slug) ? 'selected' : '' }}>{{ $dept->name }} ({{ $dept->code }})</option>
+                            <option value="{{ $dept->id }}" data-translate-lookup="{{ $dept->name }}" data-translate-suffix=" ({{ $dept->code }})" {{ (isset($activeFilters['department_id']) && $activeFilters['department_id'] == $dept->id) || (isset($activeFilters['department_slug']) && $activeFilters['department_slug'] == $dept->slug) ? 'selected' : '' }}>{{ $dept->name }} ({{ $dept->code }})</option>
                         @endforeach
                     </select>
                 </div>
 
                 <!-- 5. Salary Min Filter -->
                 <div class="filter-group">
-                    <label class="filter-label">💸 Minimum Salary</label>
+                    <label class="filter-label" data-i18n="filter_salary">💸 Minimum Salary</label>
                     <select class="filter-select" id="salarySelectFilter">
-                        <option value="">Any Salary Scale</option>
+                        <option value="" data-i18n="any_salary_scale">Any Salary Scale</option>
                         <option value="20000" {{ isset($activeFilters['min_salary']) && $activeFilters['min_salary'] == 20000 ? 'selected' : '' }}>₹ 20,000+ / mo</option>
                         <option value="40000" {{ isset($activeFilters['min_salary']) && $activeFilters['min_salary'] == 40000 ? 'selected' : '' }}>₹ 40,000+ / mo</option>
                         <option value="60000" {{ isset($activeFilters['min_salary']) && $activeFilters['min_salary'] == 60000 ? 'selected' : '' }}>₹ 60,000+ / mo</option>
@@ -410,13 +410,13 @@
                 <div class="filter-group">
                     <label class="filter-checkbox-wrapper">
                         <input type="checkbox" id="noFeeCheckFilter" {{ isset($activeFilters['has_no_fee']) && filter_var($activeFilters['has_no_fee'], FILTER_VALIDATE_BOOLEAN) ? 'checked' : '' }}>
-                        <span>Free Applications Only (₹0 fee)</span>
+                        <span data-i18n="filter_free_app">Free Applications Only (₹0 fee)</span>
                     </label>
                 </div>
 
                 <!-- Reset Btn -->
                 <div class="filter-group" style="margin-top:2rem;">
-                    <button class="reset-filters-btn" id="resetFiltersTrigger">Reset Parameters</button>
+                    <button class="reset-filters-btn" id="resetFiltersTrigger" data-i18n="btn_reset">Reset Parameters</button>
                 </div>
             </div>
         </div>
@@ -427,9 +427,9 @@
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem; flex-wrap:wrap; gap:1rem;">
                 <h2 style="font-family:'Outfit'; font-size:1.4rem; display:flex; align-items:center; gap:0.5rem;">
                     <span style="display:inline-block; width:8px; height:20px; background:var(--accent-color); border-radius:4px;"></span>
-                    <span id="jobsCountFeedback">Found {{ $jobs->total() }} recruitments</span>
+                    <span id="jobsCountFeedback" data-translate-key="found_jobs" data-translate-count="{{ $jobs->total() }}">Found {{ $jobs->total() }} recruitments</span>
                 </h2>
-                <div style="font-size:0.85rem; color:var(--text-secondary); background:var(--bg-secondary); border:1px solid var(--border-color); padding:0.4rem 0.8rem; border-radius:6px;">
+                <div style="font-size:0.85rem; color:var(--text-secondary); background:var(--bg-secondary); border:1px solid var(--border-color); padding:0.4rem 0.8rem; border-radius:6px;" data-i18n="sort_featured">
                     Sort: Featured First &bull; Fresh
                 </div>
             </div>
@@ -456,31 +456,31 @@
                     @endphp
                     <div class="glass-panel job-card" style="{{ $job->is_featured ? 'border-left: 4px solid var(--accent-color);' : '' }}">
                         <div class="job-info">
-                            <h3 style="display:flex; align-items:center; gap:0.5rem;">
-                                {{ $job->title }}
+                            <h3 style="display:flex; align-items:center; gap:0.5rem; flex-wrap:wrap;" title="{{ $job->title }}">
+                                <span class="notranslate" translate="no" data-translate-title="{{ $job->title }}" style="display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; text-overflow:ellipsis; white-space:normal; word-break:break-word; line-height:1.3;">{{ $job->title }}</span>
                                 @if($job->is_featured)
-                                    <span class="badge" style="background:var(--accent-color); color:#fff; font-size:0.7rem; padding:0.15rem 0.4rem;">FEATURED</span>
+                                    <span class="badge" style="background:var(--accent-color); color:#fff; font-size:0.7rem; padding:0.15rem 0.4rem; flex-shrink:0;" data-i18n="badge_featured">FEATURED</span>
                                 @endif
                             </h3>
                             <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 0.6rem;">
-                                {{ $job->department->name ?? 'Government Board' }} &bull; {{ $job->state->name ?? 'Pan India' }}
-                                @if($job->district) &bull; {{ $job->district->name }} @endif
+                                <span data-translate-lookup="{{ $job->department->name ?? 'Government Board' }}">{{ $job->department->name ?? 'Government Board' }}</span> &bull; <span data-translate-lookup="{{ $job->state->name ?? 'Pan India' }}">{{ $job->state->name ?? 'Pan India' }}</span>
+                                @if($job->district) &bull; <span>{{ $job->district->name }}</span> @endif
                             </p>
                             <div class="job-tags">
-                                <span class="badge badge-dept">{{ $job->qualification->name ?? 'Eligibility Required' }}</span>
-                                <span class="badge" style="background: rgba(16, 185, 129, 0.08); color: #10b981; font-weight:700;">Vacancies: {{ $job->vacancy_count }}</span>
+                                <span class="badge badge-dept" data-translate-lookup="{{ $job->qualification->name ?? 'Eligibility Required' }}">{{ $job->qualification->name ?? 'Eligibility Required' }}</span>
+                                <span class="badge" style="background: rgba(16, 185, 129, 0.08); color: #10b981; font-weight:700;" data-translate-key="vacancies_count" data-translate-prefix="" data-translate-suffix=": {{ $job->vacancy_count }}">Vacancies: {{ $job->vacancy_count }}</span>
                                 <span class="badge" style="background: rgba(139, 92, 246, 0.08); color: #8b5cf6; font-weight:700;">
                                     @if($job->salary_min > 0)
                                         ₹{{ number_format($job->salary_min, 0) }} - ₹{{ number_format($job->salary_max, 0) }}
                                     @else
-                                        Govt Scale
+                                        <span data-i18n="govt_scale">Govt Scale</span>
                                     @endif
                                 </span>
                             </div>
                         </div>
                         <div style="display: flex; flex-direction: column; gap: 0.5rem; align-items: flex-end; justify-content: space-between;">
-                            <a href="{{ $detailRoute }}" class="btn-view" style="text-decoration:none;">View Details</a>
-                            <span class="badge badge-deadline" style="margin-top:0.5rem;">Deadline: {{ $job->last_date_to_apply ? $job->last_date_to_apply->format('d M Y') : 'N/A' }}</span>
+                            <a href="{{ $detailRoute }}" class="btn-view" style="text-decoration:none;" data-i18n="btn_view_details">View Details</a>
+                            <span class="badge badge-deadline" style="margin-top:0.5rem;" data-translate-key="apply_by" data-translate-suffix=": {{ $job->last_date_to_apply ? $job->last_date_to_apply->format('d M Y') : 'N/A' }}">Deadline: {{ $job->last_date_to_apply ? $job->last_date_to_apply->format('d M Y') : 'N/A' }}</span>
                         </div>
                     </div>
                 @empty
@@ -582,7 +582,8 @@
                         const jobs = data.jobs;
 
                         // 1. Update total count text
-                        $('#jobsCountFeedback').text(`Found ${data.total} recruitments`);
+                        $('#jobsCountFeedback').text(window.t('found_jobs', `Found ${data.total} recruitments`).replace('{count}', data.total))
+                                               .attr('data-translate-count', data.total);
 
                         // 2. Render spell suggestion did-you-mean banner
                         const typoBanner = $('#typoCorrectionBanner');
@@ -590,7 +591,7 @@
                             typoBanner.html(`
                                 <div class="typo-banner">
                                     <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
-                                    <span>Did you mean: <a class="suggested-query" data-query="${data.typo_suggestion}">${data.typo_suggestion}</a> ?</span>
+                                    <span><span data-i18n="did_you_mean">${window.t('did_you_mean', 'Did you mean:')}</span> <a class="suggested-query" data-query="${data.typo_suggestion}">${data.typo_suggestion}</a> ?</span>
                                 </div>
                             `).fadeIn();
                         } else {
@@ -602,8 +603,8 @@
                             $('#jobsListContainer').html(`
                                 <div class="glass-panel" style="padding: 4rem; text-align: center; color: var(--text-secondary); border-style:dashed;">
                                     <svg width="48" height="48" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" style="color:var(--text-secondary); margin-bottom:1rem; opacity:0.6;"><path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
-                                    <h3 style="font-family:'Outfit'; color:var(--text-primary); margin-bottom:0.5rem;">No matching recruitments found</h3>
-                                    <p style="font-size:0.9rem;">We couldn't locate any active postings matching your search filters. Try widening your criteria or resetting filters.</p>
+                                    <h3 style="font-family:'Outfit'; color:var(--text-primary); margin-bottom:0.5rem;" data-i18n="no_matching_jobs">No matching recruitments found</h3>
+                                    <p style="font-size:0.9rem;" data-i18n="no_matching_jobs_desc">We couldn't locate any active postings matching your search filters. Try widening your criteria or resetting filters.</p>
                                 </div>
                             `).fadeIn();
                             return;
@@ -611,28 +612,30 @@
 
                         let html = '';
                         jobs.forEach(function(job) {
-                            const isFeaturedBadge = job.is_featured ? '<span class="badge" style="background:var(--accent-color); color:#fff; font-size:0.7rem; padding:0.15rem 0.4rem;">FEATURED</span>' : '';
+                            const isFeaturedBadge = job.is_featured ? `<span class="badge" style="background:var(--accent-color); color:#fff; font-size:0.7rem; padding:0.15rem 0.4rem; flex-shrink:0;" data-i18n="badge_featured">${window.t('badge_featured', 'FEATURED')}</span>` : '';
                             const detailUrl = `/job/${job.slug}`; // Fallback router
                             
                             html += `
                                 <div class="glass-panel job-card" style="${job.is_featured ? 'border-left: 4px solid var(--accent-color);' : ''}">
                                     <div class="job-info">
-                                        <h3 style="display:flex; align-items:center; gap:0.5rem;">
-                                            ${job.title} 
+                                        <h3 style="display:flex; align-items:center; gap:0.5rem; flex-wrap:wrap;" title="${job.title}">
+                                            <span class="notranslate" translate="no" data-translate-title="${job.title}" style="display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; text-overflow:ellipsis; white-space:normal; word-break:break-word; line-height:1.3;">${window.translateJobTitle(job.title)}</span> 
                                             ${isFeaturedBadge}
                                         </h3>
                                         <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 0.6rem;">
-                                            ${job.department} &bull; ${job.state}
+                                            <span data-translate-lookup="${job.department}">${window.t(job.department, job.department)}</span> &bull; <span data-translate-lookup="${job.state}">${window.t(job.state, job.state)}</span>
                                         </p>
                                         <div class="job-tags">
-                                            <span class="badge badge-dept">${job.qualification}</span>
-                                            <span class="badge" style="background: rgba(16, 185, 129, 0.08); color: #10b981; font-weight:700;">Vacancies: ${job.vacancy_count}</span>
-                                            <span class="badge" style="background: rgba(139, 92, 246, 0.08); color: #8b5cf6; font-weight:700;">₹ ${job.salary_min} - ₹ ${job.salary_max}</span>
+                                            <span class="badge badge-dept" data-translate-lookup="${job.qualification}">${window.t(job.qualification, job.qualification)}</span>
+                                            <span class="badge" style="background: rgba(16, 185, 129, 0.08); color: #10b981; font-weight:700;" data-translate-key="vacancies_count" data-translate-suffix=": ${job.vacancy_count}">${window.t('vacancies_count', 'Vacancies')}: ${job.vacancy_count}</span>
+                                            <span class="badge" style="background: rgba(139, 92, 246, 0.08); color: #8b5cf6; font-weight:700;">
+                                                ${job.salary_min > 0 ? `₹ ${job.salary_min} - ₹ ${job.salary_max}` : `<span data-i18n="govt_scale">${window.t('govt_scale', 'Govt Scale')}</span>`}
+                                            </span>
                                         </div>
                                     </div>
                                     <div style="display: flex; flex-direction: column; gap: 0.5rem; align-items: flex-end; justify-content: space-between;">
-                                        <a href="${detailUrl}" class="btn-view" style="text-decoration:none;">View Details</a>
-                                        <span class="badge badge-deadline" style="margin-top:0.5rem;">Deadline: ${job.last_date}</span>
+                                        <a href="${detailUrl}" class="btn-view" style="text-decoration:none;" data-i18n="btn_view_details">${window.t('btn_view_details', 'View Details')}</a>
+                                        <span class="badge badge-deadline" style="margin-top:0.5rem;" data-translate-key="apply_by" data-translate-suffix=": ${job.last_date}">${window.t('apply_by', 'Apply by')}: ${job.last_date}</span>
                                     </div>
                                 </div>
                             `;
@@ -657,7 +660,7 @@
                     $('#skeletonLoader').hide();
                     $('#jobsListContainer').html(`
                         <div class="glass-panel" style="padding: 3rem; text-align: center; color: #ef4444; border-color: rgba(239,68,68,0.2);">
-                            <strong>Search failed!</strong> Connection to database indexing timed out. Please retry.
+                            ${window.t('search_failed_timeout', 'Search failed! Connection to database indexing timed out. Please retry.')}
                         </div>
                     `).fadeIn();
                 }
@@ -670,14 +673,14 @@
 
             let html = '';
             if (current > 1) {
-                html += `<a href="#" class="page-link" data-page="${current - 1}">&laquo; Prev</a>`;
+                html += `<a href="#" class="page-link" data-page="${current - 1}">&laquo; ${window.t('btn_prev', 'Prev')}</a>`;
             }
             for (let i = 1; i <= last; i++) {
                 const activeClass = i === current ? 'active' : '';
                 html += `<a href="#" class="page-link ${activeClass}" data-page="${i}">${i}</a>`;
             }
             if (current < last) {
-                html += `<a href="#" class="page-link" data-page="${current + 1}">Next &raquo;</a>`;
+                html += `<a href="#" class="page-link" data-page="${current + 1}">${window.t('btn_next', 'Next')} &raquo;</a>`;
             }
             $('#paginationContainer').html(html);
         }
