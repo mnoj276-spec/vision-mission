@@ -1,0 +1,360 @@
+/* Custom Language Switcher Styles */
+.lang-switcher {
+    display: inline-flex;
+    align-items: center;
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    padding: 0.35rem 0.75rem;
+    border-radius: 50px;
+    gap: 0.4rem;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    box-shadow: var(--card-shadow);
+}
+.lang-btn {
+    background: none;
+    border: none;
+    color: var(--text-secondary);
+    font-size: 0.82rem;
+    font-weight: 600;
+    cursor: pointer;
+    padding: 0.15rem 0.45rem;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+    outline: none;
+}
+.lang-btn:hover {
+    color: var(--text-primary);
+}
+.lang-btn.active {
+    color: var(--accent-color);
+    text-shadow: 0 0 1px rgba(37, 99, 235, 0.4);
+}
+.lang-divider {
+    color: var(--glass-border);
+    font-size: 0.8rem;
+    user-select: none;
+}
+
+/* Premium Translation Loader Overlay */
+.translation-loader {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(9, 13, 22, 0.75);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1.25rem;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+}
+.translation-loader.active {
+    opacity: 1;
+    pointer-events: all;
+}
+.translation-loader .spinner {
+    width: 48px;
+    height: 48px;
+    border: 4px solid rgba(255, 255, 255, 0.1);
+    border-top-color: var(--accent-color);
+    border-radius: 50%;
+    animation: spin-loader 1s infinite linear;
+}
+.translation-loader .loader-text {
+    font-family: 'Outfit', sans-serif;
+    color: #ffffff;
+    font-size: 1rem;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+}
+@keyframes spin-loader {
+    to { transform: rotate(360deg); }
+}
+
+/* Smart Language Suggestion Bottom-Right Popup */
+.lang-suggestion-popup {
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    max-width: 380px;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    box-shadow: 0 15px 35px -5px rgba(0, 0, 0, 0.25);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-radius: 16px;
+    padding: 1.25rem;
+    display: none;
+    align-items: flex-start;
+    gap: 1rem;
+    z-index: 1060;
+    animation: slide-up-lang-popup 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+@keyframes slide-up-lang-popup {
+    from { transform: translateY(100px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+.lang-suggestion-popup .popup-icon {
+    background: rgba(37, 99, 235, 0.1);
+    color: var(--accent-color);
+    padding: 0.6rem;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+.lang-suggestion-popup .popup-content {
+    display: flex;
+    flex-direction: column;
+}
+.lang-suggestion-popup .popup-title {
+    font-family: 'Outfit', sans-serif;
+    font-size: 1rem;
+    font-weight: 800;
+    margin: 0 0 0.25rem 0;
+    color: var(--text-primary);
+}
+.lang-suggestion-popup .popup-text {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    margin: 0 0 1rem 0;
+    line-height: 1.5;
+}
+.lang-suggestion-popup .popup-actions {
+    display: flex;
+    gap: 0.5rem;
+}
+.lang-suggestion-popup .popup-btn {
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+.lang-suggestion-popup .btn-accept {
+    background: var(--accent-color);
+    color: white;
+}
+.lang-suggestion-popup .btn-accept:hover {
+    background: var(--accent-hover);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 10px rgba(37, 99, 235, 0.25);
+}
+.lang-suggestion-popup .btn-dismiss {
+    background: var(--bg-primary);
+    border: 1px solid var(--border-color);
+    color: var(--text-secondary);
+}
+.lang-suggestion-popup .btn-dismiss:hover {
+    background: var(--border-color);
+    color: var(--text-primary);
+}
+
+/* Floating Language Reset Pill at Bottom-Left */
+.lang-reset-pill {
+    position: fixed;
+    bottom: 2rem;
+    left: 2rem;
+    background: var(--accent-color);
+    color: white;
+    border: none;
+    padding: 0.6rem 1.25rem;
+    border-radius: 50px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: 0 4px 15px rgba(37, 99, 235, 0.3);
+    z-index: 1040;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+.lang-reset-pill:hover {
+    background: var(--accent-hover);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(37, 99, 235, 0.4);
+}
+
+/* Shift the pill when admin sidebar is present to avoid overlapping on desktop */
+@media (min-width: 901px) {
+    body:has(.admin-sidebar) .lang-reset-pill {
+        left: calc(260px + 5% + 2rem);
+    }
+}
+
+
+/* Responsive Overrides & Guards for Translated Content */
+body, html {
+    word-wrap: break-word;
+    overflow-x: hidden;
+}
+.job-card, .glass-panel, .details-grid, .sidebar-panel, .modal-box {
+    word-break: break-word;
+    overflow-wrap: break-word;
+}
+.job-card, .mobile-drawer-header, .details-summary-grid, .tab-headers {
+    flex-wrap: wrap;
+}
+
+/* Typography fallbacks for Hindi locale */
+html[lang="hi"], 
+html[lang="hi"] body, 
+html[lang="hi"] button, 
+html[lang="hi"] input, 
+html[lang="hi"] select, 
+html[lang="hi"] textarea,
+html.lang-hi,
+html.lang-hi body,
+html.lang-hi button,
+html.lang-hi input,
+html.lang-hi select,
+html.lang-hi textarea,
+html.lang-hi * {
+    font-family: 'Hind', 'Noto Sans Devanagari', 'Inter', sans-serif !important;
+}
+
+html[lang="hi"] h1, 
+html[lang="hi"] h2, 
+html[lang="hi"] h3, 
+html[lang="hi"] h4, 
+html[lang="hi"] .logo,
+html.lang-hi h1,
+html.lang-hi h2,
+html.lang-hi h3,
+html.lang-hi h4,
+html.lang-hi .logo,
+html.lang-hi .card-title {
+    font-family: 'Hind', 'Noto Sans Devanagari', 'Outfit', sans-serif !important;
+}
+
+/* Exclude ticker items from button override styles */
+html.lang-hi .ticker-item.btn-view,
+html.lang-hi .sarkari-item-link.btn-view,
+html[lang="hi"] .ticker-item.btn-view,
+html[lang="hi"] .sarkari-item-link.btn-view {
+    font-family: inherit !important;
+}
+
+/* Allow text wrapping for buttons except for horizontal scrolling marquee ticker items */
+.btn, .btn-primary, .btn-secondary, .btn-success, .btn-danger, .btn-warning, .btn-info, .btn-view:not(.ticker-item):not(.sarkari-item-link), .form-btn {
+    white-space: normal !important;
+    word-break: break-word;
+    height: auto !important;
+    min-height: 44px;
+}
+
+@media (max-width: 600px) {
+    .lang-suggestion-popup {
+        bottom: 1rem;
+        left: 1rem;
+        right: 1rem;
+        max-width: calc(100% - 2rem);
+    }
+    .lang-reset-pill {
+        bottom: 1rem;
+        left: 1rem;
+        padding: 0.5rem 1rem;
+        font-size: 0.8rem;
+    }
+}
+
+/* ==================== DYNAMIC HEADER SPACE & NO-WRAP ADJUSTMENTS ==================== */
+
+/* 1. Prevent text wrapping inside header elements so they never break to new lines internally */
+.logo, 
+.logo span, 
+.nav-links a, 
+.theme-toggle-btn, 
+.lang-switcher, 
+.user-menu-dropdown button, 
+.user-menu-dropdown span {
+    white-space: nowrap !important;
+}
+
+/* 2. For medium/desktop screens (laptops, split screen): scale down spacing and font sizes dynamically */
+@media (max-width: 1400px) {
+    header {
+        padding: 0.6rem 2.5% !important; /* reduce outer horizontal padding */
+    }
+    .navbar {
+        gap: 1rem;
+    }
+    .nav-links {
+        gap: 1.25rem !important; /* reduce gap between menu links */
+    }
+    .logo {
+        font-size: 1.35rem !important;
+    }
+    .nav-links a {
+        font-size: 0.88rem !important;
+    }
+}
+
+@media (max-width: 1200px) {
+    .nav-links {
+        gap: 0.85rem !important; /* reduce gap even further for tight space */
+    }
+    .nav-links a {
+        font-size: 0.82rem !important;
+    }
+    .theme-toggle-btn, 
+    .user-menu-dropdown button {
+        padding: 0.45rem 0.8rem !important;
+        font-size: 0.82rem !important;
+    }
+}
+
+/* 3. For mobile viewports (1024px and below): handle theme text and switcher */
+@media (max-width: 1024px) {
+    .header-actions {
+        gap: 0.5rem !important;
+    }
+}
+
+@media (max-width: 768px) {
+    /* Hide the text 'Night Mode' / 'Day Mode' to show only the icon on small viewports */
+    .theme-toggle-btn span#themeText {
+        display: none !important;
+    }
+    .theme-toggle-btn {
+        padding: 0.5rem !important;
+        border-radius: 50% !important;
+        justify-content: center;
+        width: 38px;
+        height: 38px;
+        min-width: 38px !important;
+        min-height: 38px !important;
+    }
+    /* Hide the header language switcher on mobile since it's already inside the mobile menu drawer */
+    .header-actions .lang-switcher {
+        display: none !important;
+    }
+}
+
+@media (max-width: 480px) {
+    /* Hide username on very small screens to fit log out and hamburger */
+    .user-menu-dropdown span {
+        display: none !important;
+    }
+    .user-menu-dropdown button {
+        padding: 0.5rem !important;
+        border-radius: 50% !important;
+        width: 38px;
+        height: 38px;
+        min-width: 38px !important;
+        min-height: 38px !important;
+        justify-content: center;
+    }
+}

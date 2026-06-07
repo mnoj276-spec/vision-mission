@@ -137,4 +137,7 @@ Route::prefix('api')->group(function () {
     });
 });
 
+// Dynamic CMS page route
+Route::get('/p/{slug}', [\App\Domains\Jobs\Controllers\JobController::class, 'showCmsPage'])->name('cms.page');
+
 

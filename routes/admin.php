@@ -3,6 +3,7 @@
 use App\Domains\Admin\Controllers\AdminDashboardController;
 use App\Domains\Admin\Controllers\MasterDataController;
 use App\Domains\Admin\Controllers\AdManagementController;
+use App\Domains\Admin\Controllers\SettingsManagementController;
 use App\Domains\Jobs\Controllers\AdminJobController;
 use App\Domains\Users\Controllers\AdminUserController;
 use Illuminate\Support\Facades\Route;
@@ -13,7 +14,7 @@ use Illuminate\Support\Facades\Route;
 |--------------------------------------------------------------------------
 | All admin panel endpoints. Protected by auth + EnsureAdmin middleware.
 | URL prefix: /api/admin  (kept identical to original to avoid JS changes)
-*/
+| */
 
 Route::middleware(['auth', 'admin'])->prefix('api/admin')->group(function () {
 
@@ -29,12 +30,44 @@ Route::middleware(['auth', 'admin'])->prefix('api/admin')->group(function () {
         ->middleware('permission:view_audit_logs')
         ->name('admin.activity-logs');
 
-    // ─── Global SEO & Ad Settings ─────────────────────────────────────────────
+    // ─── Global SEO & Ad Settings & Unified Dynamic Settings Module ──────────
     Route::middleware('permission:manage_seo')->group(function () {
         Route::post('/seo/update', [AdminDashboardController::class, 'updateSeoSettings'])->name('admin.seo.update');
         Route::get('/advertisements', [AdManagementController::class, 'index'])->name('admin.ads.index');
         Route::post('/advertisements', [AdManagementController::class, 'storeOrUpdate'])->name('admin.ads.store_update');
         Route::post('/advertisements/{id}/toggle', [AdManagementController::class, 'toggleActive'])->name('admin.ads.toggle');
+
+        // Dynamic Settings Module APIs
+        Route::get('/settings', [SettingsManagementController::class, 'getSettings'])->name('admin.settings.index');
+        Route::post('/settings/general', [SettingsManagementController::class, 'updateGeneralSettings'])->name('admin.settings.general');
+        Route::post('/settings/logo', [SettingsManagementController::class, 'uploadLogo'])->name('admin.settings.logo');
+        Route::post('/settings/theme', [SettingsManagementController::class, 'updateThemeSettings'])->name('admin.settings.theme');
+        Route::post('/settings/seo', [SettingsManagementController::class, 'updateSeoSettings'])->name('admin.settings.seo');
+        Route::post('/settings/email', [SettingsManagementController::class, 'updateEmailSettings'])->name('admin.settings.email');
+        Route::post('/settings/email/test', [SettingsManagementController::class, 'testSmtpConnection'])->name('admin.settings.email.test');
+        Route::post('/settings/api', [SettingsManagementController::class, 'updateApiSettings'])->name('admin.settings.api');
+        Route::post('/settings/social', [SettingsManagementController::class, 'updateSocialLinks'])->name('admin.settings.social');
+        
+        Route::get('/settings/menus', [SettingsManagementController::class, 'getMenus'])->name('admin.settings.menus');
+        Route::post('/settings/menus', [SettingsManagementController::class, 'saveMenuItem'])->name('admin.settings.menus.save');
+        Route::post('/settings/menus/reorder', [SettingsManagementController::class, 'reorderMenuItems'])->name('admin.settings.menus.reorder');
+        Route::delete('/settings/menus/{id}', [SettingsManagementController::class, 'deleteMenuItem'])->name('admin.settings.menus.delete');
+        
+        Route::get('/settings/cms-pages', [SettingsManagementController::class, 'getCmsPages'])->name('admin.settings.cms.index');
+        Route::get('/settings/cms-pages/{id}', [SettingsManagementController::class, 'getCmsPageDetail'])->name('admin.settings.cms.detail');
+        Route::post('/settings/cms-pages', [SettingsManagementController::class, 'saveCmsPage'])->name('admin.settings.cms.save');
+        Route::delete('/settings/cms-pages/{id}', [SettingsManagementController::class, 'deleteCmsPage'])->name('admin.settings.cms.delete');
+        
+        Route::get('/settings/media', [SettingsManagementController::class, 'getMedia'])->name('admin.settings.media.index');
+        Route::post('/settings/media/upload', [SettingsManagementController::class, 'uploadMedia'])->name('admin.settings.media.upload');
+        Route::post('/settings/media/folder', [SettingsManagementController::class, 'createFolder'])->name('admin.settings.media.folder');
+        Route::delete('/settings/media', [SettingsManagementController::class, 'deleteMedia'])->name('admin.settings.media.delete');
+        
+        Route::get('/settings/backups', [SettingsManagementController::class, 'getBackups'])->name('admin.settings.backups.index');
+        Route::post('/settings/backups/generate', [SettingsManagementController::class, 'generateBackup'])->name('admin.settings.backups.generate');
+        Route::post('/settings/backups/restore', [SettingsManagementController::class, 'restoreBackup'])->name('admin.settings.backups.restore');
+        Route::delete('/settings/backups/{filename}', [SettingsManagementController::class, 'deleteBackup'])->name('admin.settings.backups.delete');
+        Route::get('/settings/backups/download/{filename}', [SettingsManagementController::class, 'downloadBackup'])->name('admin.settings.backups.download');
     });
 
     // ─── Queue & DLQ Management ──────────────────────────────────────────────

@@ -41,9 +41,9 @@ class JobController extends Controller
         // Track AJAX search
         try {
             if ($request->filled('search') || !empty(array_filter($filters))) {
-                app(\App\Services\AnalyticsService::class)->trackSearchQuery($request->input('search', ''), $filters, $jobs->total());
+                app(\App\Services\AnalyticsService::class)->trackSearchQuery((string) ($request->input('search') ?? ''), $filters, $jobs->total());
             }
-        } catch (\Exception $e) {}
+        } catch (\Throwable $e) {}
 
         $formattedJobs = collect($jobs->items())->map(fn ($job) => [
             'id'              => $job->id,
@@ -303,6 +303,18 @@ class JobController extends Controller
             'pageTitle' => 'Offline Mode — GovJobs Recruitment Portal',
             'metaDescription' => 'Your device is currently disconnected from the internet. Standby offline engine is running.',
             'breadcrumbs' => ['Offline Mode' => null]
+        ]);
+    }
+
+    public function showCmsPage(string $slug)
+    {
+        $page = \App\Models\CmsPage::where('slug', $slug)->where('is_active', true)->firstOrFail();
+        
+        return view('cms_page', [
+            'pageTitle' => $page->meta_title ?? ($page->title . ' - ' . setting('website_name', 'GovJobs')),
+            'metaDescription' => $page->meta_description ?? setting('meta_description', ''),
+            'metaKeywords' => $page->meta_keywords ?? setting('meta_keywords', ''),
+            'page' => $page
         ]);
     }
 }

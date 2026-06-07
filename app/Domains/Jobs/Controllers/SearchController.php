@@ -46,7 +46,9 @@ class SearchController extends Controller
             $jobs = $this->searchService->searchJobs($filters, 8);
             
             // Track search
-            app(\App\Services\AnalyticsService::class)->trackSearchQuery($request->input('search', ''), $filters, $jobs->total());
+            try {
+                app(\App\Services\AnalyticsService::class)->trackSearchQuery((string) ($request->input('search') ?? ''), $filters, $jobs->total());
+            } catch (\Throwable $e) {}
             
             $formattedJobs = collect($jobs->items())->map(fn ($job) => [
                 'id'              => $job->id,
@@ -82,8 +84,12 @@ class SearchController extends Controller
         $spellcheck = !empty($filters['search']) ? $this->searchService->getSpellCorrection($filters['search']) : null;
 
         // Track page view and search query
-        app(\App\Services\AnalyticsService::class)->trackPageView('/search', $request->header('referer'));
-        app(\App\Services\AnalyticsService::class)->trackSearchQuery($request->input('search', ''), $filters, $jobs->total());
+        try {
+            app(\App\Services\AnalyticsService::class)->trackPageView('/search', $request->header('referer'));
+        } catch (\Throwable $e) {}
+        try {
+            app(\App\Services\AnalyticsService::class)->trackSearchQuery((string) ($request->input('search') ?? ''), $filters, $jobs->total());
+        } catch (\Throwable $e) {}
 
         return view('search', array_merge($this->getSearchMetadata(), [
             'jobs' => $jobs,
@@ -107,8 +113,12 @@ class SearchController extends Controller
         $jobs = $this->searchService->searchJobs($filters, 8);
 
         // Track state search view
-        app(\App\Services\AnalyticsService::class)->trackPageView('/search/state/' . $slug, request()->header('referer'));
-        app(\App\Services\AnalyticsService::class)->trackSearchQuery('', $filters, $jobs->total());
+        try {
+            app(\App\Services\AnalyticsService::class)->trackPageView('/search/state/' . $slug, request()->header('referer'));
+        } catch (\Throwable $e) {}
+        try {
+            app(\App\Services\AnalyticsService::class)->trackSearchQuery('', $filters, $jobs->total());
+        } catch (\Throwable $e) {}
 
         return view('search', array_merge($this->getSearchMetadata(), [
             'jobs' => $jobs,
@@ -132,8 +142,12 @@ class SearchController extends Controller
         $jobs = $this->searchService->searchJobs($filters, 8);
 
         // Track category search view
-        app(\App\Services\AnalyticsService::class)->trackPageView('/search/category/' . $slug, request()->header('referer'));
-        app(\App\Services\AnalyticsService::class)->trackSearchQuery('', $filters, $jobs->total());
+        try {
+            app(\App\Services\AnalyticsService::class)->trackPageView('/search/category/' . $slug, request()->header('referer'));
+        } catch (\Throwable $e) {}
+        try {
+            app(\App\Services\AnalyticsService::class)->trackSearchQuery('', $filters, $jobs->total());
+        } catch (\Throwable $e) {}
 
         return view('search', array_merge($this->getSearchMetadata(), [
             'jobs' => $jobs,
@@ -157,8 +171,12 @@ class SearchController extends Controller
         $jobs = $this->searchService->searchJobs($filters, 8);
 
         // Track qualification search view
-        app(\App\Services\AnalyticsService::class)->trackPageView('/search/qualification/' . $slug, request()->header('referer'));
-        app(\App\Services\AnalyticsService::class)->trackSearchQuery('', $filters, $jobs->total());
+        try {
+            app(\App\Services\AnalyticsService::class)->trackPageView('/search/qualification/' . $slug, request()->header('referer'));
+        } catch (\Throwable $e) {}
+        try {
+            app(\App\Services\AnalyticsService::class)->trackSearchQuery('', $filters, $jobs->total());
+        } catch (\Throwable $e) {}
 
         return view('search', array_merge($this->getSearchMetadata(), [
             'jobs' => $jobs,
@@ -182,8 +200,12 @@ class SearchController extends Controller
         $jobs = $this->searchService->searchJobs($filters, 8);
 
         // Track organization search view
-        app(\App\Services\AnalyticsService::class)->trackPageView('/search/organization/' . $slug, request()->header('referer'));
-        app(\App\Services\AnalyticsService::class)->trackSearchQuery('', $filters, $jobs->total());
+        try {
+            app(\App\Services\AnalyticsService::class)->trackPageView('/search/organization/' . $slug, request()->header('referer'));
+        } catch (\Throwable $e) {}
+        try {
+            app(\App\Services\AnalyticsService::class)->trackSearchQuery('', $filters, $jobs->total());
+        } catch (\Throwable $e) {}
 
         return view('search', array_merge($this->getSearchMetadata(), [
             'jobs' => $jobs,

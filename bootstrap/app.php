@@ -38,6 +38,9 @@ return Application::configure(basePath: dirname(__DIR__))
             'spatie_permission'  => \Spatie\Permission\Middleware\PermissionMiddleware::class,
             'internal_linking'   => \App\Http\Middleware\InternalLinkingHeaders::class,
         ]);
+
+        $middleware->prependToGroup('web', \App\Http\Middleware\DynamicMaintenanceMode::class);
+        $middleware->prependToGroup('api', \App\Http\Middleware\DynamicMaintenanceMode::class);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         $exceptions->render(function (\Throwable $e, \Illuminate\Http\Request $request) {

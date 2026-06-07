@@ -1,17 +1,16 @@
 @inject('seoService', 'App\Domains\Jobs\Services\SeoService')
 @php
     $seo = [
-        'meta_title' => 'GovJobs - Premium Automated Government Jobs Portal',
-        'meta_description' => 'Discover real-time, highly validated recruitment alerts verified by AI across UPSC, SSC, Banking, and Railways. Fast, mobile responsive, and fully automated.',
-        'meta_keywords' => 'government jobs, upsc, ssc, banking, railways, rrb, admit cards, results'
+        'meta_title' => seo_setting('meta_title', 'GovJobs - Premium Automated Government Jobs Portal'),
+        'meta_description' => seo_setting('meta_description', 'Discover real-time, highly validated recruitment alerts verified by AI across UPSC, SSC, Banking, and Railways. Fast, mobile responsive, and fully automated.'),
+        'meta_keywords' => seo_setting('meta_keywords', 'government jobs, upsc, ssc, banking, railways, rrb, admit cards, results'),
+        'og_title' => seo_setting('og_title', seo_setting('meta_title', 'GovJobs')),
+        'og_description' => seo_setting('og_description', seo_setting('meta_description', 'Discover real-time...')),
+        'og_image' => seo_setting('og_image', asset('assets/images/icons/pwa-icon-192.png')),
+        'twitter_title' => seo_setting('twitter_title', seo_setting('meta_title', 'GovJobs')),
+        'twitter_description' => seo_setting('twitter_description', seo_setting('meta_description', 'Discover real-time...')),
+        'twitter_image' => seo_setting('twitter_image', seo_setting('og_image')),
     ];
-    $settingsPath = storage_path('app/seo_settings.json');
-    if (file_exists($settingsPath)) {
-        $settings = json_decode(file_get_contents($settingsPath), true);
-        if (is_array($settings)) {
-            $seo = array_merge($seo, $settings);
-        }
-    }
 @endphp
 <!DOCTYPE html>
 <html lang="en">
@@ -24,21 +23,21 @@
     <!-- Meta SEO Binds -->
     <meta name="description" content="{{ $seo['meta_description'] }}">
     <meta name="keywords" content="{{ $seo['meta_keywords'] }}">
-    <meta name="robots" content="index, follow">
+    <meta name="robots" content="{{ seo_setting('robots_txt', 'index, follow') }}">
 
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website">
     <meta property="og:url" content="{{ request()->url() }}">
-    <meta property="og:title" content="@yield('title', $seo['meta_title'])">
-    <meta property="og:description" content="{{ $seo['meta_description'] }}">
-    <meta property="og:image" content="{{ request()->getSchemeAndHttpHost() }}/assets/images/icons/pwa-icon-192.png">
+    <meta property="og:title" content="@yield('title', $seo['og_title'])">
+    <meta property="og:description" content="{{ $seo['og_description'] }}">
+    <meta property="og:image" content="{{ $seo['og_image'] }}">
 
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image">
     <meta property="twitter:url" content="{{ request()->url() }}">
-    <meta property="twitter:title" content="@yield('title', $seo['meta_title'])">
-    <meta property="twitter:description" content="{{ $seo['meta_description'] }}">
-    <meta property="twitter:image" content="{{ request()->getSchemeAndHttpHost() }}/assets/images/icons/pwa-icon-192.png">
+    <meta property="twitter:title" content="@yield('title', $seo['twitter_title'])">
+    <meta property="twitter:description" content="{{ $seo['twitter_description'] }}">
+    <meta property="twitter:image" content="{{ $seo['twitter_image'] }}">
 
     <!-- Canonical URL -->
     <link rel="canonical" href="{{ request()->url() }}">
@@ -48,10 +47,16 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
     <!-- Speed Optimization: Async Web Fonts Loading -->
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&family=Hind:wght@400;500;600;700&family=Noto+Sans+Devanagari:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <!-- Custom Design Stylesheet -->
     <link rel="stylesheet" href="{{ asset('assets/css/portal.css') }}">
+
+    <!-- Google Translate Custom Translator Stylesheet -->
+    <link rel="stylesheet" href="{{ asset('assets/css/translator.css') }}">
 
     @if(!auth()->check() || !in_array(auth()->user()->membership_plan, ['premium', 'pro']))
         @if(config('app.env') !== 'local' && config('app.env') !== 'testing')
@@ -82,6 +87,61 @@
     <meta name="apple-mobile-web-app-title" content="GovJobs">
     <link rel="apple-touch-icon" href="/assets/images/icons/pwa-icon-192.png">
     <meta name="theme-color" content="#2563eb">
+    
+    <!-- Anti-FOUC (Flash of Untranslated Content) style guard -->
+    <script>
+        (function() {
+            const preferredLang = localStorage.getItem('preferred_language') || 'en';
+            const userAgent = navigator.userAgent.toLowerCase();
+            const isBot = /bot|googlebot|bingbot|yandex|baidu|crawler|spider|robot|crawling|lighthouse|chrome-lighthouse/i.test(userAgent);
+            if (preferredLang === 'hi' && !isBot) {
+                document.documentElement.classList.add('lang-hi');
+                document.write('<style id="fouc-guard">body { visibility: hidden !important; }</style>');
+            }
+        })();
+    </script>
+    <!-- Dynamic theme custom properties injection -->
+    <style>
+        :root {
+            @if(theme_setting('accent_color')) --accent-color: {{ theme_setting('accent_color') }}; @endif
+            @if(theme_setting('accent_color')) --accent-hover: {{ theme_setting('accent_color') }}dd; @endif
+            @if(theme_setting('background_color')) --bg-primary: {{ theme_setting('background_color') }}; @endif
+            @if(theme_setting('text_color')) --text-primary: {{ theme_setting('text_color') }}; @endif
+        }
+        .dark-theme {
+            --bg-primary: #090d16;
+            --bg-secondary: #111827;
+            --text-primary: #f3f4f6;
+            --text-secondary: #9ca3af;
+            --accent-color: #3b82f6;
+            --accent-hover: #60a5fa;
+            --border-color: rgba(37, 99, 235, 0.15);
+            --glass-bg: rgba(17, 24, 39, 0.65);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --card-shadow: 0 15px 35px -12px rgba(0, 0, 0, 0.5);
+            --pulse-bg: #1f2937;
+
+            @if(theme_setting('dark_primary_color')) --accent-color: {{ theme_setting('dark_primary_color') }}; @endif
+            @if(theme_setting('dark_primary_color')) --accent-hover: {{ theme_setting('dark_primary_color') }}dd; @endif
+            @if(theme_setting('dark_background_color')) --bg-primary: {{ theme_setting('dark_background_color') }}; @endif
+        }
+        
+        /* Dropdown styling */
+        .nav-links li:hover .dropdown-menu-list {
+            display: block !important;
+        }
+        .dropdown-menu-list {
+            background: var(--bg-secondary) !important;
+            border: 1px solid var(--border-color) !important;
+        }
+        .dropdown-menu-list a:hover {
+            background: rgba(37,99,235,0.08) !important;
+            color: var(--accent-color) !important;
+        }
+    </style>
+
+    <!-- Custom Injected Header Scripts -->
+    {!! setting('header_scripts') !!}
 </head>
 <body>
 
@@ -89,23 +149,87 @@
     <header class="glass-panel">
         <nav class="navbar">
             <a href="/" class="logo">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="color: var(--accent-color);"><path d="M12 2L2 7l10 5 10-5-10-5z"></path><path d="M2 17l10 5 10-5"></path><path d="M2 12l10 5 10-5"></path></svg>
-                Gov<span>Jobs</span>
+                @if(setting('header_logo'))
+                    <img src="{{ asset(setting('header_logo')) }}" alt="{{ setting('website_name', 'GovJobs') }}" style="max-height: 40px; border-radius: 4px;">
+                @else
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="color: var(--accent-color);"><path d="M12 2L2 7l10 5 10-5-10-5z"></path><path d="M2 17l10 5 10-5"></path><path d="M2 12l10 5 10-5"></path></svg>
+                @endif
+                <span>{!! setting('website_name', 'Gov<span>Jobs</span>') !!}</span>
             </a>
             
             <ul class="nav-links">
-                <li><a href="/#jobs-search-section" class="nav-tab-trigger" data-target="jobs">Home</a></li>
-                <li><a href="/ssc-jobs" style="font-weight: 700;">SSC Board</a></li>
-                <li><a href="/railway-jobs" style="font-weight: 700;">Railways</a></li>
-                <li><a href="/upsc-jobs" style="font-weight: 700;">UPSC</a></li>
-                <li><a href="/state-jobs" style="font-weight: 700;">State Jobs</a></li>
-                <li><a href="/#info-hub-section" class="nav-tab-trigger" data-target="info-hub">Info Hub</a></li>
+                @forelse($headerMenu as $mItem)
+                    @if($mItem->children->count() > 0)
+                        <li class="nav-item-dropdown" style="position: relative;">
+                            <a href="{{ $mItem->url }}" target="{{ $mItem->target }}" class="dropdown-trigger" style="font-weight: 700; display: flex; align-items: center; gap: 0.25rem;">
+                                @if($mItem->icon)
+                                    <span class="menu-icon">
+                                        @if(str_starts_with(trim($mItem->icon), '<'))
+                                            {!! $mItem->icon !!}
+                                        @else
+                                            <i class="{{ $mItem->icon }}"></i>
+                                        @endif
+                                    </span>
+                                @endif
+                                {{ $mItem->title }}
+                                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                            </a>
+                            <ul class="dropdown-menu-list glass-panel" style="display: none; position: absolute; top: 100%; left: 0; min-width: 200px; list-style: none; padding: 0.5rem; border-radius: 8px; box-shadow: var(--card-shadow); z-index: 100;">
+                                @foreach($mItem->children as $childItem)
+                                    <li>
+                                        <a href="{{ $childItem->url }}" target="{{ $childItem->target }}" class="dropdown-item" style="padding: 0.5rem 1rem; display: block; border-radius: 6px; font-weight: 500; font-size: 0.85rem;">
+                                            @if($childItem->icon)
+                                                <span class="menu-icon">
+                                                    @if(str_starts_with(trim($childItem->icon), '<'))
+                                                        {!! $childItem->icon !!}
+                                                    @else
+                                                        <i class="{{ $childItem->icon }}"></i>
+                                                    @endif
+                                                </span>
+                                            @endif
+                                            {{ $childItem->title }}
+                                        </a>
+                                    </li>
+                                @endforeach
+                            </ul>
+                        </li>
+                    @else
+                        <li>
+                            <a href="{{ $mItem->url }}" target="{{ $mItem->target }}" style="font-weight: 700;">
+                                @if($mItem->icon)
+                                    <span class="menu-icon">
+                                        @if(str_starts_with(trim($mItem->icon), '<'))
+                                            {!! $mItem->icon !!}
+                                        @else
+                                            <i class="{{ $mItem->icon }}"></i>
+                                        @endif
+                                    </span>
+                                @endif
+                                {{ $mItem->title }}
+                            </a>
+                        </li>
+                    @endif
+                @empty
+                    <li><a href="/#jobs-search-section" class="nav-tab-trigger" data-target="jobs" data-i18n="nav_home">Home</a></li>
+                    <li><a href="/ssc-jobs" style="font-weight: 700;" data-i18n="nav_ssc">SSC Board</a></li>
+                    <li><a href="/railway-jobs" style="font-weight: 700;" data-i18n="nav_railway">Railways</a></li>
+                    <li><a href="/upsc-jobs" style="font-weight: 700;" data-i18n="nav_upsc">UPSC</a></li>
+                    <li><a href="/state-jobs" style="font-weight: 700;" data-i18n="nav_state">State Jobs</a></li>
+                    <li><a href="/#info-hub-section" class="nav-tab-trigger" data-target="info-hub" data-i18n="nav_info">Info Hub</a></li>
+                @endforelse
             </ul>
 
             <div class="header-actions" style="display: flex; gap: 0.75rem; align-items: center;">
-                <button class="theme-toggle-btn" id="themeToggle">
+                <!-- Language Switcher Badge -->
+                <div class="lang-switcher" aria-label="Language Selector" role="navigation">
+                    <button type="button" class="lang-btn active" data-lang="en" aria-label="Switch to English" aria-current="true">EN</button>
+                    <span class="lang-divider" aria-hidden="true">|</span>
+                    <button type="button" class="lang-btn" data-lang="hi" aria-label="Switch to Hindi" aria-current="false">हिन्दी</button>
+                </div>
+
+                <button class="theme-toggle-btn" id="themeToggle" aria-label="Toggle Theme Mode">
                     <svg id="themeIcon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></svg>
-                    <span id="themeText">Night Mode</span>
+                    <span id="themeText" data-i18n="theme_night">Night Mode</span>
                 </button>
 
                 @auth
@@ -115,18 +239,18 @@
                             <span style="max-width: 100px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">{{ auth()->user()->name }}</span>
                         </button>
                         <div class="dropdown-menu">
-                            <a href="/#dashboard-section" class="dropdown-item nav-tab-trigger" data-target="dashboard">Dashboard</a>
+                            <a href="/#dashboard-section" class="dropdown-item nav-tab-trigger" data-target="dashboard" data-i18n="dropdown_dashboard">Dashboard</a>
                             @can('admin-access')
-                                <a href="{{ route('admin.dashboard') }}" class="dropdown-item">Admin Panel</a>
+                                <a href="{{ route('admin.dashboard') }}" class="dropdown-item" data-i18n="dropdown_admin">Admin Panel</a>
                             @endcan
                             <div class="dropdown-divider"></div>
-                            <button class="dropdown-item" id="logoutBtn" style="border:none; background:none; width:100%; cursor:pointer;">Logout</button>
+                            <button class="dropdown-item" id="logoutBtn" style="border:none; background:none; width:100%; cursor:pointer;" data-i18n="dropdown_logout">Logout</button>
                         </div>
                     </div>
                 @else
                     <button class="theme-toggle-btn" id="openAuthModalBtn">
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path><polyline points="10 17 15 12 10 7"></polyline><line x1="15" y1="12" x2="3" y2="12"></line></svg>
-                        Login / Register
+                        <span data-i18n="btn_login_register">Login / Register</span>
                     </button>
                 @endauth
 
@@ -143,31 +267,60 @@
     <div class="mobile-drawer glass-panel" id="mobileDrawer">
         <div class="mobile-drawer-header">
             <a href="/" class="logo">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="color: var(--accent-color);"><path d="M12 2L2 7l10 5 10-5-10-5z"></path><path d="M2 17l10 5 10-5"></path><path d="M2 12l10 5 10-5"></path></svg>
-                Gov<span>Jobs</span>
+                @if(setting('header_logo'))
+                    <img src="{{ asset(setting('header_logo')) }}" alt="{{ setting('website_name', 'GovJobs') }}" style="max-height: 40px; border-radius: 4px;">
+                @else
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="color: var(--accent-color);"><path d="M12 2L2 7l10 5 10-5-10-5z"></path><path d="M2 17l10 5 10-5"></path><path d="M2 12l10 5 10-5"></path></svg>
+                @endif
+                <span>{!! setting('website_name', 'Gov<span>Jobs</span>') !!}</span>
             </a>
-            <button class="drawer-close-btn" id="closeMobileDrawerBtn">&times;</button>
+            <button class="drawer-close-btn" id="closeMobileDrawerBtn" aria-label="Close navigation menu">&times;</button>
         </div>
         <ul class="mobile-drawer-links">
-            <li><a href="/#jobs-search-section" class="nav-tab-trigger mobile-drawer-link" data-target="jobs">Home</a></li>
-            <li><a href="/#jobs-search-section" class="nav-tab-trigger mobile-drawer-link" data-target="jobs">Jobs List</a></li>
-            <li><a href="/#info-hub-section" class="nav-tab-trigger mobile-drawer-link" data-target="info-hub">Information Hub</a></li>
-            <li><a href="/ssc-jobs" class="mobile-drawer-link">SSC Board</a></li>
-            <li><a href="/railway-jobs" class="mobile-drawer-link">Railways</a></li>
-            <li><a href="/upsc-jobs" class="mobile-drawer-link">UPSC</a></li>
-            <li><a href="/state-jobs" class="mobile-drawer-link">State Jobs</a></li>
-            <li><a href="/admit-cards" class="mobile-drawer-link">Exam Utilities</a></li>
+            @forelse($headerMenu as $mItem)
+                <li>
+                    <a href="{{ $mItem->url }}" target="{{ $mItem->target }}" class="mobile-drawer-link">
+                        @if($mItem->icon)
+                            <span class="menu-icon">
+                                @if(str_starts_with(trim($mItem->icon), '<'))
+                                    {!! $mItem->icon !!}
+                                @else
+                                    <i class="{{ $mItem->icon }}"></i>
+                                @endif
+                            </span>
+                        @endif
+                        {{ $mItem->title }}
+                    </a>
+                </li>
+            @empty
+                <li><a href="/#jobs-search-section" class="nav-tab-trigger mobile-drawer-link" data-target="jobs" data-i18n="nav_home">Home</a></li>
+                <li><a href="/#jobs-search-section" class="nav-tab-trigger mobile-drawer-link" data-target="jobs" data-i18n="nav_jobs_list">Jobs List</a></li>
+                <li><a href="/#info-hub-section" class="nav-tab-trigger mobile-drawer-link" data-target="info-hub" data-i18n="nav_info">Information Hub</a></li>
+                <li><a href="/ssc-jobs" class="mobile-drawer-link" data-i18n="nav_ssc">SSC Board</a></li>
+                <li><a href="/railway-jobs" class="mobile-drawer-link" data-i18n="nav_railway">Railways</a></li>
+                <li><a href="/upsc-jobs" class="mobile-drawer-link" data-i18n="nav_upsc">UPSC</a></li>
+                <li><a href="/state-jobs" class="mobile-drawer-link" data-i18n="nav_state">State Jobs</a></li>
+                <li><a href="/admit-cards" class="mobile-drawer-link" data-i18n="nav_utilities">Exam Utilities</a></li>
+            @endforelse
             @auth
                 <li style="border-top: 1px solid var(--border-color); margin-top: 0.5rem; padding-top: 0.5rem;">
-                    <a href="/#dashboard-section" class="nav-tab-trigger mobile-drawer-link" data-target="dashboard">Dashboard</a>
+                    <a href="/#dashboard-section" class="nav-tab-trigger mobile-drawer-link" data-target="dashboard" data-i18n="dropdown_dashboard">Dashboard</a>
                 </li>
                 @can('admin-access')
-                    <li><a href="{{ route('admin.dashboard') }}" class="mobile-drawer-link">Admin Panel</a></li>
+                    <li><a href="{{ route('admin.dashboard') }}" class="mobile-drawer-link" data-i18n="dropdown_admin">Admin Panel</a></li>
                 @endcan
                 <li>
-                    <button class="mobile-drawer-link" id="mobileLogoutBtn" style="background: none; border: none; color: inherit; cursor: pointer; width: 100%; text-align: left; font: inherit; padding: 0.6rem 0;">Logout</button>
+                    <button class="mobile-drawer-link" id="mobileLogoutBtn" style="background: none; border: none; color: inherit; cursor: pointer; width: 100%; text-align: left; font: inherit; padding: 0.6rem 0;" data-i18n="dropdown_logout">Logout</button>
                 </li>
             @endauth
+            
+            <li style="border-top: 1px solid var(--border-color); margin-top: 0.5rem; padding-top: 0.75rem; display: flex; justify-content: center;">
+                <div class="lang-switcher" aria-label="Language Selector" role="navigation">
+                    <button type="button" class="lang-btn active" data-lang="en" aria-label="Switch to English" aria-current="true">EN</button>
+                    <span class="lang-divider" aria-hidden="true">|</span>
+                    <button type="button" class="lang-btn" data-lang="hi" aria-label="Switch to Hindi" aria-current="false">हिन्दी</button>
+                </div>
+            </li>
         </ul>
     </div>
 
@@ -180,28 +333,66 @@
     <footer style="background-color: var(--bg-secondary); border-top: 1px solid var(--border-color); padding: 3rem 5% 2rem 5%; font-size: 0.9rem; color: var(--text-secondary); margin-top: 4rem;">
         <div style="max-width: 1400px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 2rem; margin-bottom: 2rem;">
             <div>
-                <h3 style="color: var(--text-primary); margin-bottom: 1rem; font-family: 'Outfit';">GovJobs</h3>
-                <p>An advanced, fully automated Government Recruitment Job Portal featuring low-temperature validation engines and zero full page refreshes.</p>
+                <h3 style="color: var(--text-primary); margin-bottom: 1rem; font-family: 'Outfit';">{{ setting('website_name', 'GovJobs') }}</h3>
+                <p>{{ setting('footer_about_text', 'An advanced, fully automated Government Recruitment Job Portal featuring low-temperature validation engines and zero full page refreshes.') }}</p>
+                
+                @if($socialLinks->count() > 0)
+                    <div class="social-links-row" style="margin-top: 1.5rem; display: flex; gap: 0.75rem;">
+                        @foreach($socialLinks as $sLink)
+                            <a href="{{ $sLink->url }}" target="_blank" title="{{ $sLink->platform }}" style="display: flex; align-items: center; justify-content: center; width: 32px; height: 32px; border-radius: 50%; background: var(--bg-primary); border: 1px solid var(--border-color); color: var(--text-primary); text-decoration: none; font-size: 1rem;">
+                                @if($sLink->icon)
+                                    @if(str_starts_with(trim($sLink->icon), '<'))
+                                        {!! $sLink->icon !!}
+                                    @else
+                                        <i class="{{ $sLink->icon }}"></i>
+                                    @endif
+                                @else
+                                    <span style="font-size: 0.8rem; font-weight: bold;">{{ strtoupper(substr($sLink->platform, 0, 2)) }}</span>
+                                @endif
+                            </a>
+                        @endforeach
+                    </div>
+                @endif
             </div>
             <div>
-                <h4 style="color: var(--text-primary); margin-bottom: 1rem; font-family: 'Outfit';">Portal Hubs</h4>
-                <ul style="list-style: none; display: grid; gap: 0.5rem;">
-                    <li><a href="/#jobs-search-section" class="nav-tab-trigger" data-target="jobs" style="color: var(--text-secondary); text-decoration: none;">Recruitments Board</a></li>
-                    <li><a href="/#info-hub-section" class="nav-tab-trigger" data-target="info-hub" style="color: var(--text-secondary); text-decoration: none;">Information Hub</a></li>
-                    <li><a href="/#info-hub-section" class="nav-tab-trigger" data-target="info-hub" style="color: var(--text-secondary); text-decoration: none;">FAQ Accordions</a></li>
+                <h4 style="color: var(--text-primary); margin-bottom: 1rem; font-family: 'Outfit';">Quick Links</h4>
+                <ul style="list-style: none; display: grid; gap: 0.5rem; padding: 0;">
+                    @forelse($footerMenu1 as $mItem)
+                        <li><a href="{{ $mItem->url }}" target="{{ $mItem->target }}" style="color: var(--text-secondary); text-decoration: none;">{{ $mItem->title }}</a></li>
+                    @empty
+                        <li><a href="/#jobs-search-section" class="nav-tab-trigger" data-target="jobs" style="color: var(--text-secondary); text-decoration: none;">Recruitments Board</a></li>
+                        <li><a href="/#info-hub-section" class="nav-tab-trigger" data-target="info-hub" style="color: var(--text-secondary); text-decoration: none;">Information Hub</a></li>
+                        <li><a href="/#info-hub-section" class="nav-tab-trigger" data-target="info-hub" style="color: var(--text-secondary); text-decoration: none;">FAQ Accordions</a></li>
+                    @endforelse
                 </ul>
             </div>
             <div>
-                <h4 style="color: var(--text-primary); margin-bottom: 1rem; font-family: 'Outfit';">Recruitment Partners</h4>
-                <ul style="list-style: none; display: grid; gap: 0.5rem;">
-                    <li><a href="#" style="color: var(--text-secondary); text-decoration: none;">Union Public Service Commission (UPSC)</a></li>
-                    <li><a href="#" style="color: var(--text-secondary); text-decoration: none;">Staff Selection Commission (SSC)</a></li>
-                    <li><a href="#" style="color: var(--text-secondary); text-decoration: none;">Reserve Bank of India (RBI)</a></li>
+                <h4 style="color: var(--text-primary); margin-bottom: 1rem; font-family: 'Outfit';">Useful Links</h4>
+                <ul style="list-style: none; display: grid; gap: 0.5rem; padding: 0;">
+                    @forelse($footerMenu2 as $mItem)
+                        <li><a href="{{ $mItem->url }}" target="{{ $mItem->target }}" style="color: var(--text-secondary); text-decoration: none;">{{ $mItem->title }}</a></li>
+                    @empty
+                        <li><a href="#" style="color: var(--text-secondary); text-decoration: none;">Union Public Service Commission (UPSC)</a></li>
+                        <li><a href="#" style="color: var(--text-secondary); text-decoration: none;">Staff Selection Commission (SSC)</a></li>
+                        <li><a href="#" style="color: var(--text-secondary); text-decoration: none;">Reserve Bank of India (RBI)</a></li>
+                    @endforelse
+                </ul>
+            </div>
+            <div>
+                <h4 style="color: var(--text-primary); margin-bottom: 1rem; font-family: 'Outfit';">Legal & Info</h4>
+                <ul style="list-style: none; display: grid; gap: 0.5rem; padding: 0;">
+                    @forelse($cmsPagesList as $cmsPage)
+                        <li><a href="/p/{{ $cmsPage->slug }}" style="color: var(--text-secondary); text-decoration: none;">{{ $cmsPage->title }}</a></li>
+                    @empty
+                        <li><a href="/p/about-us" style="color: var(--text-secondary); text-decoration: none;">About Us</a></li>
+                        <li><a href="/p/privacy-policy" style="color: var(--text-secondary); text-decoration: none;">Privacy Policy</a></li>
+                        <li><a href="/p/terms-and-conditions" style="color: var(--text-secondary); text-decoration: none;">Terms & Conditions</a></li>
+                    @endforelse
                 </ul>
             </div>
         </div>
         <div style="max-width: 1400px; margin: 0 auto; border-top: 1px solid var(--border-color); padding-top: 1.5rem; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 1rem;">
-            <p>&copy; 2026 GovJobs Portal Automation Inc. All rights reserved.</p>
+            <p>{!! setting('copyright_text', '&copy; 2026 GovJobs Portal Automation Inc. All rights reserved.') !!}</p>
             <p>Developed with robust MVC + Service-Repository architecture.</p>
         </div>
     </footer>
@@ -211,97 +402,97 @@
     <!-- A. Authenticatable Login/Register Modal -->
     <div class="modal-overlay" id="authModal">
         <div class="modal-box glass-panel">
-            <button class="modal-close-btn" id="closeAuthModal">&times;</button>
+            <button class="modal-close-btn" id="closeAuthModal" aria-label="Close Authentication Dialog">&times;</button>
             <div class="auth-tabs">
-                <button class="auth-tab-btn active" data-tab="loginFormContainer">Sign In</button>
-                <button class="auth-tab-btn" data-tab="registerFormContainer">Register</button>
-                <button class="auth-tab-btn" data-tab="forgotFormContainer">Reset PW</button>
+                <button class="auth-tab-btn active" data-tab="loginFormContainer" data-i18n="auth_tab_signin">Sign In</button>
+                <button class="auth-tab-btn" data-tab="registerFormContainer" data-i18n="auth_tab_register">Register</button>
+                <button class="auth-tab-btn" data-tab="forgotFormContainer" data-i18n="auth_tab_reset">Reset PW</button>
             </div>
 
             <!-- Login Sub-Form -->
             <div id="loginFormContainer">
-                <form id="ajaxLoginForm">
+                <form id="ajaxLoginForm" translate="no" class="notranslate">
                     @csrf
                     <div class="form-group">
-                        <label for="loginEmail">Email Address</label>
+                        <label for="loginEmail" data-i18n="lbl_email_addr">Email Address</label>
                         <input type="email" name="email" id="loginEmail" class="form-control" placeholder="candidate@example.com" required>
                         <div class="invalid-feedback" id="loginEmailError"></div>
                     </div>
                     <div class="form-group">
-                        <label for="loginPassword">Password</label>
+                        <label for="loginPassword" data-i18n="lbl_password">Password</label>
                         <input type="password" name="password" id="loginPassword" class="form-control" placeholder="••••••••" required>
                         <div class="invalid-feedback" id="loginPasswordError"></div>
                     </div>
-                    <button type="submit" class="form-btn" id="loginSubmitBtn">Sign In</button>
-                    <p class="form-text">Forgot password? <a href="#" class="auth-toggle-link" data-target="forgotFormContainer">Recover account</a></p>
+                    <button type="submit" class="form-btn" id="loginSubmitBtn" data-i18n="auth_tab_signin">Sign In</button>
+                    <p class="form-text"><span data-i18n="auth_forgot_pw">Forgot password?</span> <a href="#" class="auth-toggle-link" data-target="forgotFormContainer" data-i18n="auth_recover_acct">Recover account</a></p>
                 </form>
             </div>
 
             <!-- Register Sub-Form -->
             <div id="registerFormContainer" style="display: none;">
-                <form id="ajaxRegisterForm">
+                <form id="ajaxRegisterForm" translate="no" class="notranslate">
                     @csrf
                     <div class="form-group">
-                        <label for="regName">Full Name</label>
+                        <label for="regName" data-i18n="lbl_full_name">Full Name</label>
                         <input type="text" name="name" id="regName" class="form-control" placeholder="John Doe" required>
                         <div class="invalid-feedback" id="regNameError"></div>
                     </div>
                     <div class="form-group">
-                        <label for="regEmail">Email Address</label>
+                        <label for="regEmail" data-i18n="lbl_email_addr">Email Address</label>
                         <input type="email" name="email" id="regEmail" class="form-control" placeholder="johndoe@example.com" required>
                         <div class="invalid-feedback" id="regEmailError"></div>
                     </div>
                     <div class="form-group">
-                        <label for="regPhone">Phone Number</label>
+                        <label for="regPhone" data-i18n="lbl_phone_num">Phone Number</label>
                         <input type="text" name="phone" id="regPhone" class="form-control" placeholder="9876543210" required>
                         <div class="invalid-feedback" id="regPhoneError"></div>
                     </div>
                     <div class="form-group">
-                        <label for="regPassword">Password (Min 6 chars)</label>
+                        <label for="regPassword" data-i18n="lbl_new_pass">Password (Min 6 chars)</label>
                         <input type="password" name="password" id="regPassword" class="form-control" placeholder="••••••••" required>
                         <div class="invalid-feedback" id="regPasswordError"></div>
                     </div>
                     <div class="form-group">
-                        <label for="regPasswordConfirm">Confirm Password</label>
+                        <label for="regPasswordConfirm" data-i18n="lbl_confirm_pass">Confirm Password</label>
                         <input type="password" name="password_confirmation" id="regPasswordConfirm" class="form-control" placeholder="••••••••" required>
                     </div>
-                    <button type="submit" class="form-btn" id="registerSubmitBtn">Register Now</button>
-                    <p class="form-text">Already registered? <a href="#" class="auth-toggle-link" data-target="loginFormContainer">Sign In instead</a></p>
+                    <button type="submit" class="form-btn" id="registerSubmitBtn" data-i18n="auth_btn_register">Register Now</button>
+                    <p class="form-text"><span data-i18n="auth_already_reg">Already registered?</span> <a href="#" class="auth-toggle-link" data-target="loginFormContainer" data-i18n="auth_signin_instead">Sign In instead</a></p>
                 </form>
             </div>
 
             <!-- Forgot Password OTP Reset Flow -->
             <div id="forgotFormContainer" style="display: none;">
                 <!-- Step 1: Send OTP code -->
-                <form id="ajaxForgotForm">
+                <form id="ajaxForgotForm" translate="no" class="notranslate">
                     @csrf
                     <div class="form-group">
-                        <label for="forgotEmail">Registered Email Address</label>
+                        <label for="forgotEmail" data-i18n="lbl_reg_email_addr">Registered Email Address</label>
                         <input type="email" name="email" id="forgotEmail" class="form-control" placeholder="candidate@example.com" required>
                         <div class="invalid-feedback" id="forgotEmailError"></div>
                     </div>
-                    <button type="submit" class="form-btn" id="forgotSubmitBtn">Send Verification Code</button>
+                    <button type="submit" class="form-btn" id="forgotSubmitBtn" data-i18n="auth_btn_send_otp">Send Verification Code</button>
                 </form>
 
                 <!-- Step 2: Validate OTP and Set password -->
-                <form id="ajaxResetForm" style="display: none; border-top: 1px solid var(--border-color); padding-top: 1.5rem; margin-top: 1.5rem;">
+                <form id="ajaxResetForm" translate="no" class="notranslate" style="display: none; border-top: 1px solid var(--border-color); padding-top: 1.5rem; margin-top: 1.5rem;">
                     @csrf
                     <input type="hidden" name="email" id="resetEmailHidden">
                     <div class="form-group">
-                        <label for="resetOtp">Enter OTP Code (Sent: 123456)</label>
+                        <label for="resetOtp" data-i18n="lbl_enter_otp">Enter OTP Code (Sent: 123456)</label>
                         <input type="text" name="otp_code" id="resetOtp" class="form-control" placeholder="123456" required>
                         <div class="invalid-feedback" id="resetOtpError"></div>
                     </div>
                     <div class="form-group">
-                        <label for="resetPassword">New Password (Min 6 chars)</label>
+                        <label for="resetPassword" data-i18n="lbl_new_pass">New Password (Min 6 chars)</label>
                         <input type="password" name="password" id="resetPassword" class="form-control" placeholder="••••••••" required>
                         <div class="invalid-feedback" id="resetPasswordError"></div>
                     </div>
                     <div class="form-group">
-                        <label for="resetPasswordConfirm">Confirm New Password</label>
+                        <label for="resetPasswordConfirm" data-i18n="lbl_confirm_pass">Confirm New Password</label>
                         <input type="password" name="password_confirmation" id="resetPasswordConfirm" class="form-control" placeholder="••••••••" required>
                     </div>
-                    <button type="submit" class="form-btn" id="resetSubmitBtn">Synchronize Password</button>
+                    <button type="submit" class="form-btn" id="resetSubmitBtn" data-i18n="auth_btn_sync_pass">Synchronize Password</button>
                 </form>
             </div>
         </div>
@@ -310,7 +501,7 @@
     <!-- B. Asynchronous Job Details Modal -->
     <div class="modal-overlay" id="jobDetailsModal">
         <div class="modal-box glass-panel" style="max-width: 800px;">
-            <button class="modal-close-btn" id="closeJobDetailsModal">&times;</button>
+            <button class="modal-close-btn" id="closeJobDetailsModal" aria-label="Close Details Dialog">&times;</button>
             
             <!-- Skeleton Loader placeholder inside modal -->
             <div id="modalSkeletonLoader" class="skeleton-modal">
@@ -397,7 +588,7 @@
             <!-- Application Form section loaded inside details modal -->
             <div id="modalApplicationFormBlock" style="display: none; border-top: 1px solid var(--border-color); padding-top: 1.5rem; margin-top: 1.5rem;">
                 <h3 style="font-family: 'Outfit'; font-size: 1.3rem; margin-bottom: 0.5rem; color: var(--accent-color);">Recruitment Submission Form</h3>
-                <form id="recruitmentApplicationForm" enctype="multipart/form-data">
+                <form id="recruitmentApplicationForm" translate="no" class="notranslate" enctype="multipart/form-data">
                     @csrf
                     <input type="hidden" name="job_id" id="applicationFormJobId">
                     <div class="form-group">
@@ -417,7 +608,7 @@
     <!-- C. Sidebar/Utilities Details Modal (Admit Cards / Results / Syllabus Detail) -->
     <div class="modal-overlay" id="sidebarDetailsModal">
         <div class="modal-box glass-panel" style="max-width: 600px;">
-            <button class="modal-close-btn" id="closeSidebarDetailsModal">&times;</button>
+            <button class="modal-close-btn" id="closeSidebarDetailsModal" aria-label="Close Sidebar Details Dialog">&times;</button>
             <h3 style="font-family: 'Outfit'; font-size: 1.4rem; margin-bottom: 1.25rem; color: var(--accent-color);" id="sidebarDetailTitle">Exam Utility Info</h3>
             <div id="sidebarDetailBody" style="color: var(--text-secondary); font-size: 0.95rem; line-height: 1.75;">
                 <!-- Loaded dynamically -->
@@ -799,35 +990,37 @@
             // Map sidebar clicks to show immersive instructions popup
             $(document).on('click', '.tab-item a', function(e) {
                 e.preventDefault();
-                const text = $(this).text();
-                const cleanText = text.replace('→ ', '').replace('✓ ', '').replace('• ', '');
+                const span = $(this).find('span[data-i18n]');
+                const i18nKey = span.attr('data-i18n') || '';
                 
-                $('#sidebarDetailTitle').text(cleanText);
+                // Get clean title in Hindi or English
+                const rawTitle = span.text();
+                $('#sidebarDetailTitle').text(rawTitle);
                 
                 // Synthesize comprehensive mock description depending on clicks
                 let detailsText = '';
-                if (cleanText.includes('Admit Card') || cleanText.includes('Entry Card') || cleanText.includes('Hall Ticket')) {
+                if (i18nKey.includes('admit')) {
                     detailsText = `
-                        <strong>Recruitment Body:</strong> Government Selection Board<br>
-                        <strong>Release Status:</strong> LIVE & Ready to Download<br>
-                        <strong>Instructions:</strong> candidates can access their call letters by logging into their application reference dashboard. Please carry a printed copy of the Admit Card along with an active government-issued Photo ID (Aadhaar, Passport, PAN Card) to the allocated testing venue.<br><br>
-                        <strong>Exam Date:</strong> Scheduled for next month.<br>
-                        <strong>Reporting Time:</strong> 08:30 AM (Strict closing gate hours apply).
+                        <strong>${window.t('modal_sidebar_rec_body', 'Recruitment Body')}:</strong> ${window.t('modal_sidebar_gov_board', 'Government Selection Board')}<br>
+                        <strong>${window.t('modal_sidebar_rel_status', 'Release Status')}:</strong> <span style="color: #10b981; font-weight: 700;">${window.t('modal_sidebar_status_live', 'LIVE & Ready to Download')}</span><br>
+                        <strong>${window.t('modal_sidebar_instructions_lbl', 'Instructions')}:</strong> ${window.t('modal_sidebar_admit_instr_val', 'Candidates can access their call letters by logging into their application reference dashboard. Please carry a printed copy of the Admit Card along with an active government-issued Photo ID (Aadhaar, Passport, PAN Card) to the allocated testing venue.')}<br><br>
+                        <strong>${window.t('modal_exam_lbl', 'Expected Exam Date')}:</strong> ${window.t('modal_sidebar_scheduled_next_month', 'Scheduled for next month.')}<br>
+                        <strong>${window.t('modal_sidebar_reporting_time', 'Reporting Time')}:</strong> ${window.t('modal_sidebar_reporting_val', '08:30 AM (Strict closing gate hours apply).')}
                     `;
-                } else if (cleanText.includes('Result') || cleanText.includes('Selection List') || cleanText.includes('Merit List')) {
+                } else if (i18nKey.includes('result')) {
                     detailsText = `
-                        <strong>Examination Segment:</strong> Final Merit & Cutoff Index Lists<br>
-                        <strong>Review Status:</strong> Official Verification Complete<br>
-                        <strong>Cutoff Parameters:</strong> General 78.5%, OBC 72.4%, SC/ST 65.0%<br><br>
-                        Congratulations to all qualifying candidates! The selection board will dispatch individual call letters for physical verification and biometric checks via registered email profiles shortly.
+                        <strong>${window.t('modal_sidebar_exam_segment', 'Examination Segment')}:</strong> ${window.t('modal_sidebar_merit_cutoff_val', 'Final Merit & Cutoff Index Lists')}<br>
+                        <strong>${window.t('modal_sidebar_review_status', 'Review Status')}:</strong> ${window.t('modal_sidebar_verification_complete', 'Official Verification Complete')}<br>
+                        <strong>${window.t('modal_sidebar_cutoff_params', 'Cutoff Parameters')}:</strong> General 78.5%, OBC 72.4%, SC/ST 65.0%<br><br>
+                        ${window.t('modal_sidebar_result_congrats', 'Congratulations to all qualifying candidates! The selection board will dispatch individual call letters for physical verification and biometric checks via registered email profiles shortly.')}
                     `;
                 } else {
                     detailsText = `
-                        <strong>Subject Stream:</strong> Combined Competitive Exam Syllabus Patterns<br>
-                        <strong>Topic Outlines:</strong><br>
-                        &bull; <strong>Paper I (Aptitude & Math):</strong> Quantitative Reasoning, Algebra, Numerical Analysis, Data Interpretation.<br>
-                        &bull; <strong>Paper II (General Studies):</strong> Current Affairs, Constitutional Law, Public Policies, Indian History & Geography.<br><br>
-                        <strong>Marking Scheme:</strong> Objective type MCQ format (negative marking 0.25 index points for every wrong answer choice).
+                        <strong>${window.t('modal_sidebar_subject_stream', 'Subject Stream')}:</strong> ${window.t('modal_sidebar_combined_syllabus', 'Combined Competitive Exam Syllabus Patterns')}<br>
+                        <strong>${window.t('modal_sidebar_topic_outlines', 'Topic Outlines')}:</strong><br>
+                        &bull; <strong>${window.t('modal_sidebar_paper_1', 'Paper I (Aptitude & Math)')}:</strong> ${window.t('modal_sidebar_paper_1_val', 'Quantitative Reasoning, Algebra, Numerical Analysis, Data Interpretation.')}<br>
+                        &bull; <strong>${window.t('modal_sidebar_paper_2', 'Paper II (General Studies)')}:</strong> ${window.t('modal_sidebar_paper_2_val', 'Current Affairs, Constitutional Law, Public Policies, Indian History & Geography.')}<br><br>
+                        <strong>${window.t('modal_sidebar_marking_scheme', 'Marking Scheme')}:</strong> ${window.t('modal_sidebar_marking_val', 'Objective type MCQ format (negative marking 0.25 index points for every wrong answer choice).')}
                     `;
                 }
                 
@@ -1014,6 +1207,36 @@
         });
     </script>
 
+    <!-- Smart Translation Loading Spinner Overlay -->
+    <div class="translation-loader" id="translationLoader" aria-hidden="true">
+        <div class="spinner"></div>
+        <span class="loader-text">Translating page / अनुवाद किया जा रहा है...</span>
+    </div>
+
+    <!-- Smart Language Auto-Detection Suggestion Card -->
+    <div class="lang-suggestion-popup" id="langSuggestionPopup" role="alert" aria-live="assertive">
+        <div class="popup-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+        </div>
+        <div class="popup-content">
+            <h4 class="popup-title">Language / भाषा</h4>
+            <p class="popup-text">Would you like to view this website in हिन्दी?</p>
+            <div class="popup-actions">
+                <button type="button" class="popup-btn btn-accept" id="btnSwitchToHindi">Switch to हिन्दी</button>
+                <button type="button" class="popup-btn btn-dismiss" id="btnContinueEnglish">English</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Floating Reset Language Pill -->
+    <button id="langResetPill" class="lang-reset-pill" aria-label="Back to English">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"></path><polyline points="16 3 21 8 16 13"></polyline><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"></path><polyline points="8 21 3 16 8 11"></polyline></svg>
+        <span id="langResetPillText">Back to English</span>
+    </button>
+
+    <!-- Custom Google Translate Script Integration -->
+    <script src="{{ asset('assets/js/translator.js') }}"></script>
+
     <!-- PWA Smart Install App Banner -->
     <div id="pwaInstallBanner" style="position: fixed; bottom: 2rem; left: 2rem; right: 2rem; max-width: 500px; background: rgba(17, 24, 39, 0.95); border: 1px solid var(--border-color); box-shadow: var(--card-shadow); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border-radius: 16px; padding: 1.25rem; display: none; align-items: center; justify-content: space-between; gap: 1rem; z-index: 1050; margin: 0 auto; animation: slide-up-pwa 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);">
         <style>
@@ -1036,5 +1259,7 @@
     </div>
     
     @yield('scripts')
+    <!-- Custom Injected Footer Scripts -->
+    {!! setting('footer_scripts') !!}
 </body>
 </html>

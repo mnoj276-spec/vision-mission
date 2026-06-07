@@ -168,4 +168,53 @@ class AiReliabilityTest extends TestCase
         $this->assertLessThan(85.0, $auditLog->overall_score);
         $this->assertArrayHasKey('salary_min', $auditLog->confidence_scores);
     }
+
+    /**
+     * Test manual AI content generation triggering.
+     */
+    public function test_admin_can_trigger_manual_ai_content_generation(): void
+    {
+        \Illuminate\Support\Facades\Bus::fake();
+
+        $admin = \App\Models\User::create([
+            'name' => 'Portal Admin',
+            'email' => 'admin_test@govjobs.com',
+            'phone' => '9999999991',
+            'password' => bcrypt('Admin@12345'),
+            'role' => 'admin',
+            'is_active' => true
+        ]);
+
+        $this->artisan('db:seed', ['--class' => 'RoleAndPermissionSeeder']);
+        $admin->syncRoles(['Super Admin']);
+
+        $jobPost = JobPost::create([
+            'category_id' => Category::first()->id,
+            'department_id' => Department::first()->id,
+            'state_id' => State::first()->id,
+            'qualification_id' => Qualification::first()->id,
+            'title' => 'Test Manual AI Gen Job',
+            'slug' => 'test-manual-ai-gen-job',
+            'description' => 'Announcement text content here.',
+            'status' => 'published',
+            'last_date_to_apply' => '2026-12-31'
+        ]);
+
+        $this->actingAs($admin);
+
+        $response = $this->postJson(route('admin.ai-contents.generate', $jobPost->id), [
+            'provider' => 'gemini'
+        ]);
+
+        $response->assertStatus(200)
+            ->assertJsonPath('status', 'success')
+            ->assertJsonPath('message', 'Content generation task queued. The AI is working on it in the background.');
+
+        \Illuminate\Support\Facades\Bus::assertDispatched(\App\Jobs\GenerateJobContentJob::class, function ($job) use ($jobPost) {
+            $ref = new \ReflectionClass($job);
+            $prop = $ref->getProperty('jobPostId');
+            $prop->setAccessible(true);
+            return $prop->getValue($job) === $jobPost->id;
+        });
+    }
 }

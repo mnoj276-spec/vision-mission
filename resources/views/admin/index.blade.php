@@ -12,7 +12,7 @@
         ['block' => 'users',      'permission' => 'manage_users',      'label' => 'User Access Panel',        'icon' => '<path d="M17 21v-2a4 4 0 0 0-3-3.87"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path>'],
         ['block' => 'queues',     'permission' => 'manage_queues',     'label' => 'Queue Engine & DLQ',       'icon' => '<rect x="2" y="2" width="20" height="8" rx="2" ry="2"></rect><rect x="2" y="14" width="20" height="8" rx="2" ry="2"></rect><line x1="6" y1="6" x2="6.01" y2="6"></line><line x1="6" y1="18" x2="6.01" y2="18"></line>'],
         ['block' => 'marketing',  'permission' => 'manage_queues',     'label' => 'Email Automation',         'icon' => '<path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline>'],
-        ['block' => 'seo',        'permission' => 'manage_seo',        'label' => 'SEO & Content Cache',      'icon' => '<circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>'],
+        ['block' => 'settings',   'permission' => 'manage_seo',        'label' => 'Settings Management',      'icon' => '<circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path>'],
         ['block' => 'audit',      'permission' => 'view_audit_logs',   'label' => 'Audit Activity Logs',      'icon' => '<circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline>'],
         ['block' => 'ai-content', 'permission' => 'view_ai_content',   'label' => 'Content Verification Hub',       'icon' => '<polyline points="9 11 12 14 22 4"></polyline><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>'],
         ['block' => 'rbac',       'permission' => 'manage_users',      'label' => 'RBAC Clearance Matrix',    'icon' => '<rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path>'],
@@ -491,30 +491,583 @@
             </div>
         </section>
 
-        <!-- ================= PANEL 6: SEO & CONTENT CACHE ================= -->
-        <section class="admin-panel-block" id="admin-seo" style="display: none;">
-            <h2 style="font-family: 'Outfit'; font-size: 1.75rem; margin-bottom: 1.5rem;">SEO Configurations & Meta Console</h2>
+        <!-- ================= PANEL 6: SETTINGS MANAGEMENT MODULE ================= -->
+        <section class="admin-panel-block" id="admin-settings" style="display: none;">
+            <h2 style="font-family: 'Outfit'; font-size: 1.75rem; margin-bottom: 1.5rem;">Global Settings Console</h2>
             
-            <div class="glass-panel" style="padding: 2.5rem; max-width: 700px; margin: 0 auto; border-radius: 16px;">
-                <h3 style="font-family: 'Outfit'; color: var(--accent-color); margin-bottom: 1.5rem; text-align: center;">Synchronize Cached SEO Keywords</h3>
-                <form id="ajax-seo-console-form">
-                    @csrf
-                    <div class="form-group">
-                        <label for="seo-title">Meta Title Template</label>
-                        <input type="text" name="meta_title" id="seo-title" class="form-control" value="{{ $seo['meta_title'] }}" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="seo-desc">Meta Description Template</label>
-                        <textarea name="meta_description" id="seo-desc" class="form-control" rows="4" required>{{ $seo['meta_description'] }}</textarea>
-                    </div>
-                    <div class="form-group">
-                        <label for="seo-keywords">Meta Keywords Tag String</label>
-                        <input type="text" name="meta_keywords" id="seo-keywords" class="form-control" value="{{ $seo['meta_keywords'] }}" required>
-                        <p style="font-size:0.75rem; color:var(--text-secondary); margin-top:0.25rem;">Separate terms by commas (e.g. government, upsc, recruitment)</p>
-                    </div>
-                    <button type="submit" class="form-btn" id="seo-submit-btn">Synchronize Metadata Cache</button>
-                </form>
+            <!-- Settings Sub-Navigation Tabs -->
+            <div class="sub-tab-headers" style="margin-bottom: 2rem; display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                <button class="sub-tab-btn active settings-sub-trigger" data-target="settings-site">Site Configs</button>
+                <button class="sub-tab-btn settings-sub-trigger" data-target="settings-layout">Look & Layout</button>
+                <button class="sub-tab-btn settings-sub-trigger" data-target="settings-operations">Operations & CMS</button>
+                <button class="sub-tab-btn settings-sub-trigger" data-target="settings-integrations">SMTP & APIs</button>
+                <button class="sub-tab-btn settings-sub-trigger" data-target="settings-security">Security</button>
+                <button class="sub-tab-btn settings-sub-trigger" data-target="settings-media">Media Manager</button>
             </div>
+
+            <!-- SUB-PANEL 1: SITE CONFIGS -->
+            <div class="settings-sub-panel active" id="settings-site">
+                <div class="settings-responsive-grid">
+                    
+                    <!-- General settings form -->
+                    <div class="glass-panel" style="padding: 1.5rem; border-radius: 16px;">
+                        <h3 style="font-family:'Outfit'; font-size:1.25rem; margin-bottom:1.5rem; color:var(--accent-color);">General Properties</h3>
+                        <form id="settings-general-form">
+                            @csrf
+                            <div class="form-row-grid">
+                                <div class="form-group">
+                                    <label for="cfg-website-name">Website Name</label>
+                                    <input type="text" id="cfg-website-name" name="website_name" class="form-control" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="cfg-website-title">Website Title</label>
+                                    <input type="text" id="cfg-website-title" name="website_title" class="form-control" required>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="cfg-website-tagline">Website Tagline</label>
+                                <input type="text" id="cfg-website-tagline" name="website_tagline" class="form-control">
+                            </div>
+                            <div class="form-group">
+                                <label for="cfg-website-description">Website Description</label>
+                                <textarea id="cfg-website-description" name="website_description" class="form-control" rows="3"></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label for="cfg-website-keywords">Keywords (comma separated)</label>
+                                <input type="text" id="cfg-website-keywords" name="website_keywords" class="form-control">
+                            </div>
+                            <div class="form-row-grid">
+                                <div class="form-group">
+                                    <label for="cfg-website-author">Website Author</label>
+                                    <input type="text" id="cfg-website-author" name="website_author" class="form-control">
+                                </div>
+                                <div class="form-group">
+                                    <label for="cfg-copyright-text">Copyright Text</label>
+                                    <input type="text" id="cfg-copyright-text" name="copyright_text" class="form-control" required>
+                                </div>
+                            </div>
+                            
+                            <div class="form-row-grid-three" style="margin-top: 1rem;">
+                                <div class="form-group">
+                                    <label for="cfg-timezone">Timezone</label>
+                                    <select id="cfg-timezone" name="timezone" class="form-control">
+                                        <option value="Asia/Kolkata">Asia/Kolkata (IST)</option>
+                                        <option value="UTC">UTC</option>
+                                        <option value="America/New_York">EST/EDT</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="cfg-date-format">Date Format</label>
+                                    <select id="cfg-date-format" name="date_format" class="form-control">
+                                        <option value="d M Y">d M Y (e.g. 07 Jun 2026)</option>
+                                        <option value="Y-m-d">Y-m-d (e.g. 2026-06-07)</option>
+                                        <option value="m/d/Y">m/d/Y</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="cfg-currency">Currency Symbol</label>
+                                    <input type="text" id="cfg-currency" name="currency" class="form-control" required>
+                                </div>
+                            </div>
+
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 1rem;">
+                                <div class="form-group">
+                                    <label for="cfg-language">Default Language</label>
+                                    <select id="cfg-language" name="language" class="form-control">
+                                        <option value="en">English (EN)</option>
+                                        <option value="hi">Hindi (हिन्दी)</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="cfg-maintenance-mode">Maintenance Mode</label>
+                                    <select id="cfg-maintenance-mode" name="maintenance_mode" class="form-control">
+                                        <option value="0">Disabled (Site Live)</option>
+                                        <option value="1">Enabled (Block Traffic)</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group" id="maintenance-msg-group" style="display:none;">
+                                <label for="cfg-maintenance-message">Maintenance Message</label>
+                                <textarea id="cfg-maintenance-message" name="maintenance_message" class="form-control" rows="2"></textarea>
+                            </div>
+                            
+                            <div class="divider" style="margin: 1.5rem 0;"></div>
+                            
+                            <!-- Notification Configurations -->
+                            <h4 style="font-family:'Outfit'; font-size:1.1rem; margin-bottom:1rem; color:var(--accent-color);">Notification Configurations</h4>
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.5rem;">
+                                <div class="form-group">
+                                    <label for="cfg-email-notifications">Email Alerts</label>
+                                    <select id="cfg-email-notifications" name="email_notifications" class="form-control">
+                                        <option value="1">Enabled</option>
+                                        <option value="0">Disabled</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="cfg-push-notifications">Push Notifications</label>
+                                    <select id="cfg-push-notifications" name="push_notifications" class="form-control">
+                                        <option value="1">Enabled</option>
+                                        <option value="0">Disabled</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.5rem;">
+                                <div class="form-group">
+                                    <label for="cfg-admin-notifications">Admin Activity Logging</label>
+                                    <select id="cfg-admin-notifications" name="admin_notifications" class="form-control">
+                                        <option value="1">Enabled</option>
+                                        <option value="0">Disabled</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="cfg-user-notifications">User Interaction Alerts</label>
+                                    <select id="cfg-user-notifications" name="user_notifications" class="form-control">
+                                        <option value="1">Enabled</option>
+                                        <option value="0">Disabled</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="divider" style="margin: 1.5rem 0;"></div>
+                            
+                            <!-- Contact Settings -->
+                            <h4 style="font-family:'Outfit'; font-size:1.1rem; margin-bottom:1rem; color:var(--accent-color);">Contact Details</h4>
+                            <div class="form-row-grid">
+                                <div class="form-group">
+                                    <label for="cfg-contact-email">Website Contact Email</label>
+                                    <input type="email" id="cfg-contact-email" name="website_contact_email" class="form-control" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="cfg-contact-mobile">Contact Mobile</label>
+                                    <input type="text" id="cfg-contact-mobile" name="website_contact_mobile" class="form-control">
+                                </div>
+                            </div>
+                            <div class="form-row-grid">
+                                <div class="form-group">
+                                    <label for="cfg-support-email">Support Email</label>
+                                    <input type="email" id="cfg-support-email" name="support_email" class="form-control">
+                                </div>
+                                <div class="form-group">
+                                    <label for="cfg-support-phone">Support Phone</label>
+                                    <input type="text" id="cfg-support-phone" name="support_phone" class="form-control">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="cfg-office-address">Office Address</label>
+                                <textarea id="cfg-office-address" name="office_address" class="form-control" rows="2"></textarea>
+                            </div>
+
+                            <button type="submit" class="form-btn" style="margin-top:1.5rem;">Save Site Properties</button>
+                        </form>
+                    </div>
+
+                    <!-- Logo & Favicon Uploader column -->
+                    <div style="display:flex; flex-direction:column; gap:1.5rem;">
+                        <div class="glass-panel" style="padding: 1.5rem; border-radius: 16px;">
+                            <h3 style="font-family:'Outfit'; font-size:1.15rem; margin-bottom:1rem; color:var(--accent-color);">Logos & Graphics</h3>
+                            
+                            <!-- Main Logo upload -->
+                            <div style="margin-bottom:1.5rem; border-bottom: 1px dashed var(--border-color); padding-bottom:1rem;">
+                                <div style="font-size:0.85rem; font-weight:600; margin-bottom:0.5rem;">Header Logo</div>
+                                <div style="margin-bottom:0.5rem; display:flex; align-items:center; justify-content:center; height:60px; background:rgba(0,0,0,0.1); border-radius:6px; overflow:hidden;">
+                                    <img id="preview-header_logo" src="" alt="Header Logo Preview" style="max-height:45px; display:none;">
+                                    <span id="no-header_logo" style="font-size:0.75rem; color:var(--text-secondary);">No logo set</span>
+                                </div>
+                                <input type="file" class="logo-upload-input" data-key="header_logo" style="font-size:0.8rem; width:100%;">
+                            </div>
+
+                            <!-- Footer Logo upload -->
+                            <div style="margin-bottom:1.5rem; border-bottom: 1px dashed var(--border-color); padding-bottom:1rem;">
+                                <div style="font-size:0.85rem; font-weight:600; margin-bottom:0.5rem;">Footer Logo</div>
+                                <div style="margin-bottom:0.5rem; display:flex; align-items:center; justify-content:center; height:60px; background:rgba(0,0,0,0.1); border-radius:6px; overflow:hidden;">
+                                    <img id="preview-footer_logo" src="" alt="Footer Logo Preview" style="max-height:45px; display:none;">
+                                    <span id="no-footer_logo" style="font-size:0.75rem; color:var(--text-secondary);">No logo set</span>
+                                </div>
+                                <input type="file" class="logo-upload-input" data-key="footer_logo" style="font-size:0.8rem; width:100%;">
+                            </div>
+
+                            <!-- Favicon upload -->
+                            <div>
+                                <div style="font-size:0.85rem; font-weight:600; margin-bottom:0.5rem;">Browser Favicon (16x16 / 32x32)</div>
+                                <div style="margin-bottom:0.5rem; display:flex; align-items:center; justify-content:center; height:50px; background:rgba(0,0,0,0.1); border-radius:6px;">
+                                    <img id="preview-favicon" src="" alt="Favicon Preview" style="width:32px; height:32px; display:none;">
+                                    <span id="no-favicon" style="font-size:0.75rem; color:var(--text-secondary);">No favicon set</span>
+                                </div>
+                                <input type="file" class="logo-upload-input" data-key="favicon" style="font-size:0.8rem; width:100%;">
+                            </div>
+                        </div>
+
+                        <!-- Social Media Links -->
+                        <div class="glass-panel" style="padding: 1.5rem; border-radius: 16px;">
+                            <h3 style="font-family:'Outfit'; font-size:1.15rem; margin-bottom:1rem; color:var(--accent-color);">Social Channels</h3>
+                            <form id="settings-social-form">
+                                @csrf
+                                <div style="display:flex; flex-direction:column; gap:0.75rem;" id="social-links-inputs">
+                                    <!-- Rendered dynamically -->
+                                </div>
+                                <button type="submit" class="form-btn" style="margin-top:1rem; width:100%;">Save Channels</button>
+                            </form>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- SUB-PANEL 2: LOOK & LAYOUT -->
+            <div class="settings-sub-panel" id="settings-layout" style="display: none;">
+                <div class="settings-responsive-grid-theme">
+                    
+                    <!-- Themes and colors -->
+                    <div style="display:flex; flex-direction:column; gap:1.5rem;">
+                        <div class="glass-panel" style="padding: 1.5rem; border-radius: 16px;">
+                            <h3 style="font-family:'Outfit'; font-size:1.25rem; margin-bottom:1.5rem; color:var(--accent-color);">Theme Style Variables</h3>
+                            <form id="settings-theme-form">
+                                @csrf
+                                <div class="form-group">
+                                    <label for="theme-primary">Primary / Accent Color</label>
+                                    <div style="display:flex; gap:0.5rem;">
+                                        <input type="color" id="theme-primary-picker" style="width:50px; height:38px; border:none; padding:0; background:none; cursor:pointer;">
+                                        <input type="text" id="theme-primary" name="accent_color" class="form-control" placeholder="#2563eb" required>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="theme-secondary">Secondary Color</label>
+                                    <div style="display:flex; gap:0.5rem;">
+                                        <input type="color" id="theme-secondary-picker" style="width:50px; height:38px; border:none; padding:0; background:none; cursor:pointer;">
+                                        <input type="text" id="theme-secondary" name="secondary_color" class="form-control" placeholder="#1e40af" required>
+                                    </div>
+                                </div>
+                                <div class="form-row-grid">
+                                    <div class="form-group">
+                                        <label for="theme-bg">Light Bg</label>
+                                        <input type="text" id="theme-bg" name="background_color" class="form-control" placeholder="#f8fafc" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="theme-text">Light Text</label>
+                                        <input type="text" id="theme-text" name="text_color" class="form-control" placeholder="#0f172a" required>
+                                    </div>
+                                </div>
+                                <div class="form-row-grid">
+                                    <div class="form-group">
+                                        <label for="theme-dark-primary">Dark Primary</label>
+                                        <input type="text" id="theme-dark-primary" name="dark_primary_color" class="form-control" placeholder="#3b82f6" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="theme-dark-bg">Dark Bg</label>
+                                        <input type="text" id="theme-dark-bg" name="dark_background_color" class="form-control" placeholder="#090d16" required>
+                                    </div>
+                                </div>
+                                <button type="submit" class="form-btn" style="margin-top:1rem;">Apply Global Colors</button>
+                            </form>
+                        </div>
+                        
+                        <!-- Homepage sections CMS toggling -->
+                        <div class="glass-panel" style="padding: 1.5rem; border-radius: 16px;">
+                            <h3 style="font-family:'Outfit'; font-size:1.15rem; margin-bottom:1rem; color:var(--accent-color);">Homepage CMS Layout</h3>
+                            <p style="font-size:0.8rem; color:var(--text-secondary); margin-bottom:1.2rem;">Enable or disable layout columns dynamically.</p>
+                            
+                            <div style="display:flex; flex-direction:column; gap:0.75rem;" id="homepage-sections-toggles">
+                                <!-- Loaded dynamically or rendered with fallbacks -->
+                                <div style="display:flex; justify-content:space-between; align-items:center; background:var(--bg-primary); padding:0.6rem 1rem; border-radius:8px; border:1px solid var(--border-color);">
+                                    <span style="font-size:0.85rem; font-weight:600;">Hero Banner Section</span>
+                                    <label class="custom-switch" style="position: relative; display: inline-block; width: 44px; height: 24px;">
+                                        <input type="checkbox" class="section-toggle-check" data-section="hero" checked style="opacity: 0; width: 0; height: 0;">
+                                        <span class="slider-switch" style="position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: var(--border-color); transition: .3s; border-radius: 24px;"></span>
+                                    </label>
+                                </div>
+                                <div style="display:flex; justify-content:space-between; align-items:center; background:var(--bg-primary); padding:0.6rem 1rem; border-radius:8px; border:1px solid var(--border-color);">
+                                    <span style="font-size:0.85rem; font-weight:600;">Latest Ticker Notices</span>
+                                    <label class="custom-switch" style="position: relative; display: inline-block; width: 44px; height: 24px;">
+                                        <input type="checkbox" class="section-toggle-check" data-section="ticker" checked style="opacity: 0; width: 0; height: 0;">
+                                        <span class="slider-switch" style="position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: var(--border-color); transition: .3s; border-radius: 24px;"></span>
+                                    </label>
+                                </div>
+                                <div style="display:flex; justify-content:space-between; align-items:center; background:var(--bg-primary); padding:0.6rem 1rem; border-radius:8px; border:1px solid var(--border-color);">
+                                    <span style="font-size:0.85rem; font-weight:600;">Trending Hot Card Guides</span>
+                                    <label class="custom-switch" style="position: relative; display: inline-block; width: 44px; height: 24px;">
+                                        <input type="checkbox" class="section-toggle-check" data-section="trending" checked style="opacity: 0; width: 0; height: 0;">
+                                        <span class="slider-switch" style="position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: var(--border-color); transition: .3s; border-radius: 24px;"></span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Header/Footer Menu Manager -->
+                    <div class="glass-panel" style="padding: 1.5rem; border-radius: 16px;">
+                        <h3 style="font-family:'Outfit'; font-size:1.25rem; margin-bottom:1rem; color:var(--accent-color);">Menu & Navigation Builder</h3>
+                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem; background:var(--bg-primary); padding:0.5rem; border-radius:6px;">
+                            <select id="menu-select-selector" style="width: auto; font-size:0.85rem; margin:0; padding:0.4rem 0.8rem;">
+                                <option value="1">Header Menu</option>
+                                <option value="2">Footer Column 1 (Quick Links)</option>
+                                <option value="3">Footer Column 2 (Useful Links)</option>
+                            </select>
+                            <button class="btn-primary" id="btn-add-menu-item-modal" style="font-size:0.8rem; margin:0; padding:0.4rem 0.8rem;">+ Add Item</button>
+                        </div>
+                        
+                        <!-- Navigation items list wrapper -->
+                        <div style="border:1px solid var(--border-color); border-radius:8px; padding:0.5rem; min-height:200px; max-height:400px; overflow-y:auto; background:rgba(0,0,0,0.08);" id="menu-items-sortable-list">
+                            <!-- Populated dynamically -->
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- SUB-PANEL 3: OPERATIONS & CMS -->
+            <div class="settings-sub-panel" id="settings-operations" style="display: none;">
+                <div class="settings-responsive-grid-ops">
+                    
+                    <!-- CMS Pages list & creator -->
+                    <div class="glass-panel" style="padding: 1.5rem; border-radius: 16px;">
+                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem;">
+                            <h3 style="font-family:'Outfit'; font-size:1.25rem; margin:0; color:var(--accent-color);">Custom Static Pages</h3>
+                            <button class="btn-primary" id="btn-create-cms-page" style="font-size:0.8rem; margin:0; padding:0.4rem 0.8rem;">+ Create Page</button>
+                        </div>
+                        
+                        <div class="responsive-table-container">
+                            <table class="portal-table">
+                                <thead>
+                                    <tr>
+                                        <th>Title</th>
+                                        <th>Slug Link</th>
+                                        <th>Status</th>
+                                        <th style="text-align:center;">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="cms-pages-table-body">
+                                    <!-- Loaded via AJAX -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Advertisements Scheduler -->
+                    <div class="glass-panel" style="padding: 1.5rem; border-radius: 16px;">
+                        <h3 style="font-family:'Outfit'; font-size:1.25rem; margin-bottom:1rem; color:var(--accent-color);">Monetization Ad Slots</h3>
+                        <p style="font-size:0.8rem; color:var(--text-secondary); margin-bottom:1.5rem;">Configure ad scripts or campaign graphics for monetization spots.</p>
+                        
+                        <div style="display:flex; flex-direction:column; gap:1.2rem;" id="ad-slots-container">
+                            <!-- Populated dynamically -->
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- SUB-PANEL 4: SMTP & APIS -->
+            <div class="settings-sub-panel" id="settings-integrations" style="display: none;">
+                <div class="settings-responsive-grid-ops">
+                    
+                    <!-- SMTP configuration -->
+                    <div class="glass-panel" style="padding: 1.5rem; border-radius: 16px;">
+                        <h3 style="font-family:'Outfit'; font-size:1.25rem; margin-bottom:1.5rem; color:var(--accent-color);">SMTP Mail Setup</h3>
+                        <form id="settings-smtp-form">
+                            @csrf
+                            <div class="form-row-grid">
+                                <div class="form-group">
+                                    <label for="smtp-host">SMTP Server Host</label>
+                                    <input type="text" id="smtp-host" name="smtp_host" class="form-control" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="smtp-port">Port</label>
+                                    <input type="number" id="smtp-port" name="smtp_port" class="form-control" required>
+                                </div>
+                            </div>
+                            <div class="form-row-grid">
+                                <div class="form-group">
+                                    <label for="smtp-username">SMTP Username</label>
+                                    <input type="text" id="smtp-username" name="smtp_username" class="form-control">
+                                </div>
+                                <div class="form-group">
+                                    <label for="smtp-password">SMTP Password</label>
+                                    <input type="password" id="smtp-password" name="smtp_password" class="form-control" placeholder="••••••••">
+                                </div>
+                            </div>
+                            <div class="form-row-grid">
+                                <div class="form-group">
+                                    <label for="smtp-encryption">Encryption Protocol</label>
+                                    <select id="smtp-encryption" name="smtp_encryption" class="form-control">
+                                        <option value="">None</option>
+                                        <option value="tls">TLS</option>
+                                        <option value="ssl">SSL</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="smtp-sender-email">Sender Mail</label>
+                                    <input type="email" id="smtp-sender-email" name="sender_email" class="form-control" required>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="smtp-sender-name">Sender Name / App Signature</label>
+                                <input type="text" id="smtp-sender-name" name="sender_name" class="form-control" required>
+                            </div>
+
+                            <div class="divider" style="margin: 1.5rem 0;"></div>
+                            
+                            <!-- Test Connection panel -->
+                            <div style="background:rgba(0,0,0,0.06); padding:1rem; border-radius:10px; border:1px dashed var(--border-color);">
+                                <h4 style="font-family:'Outfit'; font-size:0.95rem; margin-bottom:0.5rem;">Verify Dispatch Capabilities</h4>
+                                <div style="display:flex; gap:0.5rem; align-items:center;">
+                                    <input type="email" id="smtp-test-recipient" placeholder="test@recipient.com" class="form-control" style="margin:0; flex:1;">
+                                    <button type="button" class="btn-success" id="btn-trigger-smtp-test" style="margin:0; padding:0.6rem 1rem;">Test Connection</button>
+                                </div>
+                            </div>
+                            
+                            <button type="submit" class="form-btn" style="margin-top:1.5rem; width:100%;">Save SMTP Configs</button>
+                        </form>
+                    </div>
+
+                    <!-- API Keys configuration and script injection -->
+                    <div style="display:flex; flex-direction:column; gap:1.5rem;">
+                        <div class="glass-panel" style="padding: 1.5rem; border-radius: 16px;">
+                            <h3 style="font-family:'Outfit'; font-size:1.15rem; margin-bottom:1rem; color:var(--accent-color);">Third-Party API Keys</h3>
+                            <form id="settings-api-form">
+                                @csrf
+                                <div class="form-group">
+                                    <label for="api-google">Google API Credentials</label>
+                                    <input type="password" id="api-google" name="google_api_keys" class="form-control" placeholder="••••••••">
+                                </div>
+                                <div class="form-group">
+                                    <label for="api-maps">Google Maps API Key</label>
+                                    <input type="password" id="api-maps" name="maps_api" class="form-control" placeholder="••••••••">
+                                </div>
+                                <div class="form-group">
+                                    <label for="api-sms">SMS Gateway Authentication</label>
+                                    <input type="password" id="api-sms" name="sms_gateway_api" class="form-control" placeholder="••••••••">
+                                </div>
+                                <div class="form-group">
+                                    <label for="api-whatsapp">WhatsApp Gateway Key</label>
+                                    <input type="password" id="api-whatsapp" name="whatsapp_api" class="form-control" placeholder="••••••••">
+                                </div>
+                                <button type="submit" class="form-btn" style="margin-top:1rem; width:100%;">Save Encrypted API Keys</button>
+                            </form>
+                        </div>
+                        
+                        <div class="glass-panel" style="padding: 1.5rem; border-radius: 16px;">
+                            <h3 style="font-family:'Outfit'; font-size:1.15rem; margin-bottom:1rem; color:var(--accent-color);">Custom Code Injection</h3>
+                            <form id="settings-scripts-form">
+                                @csrf
+                                <div class="form-group">
+                                    <label for="script-header">Header Injections (Google Analytics / Pixel)</label>
+                                    <textarea id="script-header" name="header_scripts" class="form-control" rows="3" placeholder="<script>...</script>"></textarea>
+                                </div>
+                                <div class="form-group">
+                                    <label for="script-footer">Footer Injections (Custom JS)</label>
+                                    <textarea id="script-footer" name="footer_scripts" class="form-control" rows="3" placeholder="<script>...</script>"></textarea>
+                                </div>
+                                <button type="submit" class="form-btn" style="width:100%;">Save Injection Scripts</button>
+                            </form>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- SUB-PANEL 5: SECURITY & BACKUPS -->
+            <div class="settings-sub-panel" id="settings-security" style="display: none;">
+                <div class="settings-responsive-grid-ops">
+                    
+                    <!-- Security properties -->
+                    <div class="glass-panel" style="padding: 1.5rem; border-radius: 16px;">
+                        <h3 style="font-family:'Outfit'; font-size:1.25rem; margin-bottom:1.5rem; color:var(--accent-color);">Security Policy Settings</h3>
+                        <form id="settings-security-form">
+                            @csrf
+                            <div class="form-row-grid">
+                                <div class="form-group">
+                                    <label for="sec-session">Session Timeout (minutes)</label>
+                                    <input type="number" id="sec-session" name="session_timeout" class="form-control" value="120" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="sec-attempts">Login Attempt Limits</label>
+                                    <input type="number" id="sec-attempts" name="login_attempt_limit" class="form-control" value="5" required>
+                                </div>
+                            </div>
+                            
+                            <div class="divider" style="margin: 1rem 0;"></div>
+                            
+                            <div style="display:flex; flex-direction:column; gap:1rem;">
+                                <div style="display:flex; justify-content:space-between; align-items:center;">
+                                    <div>
+                                        <div style="font-size:0.88rem; font-weight:600;">Enable Recaptcha Protection</div>
+                                        <span style="font-size:0.75rem; color:var(--text-secondary);">Blocks bot registration requests</span>
+                                    </div>
+                                    <label class="custom-switch" style="position: relative; display: inline-block; width: 44px; height: 24px;">
+                                        <input type="checkbox" id="sec-captcha-enable" name="captcha_enable" value="1" style="opacity: 0; width: 0; height: 0;">
+                                        <span class="slider-switch" style="position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: var(--border-color); transition: .3s; border-radius: 24px;"></span>
+                                    </label>
+                                </div>
+                                
+                                <div style="display:flex; justify-content:space-between; align-items:center;">
+                                    <div>
+                                        <div style="font-size:0.88rem; font-weight:600;">Two-Factor Authentication</div>
+                                        <span style="font-size:0.75rem; color:var(--text-secondary);">Force OTP check for admin access</span>
+                                    </div>
+                                    <label class="custom-switch" style="position: relative; display: inline-block; width: 44px; height: 24px;">
+                                        <input type="checkbox" id="sec-2fa-enable" name="two_factor_auth" value="1" style="opacity: 0; width: 0; height: 0;">
+                                        <span class="slider-switch" style="position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: var(--border-color); transition: .3s; border-radius: 24px;"></span>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <button type="submit" class="form-btn" style="margin-top:1.5rem; width:100%;">Save Security Policies</button>
+                        </form>
+                    </div>
+
+                    <!-- Database Backups -->
+                    <div class="glass-panel" style="padding: 1.5rem; border-radius: 16px;">
+                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem;">
+                            <h3 style="font-family:'Outfit'; font-size:1.25rem; margin:0; color:var(--accent-color);">System SQL Backups</h3>
+                            <button class="btn-primary" id="btn-trigger-backup" style="font-size:0.8rem; margin:0; padding:0.4rem 0.8rem;">Generate Backup</button>
+                        </div>
+                        
+                        <div class="responsive-table-container" style="max-height: 250px; overflow-y: auto;">
+                            <table class="portal-table">
+                                <thead>
+                                    <tr>
+                                        <th>Date</th>
+                                        <th>File Size</th>
+                                        <th style="text-align:center;">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="backups-table-body">
+                                    <!-- Loaded via AJAX -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- SUB-PANEL 6: MEDIA MANAGER -->
+            <div class="settings-sub-panel" id="settings-media" style="display: none;">
+                <div class="glass-panel" style="padding: 1.5rem; border-radius: 16px;">
+                    <div style="display:flex; justify-content:space-between; align-items:center; gap:1rem; flex-wrap:wrap; margin-bottom:1.5rem; padding-bottom:1rem; border-bottom:1px solid var(--border-color);">
+                        <h3 style="font-family:'Outfit'; font-size:1.25rem; margin:0; color:var(--accent-color);">File & Graphics Explorer</h3>
+                        
+                        <div style="display:flex; gap:0.5rem; align-items:center;">
+                            <!-- Directory breadcrumbs -->
+                            <div id="media-breadcrumbs" style="font-size:0.85rem; color:var(--text-secondary); background:rgba(0,0,0,0.1); padding:0.4rem 0.8rem; border-radius:6px; font-family:monospace;">
+                                uploads/media
+                            </div>
+                            
+                            <!-- Folder maker -->
+                            <button class="btn-secondary" id="btn-media-new-folder" style="font-size:0.8rem; margin:0; padding:0.4rem 0.8rem;">+ New Folder</button>
+                            
+                            <!-- File uploader -->
+                            <input type="file" id="media-upload-input" style="display:none;">
+                            <button class="btn-primary" id="btn-media-trigger-upload" style="font-size:0.8rem; margin:0; padding:0.4rem 0.8rem;">Upload File</button>
+                        </div>
+                    </div>
+
+                    <!-- Files grid layout -->
+                    <div style="display:grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap:1rem; min-height:250px; max-height:500px; overflow-y:auto; padding:0.5rem; background:rgba(0,0,0,0.08); border-radius:10px;" id="media-files-grid">
+                        <!-- Loaded dynamically -->
+                    </div>
+                </div>
+            </div>
+
         </section>
 
         <!-- ================= PANEL 7: AUDIT ACTIVITY LOGS ================= -->
@@ -1222,9 +1775,115 @@
         </form>
     </div>
 </div>
+
+<!-- Dynamic Settings: Menu Item Modal -->
+<div class="modal-overlay" id="menuItemModal">
+    <div class="modal-box glass-panel" style="max-width: 500px;">
+        <button class="modal-close-btn" id="closeMenuItemModal">&times;</button>
+        <h3 style="font-family: 'Outfit'; font-size: 1.4rem; margin-bottom: 0.5rem; color: var(--accent-color);" id="menu-item-modal-title">Add Menu Item</h3>
+        <p style="font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 1.5rem;">Configure navigation links, URL route path, and target behavior.</p>
+        
+        <form id="menuItemForm">
+            @csrf
+            <input type="hidden" id="menu-item-id" name="id">
+            <input type="hidden" id="menu-item-menu-id" name="menu_id">
+            
+            <div class="form-group">
+                <label for="menu-item-parent">Parent Item (Optional)</label>
+                <select id="menu-item-parent" name="parent_id" class="form-control">
+                    <option value="">None (Root Level)</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="menu-item-title">Title</label>
+                <input type="text" id="menu-item-title" name="title" class="form-control" required>
+            </div>
+            <div class="form-group">
+                <label for="menu-item-url">URL / Path</label>
+                <input type="text" id="menu-item-url" name="url" class="form-control" placeholder="e.g. /jobs or /p/about-us" required>
+            </div>
+            <div class="form-group">
+                <label for="menu-item-icon">Icon Class (Optional)</label>
+                <input type="text" id="menu-item-icon" name="icon" class="form-control" placeholder="e.g. fas fa-home">
+            </div>
+            <div class="form-row-grid">
+                <div class="form-group">
+                    <label for="menu-item-target">Target</label>
+                    <select id="menu-item-target" name="target" class="form-control">
+                        <option value="_self">Same Tab (_self)</option>
+                        <option value="_blank">New Tab (_blank)</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="menu-item-status">Status</label>
+                    <select id="menu-item-status" name="is_active" class="form-control">
+                        <option value="1">Active</option>
+                        <option value="0">Inactive</option>
+                    </select>
+                </div>
+            </div>
+            <button type="submit" class="form-btn" style="margin-top: 1.5rem; width: 100%;">Save Item</button>
+        </form>
+    </div>
+</div>
+
+<!-- Dynamic Settings: CMS Page Modal -->
+<div class="modal-overlay" id="cmsPageModal">
+    <div class="modal-box glass-panel" style="max-width: 850px; width: 90%;">
+        <button class="modal-close-btn" id="closeCmsPageModal">&times;</button>
+        <h3 style="font-family: 'Outfit'; font-size: 1.4rem; margin-bottom: 0.5rem; color: var(--accent-color);" id="cms-page-modal-title">Create CMS Page</h3>
+        <p style="font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 1.5rem;">Draft dynamic static pages utilizing Rich Text Editor and configure metadata indices.</p>
+        
+        <form id="cmsPageForm">
+            @csrf
+            <input type="hidden" id="cms-page-id" name="id">
+            
+            <div class="modal-form-grid" style="text-align: left;">
+                <div>
+                    <div class="form-group">
+                        <label for="cms-page-title">Page Title</label>
+                        <input type="text" id="cms-page-title" name="title" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Page Content</label>
+                        <!-- Quill Editor container -->
+                        <div id="cms-editor" style="height: 250px; background: rgba(255,255,255,0.05); border: 1px solid var(--border-color); border-radius: 8px; color: var(--text-primary);"></div>
+                        <input type="hidden" id="cms-page-content" name="content">
+                    </div>
+                </div>
+                <div>
+                    <div class="form-group">
+                        <label for="cms-page-meta-title">Meta Title</label>
+                        <input type="text" id="cms-page-meta-title" name="meta_title" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label for="cms-page-meta-desc">Meta Description</label>
+                        <textarea id="cms-page-meta-desc" name="meta_description" class="form-control" rows="3"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="cms-page-meta-keywords">Meta Keywords</label>
+                        <input type="text" id="cms-page-meta-keywords" name="meta_keywords" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label for="cms-page-status">Status</label>
+                        <select id="cms-page-status" name="is_active" class="form-control">
+                            <option value="1">Active</option>
+                            <option value="0">Inactive</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            
+            <button type="submit" class="form-btn" style="margin-top: 1.5rem; width: 100%;">Save CMS Page</button>
+        </form>
+    </div>
+</div>
 @endsection
 
 @section('scripts')
+<!-- Load Quill Rich Editor CDN -->
+<link href="https://cdn.jsdelivr.net/npm/quill@2.0.2/dist/quill.snow.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/quill@2.0.2/dist/quill.js"></script>
 <!-- Load local offline Chart.js to prevent Service Worker network fetch errors on localhost -->
 <script src="{{ asset('assets/js/chart.js') }}"></script>
 <script>
@@ -1259,6 +1918,8 @@
                 loadMarketingDashboard(1);
             } else if (targetBlock === 'analytics') {
                 loadAnalyticsDashboard();
+            } else if (targetBlock === 'settings') {
+                loadSettingsData();
             }
         });
 
@@ -1299,6 +1960,8 @@
             loadMarketingDashboard(1);
         } else if (initialBlock === 'analytics') {
             loadAnalyticsDashboard();
+        } else if (initialBlock === 'settings') {
+            loadSettingsData();
         }
 
         // Close Slide-out drawers and backdrops
@@ -1680,10 +2343,10 @@
                                     <td class="text-nowrap" style="text-align:center; width: 1%;">
                                         <div style="display:flex; gap:0.5rem; justify-content:center; align-items:center; flex-wrap:nowrap; flex-shrink:0;">
                                             <button class="btn-sm-ai btn-trigger-ai-gen" data-id="${job.id}">
-                                                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg> Verify Listing
+                                                <i class="fas fa-check-circle" style="margin-right: 4px; font-size: 0.75rem;"></i> Verify Listing
                                             </button>
-                                            <button class="btn-sm-view btn-edit-job" data-id="${job.id}" data-title="${job.title}" data-category="${job.category_id}" data-dept="${job.department_id}" data-state="${job.state_id}" data-qual="${job.qualification_id}" data-desc="${job.description}" data-min="${job.salary_min}" data-max="${job.salary_max}" data-vac="${job.vacancy_count}" data-fee="${job.application_fee}" data-deadline="${job.last_date_to_apply ? job.last_date_to_apply.substring(0, 10) : ''}" data-url="${job.official_website_link}">Edit</button>
-                                            <button class="btn-sm-danger btn-delete-job" data-id="${job.id}">Delete</button>
+                                            <button class="btn-sm-view btn-edit-job" data-id="${job.id}" data-title="${job.title}" data-category="${job.category_id}" data-dept="${job.department_id}" data-state="${job.state_id}" data-qual="${job.qualification_id}" data-desc="${job.description}" data-min="${job.salary_min}" data-max="${job.salary_max}" data-vac="${job.vacancy_count}" data-fee="${job.application_fee}" data-deadline="${job.last_date_to_apply ? job.last_date_to_apply.substring(0, 10) : ''}" data-url="${job.official_website_link}"><i class="fas fa-edit" style="margin-right: 4px; font-size: 0.75rem;"></i> Edit</button>
+                                            <button class="btn-sm-danger btn-delete-job" data-id="${job.id}"><i class="fas fa-trash-alt" style="margin-right: 4px; font-size: 0.75rem;"></i> Delete</button>
                                         </div>
                                     </td>
                                 </tr>
@@ -3019,7 +3682,7 @@
             const postId = $(this).data('id');
             const btn = $(this);
 
-            btn.prop('disabled', true).text('Verifying...');
+            btn.prop('disabled', true).html('<i class="fas fa-spinner fa-spin" style="margin-right: 4px; font-size: 0.75rem;"></i> Verifying...');
             $.ajax({
                 url: `/api/admin/ai-contents/generate/${postId}`,
                 method: 'POST',
@@ -3031,7 +3694,7 @@
                     showToast('Failed to queue verification task.', 'error');
                 },
                 complete: function() {
-                    btn.prop('disabled', false).html('<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg> Verify Listing');
+                    btn.prop('disabled', false).html('<i class="fas fa-check-circle" style="margin-right: 4px; font-size: 0.75rem;"></i> Verify Listing');
                 }
             });
         });
@@ -3193,6 +3856,1208 @@
                 },
                 complete: function() {
                     submitBtn.prop('disabled', false).text(originalText);
+                }
+            });
+        });
+        // ==========================================
+        // DYNAMIC SETTINGS MANAGEMENT MODULE JS CODE
+        // ==========================================
+
+        // Utility to safely resolve asset URLs without double leading slashes
+        function resolveAssetUrl(path) {
+            if (!path) return '';
+            if (path.startsWith('http://') || path.startsWith('https://') || path.startsWith('//')) {
+                return path;
+            }
+            const cleanPath = path.startsWith('/') ? path.substring(1) : path;
+            return '/' + cleanPath;
+        }
+
+        // Settings nested sub-tabs toggling
+        $(document).on('click', '.settings-sub-trigger', function() {
+            $('.settings-sub-trigger').removeClass('active');
+            $(this).addClass('active');
+
+            const targetTab = $(this).data('target');
+            $('.settings-sub-panel').hide();
+            $(`#${targetTab}`).fadeIn(300);
+
+            // Fetch specific data if needed
+            if (targetTab === 'settings-layout') {
+                loadMenusList();
+            } else if (targetTab === 'settings-operations') {
+                loadCmsPagesList();
+                loadAdSlots();
+            } else if (targetTab === 'settings-security') {
+                loadBackupsList();
+            } else if (targetTab === 'settings-media') {
+                loadMediaExplorer('');
+            }
+        });
+
+        // Toggle maintenance message display depending on maintenance mode select state
+        $('#cfg-maintenance-mode').on('change', function() {
+            if ($(this).val() === '1') {
+                $('#maintenance-msg-group').slideDown();
+            } else {
+                $('#maintenance-msg-group').slideUp();
+            }
+        });
+
+        // 1. Fetch settings data from backend
+        window.loadSettingsData = function() {
+            $.ajax({
+                url: '/api/admin/settings',
+                method: 'GET',
+                success: function(res) {
+                    if (res.status === 'success') {
+                        const data = res.data;
+                        
+                        // Populate Site Settings (General)
+                        if (data.general) {
+                            $.each(data.general, function(key, val) {
+                                const input = $(`[name="${key}"]`);
+                                if (input.length) {
+                                    if (input.is('select') || input.is('textarea') || input.attr('type') === 'text' || input.attr('type') === 'email') {
+                                        input.val(val);
+                                    } else if (input.is('input[type="checkbox"]') || input.attr('type') === 'checkbox') {
+                                        input.prop('checked', val == 1);
+                                    }
+                                }
+                            });
+                            
+                            // Trigger maintenance select change callback
+                            $('#cfg-maintenance-mode').trigger('change');
+                        }
+
+                        // Logo Graphic previews
+                        const logos = ['header_logo', 'footer_logo', 'favicon'];
+                        logos.forEach(logoKey => {
+                            const val = data.general ? data.general[logoKey] : null;
+                            if (val) {
+                                $(`#preview-${logoKey}`).attr('src', resolveAssetUrl(val)).show();
+                                $(`#no-${logoKey}`).hide();
+                            } else {
+                                $(`#preview-${logoKey}`).hide();
+                                $(`#no-${logoKey}`).show();
+                            }
+                        });
+
+                        // Render Social link checkboxes/urls
+                        let socialHtml = '';
+                        if (data.social) {
+                            data.social.forEach((link, idx) => {
+                                socialHtml += `
+                                    <div style="display:grid; grid-template-columns: 100px 1fr 60px; gap:0.5rem; align-items:center;">
+                                        <span style="font-size:0.85rem; font-weight:600;">${link.platform}</span>
+                                        <input type="text" name="links[${idx}][url]" value="${link.url || ''}" class="form-control" style="margin:0;" placeholder="https://...">
+                                        <input type="hidden" name="links[${idx}][platform]" value="${link.platform}">
+                                        <label class="custom-switch" style="position: relative; display: inline-block; width: 44px; height: 24px; margin: 0 auto;">
+                                            <input type="checkbox" name="links[${idx}][is_active]" value="1" ${link.is_active ? 'checked' : ''} style="opacity: 0; width: 0; height: 0;" class="social-active-checkbox">
+                                            <span class="slider-switch" style="position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: var(--border-color); transition: .3s; border-radius: 24px;"></span>
+                                        </label>
+                                    </div>
+                                `;
+                            });
+                        }
+                        $('#social-links-inputs').html(socialHtml);
+
+                        // Theme Settings
+                        if (data.theme) {
+                            $.each(data.theme, function(key, val) {
+                                const input = $(`#theme-${key.replace('_color', '')}`);
+                                if (input.length) input.val(val);
+                                const picker = $(`#theme-${key.replace('_color', '')}-picker`);
+                                if (picker.length) picker.val(val);
+                            });
+                        }
+
+                        // SEO Settings
+                        if (data.seo) {
+                            $.each(data.seo, function(key, val) {
+                                const target = $(`#admin-settings [name="${key}"]`);
+                                if (target.length) target.val(val);
+                            });
+                        }
+
+                        // Email Configs
+                        if (data.email) {
+                            $.each(data.email, function(key, val) {
+                                const target = $(`#settings-smtp-form [name="${key}"]`);
+                                if (target.length) target.val(val);
+                            });
+                        }
+
+                        // API credentials
+                        if (data.api) {
+                            $.each(data.api, function(key, val) {
+                                const target = $(`#settings-api-form [name="${key}"]`);
+                                if (target.length) target.val(val);
+                            });
+                        }
+                    }
+                },
+                error: function() {
+                    showToast('Failed to retrieve settings matrix.', 'error');
+                }
+            });
+        };
+
+        // Sync pickers and color inputs
+        $('#theme-primary-picker').on('input', function() { $('#theme-primary').val($(this).val()); });
+        $('#theme-primary').on('input', function() { $('#theme-primary-picker').val($(this).val()); });
+        $('#theme-secondary-picker').on('input', function() { $('#theme-secondary').val($(this).val()); });
+        $('#theme-secondary').on('input', function() { $('#theme-secondary-picker').val($(this).val()); });
+
+        // Submit General properties
+        $('#settings-general-form').on('submit', function(e) {
+            e.preventDefault();
+            const form = $(this);
+            const submitBtn = form.find('button[type="submit"]');
+            const originalText = submitBtn.text();
+            submitBtn.prop('disabled', true).text('Saving Configs...');
+
+            // Merge both General and Scripts forms to avoid missing fields validation errors
+            const data = form.serialize() + '&' + $('#settings-scripts-form').serialize();
+
+            $.ajax({
+                url: '/api/admin/settings/general',
+                method: 'POST',
+                data: data,
+                success: function(res) {
+                    showToast(res.message, 'success');
+                },
+                error: function(err) {
+                    showToast(err.responseJSON?.message || 'Failed to save general configurations.', 'error');
+                },
+                complete: function() {
+                    submitBtn.prop('disabled', false).text(originalText);
+                }
+            });
+        });
+
+        // Submit Social platforms
+        $('#settings-social-form').on('submit', function(e) {
+            e.preventDefault();
+            const form = $(this);
+            const submitBtn = form.find('button[type="submit"]');
+            const originalText = submitBtn.text();
+            submitBtn.prop('disabled', true).text('Synchronizing...');
+
+            // Custom serialize to make sure checkboxes are sent correctly as 0 or 1
+            const payload = {
+                _token: '{{ csrf_token() }}',
+                links: []
+            };
+
+            $('#social-links-inputs > div').each(function(idx, el) {
+                const platform = $(el).find('input[type="hidden"]').val();
+                const url = $(el).find('input[type="text"]').val();
+                const is_active = $(el).find('.social-active-checkbox').is(':checked') ? 1 : 0;
+                payload.links.push({ platform, url, is_active });
+            });
+
+            $.ajax({
+                url: '/api/admin/settings/social',
+                method: 'POST',
+                data: payload,
+                success: function(res) {
+                    showToast(res.message, 'success');
+                },
+                error: function() {
+                    showToast('Failed to save social platforms.', 'error');
+                },
+                complete: function() {
+                    submitBtn.prop('disabled', false).text(originalText);
+                }
+            });
+        });
+
+        // Logo Upload handling
+        $(document).on('change', '.logo-upload-input', function() {
+            const input = $(this);
+            const file = this.files[0];
+            if (!file) return;
+
+            const key = input.data('key');
+            const formData = new FormData();
+            formData.append('_token', '{{ csrf_token() }}');
+            formData.append('key', key);
+            formData.append('file', file);
+
+            showToast('Uploading graphics asset...', 'info');
+
+            $.ajax({
+                url: '/api/admin/settings/logo',
+                method: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function(res) {
+                    if (res.status === 'success') {
+                        showToast(res.message, 'success');
+                        $(`#preview-${key}`).attr('src', resolveAssetUrl(res.data.path)).show();
+                        $(`#no-${key}`).hide();
+                    }
+                },
+                error: function(err) {
+                    showToast(err.responseJSON?.message || 'Failed to upload logo image.', 'error');
+                }
+            });
+        });
+
+        // Submit Theme configuration
+        $('#settings-theme-form').on('submit', function(e) {
+            e.preventDefault();
+            const form = $(this);
+            const submitBtn = form.find('button[type="submit"]');
+            const originalText = submitBtn.text();
+            submitBtn.prop('disabled', true).text('Rebuilding layout...');
+
+            $.ajax({
+                url: '/api/admin/settings/theme',
+                method: 'POST',
+                data: form.serialize(),
+                success: function(res) {
+                    showToast(res.message, 'success');
+                    // Reload index view to apply new dynamic colors immediately
+                    setTimeout(() => {
+                        location.reload();
+                    }, 500);
+                },
+                error: function() {
+                    showToast('Failed to update theme colors.', 'error');
+                },
+                complete: function() {
+                    submitBtn.prop('disabled', false).text(originalText);
+                }
+            });
+        });
+
+        // Submit SMTP Setup
+        $('#settings-smtp-form').on('submit', function(e) {
+            e.preventDefault();
+            const form = $(this);
+            const submitBtn = form.find('button[type="submit"]');
+            const originalText = submitBtn.text();
+            submitBtn.prop('disabled', true).text('Applying binding...');
+
+            $.ajax({
+                url: '/api/admin/settings/email',
+                method: 'POST',
+                data: form.serialize(),
+                success: function(res) {
+                    showToast(res.message, 'success');
+                },
+                error: function() {
+                    showToast('Failed to apply SMTP credentials.', 'error');
+                },
+                complete: function() {
+                    submitBtn.prop('disabled', false).text(originalText);
+                }
+            });
+        });
+
+        // Trigger SMTP Verification Test
+        $('#btn-trigger-smtp-test').on('click', function() {
+            const btn = $(this);
+            const originalText = btn.text();
+            const recipient = $('#smtp-test-recipient').val();
+
+            if (!recipient) {
+                showToast('Please specify a verification recipient email.', 'error');
+                return;
+            }
+
+            btn.prop('disabled', true).text('Testing...');
+
+            const payload = {
+                _token: '{{ csrf_token() }}',
+                smtp_host: $('#smtp-host').val(),
+                smtp_port: $('#smtp-port').val(),
+                smtp_username: $('#smtp-username').val(),
+                smtp_password: $('#smtp-password').val(),
+                smtp_encryption: $('#smtp-encryption').val(),
+                sender_name: $('#smtp-sender-name').val(),
+                sender_email: $('#smtp-sender-email').val(),
+                test_recipient: recipient
+            };
+
+            $.ajax({
+                url: '/api/admin/settings/email/test',
+                method: 'POST',
+                data: payload,
+                success: function(res) {
+                    showToast(res.message, 'success');
+                },
+                error: function(err) {
+                    showToast(err.responseJSON?.message || 'SMTP Connection failed.', 'error');
+                },
+                complete: function() {
+                    btn.prop('disabled', false).text(originalText);
+                }
+            });
+        });
+
+        // Submit API Credentials
+        $('#settings-api-form').on('submit', function(e) {
+            e.preventDefault();
+            const form = $(this);
+            const submitBtn = form.find('button[type="submit"]');
+            const originalText = submitBtn.text();
+            submitBtn.prop('disabled', true).text('Encrypting credentials...');
+
+            $.ajax({
+                url: '/api/admin/settings/api',
+                method: 'POST',
+                data: form.serialize(),
+                success: function(res) {
+                    showToast(res.message, 'success');
+                },
+                error: function() {
+                    showToast('Failed to save API credentials.', 'error');
+                },
+                complete: function() {
+                    submitBtn.prop('disabled', false).text(originalText);
+                }
+            });
+        });
+
+        // Submit Custom Scripts (Sends entire general config values to prevent validation block)
+        $('#settings-scripts-form').on('submit', function(e) {
+            e.preventDefault();
+            const form = $(this);
+            const submitBtn = form.find('button[type="submit"]');
+            const originalText = submitBtn.text();
+            submitBtn.prop('disabled', true).text('Saving injections...');
+
+            const data = $('#settings-general-form').serialize() + '&' + form.serialize();
+
+            $.ajax({
+                url: '/api/admin/settings/general',
+                method: 'POST',
+                data: data,
+                success: function(res) {
+                    showToast('Injected scripts saved successfully!', 'success');
+                },
+                error: function() {
+                    showToast('Failed to save custom scripts.', 'error');
+                },
+                complete: function() {
+                    submitBtn.prop('disabled', false).text(originalText);
+                }
+            });
+        });
+
+        // 2. Menus & Navigation Builder
+        let activeMenusData = [];
+        window.loadMenusList = function() {
+            const select = $('#menu-select-selector');
+            const activeMenuId = select.val() || 1;
+
+            $.ajax({
+                url: '/api/admin/settings/menus',
+                method: 'GET',
+                success: function(res) {
+                    if (res.status === 'success') {
+                        activeMenusData = res.data;
+                        
+                        // Populate select dropdown options if empty
+                        if (select.find('option').length <= 3) {
+                            let selectHtml = '';
+                            activeMenusData.forEach(menu => {
+                                selectHtml += `<option value="${menu.id}">${menu.name} (${menu.location})</option>`;
+                            });
+                            select.html(selectHtml);
+                            select.val(activeMenuId);
+                        }
+
+                        // Filter active menu items
+                        const activeMenu = activeMenusData.find(m => m.id == activeMenuId);
+                        renderMenuItemsList(activeMenu ? activeMenu.items : []);
+                    }
+                },
+                error: function() {
+                    showToast('Failed to retrieve menus list.', 'error');
+                }
+            });
+        };
+
+        $('#menu-select-selector').on('change', function() {
+            loadMenusList();
+        });
+
+        function renderMenuItemsList(items) {
+            let html = '';
+            const rootItems = items.filter(item => !item.parent_id).sort((a, b) => a.order_index - b.order_index);
+
+            if (rootItems.length === 0) {
+                html = `<div style="text-align:center; padding:2rem; color:var(--text-secondary); font-size:0.85rem;">No navigation items inside this menu. Click + Add Item to create.</div>`;
+            } else {
+                rootItems.forEach(item => {
+                    const children = items.filter(c => c.parent_id == item.id).sort((a, b) => a.order_index - b.order_index);
+                    const statusBadge = item.is_active 
+                        ? `<span class="badge" style="background:rgba(16,185,129,0.1); color:#10b981;">Active</span>`
+                        : `<span class="badge" style="background:rgba(239,68,68,0.1); color:#ef4444;">Inactive</span>`;
+
+                    html += `
+                        <div class="menu-item-row" style="background:var(--bg-primary); border:1px solid var(--border-color); border-radius:8px; padding:0.75rem 1rem; margin-bottom:0.5rem; display:flex; justify-content:space-between; align-items:center;">
+                            <div>
+                                <strong style="font-size:0.9rem;">${item.title}</strong>
+                                <span style="font-size:0.75rem; color:var(--text-secondary); margin-left:0.5rem;">${item.url}</span>
+                                <span style="margin-left:0.5rem;">${statusBadge}</span>
+                            </div>
+                            <div style="display:flex; gap:0.4rem; align-items:center;">
+                                <button type="button" class="btn-secondary btn-menu-item-up" data-id="${item.id}" style="font-size:0.7rem; padding:0.2rem 0.4rem; margin:0;">▲</button>
+                                <button type="button" class="btn-secondary btn-menu-item-down" data-id="${item.id}" style="font-size:0.7rem; padding:0.2rem 0.4rem; margin:0;">▼</button>
+                                <button type="button" class="btn-primary btn-menu-item-edit" data-id="${item.id}" style="font-size:0.7rem; padding:0.2rem 0.5rem; margin:0;">Edit</button>
+                                <button type="button" class="btn-danger btn-menu-item-delete" data-id="${item.id}" style="font-size:0.7rem; padding:0.2rem 0.5rem; margin:0;">Del</button>
+                            </div>
+                        </div>
+                    `;
+
+                    children.forEach(cItem => {
+                        const childStatusBadge = cItem.is_active 
+                            ? `<span class="badge" style="background:rgba(16,185,129,0.1); color:#10b981; font-size:0.7rem;">Active</span>`
+                            : `<span class="badge" style="background:rgba(239,68,68,0.1); color:#ef4444; font-size:0.7rem;">Inactive</span>`;
+
+                        html += `
+                            <div class="menu-item-row-child" style="background:rgba(255,255,255,0.02); border:1px dashed var(--border-color); border-radius:8px; padding:0.5rem 1rem; margin-bottom:0.5rem; margin-left:2rem; display:flex; justify-content:space-between; align-items:center;">
+                                <div>
+                                    <span style="color:var(--text-secondary); margin-right:0.25rem;">└</span>
+                                    <strong style="font-size:0.85rem;">${cItem.title}</strong>
+                                    <span style="font-size:0.7rem; color:var(--text-secondary); margin-left:0.5rem;">${cItem.url}</span>
+                                    <span style="margin-left:0.5rem;">${childStatusBadge}</span>
+                                </div>
+                                <div style="display:flex; gap:0.4rem; align-items:center;">
+                                    <button type="button" class="btn-secondary btn-menu-item-up" data-id="${cItem.id}" style="font-size:0.65rem; padding:0.15rem 0.3rem; margin:0;">▲</button>
+                                    <button type="button" class="btn-secondary btn-menu-item-down" data-id="${cItem.id}" style="font-size:0.65rem; padding:0.15rem 0.3rem; margin:0;">▼</button>
+                                    <button type="button" class="btn-primary btn-menu-item-edit" data-id="${cItem.id}" style="font-size:0.65rem; padding:0.15rem 0.4rem; margin:0;">Edit</button>
+                                    <button type="button" class="btn-danger btn-menu-item-delete" data-id="${cItem.id}" style="font-size:0.65rem; padding:0.15rem 0.4rem; margin:0;">Del</button>
+                                </div>
+                            </div>
+                        `;
+                    });
+                });
+            }
+            $('#menu-items-sortable-list').html(html);
+        }
+
+        // Add Menu Item triggers Modal
+        $('#btn-add-menu-item-modal').on('click', function() {
+            const menuId = $('#menu-select-selector').val();
+            
+            $('#menuItemForm')[0].reset();
+            $('#menu-item-id').val('');
+            $('#menu-item-menu-id').val(menuId);
+            $('#menu-item-modal-title').text('Add Menu Item');
+
+            // Populate Parents select
+            const activeMenu = activeMenusData.find(m => m.id == menuId);
+            let parentOptions = '<option value="">None (Root Level)</option>';
+            if (activeMenu && activeMenu.items) {
+                const rootItems = activeMenu.items.filter(item => !item.parent_id);
+                rootItems.forEach(item => {
+                    parentOptions += `<option value="${item.id}">${item.title}</option>`;
+                });
+            }
+            $('#menu-item-parent').html(parentOptions);
+
+            $('#menuItemModal').addClass('active');
+        });
+
+        // Edit Menu Item
+        $(document).on('click', '.btn-menu-item-edit', function() {
+            const itemId = $(this).data('id');
+            const menuId = $('#menu-select-selector').val();
+            const activeMenu = activeMenusData.find(m => m.id == menuId);
+            if (!activeMenu) return;
+
+            const item = activeMenu.items.find(i => i.id == itemId);
+            if (!item) return;
+
+            $('#menu-item-id').val(item.id);
+            $('#menu-item-menu-id').val(item.menu_id);
+            $('#menu-item-title').val(item.title);
+            $('#menu-item-url').val(item.url);
+            $('#menu-item-icon').val(item.icon);
+            $('#menu-item-target').val(item.target);
+            $('#menu-item-status').val(item.is_active ? '1' : '0');
+            $('#menu-item-modal-title').text('Edit Menu Item');
+
+            // Populate Parents select (exclude self)
+            let parentOptions = '<option value="">None (Root Level)</option>';
+            const rootItems = activeMenu.items.filter(i => !i.parent_id && i.id != item.id);
+            rootItems.forEach(rItem => {
+                parentOptions += `<option value="${rItem.id}">${rItem.title}</option>`;
+            });
+            $('#menu-item-parent').html(parentOptions);
+            $('#menu-item-parent').val(item.parent_id || '');
+
+            $('#menuItemModal').addClass('active');
+        });
+
+        // Delete Menu Item
+        $(document).on('click', '.btn-menu-item-delete', function() {
+            const itemId = $(this).data('id');
+            if (!confirm('Are you sure you want to delete this menu item and all its submenus?')) return;
+
+            $.ajax({
+                url: `/api/admin/settings/menus/${itemId}`,
+                method: 'DELETE',
+                data: { _token: '{{ csrf_token() }}' },
+                success: function(res) {
+                    showToast(res.message, 'success');
+                    loadMenusList();
+                },
+                error: function() {
+                    showToast('Failed to delete menu item.', 'error');
+                }
+            });
+        });
+
+        // Close Menu Item Modal
+        $('#closeMenuItemModal, #menuItemModal').on('click', function(e) {
+            if (e.target === this || e.target.id === 'closeMenuItemModal') {
+                $('#menuItemModal').removeClass('active');
+            }
+        });
+
+        // Save Menu Item submit handler
+        $('#menuItemForm').on('submit', function(e) {
+            e.preventDefault();
+            const form = $(this);
+            $.ajax({
+                url: '/api/admin/settings/menus',
+                method: 'POST',
+                data: form.serialize(),
+                success: function(res) {
+                    showToast(res.message, 'success');
+                    $('#menuItemModal').removeClass('active');
+                    loadMenusList();
+                },
+                error: function(err) {
+                    showToast('Failed to save menu navigation item.', 'error');
+                }
+            });
+        });
+
+        // Reorder Menu Items via Up/Down buttons
+        $(document).on('click', '.btn-menu-item-up, .btn-menu-item-down', function() {
+            const btn = $(this);
+            const itemId = btn.data('id');
+            const direction = btn.hasClass('btn-menu-item-up') ? 'up' : 'down';
+            
+            const menuId = $('#menu-select-selector').val();
+            const activeMenu = activeMenusData.find(m => m.id == menuId);
+            if (!activeMenu) return;
+
+            const items = activeMenu.items;
+            const item = items.find(i => i.id == itemId);
+            if (!item) return;
+
+            // Get siblings (same parent level)
+            const siblings = items.filter(i => i.parent_id == item.parent_id).sort((a, b) => (a.order_index || 0) - (b.order_index || 0));
+            
+            // Normalize sibling order indices to ensure they are sequential and distinct
+            siblings.forEach((sib, sIdx) => {
+                sib.order_index = sIdx;
+            });
+
+            const idx = siblings.findIndex(i => i.id == item.id);
+
+            if (direction === 'up' && idx > 0) {
+                // Swap order indices
+                const prevItem = siblings[idx - 1];
+                const temp = prevItem.order_index;
+                prevItem.order_index = item.order_index;
+                item.order_index = temp;
+            } else if (direction === 'down' && idx < siblings.length - 1) {
+                // Swap order indices
+                const nextItem = siblings[idx + 1];
+                const temp = nextItem.order_index;
+                nextItem.order_index = item.order_index;
+                item.order_index = temp;
+            } else {
+                return; // already at extreme boundaries
+            }
+
+            // Construct payload items sorted hierarchically
+            const orderedPayloadItems = [];
+            const sortedRootItems = items.filter(i => !i.parent_id).sort((a, b) => (a.order_index || 0) - (b.order_index || 0));
+            
+            sortedRootItems.forEach(root => {
+                orderedPayloadItems.push({ id: root.id, parent_id: null });
+                const sortedChildren = items.filter(i => i.parent_id == root.id).sort((a, b) => (a.order_index || 0) - (b.order_index || 0));
+                sortedChildren.forEach(child => {
+                    orderedPayloadItems.push({ id: child.id, parent_id: root.id });
+                });
+            });
+
+            // Fallback for any orphaned items
+            items.forEach(i => {
+                if (!orderedPayloadItems.some(p => p.id === i.id)) {
+                    orderedPayloadItems.push({ id: i.id, parent_id: i.parent_id });
+                }
+            });
+
+            $.ajax({
+                url: '/api/admin/settings/menus/reorder',
+                method: 'POST',
+                data: {
+                    _token: '{{ csrf_token() }}',
+                    menu_id: menuId,
+                    items: orderedPayloadItems
+                },
+                success: function(res) {
+                    showToast('Navigation ordering updated!', 'success');
+                    loadMenusList();
+                },
+                error: function() {
+                    showToast('Failed to swap navigation positions.', 'error');
+                }
+            });
+        });
+
+        // 3. Operations: CMS Pages Table & Editor
+        let cmsEditor = null;
+        function initCmsEditor() {
+            if (!cmsEditor) {
+                cmsEditor = new Quill('#cms-editor', {
+                    theme: 'snow',
+                    modules: {
+                        toolbar: [
+                            [{ 'header': [1, 2, 3, false] }],
+                            ['bold', 'italic', 'underline', 'strike'],
+                            ['link', 'blockquote', 'code-block'],
+                            [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+                            ['clean']
+                        ]
+                    }
+                });
+            }
+        }
+
+        window.loadCmsPagesList = function() {
+            $.ajax({
+                url: '/api/admin/settings/cms-pages',
+                method: 'GET',
+                success: function(res) {
+                    if (res.status === 'success') {
+                        let tbodyHtml = '';
+                        const pages = res.data;
+
+                        if (pages.length === 0) {
+                            tbodyHtml = `<tr><td colspan="4" style="text-align: center; color: var(--text-secondary); padding: 2rem 0;">No CMS static pages created.</td></tr>`;
+                        } else {
+                            pages.forEach(page => {
+                                const statusBadge = page.is_active 
+                                    ? `<span class="badge" style="background:rgba(16,185,129,0.1); color:#10b981;">Published</span>`
+                                    : `<span class="badge" style="background:rgba(100,116,139,0.1); color:var(--text-secondary);">Draft</span>`;
+
+                                tbodyHtml += `
+                                    <tr>
+                                        <td><strong>${page.title}</strong></td>
+                                        <td><a href="/p/${page.slug}" target="_blank" style="color:var(--accent-color); font-family:monospace; font-size:0.85rem;">/p/${page.slug}</a></td>
+                                        <td>${statusBadge}</td>
+                                        <td style="text-align:center;">
+                                            <button type="button" class="btn-primary btn-cms-page-edit" data-id="${page.id}" style="font-size:0.75rem; padding:0.25rem 0.6rem; margin:0;">Edit</button>
+                                            <button type="button" class="btn-danger btn-cms-page-delete" data-id="${page.id}" style="font-size:0.75rem; padding:0.25rem 0.6rem; margin:0;">Delete</button>
+                                        </td>
+                                    </tr>
+                                `;
+                            });
+                        }
+                        $('#cms-pages-table-body').html(tbodyHtml);
+                    }
+                },
+                error: function() {
+                    showToast('Failed to retrieve static pages.', 'error');
+                }
+            });
+        };
+
+        // Create CMS page opens modal
+        $('#btn-create-cms-page').on('click', function() {
+            $('#cmsPageForm')[0].reset();
+            $('#cms-page-id').val('');
+            $('#cms-page-modal-title').text('Create CMS Page');
+
+            // Init Quill if not done
+            initCmsEditor();
+            if (cmsEditor) cmsEditor.setText('');
+
+            $('#cmsPageModal').addClass('active');
+        });
+
+        // Edit CMS page
+        $(document).on('click', '.btn-cms-page-edit', function() {
+            const pageId = $(this).data('id');
+            
+            showToast('Loading page details...', 'info');
+
+            $.ajax({
+                url: `/api/admin/settings/cms-pages/${pageId}`,
+                method: 'GET',
+                success: function(res) {
+                    if (res.status === 'success') {
+                        const page = res.data;
+
+                        $('#cms-page-id').val(page.id);
+                        $('#cms-page-title').val(page.title);
+                        $('#cms-page-meta-title').val(page.meta_title);
+                        $('#cms-page-meta-desc').val(page.meta_description);
+                        $('#cms-page-meta-keywords').val(page.meta_keywords);
+                        $('#cms-page-status').val(page.is_active ? '1' : '0');
+                        $('#cms-page-modal-title').text('Edit CMS Page');
+
+                        initCmsEditor();
+                        if (cmsEditor) {
+                            cmsEditor.clipboard.dangerouslyPasteHTML(page.content || '');
+                        }
+
+                        $('#cmsPageModal').addClass('active');
+                    }
+                },
+                error: function() {
+                    showToast('Failed to retrieve page details.', 'error');
+                }
+            });
+        });
+
+        // Submit CMS page Form
+        $('#cmsPageForm').on('submit', function(e) {
+            e.preventDefault();
+            
+            // Extract content from Quill editor
+            const htmlContent = cmsEditor ? cmsEditor.getSemanticHTML() : '';
+            $('#cms-page-content').val(htmlContent);
+
+            if (!htmlContent.trim()) {
+                showToast('Page content is empty. Please enter details.', 'error');
+                return;
+            }
+
+            const submitBtn = $(this).find('button[type="submit"]');
+            const originalText = submitBtn.text();
+            submitBtn.prop('disabled', true).text('Saving template...');
+
+            $.ajax({
+                url: '/api/admin/settings/cms-pages',
+                method: 'POST',
+                data: $(this).serialize(),
+                success: function(res) {
+                    showToast(res.message, 'success');
+                    $('#cmsPageModal').removeClass('active');
+                    loadCmsPagesList();
+                },
+                error: function(err) {
+                    showToast('Failed to save static page template.', 'error');
+                },
+                complete: function() {
+                    submitBtn.prop('disabled', false).text(originalText);
+                }
+            });
+        });
+
+        // Delete CMS Page
+        $(document).on('click', '.btn-cms-page-delete', function() {
+            const pageId = $(this).data('id');
+            if (!confirm('Are you sure you want to delete this CMS static page permanently?')) return;
+
+            $.ajax({
+                url: `/api/admin/settings/cms-pages/${pageId}`,
+                method: 'DELETE',
+                data: { _token: '{{ csrf_token() }}' },
+                success: function(res) {
+                    showToast(res.message, 'success');
+                    loadCmsPagesList();
+                },
+                error: function() {
+                    showToast('Failed to delete CMS page.', 'error');
+                }
+            });
+        });
+
+        // Close CMS Page Modal
+        $('#closeCmsPageModal, #cmsPageModal').on('click', function(e) {
+            if (e.target === this || e.target.id === 'closeCmsPageModal') {
+                $('#cmsPageModal').removeClass('active');
+            }
+        });
+
+        // 4. Operations: Advertisements list
+        window.loadAdSlots = function() {
+            $.ajax({
+                url: '/api/admin/advertisements',
+                method: 'GET',
+                success: function(res) {
+                    if (res.status === 'success') {
+                        let html = '';
+                        res.data.forEach(ad => {
+                            html += `
+                                <div style="background:var(--bg-primary); border:1px solid var(--border-color); border-radius:10px; padding:1rem;">
+                                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.75rem;">
+                                        <strong style="font-size:0.95rem; text-transform:capitalize;">${ad.slot_name.replace(/_/g, ' ')}</strong>
+                                        <label class="custom-switch" style="position: relative; display: inline-block; width: 44px; height: 24px;">
+                                            <input type="checkbox" class="ad-active-toggle" data-id="${ad.id}" ${ad.is_active ? 'checked' : ''} style="opacity: 0; width: 0; height: 0;">
+                                            <span class="slider-switch" style="position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: var(--border-color); transition: .3s; border-radius: 24px;"></span>
+                                        </label>
+                                    </div>
+                                    <form class="ajax-ad-slot-form" data-slot="${ad.slot_name}">
+                                        @csrf
+                                        <input type="hidden" name="slot_name" value="${ad.slot_name}">
+                                        <input type="hidden" name="is_active" value="${ad.is_active ? 1 : 0}" class="ad-form-status-val">
+                                        
+                                        <div class="form-group" style="margin:0;">
+                                            <label style="font-size:0.75rem; margin-bottom:0.25rem;">Ad Script (JS/HTML code)</label>
+                                            <textarea name="ad_code" class="form-control" rows="2" style="font-family:monospace; font-size:0.8rem; margin-bottom:0.5rem;" placeholder="Paste Google AdSense / Header auction code here...">${ad.ad_code || ''}</textarea>
+                                        </div>
+                                        <button type="submit" class="btn-primary" style="font-size:0.75rem; margin:0; padding:0.3rem 0.7rem; width:100%;">Apply Ad Slot Code</button>
+                                    </form>
+                                </div>
+                            `;
+                        });
+                        $('#ad-slots-container').html(html);
+                    }
+                },
+                error: function() {
+                    showToast('Failed to load advertisements slots.', 'error');
+                }
+            });
+        };
+
+        // Submit Ad slot code
+        $(document).on('submit', '.ajax-ad-slot-form', function(e) {
+            e.preventDefault();
+            const form = $(this);
+            const submitBtn = form.find('button[type="submit"]');
+            submitBtn.prop('disabled', true).text('Applying script...');
+
+            $.ajax({
+                url: '/api/admin/advertisements',
+                method: 'POST',
+                data: form.serialize(),
+                success: function(res) {
+                    showToast(res.message, 'success');
+                    loadAdSlots();
+                },
+                error: function() {
+                    showToast('Failed to save ad slot scripts.', 'error');
+                },
+                complete: function() {
+                    submitBtn.prop('disabled', false).text('Apply Ad Slot Code');
+                }
+            });
+        });
+
+        // Toggle Ad Slot Active State
+        $(document).on('change', '.ad-active-toggle', function() {
+            const checkbox = $(this);
+            const id = checkbox.data('id');
+            
+            $.ajax({
+                url: `/api/admin/advertisements/${id}/toggle`,
+                method: 'POST',
+                data: { _token: '{{ csrf_token() }}' },
+                success: function(res) {
+                    showToast(res.message, 'success');
+                    loadAdSlots();
+                },
+                error: function() {
+                    showToast('Failed to toggle ad slot state.', 'error');
+                }
+            });
+        });
+
+        // 5. Security: SQL Backup Console
+        window.loadBackupsList = function() {
+            $.ajax({
+                url: '/api/admin/settings/backups',
+                method: 'GET',
+                success: function(res) {
+                    if (res.status === 'success') {
+                        let tbodyHtml = '';
+                        res.data.forEach(backup => {
+                            const fileSizeMb = (backup.size / (1024 * 1024)).toFixed(2);
+                            tbodyHtml += `
+                                <tr>
+                                    <td><strong>${backup.filename}</strong><br><span style="font-size:0.75rem; color:var(--text-secondary);">${backup.created_at}</span></td>
+                                    <td class="text-nowrap">${fileSizeMb} MB</td>
+                                    <td class="text-nowrap" style="text-align:center;">
+                                        <a href="/api/admin/settings/backups/download/${backup.filename}" class="btn-success" style="font-size:0.7rem; padding:0.25rem 0.5rem; text-decoration:none; display:inline-block; border-radius:4px; margin-right:0.2rem;">Get SQL</a>
+                                        <button type="button" class="btn-primary btn-backup-restore" data-file="${backup.filename}" style="font-size:0.7rem; padding:0.25rem 0.5rem; margin:0 0.2rem 0 0;">Restore</button>
+                                        <button type="button" class="btn-danger btn-backup-delete" data-file="${backup.filename}" style="font-size:0.7rem; padding:0.25rem 0.5rem; margin:0;">Del</button>
+                                    </td>
+                                </tr>
+                            `;
+                        });
+
+                        if (res.data.length === 0) {
+                            tbodyHtml = `<tr><td colspan="3" style="text-align: center; color: var(--text-secondary); padding: 1.5rem 0;">No backups generated in storage path.</td></tr>`;
+                        }
+
+                        $('#backups-table-body').html(tbodyHtml);
+                    }
+                },
+                error: function() {
+                    showToast('Failed to load backup files list.', 'error');
+                }
+            });
+        };
+
+        // Generate Backup
+        $('#btn-trigger-backup').on('click', function() {
+            const btn = $(this);
+            btn.prop('disabled', true).text('Writing SQL dump...');
+            showToast('Generating database SQL dump. Please wait...', 'info');
+
+            $.ajax({
+                url: '/api/admin/settings/backups/generate',
+                method: 'POST',
+                data: { _token: '{{ csrf_token() }}' },
+                success: function(res) {
+                    showToast(res.message, 'success');
+                    loadBackupsList();
+                },
+                error: function(err) {
+                    showToast(err.responseJSON?.message || 'Database export dump failed.', 'error');
+                },
+                complete: function() {
+                    btn.prop('disabled', false).text('Generate Backup');
+                }
+            });
+        });
+
+        // Restore Backup
+        $(document).on('click', '.btn-backup-restore', function() {
+            const filename = $(this).data('file');
+            if (!confirm(`CAUTION: Restoring database will drop all current table rows and overwrite states with backup file: "${filename}". Proceed?`)) return;
+
+            showToast('Restoring DB backup. Connection might drop temporarily...', 'info');
+
+            $.ajax({
+                url: '/api/admin/settings/backups/restore',
+                method: 'POST',
+                data: {
+                    _token: '{{ csrf_token() }}',
+                    filename: filename
+                },
+                success: function(res) {
+                    showToast(res.message, 'success');
+                    setTimeout(() => {
+                        location.reload();
+                    }, 1000);
+                },
+                error: function(err) {
+                    showToast(err.responseJSON?.message || 'DB Restoration state failed.', 'error');
+                }
+            });
+        });
+
+        // Delete Backup file
+        $(document).on('click', '.btn-backup-delete', function() {
+            const filename = $(this).data('file');
+            if (!confirm(`Are you sure you want to delete this SQL backup file permanently from storage: "${filename}"?`)) return;
+
+            $.ajax({
+                url: `/api/admin/settings/backups/${filename}`,
+                method: 'DELETE',
+                data: { _token: '{{ csrf_token() }}' },
+                success: function(res) {
+                    showToast(res.message, 'success');
+                    loadBackupsList();
+                },
+                error: function() {
+                    showToast('Failed to delete backup file.', 'error');
+                }
+            });
+        });
+
+        // 6. Media Manager Explorer
+        let currentMediaPath = '';
+        window.loadMediaExplorer = function(path = '') {
+            currentMediaPath = path;
+            
+            // Render breadcrumbs
+            const segments = path.split('/').filter(p => p !== '');
+            let breadHtml = '<span style="cursor:pointer;" class="media-breadcrumb-segment" data-path="">uploads/media</span>';
+            let accumulatedPath = '';
+            
+            segments.forEach(seg => {
+                accumulatedPath += (accumulatedPath === '' ? seg : '/' + seg);
+                breadHtml += ` &rsaquo; <span style="cursor:pointer;" class="media-breadcrumb-segment" data-path="${accumulatedPath}">${seg}</span>`;
+            });
+            $('#media-breadcrumbs').html(breadHtml);
+
+            // Fetch directory contents
+            $.ajax({
+                url: `/api/admin/settings/media?path=${encodeURIComponent(path)}`,
+                method: 'GET',
+                success: function(res) {
+                    if (res.status === 'success') {
+                        let gridHtml = '';
+                        const items = res.data;
+
+                        if (items.length === 0) {
+                            gridHtml = `
+                                <div style="grid-column: 1 / -1; display:flex; flex-direction:column; justify-content:center; align-items:center; color:var(--text-secondary); padding:3rem; font-size:0.9rem;">
+                                    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="margin-bottom:1rem;"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path></svg>
+                                    This directory is empty.
+                                </div>
+                            `;
+                        } else {
+                            items.forEach(item => {
+                                if (item.type === 'directory') {
+                                    gridHtml += `
+                                        <div class="media-folder-card media-item-clickable" data-type="directory" data-path="${item.path}" style="background:var(--bg-primary); border:1px solid var(--border-color); border-radius:8px; padding:1rem; display:flex; flex-direction:column; align-items:center; text-align:center; cursor:pointer; position:relative;">
+                                            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#eab308" stroke-width="2" style="margin-bottom:0.5rem;"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path></svg>
+                                            <div style="font-size:0.8rem; font-weight:600; width:100%; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;" title="${item.name}">${item.name}</div>
+                                            <button type="button" class="btn-media-delete" data-path="${item.path}" style="position:absolute; top:2px; right:2px; font-size:0.7rem; padding:0.1rem 0.25rem; border-radius:3px; margin:0; line-height:1; background:#ef4444; border:none; color:white; display:none;">&times;</button>
+                                        </div>
+                                    `;
+                                } else {
+                                    const ext = item.name.split('.').pop().toLowerCase();
+                                    const isImg = ['jpg', 'jpeg', 'png', 'gif', 'svg', 'webp', 'ico'].includes(ext);
+                                    
+                                    let iconHtml = '';
+                                    if (isImg) {
+                                        iconHtml = `<img src="${item.url}" style="width:48px; height:48px; object-fit:cover; border-radius:4px; margin-bottom:0.5rem;">`;
+                                    } else {
+                                        iconHtml = `<svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-bottom:0.5rem; color:var(--text-secondary);"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>`;
+                                    }
+
+                                    const sizeKb = (item.size / 1024).toFixed(1);
+
+                                    gridHtml += `
+                                        <div class="media-file-card media-item-clickable" data-type="file" data-url="${item.url}" style="background:var(--bg-primary); border:1px solid var(--border-color); border-radius:8px; padding:1rem; display:flex; flex-direction:column; align-items:center; text-align:center; cursor:pointer; position:relative;">
+                                            ${iconHtml}
+                                            <div style="font-size:0.8rem; font-weight:600; width:100%; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; margin-bottom:0.2rem;" title="${item.name}">${item.name}</div>
+                                            <div style="font-size:0.65rem; color:var(--text-secondary);">${sizeKb} KB</div>
+                                            <button type="button" class="btn-media-delete" data-path="${item.path}" style="position:absolute; top:2px; right:2px; font-size:0.7rem; padding:0.1rem 0.25rem; border-radius:3px; margin:0; line-height:1; background:#ef4444; border:none; color:white; display:none;">&times;</button>
+                                        </div>
+                                    `;
+                                }
+                            });
+                        }
+                        $('#media-files-grid').html(gridHtml);
+                    }
+                },
+                error: function() {
+                    showToast('Failed to explore directory contents.', 'error');
+                }
+            });
+        };
+
+        // Click breadcrumb to navigate
+        $(document).on('click', '.media-breadcrumb-segment', function() {
+            const targetPath = $(this).data('path');
+            loadMediaExplorer(targetPath);
+        });
+
+        // Click media folder card to go deeper
+        $(document).on('click', '.media-item-clickable', function(e) {
+            if ($(e.target).closest('.btn-media-delete').length) return;
+            
+            const card = $(this);
+            if (card.data('type') === 'directory') {
+                loadMediaExplorer(card.data('path'));
+            } else {
+                const url = card.data('url');
+                navigator.clipboard.writeText(url).then(() => {
+                    showToast('Copied media URL to clipboard!', 'success');
+                }).catch(() => {
+                    const temp = $('<input>');
+                    $('body').append(temp);
+                    temp.val(url).select();
+                    document.execCommand('copy');
+                    temp.remove();
+                    showToast('Copied media URL!', 'success');
+                });
+            }
+        });
+
+        // Show/hide delete icon on media cards hover
+        $(document).on('mouseenter', '.media-folder-card, .media-file-card', function() {
+            $(this).find('.btn-media-delete').show();
+        }).on('mouseleave', '.media-folder-card, .media-file-card', function() {
+            $(this).find('.btn-media-delete').hide();
+        });
+
+        // Delete File/Directory in Media Manager
+        $(document).on('click', '.btn-media-delete', function(e) {
+            e.stopPropagation();
+            const path = $(this).data('path');
+            if (!confirm(`Are you sure you want to delete this file/folder permanently: "${path}"?`)) return;
+
+            $.ajax({
+                url: '/api/admin/settings/media',
+                method: 'DELETE',
+                data: {
+                    _token: '{{ csrf_token() }}',
+                    path: path
+                },
+                success: function(res) {
+                    showToast(res.message, 'success');
+                    loadMediaExplorer(currentMediaPath);
+                },
+                error: function() {
+                    showToast('Failed to delete media asset.', 'error');
+                }
+            });
+        });
+
+        // Create Folder in Media Manager
+        $('#btn-media-new-folder').on('click', function() {
+            const name = prompt('Enter folder name:');
+            if (!name) return;
+
+            $.ajax({
+                url: '/api/admin/settings/media/folder',
+                method: 'POST',
+                data: {
+                    _token: '{{ csrf_token() }}',
+                    path: currentMediaPath,
+                    folder_name: name
+                },
+                success: function(res) {
+                    showToast(res.message, 'success');
+                    loadMediaExplorer(currentMediaPath);
+                },
+                error: function(err) {
+                    showToast(err.responseJSON?.message || 'Failed to create directory.', 'error');
+                }
+            });
+        });
+
+        // Upload Media Trigger
+        $('#btn-media-trigger-upload').on('click', function() {
+            $('#media-upload-input').click();
+        });
+
+        $('#media-upload-input').on('change', function() {
+            const file = this.files[0];
+            if (!file) return;
+
+            const formData = new FormData();
+            formData.append('_token', '{{ csrf_token() }}');
+            formData.append('path', currentMediaPath);
+            formData.append('file', file);
+
+            showToast('Uploading file...', 'info');
+
+            $.ajax({
+                url: '/api/admin/settings/media/upload',
+                method: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function(res) {
+                    showToast(res.message, 'success');
+                    loadMediaExplorer(currentMediaPath);
+                },
+                error: function(err) {
+                    showToast(err.responseJSON?.message || 'Failed to upload media file.', 'error');
                 }
             });
         });

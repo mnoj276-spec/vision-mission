@@ -55,6 +55,7 @@ class AppServiceProvider extends ServiceProvider
 
         // ─── Admin Domain ─────────────────────────────────────────────────────
         $this->app->bind(AdminServiceInterface::class, AdminService::class);
+        $this->app->singleton(\App\Domains\Admin\Services\SettingsService::class);
 
         // ─── JWT Service ──────────────────────────────────────────────────────
         $this->app->singleton(JwtService::class, function ($app) {

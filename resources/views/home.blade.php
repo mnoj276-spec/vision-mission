@@ -108,7 +108,8 @@
         align-items: center;
         justify-content: center;
         gap: 0.4rem;
-        height: 105px;
+        min-height: 105px;
+        height: auto;
         position: relative;
         overflow: hidden;
         box-shadow: var(--card-shadow);
@@ -154,11 +155,16 @@
         color: var(--text-primary);
         text-transform: uppercase;
         letter-spacing: 0.02em;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
         max-width: 100%;
         padding: 0 0.25rem;
+        white-space: normal;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        line-height: 1.25;
+        height: 2.5em;
     }
 
     /* Sarkari Board Panels */
@@ -252,11 +258,13 @@
         font-weight: 500;
         line-height: 1.4;
         flex-grow: 1;
-        display: block;
+        cursor: pointer;
+        white-space: normal !important;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
         overflow: hidden;
         text-overflow: ellipsis;
-        white-space: nowrap;
-        cursor: pointer;
     }
     .sarkari-item-link:hover {
         color: var(--accent-color);
@@ -460,19 +468,634 @@
         transform: none !important;
         color: var(--accent-color) !important;
     }
+
+    /* ==================== REDESIGNED SINGLE ROW SEARCH & FILTER SYSTEM ==================== */
+    .search-toolbar-wrapper {
+        background: linear-gradient(135deg, rgba(255, 255, 255, 0.02) 0%, rgba(255, 255, 255, 0.01) 100%);
+        border: 1px solid var(--border-color);
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+        border-radius: 16px;
+        padding: 1.25rem;
+        box-shadow: var(--card-shadow);
+        margin-bottom: 1.5rem;
+        position: relative;
+        z-index: 100;
+    }
+
+    .search-toolbar-main {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        width: 100%;
+    }
+
+    .search-input-col {
+        flex: 2.5;
+        position: relative;
+        min-width: 200px;
+    }
+
+    .search-input-container {
+        position: relative;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        background: var(--bg-primary);
+        border: 2px solid var(--border-color);
+        border-radius: 10px;
+        padding: 0.25rem 0.5rem;
+        transition: all 0.25s ease;
+    }
+
+    .search-input-container:focus-within {
+        border-color: var(--accent-color);
+        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+    }
+
+    .search-input-container input {
+        flex: 1;
+        border: none;
+        background: transparent;
+        padding: 0.65rem 0.5rem;
+        color: var(--text-primary);
+        font-size: 1rem;
+        font-weight: 500;
+        outline: none;
+    }
+
+    .search-input-container svg.search-icon {
+        color: var(--text-secondary);
+        margin-left: 0.5rem;
+        flex-shrink: 0;
+    }
+
+    .clear-search-btn {
+        background: var(--bg-secondary);
+        border: none;
+        color: var(--text-secondary);
+        cursor: pointer;
+        padding: 0.35rem 0.5rem;
+        border-radius: 6px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.2s;
+    }
+
+    .clear-search-btn:hover {
+        color: #ef4444;
+        background: rgba(239, 68, 68, 0.08);
+    }
+
+    .search-dropdown-col {
+        flex: 1.2;
+        min-width: 180px;
+        position: relative;
+    }
+
+    .search-btn-col {
+        flex-shrink: 0;
+    }
+
+    /* Primary CTA Search Button */
+    .btn-search-primary {
+        background: linear-gradient(135deg, var(--accent-color) 0%, #1e40af 100%);
+        color: #ffffff;
+        border: none;
+        border-radius: 10px;
+        padding: 0.75rem 1.5rem;
+        font-size: 0.95rem;
+        font-weight: 700;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        transition: all 0.25s ease;
+        box-shadow: 0 4px 15px rgba(37, 99, 235, 0.2);
+    }
+
+    .btn-search-primary:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 6px 20px rgba(37, 99, 235, 0.3);
+        filter: brightness(1.1);
+    }
+
+    .btn-search-primary:active {
+        transform: translateY(0);
+    }
+
+    /* Custom Searchable Dropdowns */
+    .searchable-dropdown {
+        position: relative;
+        width: 100%;
+    }
+
+    .dropdown-selected {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background: var(--bg-primary);
+        border: 2px solid var(--border-color);
+        border-radius: 10px;
+        padding: 0.65rem 1rem;
+        color: var(--text-primary);
+        font-size: 0.95rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        user-select: none;
+    }
+
+    .dropdown-selected:focus {
+        border-color: var(--accent-color);
+        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+        outline: none;
+    }
+
+    .searchable-dropdown.open .dropdown-selected {
+        border-color: var(--accent-color);
+        border-bottom-left-radius: 0;
+        border-bottom-right-radius: 0;
+    }
+
+    .caret-icon {
+        color: var(--text-secondary);
+        transition: transform 0.2s ease;
+        flex-shrink: 0;
+    }
+
+    .searchable-dropdown.open .caret-icon {
+        transform: rotate(180deg);
+    }
+
+    .dropdown-panel {
+        display: none;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        background: var(--bg-secondary);
+        border: 2px solid var(--accent-color);
+        border-top: none;
+        border-bottom-left-radius: 10px;
+        border-bottom-right-radius: 10px;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+        z-index: 1010;
+        backdrop-filter: blur(14px);
+        -webkit-backdrop-filter: blur(14px);
+    }
+
+    .searchable-dropdown.open .dropdown-panel {
+        display: block;
+    }
+
+    .dropdown-search {
+        padding: 0.5rem;
+        border-bottom: 1px solid var(--border-color);
+    }
+
+    .dropdown-search-input {
+        width: 100%;
+        background: var(--bg-primary);
+        border: 1px solid var(--border-color);
+        border-radius: 6px;
+        padding: 0.5rem;
+        color: var(--text-primary);
+        font-size: 0.9rem;
+        outline: none;
+    }
+
+    .dropdown-search-input:focus {
+        border-color: var(--accent-color);
+    }
+
+    .dropdown-list {
+        max-height: 200px;
+        overflow-y: auto;
+        padding: 0.25rem 0;
+    }
+
+    .dropdown-list::-webkit-scrollbar {
+        width: 6px;
+    }
+
+    .dropdown-list::-webkit-scrollbar-thumb {
+        background: rgba(255, 255, 255, 0.15);
+        border-radius: 3px;
+    }
+
+    .dropdown-option {
+        padding: 0.6rem 1rem;
+        color: var(--text-secondary);
+        font-size: 0.9rem;
+        cursor: pointer;
+        transition: all 0.15s ease;
+    }
+
+    .dropdown-option:hover, .dropdown-option.highlighted {
+        background: rgba(37, 99, 235, 0.08);
+        color: var(--text-primary);
+        padding-left: 1.25rem;
+    }
+
+    .dropdown-option.selected {
+        background: var(--accent-color);
+        color: #ffffff;
+        font-weight: 600;
+    }
+
+    /* Quick suggestions row */
+    .quick-suggestions-row {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        margin-top: 1rem;
+        font-size: 0.85rem;
+    }
+
+    .suggestion-label {
+        font-weight: 600;
+        color: var(--text-secondary);
+        white-space: nowrap;
+        display: flex;
+        align-items: center;
+        gap: 0.25rem;
+    }
+
+    .suggestions-chips-container {
+        display: flex;
+        gap: 0.5rem;
+        overflow-x: auto;
+        scrollbar-width: none;
+        -webkit-overflow-scrolling: touch;
+        padding-bottom: 2px;
+    }
+
+    .suggestions-chips-container::-webkit-scrollbar {
+        display: none;
+    }
+
+    .suggestion-chip-item {
+        flex-shrink: 0;
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid var(--border-color);
+        padding: 0.35rem 0.85rem;
+        border-radius: 20px;
+        color: var(--text-secondary);
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+
+    .suggestion-chip-item:hover {
+        border-color: var(--accent-color);
+        color: var(--text-primary);
+        transform: translateY(-1px);
+        background: rgba(37, 99, 235, 0.05);
+    }
+
+    /* Sub-toolbar */
+    .search-sub-toolbar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
+        margin-top: 1rem;
+        padding-top: 1rem;
+        border-top: 1px dashed var(--border-color);
+        flex-wrap: wrap;
+    }
+
+    .sub-toolbar-left-group {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+
+    .btn-advanced-trigger {
+        background: var(--bg-secondary);
+        border: 1px solid var(--border-color);
+        color: var(--text-primary);
+        font-size: 0.85rem;
+        font-weight: 600;
+        padding: 0.5rem 0.85rem;
+        border-radius: 8px;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.35rem;
+        transition: all 0.2s;
+    }
+
+    .btn-advanced-trigger:hover {
+        border-color: var(--accent-color);
+        background: rgba(37, 99, 235, 0.04);
+    }
+
+    .btn-advanced-trigger.active {
+        background: rgba(37, 99, 235, 0.08);
+        border-color: var(--accent-color);
+        color: var(--accent-color);
+    }
+
+    .btn-reset-trigger {
+        background: transparent;
+        border: 1px solid transparent;
+        color: #ef4444;
+        font-size: 0.85rem;
+        font-weight: 600;
+        padding: 0.5rem 0.85rem;
+        border-radius: 8px;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.35rem;
+        transition: all 0.2s;
+    }
+
+    .btn-reset-trigger:hover {
+        background: rgba(239, 68, 68, 0.08);
+        border-color: rgba(239, 68, 68, 0.15);
+    }
+
+    /* Active Filter Summary tags */
+    .active-filter-chips-list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        align-items: center;
+    }
+
+    .active-filter-chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.35rem;
+        background: rgba(37, 99, 235, 0.06);
+        border: 1px solid rgba(37, 99, 235, 0.15);
+        border-radius: 16px;
+        padding: 0.3rem 0.7rem;
+        font-size: 0.8rem;
+        font-weight: 600;
+        color: var(--accent-color);
+    }
+
+    .active-filter-chip .remove-filter-btn {
+        cursor: pointer;
+        font-size: 1rem;
+        font-weight: 700;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 14px;
+        height: 14px;
+        border-radius: 50%;
+        transition: all 0.15s;
+    }
+
+    .active-filter-chip .remove-filter-btn:hover {
+        background: #ef4444;
+        color: #ffffff;
+    }
+
+    /* Collapsible Advanced Filters Drawer */
+    .advanced-drawer-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.6);
+        backdrop-filter: blur(4px);
+        -webkit-backdrop-filter: blur(4px);
+        z-index: 1999;
+        opacity: 0;
+        visibility: hidden;
+        transition: opacity 0.3s ease, visibility 0.3s ease;
+    }
+
+    .advanced-drawer-overlay.open {
+        opacity: 1;
+        visibility: visible;
+    }
+
+    .advanced-drawer {
+        position: fixed;
+        top: 0;
+        right: -420px;
+        width: 400px;
+        height: 100%;
+        background: var(--bg-secondary);
+        border-left: 1px solid var(--border-color);
+        box-shadow: -10px 0 30px rgba(0, 0, 0, 0.25);
+        z-index: 2000;
+        display: flex;
+        flex-direction: column;
+        transition: right 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .advanced-drawer.open {
+        right: 0;
+    }
+
+    .drawer-header {
+        padding: 1.25rem 1.5rem;
+        border-bottom: 1px solid var(--border-color);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .drawer-header h3 {
+        margin: 0;
+        font-family: 'Outfit', sans-serif;
+        font-size: 1.2rem;
+        font-weight: 700;
+        color: var(--text-primary);
+    }
+
+    .close-drawer-btn {
+        background: none;
+        border: none;
+        color: var(--text-secondary);
+        font-size: 1.5rem;
+        cursor: pointer;
+        line-height: 1;
+        padding: 0.25rem;
+        transition: color 0.2s;
+    }
+
+    .close-drawer-btn:hover {
+        color: #ef4444;
+    }
+
+    .drawer-body {
+        padding: 1.5rem 1.5rem 8rem 1.5rem;
+        flex: 1;
+        overflow-y: auto;
+    }
+
+    .filter-group {
+        margin-bottom: 1.25rem;
+    }
+
+    .filter-label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-size: 0.88rem;
+        font-weight: 600;
+        color: var(--text-secondary);
+    }
+
+    /* User-friendly clearly visible custom toggle switch */
+    .custom-switch {
+        position: relative;
+        display: inline-block;
+        width: 46px !important;
+        height: 26px !important;
+    }
+
+    .slider-switch {
+        position: absolute;
+        cursor: pointer;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: rgba(255, 255, 255, 0.18) !important;
+        border: 1.5px solid var(--border-color);
+        transition: .3s;
+        border-radius: 26px !important;
+    }
+
+    .slider-switch:before {
+        position: absolute;
+        content: "";
+        height: 18px !important;
+        width: 18px !important;
+        left: 3px !important;
+        bottom: 2.5px !important;
+        background-color: #ffffff !important;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.4);
+        transition: .3s;
+        border-radius: 50% !important;
+    }
+
+    .custom-switch input:checked + .slider-switch {
+        background-color: #10b981 !important;
+        border-color: #10b981;
+    }
+
+    .custom-switch input:checked + .slider-switch:before {
+        transform: translateX(18px) !important;
+    }
+
+    .drawer-footer {
+        padding: 1.25rem 1.5rem;
+        border-top: 1px solid var(--border-color);
+        display: flex;
+        gap: 0.75rem;
+        background: rgba(255, 255, 255, 0.01);
+    }
+
+    .btn-reset-drawer {
+        flex: 1;
+        background: rgba(239, 68, 68, 0.08);
+        border: 1px solid rgba(239, 68, 68, 0.15);
+        color: #ef4444;
+        border-radius: 8px;
+        padding: 0.75rem;
+        font-weight: 700;
+        font-size: 0.9rem;
+        cursor: pointer;
+        transition: all 0.2s;
+        text-align: center;
+    }
+
+    .btn-reset-drawer:hover {
+        background: #ef4444;
+        color: white;
+    }
+
+    .btn-apply-drawer {
+        flex: 2;
+        background: var(--accent-color);
+        border: none;
+        color: white;
+        border-radius: 8px;
+        padding: 0.75rem;
+        font-weight: 700;
+        font-size: 0.9rem;
+        cursor: pointer;
+        transition: all 0.2s;
+        text-align: center;
+    }
+
+    .btn-apply-drawer:hover {
+        filter: brightness(1.1);
+    }
+
+    /* Media Queries */
+    @media (max-width: 992px) {
+        .search-toolbar-main {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.75rem;
+        }
+        .search-input-col {
+            grid-column: span 2;
+        }
+        .search-dropdown-col {
+            grid-column: span 1;
+        }
+        .search-btn-col {
+            grid-column: span 2;
+        }
+        .btn-search-primary {
+            width: 100%;
+            justify-content: center;
+        }
+    }
+
+    @media (max-width: 576px) {
+        .search-toolbar-main {
+            display: flex;
+            flex-direction: column;
+            align-items: stretch;
+            gap: 0.75rem;
+        }
+        .search-input-col, .search-dropdown-col, .search-btn-col {
+            width: 100%;
+        }
+        .advanced-drawer {
+            width: 100%;
+            height: auto;
+            max-height: 85vh;
+            bottom: -100%;
+            top: auto;
+            right: 0;
+            border-left: none;
+            border-radius: 20px 20px 0 0;
+            box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.25);
+            transition: bottom 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .advanced-drawer.open {
+            bottom: 0;
+        }
+    }
 </style>
 
 <div style="max-width: 1400px; margin: 0 auto; padding: 0 5%;">
 
 <!-- 1. Hero Welcome Segment -->
 <section class="hero" style="margin-bottom: 1.5rem;">
-    <h1>Find Your Dream <span style="color: var(--accent-color);">Government Job</span> Today</h1>
-    <p>Discover real-time, highly validated recruitment alerts across UPSC, SSC, Banking, Railways, and individual states. Updated automatically, systematically verified, 100% accurate.</p>
+    <h1 data-i18n-html="hero_title">{!! setting('homepage_hero_title', 'Find Your Dream <span style="color: var(--accent-color);">Government Job</span> Today') !!}</h1>
+    <p data-i18n="hero_desc">{{ setting('homepage_hero_description', 'Discover real-time, highly validated recruitment alerts across UPSC, SSC, Banking, Railways, and individual states. Updated automatically, systematically verified, 100% accurate.') }}</p>
 </section>
 
 <!-- 2. Scrolling Marquee Updates Ticker -->
 <div class="ticker-wrap">
-    <div class="ticker-label">LATEST UPDATES</div>
+    <div class="ticker-label" data-i18n="latest_updates">LATEST UPDATES</div>
     <div class="ticker">
         <div class="ticker-item-list">
             @forelse($tickerNotices as $tNotice)
@@ -505,35 +1128,35 @@
     <div class="trending-grid">
         <a href="#sarkari-jobs" class="trending-card" style="--card-accent: #3b82f6;">
             <div class="card-icon" style="background: rgba(59, 130, 246, 0.1); color: #3b82f6;">💼</div>
-            <span class="card-title">Latest Jobs</span>
+            <span class="card-title" data-i18n="trend_latest_jobs">Latest Jobs</span>
         </a>
         <a href="#sarkari-admit-cards" class="trending-card" style="--card-accent: #10b981;">
             <div class="card-icon" style="background: rgba(16, 185, 129, 0.1); color: #10b981;">🎟️</div>
-            <span class="card-title">Admit Cards</span>
+            <span class="card-title" data-i18n="trend_admit_cards">Admit Cards</span>
         </a>
         <a href="#sarkari-results" class="trending-card" style="--card-accent: #8b5cf6;">
             <div class="card-icon" style="background: rgba(139, 92, 246, 0.1); color: #8b5cf6;">🏆</div>
-            <span class="card-title">Exam Results</span>
+            <span class="card-title" data-i18n="trend_results">Exam Results</span>
         </a>
         <a href="#sarkari-answer-keys" class="trending-card" style="--card-accent: #f59e0b;">
             <div class="card-icon" style="background: rgba(245, 158, 11, 0.1); color: #f59e0b;">🔑</div>
-            <span class="card-title">Answer Keys</span>
+            <span class="card-title" data-i18n="trend_answer_keys">Answer Keys</span>
         </a>
         <a href="#sarkari-syllabus" class="trending-card" style="--card-accent: #ec4899;">
             <div class="card-icon" style="background: rgba(236, 72, 153, 0.1); color: #ec4899;">📖</div>
-            <span class="card-title">Syllabus</span>
+            <span class="card-title" data-i18n="trend_syllabus">Syllabus</span>
         </a>
         <a href="#sarkari-notices" class="trending-card" style="--card-accent: #ef4444;">
             <div class="card-icon" style="background: rgba(239, 68, 68, 0.1); color: #ef4444;">📢</div>
-            <span class="card-title">Notices</span>
+            <span class="card-title" data-i18n="trend_notices">Notices</span>
         </a>
         <a href="#sarkari-admissions" class="trending-card" style="--card-accent: #06b6d4;">
             <div class="card-icon" style="background: rgba(6, 182, 212, 0.1); color: #06b6d4;">🎓</div>
-            <span class="card-title">Admissions</span>
+            <span class="card-title" data-i18n="trend_admissions">Admissions</span>
         </a>
         <a href="#sarkari-scholarships" class="trending-card" style="--card-accent: #f97316;">
             <div class="card-icon" style="background: rgba(249, 115, 22, 0.1); color: #f97316;">💰</div>
-            <span class="card-title">Scholarships</span>
+            <span class="card-title" data-i18n="trend_scholarships">Scholarships</span>
         </a>
     </div>
 
@@ -555,18 +1178,18 @@
         <div class="sarkari-panel" id="sarkari-jobs" style="border-top: 4px solid #3b82f6;">
             <div class="sarkari-panel-header" style="color: #3b82f6;">
                 <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
-                Latest Jobs
+                <span data-i18n="trend_latest_jobs">Latest Jobs</span>
             </div>
             <ul class="sarkari-list">
                 @forelse($recentJobs as $job)
                     <li class="sarkari-item">
-                        <a href="#" class="sarkari-item-link btn-view" data-slug="{{ $job->slug }}">
-                            &raquo; {{ $job->title }}
+                        <a href="#" class="sarkari-item-link btn-view" data-slug="{{ $job->slug }}" title="{{ $job->title }}">
+                            &raquo; <span class="notranslate" translate="no" data-translate-title="{{ $job->title }}">{{ $job->title }}</span>
                         </a>
-                        <span class="new-badge">NEW</span>
+                        <span class="new-badge" data-i18n="new_badge">NEW</span>
                     </li>
                 @empty
-                    <li style="padding: 1rem; text-align: center; color: var(--text-secondary); font-size: 0.85rem;">No active recruitments listed.</li>
+                    <li style="padding: 1rem; text-align: center; color: var(--text-secondary); font-size: 0.85rem;" data-i18n="no_active_recruitments">No active recruitments listed.</li>
                 @endforelse
             </ul>
         </div>
@@ -575,18 +1198,18 @@
         <div class="sarkari-panel" id="sarkari-admit-cards" style="border-top: 4px solid #10b981;">
             <div class="sarkari-panel-header" style="color: #10b981;">
                 <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M15 5v2m0 4v2m0 4v2M5 5a2 2 0 00-2 2v3a2 2 0 110 4v3a2 2 0 002 2h14a2 2 0 002-2v-3a2 2 0 110-4V7a2 2 0 00-2-2H5z"></path></svg>
-                Admit Cards
+                <span data-i18n="trend_admit_cards">Admit Cards</span>
             </div>
             <ul class="sarkari-list">
                 @forelse($admitCards as $card)
                     <li class="sarkari-item">
-                        <a href="#" class="sarkari-item-link btn-view" data-slug="{{ $card->slug }}">
-                            &raquo; {{ $card->title }}
+                        <a href="#" class="sarkari-item-link btn-view" data-slug="{{ $card->slug }}" title="{{ $card->title }}">
+                            &raquo; <span class="notranslate" translate="no" data-translate-title="{{ $card->title }}">{{ $card->title }}</span>
                         </a>
-                        <span class="new-badge">NEW</span>
+                        <span class="new-badge" data-i18n="new_badge">NEW</span>
                     </li>
                 @empty
-                    <li style="padding: 1rem; text-align: center; color: var(--text-secondary); font-size: 0.85rem;">No active admit cards released.</li>
+                    <li style="padding: 1rem; text-align: center; color: var(--text-secondary); font-size: 0.85rem;" data-i18n="no_admit_cards">No active admit cards released.</li>
                 @endforelse
             </ul>
         </div>
@@ -594,19 +1217,19 @@
         <!-- Panel 3: Exam Results -->
         <div class="sarkari-panel" id="sarkari-results" style="border-top: 4px solid #8b5cf6;">
             <div class="sarkari-panel-header" style="color: #8b5cf6;">
-                <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138z"></path></svg>
-                Exam Results
+                <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138z"></path></svg>
+                <span data-i18n="trend_results">Exam Results</span>
             </div>
             <ul class="sarkari-list">
                 @forelse($results as $res)
                     <li class="sarkari-item">
-                        <a href="#" class="sarkari-item-link btn-view" data-slug="{{ $res->slug }}">
-                            &raquo; {{ $res->title }}
+                        <a href="#" class="sarkari-item-link btn-view" data-slug="{{ $res->slug }}" title="{{ $res->title }}">
+                            &raquo; <span class="notranslate" translate="no" data-translate-title="{{ $res->title }}">{{ $res->title }}</span>
                         </a>
-                        <span class="new-badge">NEW</span>
+                        <span class="new-badge" data-i18n="new_badge">NEW</span>
                     </li>
                 @empty
-                    <li style="padding: 1rem; text-align: center; color: var(--text-secondary); font-size: 0.85rem;">No active results declared yet.</li>
+                    <li style="padding: 1rem; text-align: center; color: var(--text-secondary); font-size: 0.85rem;" data-i18n="no_results">No active results declared yet.</li>
                 @endforelse
             </ul>
         </div>
@@ -618,18 +1241,18 @@
         <div class="sarkari-panel" id="sarkari-answer-keys" style="border-top: 4px solid #f59e0b;">
             <div class="sarkari-panel-header" style="color: #f59e0b;">
                 <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M15 7a2 2 0 012 2m-2 4a2 2 0 012 2m-2 4a2 2 0 012 2M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
-                Answer Keys
+                <span data-i18n="trend_answer_keys">Answer Keys</span>
             </div>
             <ul class="sarkari-list">
                 @forelse($answerKeys as $key)
                     <li class="sarkari-item">
-                        <a href="#" class="sarkari-item-link btn-view" data-slug="{{ $key->slug }}">
-                            &raquo; {{ $key->title }}
+                        <a href="#" class="sarkari-item-link btn-view" data-slug="{{ $key->slug }}" title="{{ $key->title }}">
+                            &raquo; <span class="notranslate" translate="no" data-translate-title="{{ $key->title }}">{{ $key->title }}</span>
                         </a>
-                        <span class="new-badge">NEW</span>
+                        <span class="new-badge" data-i18n="new_badge">NEW</span>
                     </li>
                 @empty
-                    <li style="padding: 1rem; text-align: center; color: var(--text-secondary); font-size: 0.85rem;">No official answer keys released.</li>
+                    <li style="padding: 1rem; text-align: center; color: var(--text-secondary); font-size: 0.85rem;" data-i18n="no_answer_keys">No official answer keys released.</li>
                 @endforelse
             </ul>
         </div>
@@ -638,18 +1261,18 @@
         <div class="sarkari-panel" id="sarkari-syllabus" style="border-top: 4px solid #ec4899;">
             <div class="sarkari-panel-header" style="color: #ec4899;">
                 <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
-                Syllabus & Exams
+                <span data-i18n="syllabus_exams">Syllabus & Exams</span>
             </div>
             <ul class="sarkari-list">
                 @forelse($syllabi as $syllabus)
                     <li class="sarkari-item">
-                        <a href="#" class="sarkari-item-link btn-view" data-slug="{{ $syllabus->slug }}">
-                            &raquo; {{ $syllabus->title }}
+                        <a href="#" class="sarkari-item-link btn-view" data-slug="{{ $syllabus->slug }}" title="{{ $syllabus->title }}">
+                            &raquo; <span class="notranslate" translate="no" data-translate-title="{{ $syllabus->title }}">{{ $syllabus->title }}</span>
                         </a>
-                        <span class="new-badge">NEW</span>
+                        <span class="new-badge" data-i18n="new_badge">NEW</span>
                     </li>
                 @empty
-                    <li style="padding: 1rem; text-align: center; color: var(--text-secondary); font-size: 0.85rem;">No new syllabus structures out.</li>
+                    <li style="padding: 1rem; text-align: center; color: var(--text-secondary); font-size: 0.85rem;" data-i18n="no_syllabus">No new syllabus structures out.</li>
                 @endforelse
             </ul>
         </div>
@@ -658,18 +1281,18 @@
         <div class="sarkari-panel" id="sarkari-notices" style="border-top: 4px solid #ef4444;">
             <div class="sarkari-panel-header" style="color: #ef4444;">
                 <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path></svg>
-                Important Notices
+                <span data-i18n="important_notices">Important Notices</span>
             </div>
             <ul class="sarkari-list">
                 @forelse($notices as $notice)
                     <li class="sarkari-item">
-                        <a href="#" class="sarkari-item-link btn-view" data-slug="{{ $notice->slug }}">
-                            &raquo; {{ $notice->title }}
+                        <a href="#" class="sarkari-item-link btn-view" data-slug="{{ $notice->slug }}" title="{{ $notice->title }}">
+                            &raquo; <span class="notranslate" translate="no" data-translate-title="{{ $notice->title }}">{{ $notice->title }}</span>
                         </a>
-                        <span class="new-badge">NEW</span>
+                        <span class="new-badge" data-i18n="new_badge">NEW</span>
                     </li>
                 @empty
-                    <li style="padding: 1rem; text-align: center; color: var(--text-secondary); font-size: 0.85rem;">No important circular notices active.</li>
+                    <li style="padding: 1rem; text-align: center; color: var(--text-secondary); font-size: 0.85rem;" data-i18n="no_notices">No important circular notices active.</li>
                 @endforelse
             </ul>
         </div>
@@ -681,18 +1304,18 @@
         <div class="sarkari-panel" id="sarkari-admissions" style="border-top: 4px solid #06b6d4;">
             <div class="sarkari-panel-header" style="color: #06b6d4;">
                 <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M12 14l9-5-9-5-9 5 9 5z"></path><path d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z"></path></svg>
-                Admissions Hub
+                <span data-i18n="admissions_hub">Admissions Hub</span>
             </div>
             <ul class="sarkari-list">
                 @forelse($admissions as $adm)
                     <li class="sarkari-item">
-                        <a href="#" class="sarkari-item-link btn-view" data-slug="{{ $adm->slug }}">
-                            &raquo; {{ $adm->title }}
+                        <a href="#" class="sarkari-item-link btn-view" data-slug="{{ $adm->slug }}" title="{{ $adm->title }}">
+                            &raquo; <span class="notranslate" translate="no" data-translate-title="{{ $adm->title }}">{{ $adm->title }}</span>
                         </a>
-                        <span class="new-badge">NEW</span>
+                        <span class="new-badge" data-i18n="new_badge">NEW</span>
                     </li>
                 @empty
-                    <li style="padding: 1rem; text-align: center; color: var(--text-secondary); font-size: 0.85rem;">No active entrance exam admission notices.</li>
+                    <li style="padding: 1rem; text-align: center; color: var(--text-secondary); font-size: 0.85rem;" data-i18n="no_admissions">No active entrance exam admission notices.</li>
                 @endforelse
             </ul>
         </div>
@@ -701,90 +1324,178 @@
         <div class="sarkari-panel" id="sarkari-scholarships" style="border-top: 4px solid #f97316;">
             <div class="sarkari-panel-header" style="color: #f97316;">
                 <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                Scholarships & Grants
+                <span data-i18n="scholarships_grants">Scholarships & Grants</span>
             </div>
             <ul class="sarkari-list">
                 @forelse($scholarships as $scho)
                     <li class="sarkari-item">
-                        <a href="#" class="sarkari-item-link btn-view" data-slug="{{ $scho->slug }}">
-                            &raquo; {{ $scho->title }}
+                        <a href="#" class="sarkari-item-link btn-view" data-slug="{{ $scho->slug }}" title="{{ $scho->title }}">
+                            &raquo; <span class="notranslate" translate="no" data-translate-title="{{ $scho->title }}">{{ $scho->title }}</span>
                         </a>
-                        <span class="new-badge">NEW</span>
+                        <span class="new-badge" data-i18n="new_badge">NEW</span>
                     </li>
                 @empty
-                    <li style="padding: 1rem; text-align: center; color: var(--text-secondary); font-size: 0.85rem;">No active scholarship schemes posted.</li>
+                    <li style="padding: 1rem; text-align: center; color: var(--text-secondary); font-size: 0.85rem;" data-i18n="no_scholarships">No active scholarship schemes posted.</li>
                 @endforelse
             </ul>
         </div>
     </div>
 
-    <!-- State & Qualification Explorer Grids -->
-    <div class="explorer-deck-title">
-        <svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" style="color: var(--accent-color);"><path d="M12 2a8 8 0 00-8 8c0 5.25 8 12 8 12s8-6.75 8-12a8 8 0 00-8-8z"></path><circle cx="12" cy="10" r="3"></circle></svg>
-        Explore by State / Region
-    </div>
-    <div class="explorer-chips-container" id="stateExplorerChips">
-        <div class="explorer-chip active" data-id="">
-            🌐 All Regions
-        </div>
-        @foreach($states as $state)
-            <div class="explorer-chip" data-id="{{ $state->id }}">
-                📍 {{ $state->name }}
-            </div>
-        @endforeach
-    </div>
-
-    <div class="explorer-deck-title" style="margin-top: 1rem;">
-        <svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" style="color: #10b981;"><path d="M12 14l9-5-9-5-9 5 9 5z"></path><path d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z"></path></svg>
-        Explore by Qualification
-    </div>
-    <div class="explorer-chips-container" id="qualExplorerChips">
-        <div class="explorer-chip active" data-id="">
-            🎓 All Qualifications
-        </div>
-        @foreach($qualifications as $qual)
-            <div class="explorer-chip" data-id="{{ $qual->id }}">
-                📚 {{ $qual->name }}
-            </div>
-        @endforeach
-    </div>
-
-    <!-- 8. Interactive Search Filters Panel (original Search Compass) -->
-    <div class="main-grid" style="margin-bottom: 0px; padding-bottom: 0px;" id="interactive-finder">
+    <!-- Redesigned Single Row Search Bar Layout -->
+    <div class="search-toolbar-wrapper" id="interactive-finder">
         <!-- Typo Correction Banner -->
-        <div id="homeTypoBanner" style="display: none; grid-column: 1 / -1; margin-bottom: 1rem;"></div>
+        <div id="homeTypoBanner" style="display: none; margin-bottom: 1rem;"></div>
 
-        <div class="glass-panel search-compass" style="border-left: 4px solid var(--accent-color); overflow: visible; z-index: 100; position: relative;">
-            <div style="position: relative;">
-                <input type="text" id="searchKeywords" placeholder="Search keywords (e.g. UPSC, RBI officer)..." autocomplete="off">
-                <div class="autocomplete-dropdown" id="autocompleteDropdown" style="position: absolute; top: 100%; left: 0; right: 0; background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: 12px; margin-top: 0.5rem; max-height: 350px; overflow-y: auto; z-index: 1050; box-shadow: 0 15px 35px -5px rgba(0,0,0,0.25); display: none; text-align: left; backdrop-filter: blur(14px);"></div>
+        <div class="search-toolbar-main">
+            <!-- 1. Search Input Column -->
+            <div class="search-input-col">
+                <div class="search-input-container">
+                    <svg class="search-icon" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                        <path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                    </svg>
+                    <input type="text" id="searchKeywords" placeholder="Search Government Jobs, UPSC, SSC, Railway..." data-i18n="search_placeholder" autocomplete="off">
+                    <button type="button" id="clearSearchBtn" class="clear-search-btn" style="display: none;">
+                        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M6 18L18 6M6 6l12 12"></path></svg>
+                    </button>
+                </div>
+                <!-- Autocomplete Dropdown -->
+                <div class="autocomplete-dropdown" id="autocompleteDropdown"></div>
             </div>
-            <div>
-                <select id="stateSelect">
-                    <option value="">Select Region/State</option>
-                    @foreach($states as $state)
-                        <option value="{{ $state->id }}">{{ $state->name }}</option>
-                    @endforeach
-                </select>
+
+            <!-- 2. State searchable dropdown -->
+            <div class="search-dropdown-col">
+                <div class="searchable-dropdown" id="stateDropdownWrapper">
+                    <div class="dropdown-selected" tabindex="0" role="combobox" aria-haspopup="listbox" aria-expanded="false" aria-label="Select Region">
+                        <span class="selected-text">All Regions</span>
+                        <svg class="caret-icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                    </div>
+                    <div class="dropdown-panel">
+                        <div class="dropdown-search">
+                            <input type="text" placeholder="Search region..." class="dropdown-search-input" aria-label="Search region">
+                        </div>
+                        <div class="dropdown-list" role="listbox"></div>
+                    </div>
+                </div>
             </div>
-            <div>
-                <select id="qualificationSelect">
-                    <option value="">Select Qualification</option>
-                    @foreach($qualifications as $qual)
-                        <option value="{{ $qual->id }}">{{ $qual->name }}</option>
-                    @endforeach
-                </select>
+
+            <!-- 3. Qualification searchable dropdown -->
+            <div class="search-dropdown-col">
+                <div class="searchable-dropdown" id="qualificationDropdownWrapper">
+                    <div class="dropdown-selected" tabindex="0" role="combobox" aria-haspopup="listbox" aria-expanded="false" aria-label="Select Qualification">
+                        <span class="selected-text">All Qualifications</span>
+                        <svg class="caret-icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                    </div>
+                    <div class="dropdown-panel">
+                        <div class="dropdown-search">
+                            <input type="text" placeholder="Search qualification..." class="dropdown-search-input" aria-label="Search qualification">
+                        </div>
+                        <div class="dropdown-list" role="listbox"></div>
+                    </div>
+                </div>
             </div>
-            <div>
-                <select id="categorySelect">
-                    <option value="">Select Category</option>
+
+            <!-- 4. Search Submit Button -->
+            <div class="search-btn-col">
+                <button type="button" class="btn-search-primary" id="searchSubmitBtn">
+                    <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                        <path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                    </svg>
+                    <span>Search</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Hidden/Sync dropdown elements -->
+        <select id="stateSelect" style="display: none;">
+            <option value="" data-i18n="select_state">Select Region/State</option>
+            @foreach($states as $state)
+                <option value="{{ $state->id }}">{{ $state->name }}</option>
+            @endforeach
+        </select>
+        <select id="qualificationSelect" style="display: none;">
+            <option value="" data-i18n="select_qual">Select Qualification</option>
+            @foreach($qualifications as $qual)
+                <option value="{{ $qual->id }}">{{ $qual->name }}</option>
+            @endforeach
+        </select>
+
+        <!-- Quick Suggestions Row -->
+        <div class="quick-suggestions-row">
+            <span class="suggestion-label"><span class="fire-icon">🔥</span> Quick Search:</span>
+            <div class="suggestions-chips-container">
+                <span class="suggestion-chip-item" data-query="UPSC">🔥 UPSC</span>
+                <span class="suggestion-chip-item" data-query="SSC">🔥 SSC</span>
+                <span class="suggestion-chip-item" data-query="Railway">🔥 Railway</span>
+                <span class="suggestion-chip-item" data-query="Banking">🔥 Banking</span>
+                <span class="suggestion-chip-item" data-query="Teaching">🔥 Teaching</span>
+                <span class="suggestion-chip-item" data-query="Bihar Police">🔥 Bihar Police</span>
+            </div>
+        </div>
+
+        <!-- Sub-toolbar containing Advanced Filters toggle and active tags summary -->
+        <div class="search-sub-toolbar">
+            <div class="sub-toolbar-left-group">
+                <button type="button" class="btn-advanced-trigger" id="toggleAdvancedFiltersBtn">
+                    <span>⚙ Advanced Filters</span>
+                </button>
+                <button type="button" class="btn-reset-trigger" id="resetFiltersTriggerBtn">
+                    <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                    <span data-i18n="btn_reset">Reset All</span>
+                </button>
+            </div>
+            <div class="active-filter-chips-list" id="activeFilterChipsContainer"></div>
+        </div>
+    </div>
+
+    <!-- Advanced Filters Drawer overlay & container -->
+    <div class="advanced-drawer-overlay" id="advancedDrawerOverlay"></div>
+    <div class="advanced-drawer" id="advancedDrawer">
+        <div class="drawer-header">
+            <h3>⚙ Advanced Filters</h3>
+            <button type="button" class="close-drawer-btn" id="closeDrawerBtn">&times;</button>
+        </div>
+        <div class="drawer-body">
+            <!-- Category Filter -->
+            <div class="filter-group">
+                <label class="filter-label">🏢 Category / Sector</label>
+                <div class="searchable-dropdown" id="categoryDropdownWrapper">
+                    <div class="dropdown-selected" tabindex="0" role="combobox" aria-haspopup="listbox" aria-expanded="false" aria-label="Select Category">
+                        <span class="selected-text" data-i18n="all_streams">All Streams</span>
+                        <svg class="caret-icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                    </div>
+                    <div class="dropdown-panel">
+                        <div class="dropdown-search">
+                            <input type="text" placeholder="Search category..." class="dropdown-search-input" aria-label="Search category">
+                        </div>
+                        <div class="dropdown-list" role="listbox"></div>
+                    </div>
+                </div>
+                <!-- Hidden select input to preserve all existing logic/APIs -->
+                <select class="filter-select" id="categorySelect" style="display: none;">
+                    <option value="" data-i18n="all_streams">All Streams</option>
                     @foreach($categories as $category)
                         <option value="{{ $category->id }}">{{ $category->name }}</option>
                     @endforeach
                 </select>
             </div>
+
+            <!-- Free Application Toggle Switch -->
+            <div class="filter-group">
+                <div class="switch-wrapper" style="width: 100%; min-height: 48px; display: flex; justify-content: space-between; align-items: center; background: var(--bg-primary); border: 1px solid var(--border-color); padding: 0.75rem 1rem; border-radius: 10px;">
+                    <span style="font-size: 0.88rem; font-weight: 600; color: var(--text-secondary);" data-i18n="filter_free_app">Free Applications Only (₹0)</span>
+                    <label class="custom-switch" style="position: relative; display: inline-block; width: 44px; height: 24px;">
+                        <input type="checkbox" id="noFeeCheck" style="opacity: 0; width: 0; height: 0;">
+                        <span class="slider-switch" style="position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: var(--border-color); transition: .3s; border-radius: 24px;"></span>
+                    </label>
+                </div>
+            </div>
+        </div>
+        <div class="drawer-footer">
+            <button type="button" class="btn-reset-drawer" id="resetFiltersDrawerBtn">Reset All</button>
+            <button type="button" class="btn-apply-drawer" id="applyFiltersDrawerBtn">Apply Filters</button>
         </div>
     </div>
+
 
     <!-- Main Workspace Split Grid -->
     <div class="main-grid">
@@ -795,25 +1506,27 @@
             <div id="featuredSegment" style="margin-bottom: 2.5rem;">
                 <h2 style="font-size: 1.4rem; margin-bottom: 1.2rem; display: flex; align-items: center; gap: 0.5rem;">
                     <span style="display:inline-block; width:8px; height:20px; background:var(--accent-color); border-radius:4px;"></span>
-                    Premium Featured Announcements
+                    <span data-i18n="premium_featured">Premium Featured Announcements</span>
                 </h2>
                 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.2rem;">
                     @forelse($featuredJobs as $fJob)
-                        <div class="glass-panel job-card" style="display:block; border-left: 4px solid var(--accent-color); margin-bottom: 0;">
+                        <div class="glass-panel job-card" style="display: flex; flex-direction: column; justify-content: space-between; height: 100%; border-left: 4px solid var(--accent-color); margin-bottom: 0;">
                             <div class="job-info">
-                                <span class="badge" style="margin-bottom: 0.5rem; display: inline-block;">FEATURED</span>
-                                <h3 style="font-size: 1.1rem; margin-bottom: 0.4rem;">{{ $fJob->title }}</h3>
+                                <span class="badge" data-i18n="badge_featured" style="margin-bottom: 0.5rem; display: inline-block;">FEATURED</span>
+                                <h3 style="font-size: 1.1rem; margin-bottom: 0.4rem;" title="{{ $fJob->title }}">
+                                    <span class="notranslate" translate="no" data-translate-title="{{ $fJob->title }}">{{ $fJob->title }}</span>
+                                </h3>
                                 <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 0.8rem;">
-                                    {{ $fJob->department->name ?? 'Government' }} &bull; {{ $fJob->state->name ?? 'Pan India' }}
+                                    <span data-translate-lookup="{{ $fJob->department->name ?? 'Government' }}">{{ $fJob->department->name ?? 'Government' }}</span> &bull; <span data-translate-lookup="{{ $fJob->state->name ?? 'Pan India' }}">{{ $fJob->state->name ?? 'Pan India' }}</span>
                                 </p>
                             </div>
-                            <div style="display: flex; justify-content: space-between; align-items: center;">
-                                <span class="badge badge-deadline">Apply by {{ $fJob->last_date_to_apply ? $fJob->last_date_to_apply->format('d M') : 'N/A' }}</span>
-                                <a href="#" class="btn-view" data-slug="{{ $fJob->slug }}">Details</a>
+                            <div style="display: flex; justify-content: space-between; align-items: center; width: 100%; gap: 0.5rem;">
+                                <span class="badge badge-deadline" data-translate-key="apply_by" data-translate-prefix="📅 " data-translate-suffix=": {{ $fJob->last_date_to_apply ? $fJob->last_date_to_apply->format('d M') : 'N/A' }}">📅 Apply by: {{ $fJob->last_date_to_apply ? $fJob->last_date_to_apply->format('d M') : 'N/A' }}</span>
+                                <a href="#" class="btn-view" data-i18n="btn_view_details" data-slug="{{ $fJob->slug }}" aria-label="View details for {{ $fJob->title }}" style="padding: 0.4rem 0.8rem; font-size: 0.8rem; height: auto;">Details</a>
                             </div>
                         </div>
                     @empty
-                        <div class="glass-panel" style="grid-column: 1/-1; padding: 2rem; text-align: center; color: var(--text-secondary);">
+                        <div class="glass-panel" data-i18n="no_featured" style="grid-column: 1/-1; padding: 2rem; text-align: center; color: var(--text-secondary);">
                             No featured announcements active at this moment.
                         </div>
                     @endforelse
@@ -825,7 +1538,7 @@
                 <h2 style="font-size: 1.4rem; margin-bottom: 1.2rem; display: flex; align-items: center; justify-content: space-between;">
                     <span style="display: flex; align-items: center; gap: 0.5rem;">
                         <span style="display:inline-block; width:8px; height:20px; background:#10b981; border-radius:4px;"></span>
-                        Latest Active Recruitments
+                        <span data-i18n="latest_active">Latest Active Recruitments</span>
                     </span>
                     <span id="jobsCountFeedback" style="font-size: 0.85rem; color: var(--text-secondary); font-weight: normal;"></span>
                 </h2>
@@ -845,34 +1558,34 @@
                         @endphp
                         <div class="glass-panel job-card {{ $rJob->is_sponsored ? 'is-sponsored' : '' }} {{ $rJob->is_featured ? 'featured-premium' : '' }}">
                             <div class="job-info">
-                                <h3 style="display:flex; align-items:center; gap:0.5rem;">
-                                    {{ $rJob->title }}
+                                <h3 style="display:flex; align-items:center; gap:0.5rem;" title="{{ $rJob->title }}">
+                                    <span class="notranslate" translate="no" data-translate-title="{{ $rJob->title }}">{{ $rJob->title }}</span>
                                     @if($rJob->is_sponsored)
-                                        <span class="badge badge-sponsored">SPONSORED</span>
+                                        <span class="badge badge-sponsored" data-i18n="badge_sponsored">SPONSORED</span>
                                     @elseif($rJob->is_featured)
-                                        <span class="badge" style="background:var(--accent-color); color:#fff; font-size:0.75rem;">FEATURED</span>
+                                        <span class="badge" data-i18n="badge_featured" style="background:var(--accent-color); color:#fff; font-size:0.75rem;">FEATURED</span>
                                     @endif
                                 </h3>
                                 <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 0.5rem;">
-                                    {{ $rJob->department->name ?? 'Government' }} &bull; {{ $rJob->state->name ?? 'Pan India' }}
+                                    <span data-translate-lookup="{{ $rJob->department->name ?? 'Government' }}">{{ $rJob->department->name ?? 'Government' }}</span> &bull; <span data-translate-lookup="{{ $rJob->state->name ?? 'Pan India' }}">{{ $rJob->state->name ?? 'Pan India' }}</span>
                                 </p>
                                 <div class="job-tags">
-                                    <span class="badge badge-dept">{{ $rJob->qualification->name ?? 'Degree Required' }}</span>
-                                    <span class="badge" style="background: rgba(16, 185, 129, 0.08); color: #10b981;">Vacancies: {{ $rJob->vacancy_count }}</span>
-                                    <span class="badge badge-deadline">Apply by {{ $rJob->last_date_to_apply ? $rJob->last_date_to_apply->format('d M Y') : 'N/A' }}</span>
+                                    <span class="badge badge-dept" data-translate-lookup="{{ $rJob->qualification->name ?? 'Degree Required' }}" data-translate-prefix="🎓 ">🎓 {{ $rJob->qualification->name ?? 'Degree Required' }}</span>
+                                    <span class="badge" data-translate-key="vacancies_count" data-translate-prefix="👥 " data-translate-suffix=": {{ number_format($rJob->vacancy_count) }}" style="background: rgba(16, 185, 129, 0.08); color: #10b981;">👥 Vacancies: {{ number_format($rJob->vacancy_count) }}</span>
+                                    <span class="badge badge-deadline" data-translate-key="apply_by" data-translate-prefix="📅 " data-translate-suffix=": {{ $rJob->last_date_to_apply ? $rJob->last_date_to_apply->format('d M Y') : 'N/A' }}">📅 Apply by: {{ $rJob->last_date_to_apply ? $rJob->last_date_to_apply->format('d M Y') : 'N/A' }}</span>
                                 </div>
                             </div>
-                            <div style="display: flex; flex-direction: column; gap: 0.5rem; align-items: flex-end;">
-                                <a href="{{ $applyTarget }}" class="btn-view" data-slug="{{ $rJob->slug }}">View Details</a>
+                            <div class="job-card-actions">
+                                <a href="{{ $applyTarget }}" class="btn-view" data-i18n="btn_view_details" data-slug="{{ $rJob->slug }}" aria-label="View details for {{ $rJob->title }}">View Details</a>
                                 @auth
-                                    <button class="btn-sm-danger toggle-bookmark-btn" data-id="{{ $rJob->id }}" style="background: rgba(37,99,235,0.06); color: var(--accent-color); border-color: rgba(37,99,235,0.15);">
+                                    <button class="toggle-bookmark-btn" data-i18n="btn_save_job" data-id="{{ $rJob->id }}" aria-label="Save {{ $rJob->title }} to bookmarks">
                                         Save Job
                                     </button>
                                 @endauth
                             </div>
                         </div>
                     @empty
-                        <div class="glass-panel" style="padding: 3rem; text-align: center; color: var(--text-secondary);">
+                        <div class="glass-panel" data-i18n="no_active_recruitments" style="padding: 3rem; text-align: center; color: var(--text-secondary);">
                             No recruitment posts active. Check back later!
                         </div>
                     @endforelse
@@ -888,30 +1601,30 @@
             <!-- Admit Cards / Syllabus Widget -->
             <div class="glass-panel sidebar-panel" id="admit-cards">
                 <div class="tab-headers">
-                    <button class="tab-btn active" data-tab="admitCards">Admit Cards</button>
-                    <button class="tab-btn" data-tab="examResults">Results</button>
-                    <button class="tab-btn" data-tab="syllabi">Syllabus</button>
+                    <button class="tab-btn active" data-tab="admitCards" data-i18n="trend_admit_cards">Admit Cards</button>
+                    <button class="tab-btn" data-tab="examResults" data-i18n="trend_results">Results</button>
+                    <button class="tab-btn" data-tab="syllabi" data-i18n="trend_syllabus">Syllabus</button>
                 </div>
                 <div class="tab-content active" id="admitCards">
                     <ul class="tab-list">
-                        <li class="tab-item"><a href="#">&rarr; UPSC Civil Services (IAS) 2026 Admit Card</a></li>
-                        <li class="tab-item"><a href="#">&rarr; SSC CGL Tier 1 Entry Card</a></li>
-                        <li class="tab-item"><a href="#">&rarr; RBI Officer Grade B Exam Schedule</a></li>
-                        <li class="tab-item"><a href="#">&rarr; SBI Probationary Officer Exam Hall Ticket</a></li>
+                        <li class="tab-item"><a href="#">&rarr; <span data-i18n="tab_admit_1">UPSC Civil Services (IAS) 2026 Admit Card</span></a></li>
+                        <li class="tab-item"><a href="#">&rarr; <span data-i18n="tab_admit_2">SSC CGL Tier 1 Entry Card</span></a></li>
+                        <li class="tab-item"><a href="#">&rarr; <span data-i18n="tab_admit_3">RBI Officer Grade B Exam Schedule</span></a></li>
+                        <li class="tab-item"><a href="#">&rarr; <span data-i18n="tab_admit_4">SBI Probationary Officer Exam Hall Ticket</span></a></li>
                     </ul>
                 </div>
                 <div class="tab-content" id="examResults">
                     <ul class="tab-list">
-                        <li class="tab-item"><a href="#" style="font-weight: 500; color: #10b981;">&check; UPSC IFS Final Selection List 2025</a></li>
-                        <li class="tab-item"><a href="#">&check; Railway NTPC CBT 2 Merit List</a></li>
-                        <li class="tab-item"><a href="#">&check; IBPS Specialist Officer Mains Result</a></li>
+                        <li class="tab-item"><a href="#" style="font-weight: 500; color: #10b981;">&check; <span data-i18n="tab_result_1">UPSC IFS Final Selection List 2025</span></a></li>
+                        <li class="tab-item"><a href="#">&check; <span data-i18n="tab_result_2">Railway NTPC CBT 2 Merit List</span></a></li>
+                        <li class="tab-item"><a href="#">&check; <span data-i18n="tab_result_3">IBPS Specialist Officer Mains Result</span></a></li>
                     </ul>
                 </div>
                 <div class="tab-content" id="syllabi">
                     <ul class="tab-list">
-                        <li class="tab-item"><a href="#">&bull; UPSC IAS Complete Pattern (Prelims & Mains)</a></li>
-                        <li class="tab-item"><a href="#">&bull; SSC CGL Tier 1 & Tier 2 Math Syllabus</a></li>
-                        <li class="tab-item"><a href="#">&bull; RBI Grade B Phase 1 Syllabus Pattern</a></li>
+                        <li class="tab-item"><a href="#">&bull; <span data-i18n="tab_syllabus_1">UPSC IAS Complete Pattern (Prelims & Mains)</span></a></li>
+                        <li class="tab-item"><a href="#">&bull; <span data-i18n="tab_syllabus_2">SSC CGL Tier 1 & Tier 2 Math Syllabus</span></a></li>
+                        <li class="tab-item"><a href="#">&bull; <span data-i18n="tab_syllabus_3">RBI Grade B Phase 1 Syllabus Pattern</span></a></li>
                     </ul>
                 </div>
             </div>
@@ -920,13 +1633,13 @@
             <div class="glass-panel sidebar-panel" style="border-left: 4px solid #10b981;">
                 <h3 style="font-size: 1.1rem; margin-bottom: 0.8rem; display: flex; align-items: center; gap: 0.5rem;">
                     <span style="display:inline-block; width:8px; height:8px; background:#10b981; border-radius:50%; animation: pulse 1s infinite;"></span>
-                    Automation Monitor
+                    <span data-i18n="automation_monitor">Automation Monitor</span>
                 </h3>
-                <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 0.8rem;">
+                <p data-i18n="automation_desc" style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 0.8rem;">
                     Our intelligent scraping pipeline parses government portals every 5 minutes, validates parameters deterministically, and isolates errors in quarantine.
                 </p>
                 <div style="font-size: 0.8rem; background: var(--bg-primary); padding: 0.6rem; border-radius: 6px; border: 1px solid var(--border-color);">
-                    <strong>Status:</strong> Active &bull; <strong>System Mode:</strong> Failsafe
+                    <strong data-i18n="lbl_status">Status</strong>: <span data-i18n="status_active">Active</span> &bull; <strong data-i18n="lbl_system_mode">System Mode</strong>: <span data-i18n="system_failsafe">Failsafe</span>
                 </div>
             </div>
         </div>
@@ -935,13 +1648,13 @@
 
 <!-- TAB 2: PORTAL INFORMATION HUB (NEW TAB) -->
 <div class="portal-main-tab" id="info-hub-section" style="display: none; padding: 0 5%; max-width: 1400px; margin: 0 auto;">
-    <h2 style="font-size: 1.8rem; margin-bottom: 1.5rem; font-family: 'Outfit';">Portal Information & Help Center</h2>
+    <h2 style="font-size: 1.8rem; margin-bottom: 1.5rem; font-family: 'Outfit';" data-i18n="info_hub_title">Portal Information & Help Center</h2>
     
     <div class="sub-tab-headers">
-        <button class="sub-tab-btn active" data-sub="info-blog">Blog & News</button>
-        <button class="sub-tab-btn" data-sub="info-timeline">About Portal Timeline</button>
-        <button class="sub-tab-btn" data-sub="info-faq">Frequently Asked Questions</button>
-        <button class="sub-tab-btn" data-sub="info-contact">Contact Helpdesk</button>
+        <button class="sub-tab-btn active" data-sub="info-blog" data-i18n="info_blog_tab">Blog & News</button>
+        <button class="sub-tab-btn" data-sub="info-timeline" data-i18n="info_timeline_tab">About Portal Timeline</button>
+        <button class="sub-tab-btn" data-sub="info-faq" data-i18n="info_faq_tab">Frequently Asked Questions</button>
+        <button class="sub-tab-btn" data-sub="info-contact" data-i18n="info_contact_tab">Contact Helpdesk</button>
     </div>
 
     <!-- A. Blog Sub-tab -->
@@ -950,42 +1663,42 @@
             <div class="blog-card glass-panel">
                 <div class="blog-image-wrapper">UPSC 2026</div>
                 <div class="blog-body">
-                    <span class="blog-tag">Recruitment News</span>
-                    <h3 style="font-size: 1.1rem; margin-bottom: 0.5rem; font-family: 'Outfit';">UPSC Civil Services 2026 Notification Out!</h3>
-                    <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 1rem; flex-grow: 1;">
+                    <span class="blog-tag" data-i18n="blog_tag_rec">Recruitment News</span>
+                    <h3 style="font-size: 1.1rem; margin-bottom: 0.5rem; font-family: 'Outfit';" data-i18n="blog_t1">UPSC Civil Services 2026 Notification Out!</h3>
+                    <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 1rem; flex-grow: 1;" data-i18n="blog_d1">
                         The Union Public Service Commission has officially announced the vacancies count and cutoff criteria for the IAS/IFS preliminary examinations.
                     </p>
                     <div style="font-size: 0.8rem; color: var(--text-secondary); display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border-color); padding-top: 0.75rem;">
-                        <span>Released: Today</span>
-                        <a href="#" class="btn-view-sm" style="text-decoration: none; color: var(--accent-color); font-weight: 600;">Read More &rarr;</a>
+                        <span data-i18n="blog_rel_today">Released: Today</span>
+                        <a href="#" class="btn-view-sm" style="text-decoration: none; color: var(--accent-color); font-weight: 600;" data-i18n-html="blog_read_more">Read More &rarr;</a>
                     </div>
                 </div>
             </div>
             <div class="blog-card glass-panel">
                 <div class="blog-image-wrapper" style="background: linear-gradient(135deg, #10b981, #059669);">SSC CGL</div>
                 <div class="blog-body">
-                    <span class="blog-tag" style="background:rgba(16,185,129,0.08); color:#10b981;">Admit Card Updates</span>
-                    <h3 style="font-size: 1.1rem; margin-bottom: 0.5rem; font-family: 'Outfit';">SSC CGL Tier 1 Hall Ticket Release Dates</h3>
-                    <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 1rem; flex-grow: 1;">
+                    <span class="blog-tag" style="background:rgba(16,185,129,0.08); color:#10b981;" data-i18n="blog_tag_admit">Admit Card Updates</span>
+                    <h3 style="font-size: 1.1rem; margin-bottom: 0.5rem; font-family: 'Outfit';" data-i18n="blog_t2">SSC CGL Tier 1 Hall Ticket Release Dates</h3>
+                    <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 1rem; flex-grow: 1;" data-i18n="blog_d2">
                         Candidates who submitted application forms can download active entry cards starting this Friday by entering their unique birth records.
                     </p>
                     <div style="font-size: 0.8rem; color: var(--text-secondary); display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border-color); padding-top: 0.75rem;">
-                        <span>Released: Yesterday</span>
-                        <a href="#" class="btn-view-sm" style="text-decoration: none; color: #10b981; font-weight: 600;">Read More &rarr;</a>
+                        <span data-i18n="blog_rel_yesterday">Released: Yesterday</span>
+                        <a href="#" class="btn-view-sm" style="text-decoration: none; color: #10b981; font-weight: 600;" data-i18n-html="blog_read_more">Read More &rarr;</a>
                     </div>
                 </div>
             </div>
             <div class="blog-card glass-panel">
                 <div class="blog-image-wrapper" style="background: linear-gradient(135deg, #8b5cf6, #7c3aed);">RAILWAYS</div>
                 <div class="blog-body">
-                    <span class="blog-tag" style="background:rgba(139,92,246,0.08); color:#8b5cf6;">Syllabus Releases</span>
-                    <h3 style="font-size: 1.1rem; margin-bottom: 0.5rem; font-family: 'Outfit';">Railway Recruitment Board Syllabus Overhaul</h3>
-                    <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 1rem; flex-grow: 1;">
+                    <span class="blog-tag" style="background:rgba(139,92,246,0.08); color:#8b5cf6;" data-i18n="blog_tag_syllabus">Syllabus Releases</span>
+                    <h3 style="font-size: 1.1rem; margin-bottom: 0.5rem; font-family: 'Outfit';" data-i18n="blog_t3">Railway Recruitment Board Syllabus Overhaul</h3>
+                    <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 1rem; flex-grow: 1;" data-i18n="blog_d3">
                         The selection committee revised general aptitude and science parameters for technical examinations. Read complete subject breakdowns here.
                     </p>
                     <div style="font-size: 0.8rem; color: var(--text-secondary); display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border-color); padding-top: 0.75rem;">
-                        <span>Released: 2 days ago</span>
-                        <a href="#" class="btn-view-sm" style="text-decoration: none; color: #8b5cf6; font-weight: 600;">Read More &rarr;</a>
+                        <span data-i18n="blog_rel_2days">Released: 2 days ago</span>
+                        <a href="#" class="btn-view-sm" style="text-decoration: none; color: #8b5cf6; font-weight: 600;" data-i18n-html="blog_read_more">Read More &rarr;</a>
                     </div>
                 </div>
             </div>
@@ -995,22 +1708,22 @@
     <!-- B. About Us Timeline Sub-tab -->
     <div class="sub-tab-content" id="info-timeline" style="display: none;">
         <div class="glass-panel" style="padding: 1.75rem;">
-            <h3 style="font-family:'Outfit'; margin-bottom: 0.5rem; color: var(--accent-color);">Portal Design & Low-Temperature Scraping Pipeline</h3>
-            <p style="font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 1.5rem;">
+            <h3 style="font-family:'Outfit'; margin-bottom: 0.5rem; color: var(--accent-color);" data-i18n="timeline_title">Portal Design & Low-Temperature Scraping Pipeline</h3>
+            <p style="font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 1.5rem;" data-i18n="timeline_desc">
                 GovJobs is engineered with clean PHP Laravel MVC + Service-Repository architecture, keeping API requests blazing-fast and highly secure.
             </p>
             <div class="timeline-flow">
                 <div class="timeline-step">
-                    <div class="timeline-title">Stage 1: Multi-Feed Target Web Scraper</div>
-                    <div class="timeline-desc">Intelligent crawler engines fetch recruitment notifications directly from official portals asynchronously via Background Queues.</div>
+                    <div class="timeline-title" data-i18n="timeline_s1_t">Stage 1: Multi-Feed Target Web Scraper</div>
+                    <div class="timeline-desc" data-i18n="timeline_s1_d">Intelligent crawler engines fetch recruitment notifications directly from official portals asynchronously via Background Queues.</div>
                 </div>
                 <div class="timeline-step">
-                    <div class="timeline-title">Stage 2: Deterministic Pre-Parser Validation</div>
-                    <div class="timeline-desc">Strict regex filters extract qualification codes, vacancies, cutoff ages, application fees, and deadlines. Matches with incomplete fields are quarantined.</div>
+                    <div class="timeline-title" data-i18n="timeline_s2_t">Stage 2: Deterministic Pre-Parser Validation</div>
+                    <div class="timeline-desc" data-i18n="timeline_s2_d">Strict regex filters extract qualification codes, vacancies, cutoff ages, application fees, and deadlines. Matches with incomplete fields are quarantined.</div>
                 </div>
                 <div class="timeline-step">
-                    <div class="timeline-title">Stage 3: Quarantine Override & Live Publish</div>
-                    <div class="timeline-desc">Administrators review isolated postings, make corrections with a single click, and synchronize them live into public job directories instantly!</div>
+                    <div class="timeline-title" data-i18n="timeline_s3_t">Stage 3: Quarantine Override & Live Publish</div>
+                    <div class="timeline-desc" data-i18n="timeline_s3_d">Administrators review isolated postings, make corrections with a single click, and synchronize them live into public job directories instantly!</div>
                 </div>
             </div>
         </div>
@@ -1019,25 +1732,25 @@
     <!-- C. Frequently Asked Questions (Accordion FAQ) Sub-tab -->
     <div class="sub-tab-content" id="info-faq" style="display: none;">
         <div class="glass-panel" style="padding: 1.75rem;">
-            <h3 style="font-family:'Outfit'; color: var(--accent-color); margin-bottom: 0.5rem;">Frequently Asked Questions</h3>
+            <h3 style="font-family:'Outfit'; color: var(--accent-color); margin-bottom: 0.5rem;" data-i18n="info_faq_tab">Frequently Asked Questions</h3>
             <p style="font-size: 0.9rem; color: var(--text-secondary);">Expand options below to understand GovJobs verification engines and registration policies.</p>
             
             <div class="accordion-wrapper">
                 <div class="accordion-item">
-                    <div class="accordion-header">Are all listed government job alerts verified?</div>
-                    <div class="accordion-content">
+                    <div class="accordion-header" data-i18n="faq_q1">Are all listed government job alerts verified?</div>
+                    <div class="accordion-content" data-i18n="faq_a1">
                         Yes! Every announcement in our portal is scraped directly from authentic government domain resources (.gov.in / .nic.in) and cross-validated before listing.
                     </div>
                 </div>
                 <div class="accordion-item">
-                    <div class="accordion-header">How does the mock OTP verification system work?</div>
-                    <div class="accordion-content">
+                    <div class="accordion-header" data-i18n="faq_q2">How does the mock OTP verification system work?</div>
+                    <div class="accordion-content" data-i18n="faq_a2">
                         To recover your candidate account, click the 'Reset PW' tab in the authentication modal, input your email, and receive a simulated SMS code '123456' immediately to restore session rights.
                     </div>
                 </div>
                 <div class="accordion-item">
-                    <div class="accordion-header">How can candidates update their alert preferences?</div>
-                    <div class="accordion-content">
+                    <div class="accordion-header" data-i18n="faq_q3">How can candidates update their alert preferences?</div>
+                    <div class="accordion-content" data-i18n="faq_a3">
                         Candidates can sign in, open the 'Dashboard' section, go to the 'Profile Settings' tab, and toggle Email or SMS notifications checkbox configurations in real-time.
                     </div>
                 </div>
@@ -1048,25 +1761,25 @@
     <!-- D. Contact Helpdesk Sub-tab -->
     <div class="sub-tab-content" id="info-contact" style="display: none;">
         <div class="glass-panel" style="padding: 1.75rem; max-width: 600px; margin: 0 auto;">
-            <h3 style="font-family:'Outfit'; color: var(--accent-color); margin-bottom: 0.5rem; text-align: center;">Contact Portal Support Helpdesk</h3>
-            <p style="font-size: 0.85rem; color: var(--text-secondary); text-align: center; margin-bottom: 1.5rem;">
+            <h3 style="font-family:'Outfit'; color: var(--accent-color); margin-bottom: 0.5rem; text-align: center;" data-i18n="contact_title">Contact Portal Support Helpdesk</h3>
+            <p style="font-size: 0.85rem; color: var(--text-secondary); text-align: center; margin-bottom: 1.5rem;" data-i18n="contact_desc">
                 Have questions or spot a typo on a scraped recruitment feed? Send us a ticket.
             </p>
             <form id="ajaxContactForm">
                 @csrf
                 <div class="form-group">
-                    <label for="contactName">Your Name</label>
-                    <input type="text" name="name" id="contactName" class="form-control" placeholder="Candidate Name" required>
+                    <label for="contactName" data-i18n="contact_name_lbl">Your Name</label>
+                    <input type="text" name="name" id="contactName" class="form-control" placeholder="Candidate Name" data-i18n="contact_name_placeholder" required>
                 </div>
                 <div class="form-group">
-                    <label for="contactEmail">Email Address</label>
-                    <input type="email" name="email" id="contactEmail" class="form-control" placeholder="candidate@example.com" required>
+                    <label for="contactEmail" data-i18n="lbl_email_addr">Email Address</label>
+                    <input type="email" name="email" id="contactEmail" class="form-control" placeholder="candidate@example.com" data-i18n="contact_email_placeholder" required>
                 </div>
                 <div class="form-group">
-                    <label for="contactMessage">Support Message / Feedback</label>
-                    <textarea name="message" id="contactMessage" class="form-control" rows="4" placeholder="Briefly describe your request..." required></textarea>
+                    <label for="contactMessage" data-i18n="contact_msg_lbl">Support Message / Feedback</label>
+                    <textarea name="message" id="contactMessage" class="form-control" rows="4" placeholder="Briefly describe your request..." data-i18n="contact_msg_placeholder" required></textarea>
                 </div>
-                <button type="submit" class="form-btn" id="contactSubmitBtn">Submit Support Ticket</button>
+                <button type="submit" class="form-btn" id="contactSubmitBtn" data-i18n="contact_submit_btn">Submit Support Ticket</button>
             </form>
         </div>
     </div>
@@ -1076,12 +1789,12 @@
 
 <!-- TAB 3: CANDIDATE INTERACTIVE DASHBOARD -->
 <div class="portal-main-tab" id="dashboard-section" style="display: none; padding: 0 5%; max-width: 1400px; margin: 0 auto;">
-    <h2 style="font-size: 1.8rem; margin-bottom: 1.5rem; font-family: 'Outfit';">Candidate Interactive Dashboard</h2>
+    <h2 style="font-size: 1.8rem; margin-bottom: 1.5rem; font-family: 'Outfit';" data-i18n="dash_title">Candidate Interactive Dashboard</h2>
     
     <div class="sub-tab-headers" style="margin-bottom: 1.5rem;">
-        <button class="sub-tab-btn active dash-sub-trigger" data-target="dash-overview-block">Workspace Overview</button>
-        <button class="sub-tab-btn dash-sub-trigger" data-target="dash-settings-block">Profile & Match Alerts Preferences</button>
-        <button class="sub-tab-btn dash-sub-trigger" data-target="dash-membership-block" id="dashMembershipTabTrigger">Premium Membership Plans</button>
+        <button class="sub-tab-btn active dash-sub-trigger" data-target="dash-overview-block" data-i18n="dash_overview_tab">Workspace Overview</button>
+        <button class="sub-tab-btn dash-sub-trigger" data-target="dash-settings-block" data-i18n="dash_settings_tab">Profile & Match Alerts Preferences</button>
+        <button class="sub-tab-btn dash-sub-trigger" data-target="dash-membership-block" id="dashMembershipTabTrigger" data-i18n="dash_membership_tab">Premium Membership Plans</button>
     </div>
 
     <!-- Dash Block 1: Overview (Bookmarks and apps table) -->
@@ -1090,15 +1803,15 @@
             <div>
                 <!-- Bookmarked items box -->
                 <div class="glass-panel" style="padding: 1.5rem; margin-bottom: 2rem;">
-                    <h3 style="font-size: 1.25rem; margin-bottom: 1rem; color: var(--accent-color); font-family: 'Outfit';">Saved Recruitment Postings</h3>
+                    <h3 style="font-size: 1.25rem; margin-bottom: 1rem; color: var(--accent-color); font-family: 'Outfit';" data-i18n="dash_saved_postings">Saved Recruitment Postings</h3>
                     <div class="responsive-table-container">
                         <table class="portal-table" id="dashboardBookmarksTable">
                             <thead>
                                 <tr>
-                                    <th>Job Title</th>
-                                    <th>Region</th>
-                                    <th>Apply Deadline</th>
-                                    <th style="text-align: center;">Actions</th>
+                                    <th data-i18n="lbl_job_title">Job Title</th>
+                                    <th data-i18n="lbl_region">Region</th>
+                                    <th data-i18n="lbl_deadline">Apply Deadline</th>
+                                    <th style="text-align: center;" data-i18n="lbl_actions">Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -1110,15 +1823,15 @@
 
                 <!-- Job Applications box -->
                 <div class="glass-panel" style="padding: 1.5rem;">
-                    <h3 style="font-size: 1.25rem; margin-bottom: 1rem; color: #10b981; font-family: 'Outfit';">Submitted Applications & Recruiter Status</h3>
+                    <h3 style="font-size: 1.25rem; margin-bottom: 1rem; color: #10b981; font-family: 'Outfit';" data-i18n="dash_submitted_apps">Submitted Applications & Recruiter Status</h3>
                     <div class="responsive-table-container">
                         <table class="portal-table" id="dashboardApplicationsTable">
                             <thead>
                                 <tr>
-                                    <th>Recruitment Title</th>
-                                    <th>Organization</th>
-                                    <th>Date Submitted</th>
-                                    <th>Process State</th>
+                                    <th data-i18n="lbl_job_title">Recruitment Title</th>
+                                    <th data-i18n="lbl_organization">Organization</th>
+                                    <th data-i18n="lbl_date_submitted">Date Submitted</th>
+                                    <th data-i18n="lbl_process_state">Process State</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -1129,15 +1842,15 @@
 
                 <!-- Recently Viewed Recruitments box -->
                 <div class="glass-panel" style="padding: 1.5rem; margin-top: 2rem;">
-                    <h3 style="font-size: 1.25rem; margin-bottom: 1rem; color: #8b5cf6; font-family: 'Outfit';">Recently Viewed Recruitments</h3>
+                    <h3 style="font-size: 1.25rem; margin-bottom: 1rem; color: #8b5cf6; font-family: 'Outfit';" data-i18n="dash_recently_viewed">Recently Viewed Recruitments</h3>
                     <div class="responsive-table-container">
                         <table class="portal-table" id="dashboardRecentlyViewedTable">
                             <thead>
                                 <tr>
-                                    <th>Recruitment Title</th>
-                                    <th>Region</th>
-                                    <th>Apply Deadline</th>
-                                    <th style="text-align: center;">Actions</th>
+                                    <th data-i18n="lbl_job_title">Recruitment Title</th>
+                                    <th data-i18n="lbl_region">Region</th>
+                                    <th data-i18n="lbl_deadline">Apply Deadline</th>
+                                    <th style="text-align: center;" data-i18n="lbl_actions">Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -1150,23 +1863,23 @@
 
             <!-- Candidate statistics card -->
             <div class="glass-panel" style="padding: 1.5rem;">
-                <h3 style="font-size: 1.25rem; margin-bottom: 1.5rem; font-family: 'Outfit';">Profile Statistics</h3>
+                <h3 style="font-size: 1.25rem; margin-bottom: 1.5rem; font-family: 'Outfit';" data-i18n="dash_profile_stats">Profile Statistics</h3>
                 
                 <div class="stats-grid" style="grid-template-columns: 1fr; gap: 1rem;">
                     <div class="glass-panel stat-card" style="background: var(--bg-primary); border: 1px solid var(--border-color);">
                         <div class="stat-num" id="statsTotalBookmarks">0</div>
-                        <div class="stat-label">Saved Recruitments</div>
+                        <div class="stat-label" data-i18n="dash_saved_count">Saved Recruitments</div>
                     </div>
                     <div class="glass-panel stat-card" style="background: var(--bg-primary); border: 1px solid var(--border-color);">
                         <div class="stat-num" id="statsTotalApplications" style="color: #10b981;">0</div>
-                        <div class="stat-label">Submitted Applications</div>
+                        <div class="stat-label" data-i18n="dash_submitted_count">Submitted Applications</div>
                     </div>
                 </div>
 
                 <div style="border-top: 1px solid var(--border-color); padding-top: 1.25rem; margin-top: 1.25rem; font-size: 0.9rem; color: var(--text-secondary);">
-                    <p><strong>Candidate:</strong> <span id="dashCandidateName" style="color: var(--text-primary);">John Doe</span></p>
-                    <p><strong>Email:</strong> <span id="dashCandidateEmail">candidate@example.com</span></p>
-                    <p><strong>Phone:</strong> <span id="dashCandidatePhone">Not Verified</span></p>
+                    <p><strong>Candidate:</strong> <span id="dashCandidateName" translate="no" class="notranslate" style="color: var(--text-primary);">John Doe</span></p>
+                    <p><strong>Email:</strong> <span id="dashCandidateEmail" translate="no" class="notranslate">candidate@example.com</span></p>
+                    <p><strong>Phone:</strong> <span id="dashCandidatePhone" translate="no" class="notranslate">Not Verified</span></p>
                 </div>
             </div>
         </div>
@@ -1175,63 +1888,63 @@
     <!-- Dash Block 2: Profile Settings Form -->
     <div id="dash-settings-block" class="dash-block-panel" style="display: none;">
         <div class="glass-panel" style="padding: 2rem; max-width: 700px; margin: 0 auto;">
-            <h3 style="font-family:'Outfit'; color: var(--accent-color); margin-bottom: 1.5rem; text-align: center;">Update Profile Settings & Preferences</h3>
+            <h3 style="font-family:'Outfit'; color: var(--accent-color); margin-bottom: 1.5rem; text-align: center;" data-i18n="dash_update_profile">Update Profile Settings & Preferences</h3>
             
-            <form id="ajaxProfileUpdateForm" style="margin-bottom: 2rem; border-bottom: 1px solid var(--border-color); padding-bottom: 2rem;">
+            <form id="ajaxProfileUpdateForm" translate="no" class="notranslate" style="margin-bottom: 2rem; border-bottom: 1px solid var(--border-color); padding-bottom: 2rem;">
                 @csrf
                 <div class="form-group">
-                    <label for="profileName">Full Name</label>
+                    <label for="profileName" data-i18n="lbl_full_name">Full Name</label>
                     <input type="text" name="name" id="profileName" class="form-control" required>
                     <div class="invalid-feedback" id="profileNameError"></div>
                 </div>
                 <div class="form-group">
-                    <label for="profileEmail">Email Address</label>
+                    <label for="profileEmail" data-i18n="lbl_email_addr">Email Address</label>
                     <input type="email" name="email" id="profileEmail" class="form-control" required>
                     <div class="invalid-feedback" id="profileEmailError"></div>
                 </div>
                 <div class="form-group">
-                    <label for="profilePhone">Phone Number</label>
+                    <label for="profilePhone" data-i18n="lbl_phone_num">Phone Number</label>
                     <input type="text" name="phone" id="profilePhone" class="form-control" required>
                     <div class="invalid-feedback" id="profilePhoneError"></div>
                 </div>
                 
                 <div style="background: rgba(37,99,235,0.03); padding: 1rem; border-radius: 8px; border: 1px dashed var(--border-color); margin: 1.5rem 0;">
-                    <p style="font-size:0.8rem; color:var(--text-secondary); margin-bottom:1rem;">Leave password fields blank if you do not want to alter credentials.</p>
+                    <p style="font-size:0.8rem; color:var(--text-secondary); margin-bottom:1rem;" data-i18n="dash_pass_blank">Leave password fields blank if you do not want to alter credentials.</p>
                     <div class="form-group">
-                        <label for="profilePassword">New Password (Min 6 chars)</label>
+                        <label for="profilePassword" data-i18n="lbl_new_pass">New Password (Min 6 chars)</label>
                         <input type="password" name="password" id="profilePassword" class="form-control" placeholder="••••••••">
                         <div class="invalid-feedback" id="profilePasswordError"></div>
                     </div>
                     <div class="form-group">
-                        <label for="profilePasswordConfirm">Confirm New Password</label>
+                        <label for="profilePasswordConfirm" data-i18n="lbl_confirm_pass">Confirm New Password</label>
                         <input type="password" name="password_confirmation" id="profilePasswordConfirm" class="form-control" placeholder="••••••••">
                     </div>
                 </div>
 
-                <button type="submit" class="form-btn" id="profileUpdateSubmitBtn">Synchronize Profile Settings</button>
+                <button type="submit" class="form-btn" id="profileUpdateSubmitBtn" data-i18n="btn_sync_profile">Synchronize Profile Settings</button>
             </form>
 
             <form id="ajaxPreferencesForm">
                 @csrf
-                <h4 style="font-family:'Outfit'; font-size:1.1rem; color:var(--text-primary); margin-bottom:1rem;">Real-time Recruitment Alert Channels</h4>
+                <h4 style="font-family:'Outfit'; font-size:1.1rem; color:var(--text-primary); margin-bottom:1rem;" data-i18n="dash_alert_channels">Real-time Recruitment Alert Channels</h4>
                 
                 <div class="alert-preference-row">
                     <div>
-                        <strong>Email Match Notifications</strong><br>
-                        <span style="font-size:0.8rem; color:var(--text-secondary);">Receive validation notifications daily on active categories.</span>
+                        <strong data-i18n="dash_email_alerts">Email Match Notifications</strong><br>
+                        <span style="font-size:0.8rem; color:var(--text-secondary);" data-i18n="dash_email_alerts_desc">Receive validation notifications daily on active categories.</span>
                     </div>
                     <input type="checkbox" name="email_alerts" id="prefEmailAlerts" value="1" checked style="width: 20px; height: 20px; cursor: pointer;">
                 </div>
                 
                 <div class="alert-preference-row" style="border-bottom:none; margin-bottom: 1.5rem;">
                     <div>
-                        <strong>SMS Verification Alerts</strong><br>
-                        <span style="font-size:0.8rem; color:var(--text-secondary);">Send live SMS reminders 24 hours prior to apply deadlines.</span>
+                        <strong data-i18n="dash_sms_alerts">SMS Verification Alerts</strong><br>
+                        <span style="font-size:0.8rem; color:var(--text-secondary);" data-i18n="dash_sms_alerts_desc">Send live SMS reminders 24 hours prior to apply deadlines.</span>
                     </div>
                     <input type="checkbox" name="sms_alerts" id="prefSmsAlerts" value="1" checked style="width: 20px; height: 20px; cursor: pointer;">
                 </div>
 
-                <button type="submit" class="form-btn" id="preferencesSubmitBtn" style="background:#10b981;">Save Notification Preferences</button>
+                <button type="submit" class="form-btn" id="preferencesSubmitBtn" style="background:#10b981;" data-i18n="btn_save_preferences">Save Notification Preferences</button>
             </form>
         </div>
     </div>
@@ -1239,8 +1952,8 @@
     <!-- Dash Block 3: Membership Plans & Upgrades -->
     <div id="dash-membership-block" class="dash-block-panel" style="display: none;">
         <div class="glass-panel" style="padding: 2rem; max-width: 800px; margin: 0 auto;">
-            <h3 style="font-family:'Outfit'; color: var(--accent-color); margin-bottom: 0.5rem; text-align: center;">Premium Membership Plans</h3>
-            <p style="font-size:0.9rem; color:var(--text-secondary); text-align:center; margin-bottom:2rem;">
+            <h3 style="font-family:'Outfit'; color: var(--accent-color); margin-bottom: 0.5rem; text-align: center;" data-i18n="dash_membership_tab">Premium Membership Plans</h3>
+            <p style="font-size:0.9rem; color:var(--text-secondary); text-align:center; margin-bottom:2rem;" data-i18n-html="membership_desc">
                 Unlock advanced automation alerts, early results access, and a completely <strong>ad-free experience</strong>.
             </p>
 
@@ -1248,7 +1961,7 @@
                 <!-- Plan 1: Free -->
                 <div class="glass-panel" style="flex: 1; min-width: 220px; padding: 1.5rem; display: flex; flex-direction: column; justify-content: space-between; border-top: 4px solid var(--text-secondary);">
                     <div>
-                        <h4 style="font-family:'Outfit'; font-size:1.15rem; margin-bottom:0.5rem;">Basic Free Plan</h4>
+                        <h4 style="font-family:'Outfit'; font-size:1.15rem; margin-bottom:0.5rem;" data-i18n="plan_free">Basic Free Plan</h4>
                         <div style="font-size:1.5rem; font-weight:800; margin-bottom:1rem; color:var(--text-primary);">₹0</div>
                         <ul style="list-style:none; padding:0; margin:0; display:grid; gap:0.5rem; font-size:0.82rem; color:var(--text-secondary);">
                             <li>✓ Standard job notifications</li>
@@ -1265,7 +1978,7 @@
                 <!-- Plan 2: Premium -->
                 <div class="glass-panel" style="flex: 1; min-width: 220px; padding: 1.5rem; display: flex; flex-direction: column; justify-content: space-between; border-top: 4px solid var(--accent-color); background: rgba(37,99,235,0.02);">
                     <div>
-                        <h4 style="font-family:'Outfit'; font-size:1.15rem; margin-bottom:0.5rem;">Premium Candidate</h4>
+                        <h4 style="font-family:'Outfit'; font-size:1.15rem; margin-bottom:0.5rem;" data-i18n="plan_premium">Premium Candidate</h4>
                         <div style="font-size:1.5rem; font-weight:800; margin-bottom:1rem; color:var(--accent-color);">₹299 <span style="font-size:0.8rem; font-weight:normal;">/ month</span></div>
                         <ul style="list-style:none; padding:0; margin:0; display:grid; gap:0.5rem; font-size:0.82rem; color:var(--text-secondary);">
                             <li><strong>✓ Completely Ad-Free Experience</strong></li>
@@ -1275,14 +1988,14 @@
                         </ul>
                     </div>
                     <div style="margin-top:1.5rem;">
-                        <button class="form-btn select-membership-plan-btn" data-plan="premium" id="btnPremiumPlanIndicator" style="width:100%; margin:0; padding:0.6rem;">Upgrade Premium</button>
+                        <button class="form-btn select-membership-plan-btn" data-plan="premium" id="btnPremiumPlanIndicator" style="width:100%; margin:0; padding:0.6rem;" data-i18n="btn_upgrade_premium">Upgrade Premium</button>
                     </div>
                 </div>
 
                 <!-- Plan 3: Pro -->
                 <div class="glass-panel" style="flex: 1; min-width: 220px; padding: 1.5rem; display: flex; flex-direction: column; justify-content: space-between; border-top: 4px solid #10b981; background: rgba(16,185,129,0.02);">
                     <div>
-                        <h4 style="font-family:'Outfit'; font-size:1.15rem; margin-bottom:0.5rem;">Pro Professional</h4>
+                        <h4 style="font-family:'Outfit'; font-size:1.15rem; margin-bottom:0.5rem;" data-i18n="plan_pro">Pro Professional</h4>
                         <div style="font-size:1.5rem; font-weight:800; margin-bottom:1rem; color:#10b981;">₹599 <span style="font-size:0.8rem; font-weight:normal;">/ month</span></div>
                         <ul style="list-style:none; padding:0; margin:0; display:grid; gap:0.5rem; font-size:0.82rem; color:var(--text-secondary);">
                             <li><strong>✓ Completely Ad-Free Experience</strong></li>
@@ -1292,7 +2005,7 @@
                         </ul>
                     </div>
                     <div style="margin-top:1.5rem;">
-                        <button class="form-btn select-membership-plan-btn" data-plan="pro" id="btnProPlanIndicator" style="width:100%; margin:0; padding:0.6rem; background:#10b981;">Upgrade Pro</button>
+                        <button class="form-btn select-membership-plan-btn" data-plan="pro" id="btnProPlanIndicator" style="width:100%; margin:0; padding:0.6rem; background:#10b981;" data-i18n="btn_upgrade_pro">Upgrade Pro</button>
                     </div>
                 </div>
             </div>
@@ -1300,7 +2013,7 @@
             <!-- UPI/Credit Card Simulated Payment Panel (hidden by default) -->
             <div id="simulatedPaymentPanel" style="display: none; border-top: 1px solid var(--border-color); padding-top: 1.5rem; margin-top: 1.5rem;">
                 <h4 style="font-family:'Outfit'; font-size:1.1rem; color:var(--accent-color); margin-bottom:1rem; text-align:center;">Secure Mock Checkout Interface</h4>
-                <form id="ajaxSimulatedCheckoutForm" style="max-width: 450px; margin: 0 auto;">
+                <form id="ajaxSimulatedCheckoutForm" translate="no" class="notranslate" style="max-width: 450px; margin: 0 auto;">
                     @csrf
                     <input type="hidden" id="checkoutTargetPlan" name="plan">
                     
@@ -1766,6 +2479,7 @@
         // ================== SEARCH AND PAGINATION SYSTEM ==================
         let currentPage = 1;
 
+        // Fetch jobs from server
         function fetchJobs(page = 1) {
             currentPage = page;
             const queryData = {
@@ -1773,6 +2487,7 @@
                 state_id: $('#stateSelect').val(),
                 qualification_id: $('#qualificationSelect').val(),
                 category_id: $('#categorySelect').val(),
+                has_no_fee: $('#noFeeCheck').is(':checked'),
                 page: page
             };
 
@@ -1792,12 +2507,12 @@
                         const data = response.data;
                         const jobs = data.jobs;
 
-                        $('#jobsCountFeedback').text(`Found ${data.total} recruitments`);
+                        $('#jobsCountFeedback').text(window.t('found_jobs', 'Found {count} recruitments').replace('{count}', data.total));
 
                         if (jobs.length === 0) {
                             $('#jobsListContainer').html(`
                                 <div class="glass-panel" style="padding: 3rem; text-align: center; color: var(--text-secondary);">
-                                    No recruitment postings match your exact search criteria. Try modifying your filters.
+                                    ${window.t('no_match_criteria', 'No recruitment postings match your exact search criteria. Try modifying your filters.')}
                                 </div>
                             `).fadeIn();
                             return;
@@ -1806,8 +2521,8 @@
                         // Rebuild HTML cards dynamically
                         let html = '';
                         jobs.forEach(function(job) {
-                            const isFeaturedBadge = job.is_featured ? '<span class="badge" style="background:var(--accent-color); color:#fff; font-size:0.75rem;">FEATURED</span>' : '';
-                            const isSponsoredBadge = job.is_sponsored ? '<span class="badge badge-sponsored">SPONSORED</span>' : '';
+                            const isFeaturedBadge = job.is_featured ? `<span class="badge" style="background:var(--accent-color); color:#fff; font-size:0.75rem;">${window.t('badge_featured', 'FEATURED')}</span>` : '';
+                            const isSponsoredBadge = job.is_sponsored ? `<span class="badge badge-sponsored">${window.t('badge_sponsored', 'SPONSORED')}</span>` : '';
                             const sponsoredClass = job.is_sponsored ? 'is-sponsored' : '';
                             const featuredClass = job.is_featured ? 'featured-premium' : '';
                             const applyTarget = job.affiliate_link ? `/go/${job.slug}` : `#`;
@@ -1815,25 +2530,25 @@
                             html += `
                                 <div class="glass-panel job-card ${sponsoredClass} ${featuredClass}">
                                     <div class="job-info">
-                                        <h3 style="display:flex; align-items:center; gap:0.5rem;">
-                                            ${job.title} 
+                                        <h3 style="display:flex; align-items:center; gap:0.5rem;" title="${job.title}">
+                                            <span class="notranslate" translate="no" data-translate-title="${job.title}">${window.translateJobTitle(job.title)}</span> 
                                             ${isSponsoredBadge}
                                             ${isFeaturedBadge}
                                         </h3>
                                         <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 0.5rem;">
-                                            ${job.department} &bull; ${job.state}
+                                            ${window.t(job.department, job.department)} &bull; ${window.t(job.state, job.state)}
                                         </p>
                                         <div class="job-tags">
-                                            <span class="badge badge-dept">${job.qualification}</span>
-                                            <span class="badge" style="background: rgba(16, 185, 129, 0.08); color: #10b981;">Vacancies: ${job.vacancy_count}</span>
-                                            <span class="badge badge-deadline">Apply by ${job.last_date}</span>
+                                            <span class="badge badge-dept">🎓 ${window.t(job.qualification, job.qualification)}</span>
+                                            <span class="badge" style="background: rgba(16, 185, 129, 0.08); color: #10b981;">👥 ${window.t('vacancies_count', 'Vacancies')}: ${Number(job.vacancy_count).toLocaleString('en-IN')}</span>
+                                            <span class="badge badge-deadline">📅 ${window.t('apply_by', 'Apply by')}: ${job.last_date}</span>
                                         </div>
                                     </div>
-                                    <div style="display: flex; flex-direction: column; gap: 0.5rem; align-items: flex-end;">
-                                        <a href="${applyTarget}" class="btn-view" data-slug="${job.slug}">View Details</a>
+                                    <div class="job-card-actions">
+                                        <a href="${applyTarget}" class="btn-view" data-slug="${job.slug}" aria-label="View details for ${job.title}">${window.t('btn_view_details', 'View Details')}</a>
                                         @auth
-                                            <button class="btn-sm-danger toggle-bookmark-btn" data-id="${job.id}" style="background: rgba(37,99,235,0.06); color: var(--accent-color); border-color: rgba(37,99,235,0.15);">
-                                                Save Job
+                                            <button class="toggle-bookmark-btn" data-id="${job.id}" aria-label="Save ${job.title}">
+                                                ${window.t('btn_save_job', 'Save Job')}
                                             </button>
                                         @endauth
                                     </div>
@@ -1849,7 +2564,7 @@
                     $('#skeletonLoader').hide();
                     $('#jobsListContainer').html(`
                         <div class="glass-panel" style="padding: 3rem; text-align: center; color: #ef4444; border-color: rgba(239,68,68,0.2);">
-                            <strong>System error occurred!</strong> Could not synchronize listings. Please try again.
+                            ${window.t('system_error', 'System error occurred! Could not synchronize listings. Please try again.')}
                         </div>
                     `).fadeIn();
                 }
@@ -1862,57 +2577,333 @@
 
             let html = '';
             if (current > 1) {
-                html += `<a href="#" class="page-link" data-page="${current - 1}">&laquo; Prev</a>`;
+                html += `<a href="#" class="page-link" data-page="${current - 1}">&laquo; ${window.t('btn_prev', 'Prev')}</a>`;
             }
             for (let i = 1; i <= last; i++) {
                 const activeClass = i === current ? 'active' : '';
                 html += `<a href="#" class="page-link ${activeClass}" data-page="${i}">${i}</a>`;
             }
             if (current < last) {
-                html += `<a href="#" class="page-link" data-page="${current + 1}">Next &raquo;</a>`;
+                html += `<a href="#" class="page-link" data-page="${current + 1}">${window.t('btn_next', 'Next')} &raquo;</a>`;
             }
             $('#paginationContainer').html(html);
         }
 
-        // Trigger filters
-        $('#stateSelect, #qualificationSelect, #categorySelect').on('change', function() {
+        // Initialize custom searchable dropdowns
+        function initSearchableDropdown(wrapperId, hiddenSelectId, placeholderText) {
+            const $wrapper = $(wrapperId);
+            const $hiddenSelect = $(hiddenSelectId);
+            const $selectedText = $wrapper.find('.selected-text');
+            const $selectedDiv = $wrapper.find('.dropdown-selected');
+            const $searchInput = $wrapper.find('.dropdown-search-input');
+            const $panel = $wrapper.find('.dropdown-panel');
+            const $list = $wrapper.find('.dropdown-list');
+            const defaultI18nKey = $selectedText.attr('data-i18n') || '';
+
+            function populateOptions() {
+                $list.empty();
+                $hiddenSelect.find('option').each(function() {
+                    const val = $(this).val();
+                    let text = $(this).text().trim();
+                    if (!val) {
+                        text = placeholderText;
+                    }
+                    const isSelected = $(this).is(':selected');
+                    const lookup = $(this).attr('data-translate-lookup');
+                    const prefix = $(this).attr('data-translate-prefix');
+                    const suffix = $(this).attr('data-translate-suffix');
+                    const i18nKey = $(this).attr('data-i18n');
+                    
+                    const optionAttr = {
+                        class: 'dropdown-option' + (isSelected ? ' selected' : ''),
+                        'data-value': val,
+                        text: text,
+                        role: 'option',
+                        tabindex: '-1'
+                    };
+                    
+                    if (lookup) { optionAttr['data-translate-lookup'] = lookup; }
+                    if (prefix) { optionAttr['data-translate-prefix'] = prefix; }
+                    if (suffix) { optionAttr['data-translate-suffix'] = suffix; }
+                    if (i18nKey) { optionAttr['data-i18n'] = i18nKey; }
+
+                    const $option = $('<div>', optionAttr);
+                    $list.append($option);
+                    if (isSelected) {
+                        $selectedText.text(text);
+                        if (val) {
+                            $selectedText.removeAttr('data-i18n');
+                        } else {
+                            if (defaultI18nKey) {
+                                $selectedText.attr('data-i18n', defaultI18nKey);
+                            }
+                        }
+                        if (lookup) {
+                            $selectedText.attr('data-translate-lookup', lookup);
+                        } else {
+                            $selectedText.removeAttr('data-translate-lookup');
+                        }
+                        if (prefix) {
+                            $selectedText.attr('data-translate-prefix', prefix);
+                        } else {
+                            $selectedText.removeAttr('data-translate-prefix');
+                        }
+                        if (suffix) {
+                            $selectedText.attr('data-translate-suffix', suffix);
+                        } else {
+                            $selectedText.removeAttr('data-translate-suffix');
+                        }
+                    }
+                });
+            }
+
+            populateOptions();
+
+            // Toggle panel
+            $selectedDiv.on('click', function(e) {
+                e.stopPropagation();
+                const isOpen = $wrapper.hasClass('open');
+                $('.searchable-dropdown').not($wrapper).removeClass('open');
+                $wrapper.toggleClass('open');
+                if (!isOpen) {
+                    $searchInput.val('').trigger('input');
+                    $searchInput.focus();
+                }
+            });
+
+            // Handle option click
+            $list.on('click', '.dropdown-option', function(e) {
+                e.stopPropagation();
+                const val = $(this).attr('data-value') || '';
+                const text = $(this).text();
+                $hiddenSelect.val(val).trigger('change');
+                $selectedText.text(text);
+                $wrapper.removeClass('open');
+                $selectedDiv.focus();
+            });
+
+            // Handle search input filtering
+            $searchInput.on('input', function() {
+                const query = $(this).val().toLowerCase();
+                $list.find('.dropdown-option').each(function() {
+                    const text = $(this).text().toLowerCase();
+                    if (text.includes(query)) {
+                        $(this).show();
+                    } else {
+                        $(this).hide();
+                    }
+                });
+            });
+
+            // Keyboard accessibility
+            $selectedDiv.on('keydown', function(e) {
+                if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    $(this).trigger('click');
+                }
+            });
+
+            $searchInput.on('keydown', function(e) {
+                const $visibleOptions = $list.find('.dropdown-option:visible');
+                let activeIdx = $visibleOptions.index($list.find('.dropdown-option.highlighted'));
+                
+                if (e.key === 'ArrowDown') {
+                    e.preventDefault();
+                    activeIdx = (activeIdx + 1) % $visibleOptions.length;
+                    $visibleOptions.removeClass('highlighted');
+                    $visibleOptions.eq(activeIdx).addClass('highlighted');
+                    $visibleOptions.eq(activeIdx)[0].scrollIntoView({ block: 'nearest' });
+                } else if (e.key === 'ArrowUp') {
+                    e.preventDefault();
+                    activeIdx = (activeIdx - 1 + $visibleOptions.length) % $visibleOptions.length;
+                    $visibleOptions.removeClass('highlighted');
+                    $visibleOptions.eq(activeIdx).addClass('highlighted');
+                    $visibleOptions.eq(activeIdx)[0].scrollIntoView({ block: 'nearest' });
+                } else if (e.key === 'Enter') {
+                    e.preventDefault();
+                    const $highlighted = $list.find('.dropdown-option.highlighted');
+                    if ($highlighted.length > 0) {
+                        $highlighted.trigger('click');
+                    } else if ($visibleOptions.length > 0) {
+                        $visibleOptions.first().trigger('click');
+                    }
+                } else if (e.key === 'Escape') {
+                    $wrapper.removeClass('open');
+                    $selectedDiv.focus();
+                }
+            });
+
+            // Sync from hidden select changes
+            $hiddenSelect.on('change', function() {
+                const val = $(this).val();
+                let selectedTextVal = placeholderText;
+                let activeLookup = null;
+                let activePrefix = null;
+                let activeSuffix = null;
+                
+                $list.find('.dropdown-option').removeClass('selected').each(function() {
+                    if (($(this).attr('data-value') || '') == val) {
+                        $(this).addClass('selected');
+                        selectedTextVal = $(this).text();
+                        activeLookup = $(this).attr('data-translate-lookup');
+                        activePrefix = $(this).attr('data-translate-prefix');
+                        activeSuffix = $(this).attr('data-translate-suffix');
+                    }
+                });
+                
+                $selectedText.text(selectedTextVal);
+                if (val) {
+                    $selectedText.removeAttr('data-i18n');
+                } else {
+                    if (defaultI18nKey) {
+                        $selectedText.attr('data-i18n', defaultI18nKey);
+                    }
+                }
+                
+                if (activeLookup) {
+                    $selectedText.attr('data-translate-lookup', activeLookup);
+                } else {
+                    $selectedText.removeAttr('data-translate-lookup');
+                }
+                if (activePrefix) {
+                    $selectedText.attr('data-translate-prefix', activePrefix);
+                } else {
+                    $selectedText.removeAttr('data-translate-prefix');
+                }
+                if (activeSuffix) {
+                    $selectedText.attr('data-translate-suffix', activeSuffix);
+                } else {
+                    $selectedText.removeAttr('data-translate-suffix');
+                }
+            });
+        }
+
+        // Initialize custom dropdowns
+        initSearchableDropdown('#stateDropdownWrapper', '#stateSelect', 'All Regions');
+        initSearchableDropdown('#qualificationDropdownWrapper', '#qualificationSelect', 'All Qualifications');
+        initSearchableDropdown('#categoryDropdownWrapper', '#categorySelect', 'All Streams');
+
+        // Render initial chips on load
+        updateFilterChips();
+
+        // Close dropdowns clicking outside
+        $(document).on('click', function(e) {
+            if (!$(e.target).closest('.searchable-dropdown').length) {
+                $('.searchable-dropdown').removeClass('open');
+            }
+        });
+
+        // Advanced filter drawer toggle
+        $('#toggleAdvancedFiltersBtn').on('click', function() {
+            $('#advancedDrawer, #advancedDrawerOverlay').addClass('open');
+            $(this).addClass('active');
+            $('#advancedDrawer').find('select, input').first().focus();
+        });
+
+        $('#closeDrawerBtn, #advancedDrawerOverlay, #applyFiltersDrawerBtn').on('click', function() {
+            $('#advancedDrawer, #advancedDrawerOverlay').removeClass('open');
+            $('#toggleAdvancedFiltersBtn').removeClass('active');
+        });
+
+        // Selected Active Filter tag chips manager
+        function updateFilterChips() {
+            const container = $('#activeFilterChipsContainer');
+            container.empty();
+            let hasFilters = false;
+
+            const stateVal = $('#stateSelect').val();
+            if (stateVal) {
+                const text = $(`#stateSelect option[value="${stateVal}"]`).text().trim();
+                container.append(`<div class="active-filter-chip">📍 ${text} <span class="remove-filter-btn" data-type="state" role="button" aria-label="Remove ${text} filter">&times;</span></div>`);
+                hasFilters = true;
+            }
+
+            const qualVal = $('#qualificationSelect').val();
+            if (qualVal) {
+                const text = $(`#qualificationSelect option[value="${qualVal}"]`).text().trim();
+                container.append(`<div class="active-filter-chip">🎓 ${text} <span class="remove-filter-btn" data-type="qualification" role="button" aria-label="Remove ${text} filter">&times;</span></div>`);
+                hasFilters = true;
+            }
+
+            const catVal = $('#categorySelect').val();
+            if (catVal) {
+                const text = $(`#categorySelect option[value="${catVal}"]`).text().trim();
+                container.append(`<div class="active-filter-chip">🏢 ${text} <span class="remove-filter-btn" data-type="category" role="button" aria-label="Remove ${text} filter">&times;</span></div>`);
+                hasFilters = true;
+            }
+
+            const noFeeVal = $('#noFeeCheck').is(':checked');
+            if (noFeeVal) {
+                container.append(`<div class="active-filter-chip">💸 Free Application <span class="remove-filter-btn" data-type="nofee" role="button" aria-label="Remove free applications filter">&times;</span></div>`);
+                hasFilters = true;
+            }
+
+            if (hasFilters) {
+                container.append(`<a href="#" id="clearAllFiltersBtn" style="font-size: 0.85rem; color: #ef4444; font-weight: 600; text-decoration: none; margin-left: 0.5rem;">Clear All</a>`);
+            }
+        }
+
+        // Dismiss active filter chips handler
+        $('#activeFilterChipsContainer').on('click', '.remove-filter-btn', function() {
+            const type = $(this).data('type');
+            if (type === 'state') {
+                $('#stateSelect').val('').trigger('change');
+            } else if (type === 'qualification') {
+                $('#qualificationSelect').val('').trigger('change');
+            } else if (type === 'category') {
+                $('#categorySelect').val('').trigger('change');
+            } else if (type === 'nofee') {
+                $('#noFeeCheck').prop('checked', false).trigger('change');
+            }
+        });
+
+        $(document).on('click', '#clearAllFiltersBtn', function(e) {
+            e.preventDefault();
+            $('#resetFiltersTriggerBtn').trigger('click');
+        });
+
+        // Trigger filters on changes
+        $('#stateSelect, #qualificationSelect, #categorySelect, #noFeeCheck').on('change', function() {
+            updateFilterChips();
             fetchJobs(1);
         });
 
-        // State Explorer Chips click handler
-        $('#stateExplorerChips').on('click', '.explorer-chip', function() {
-            $(this).addClass('active').siblings().removeClass('active');
-            const stateId = $(this).data('id');
-            $('#stateSelect').val(stateId);
+        // Try searching suggestions click
+        $(document).on('click', '.suggestion-chip-item', function() {
+            const query = $(this).data('query');
+            $('#searchKeywords').val(query);
+            $('#clearSearchBtn').show();
             fetchJobs(1);
         });
 
-        // Qualification Explorer Chips click handler
-        $('#qualExplorerChips').on('click', '.explorer-chip', function() {
-            $(this).addClass('active').siblings().removeClass('active');
-            const qualId = $(this).data('id');
-            $('#qualificationSelect').val(qualId);
+        // Submit search on button click
+        $('#searchSubmitBtn').on('click', function() {
+            clearTimeout(searchTimeout);
             fetchJobs(1);
         });
 
-        // Sync dropdown changes back to explorer chips
-        $('#stateSelect').on('change', function() {
-            const val = $(this).val();
-            $(`#stateExplorerChips .explorer-chip[data-id="${val || ''}"]`).addClass('active').siblings().removeClass('active');
-        });
-
-        // Sync dropdown changes back to explorer chips
-        $('#qualificationSelect').on('change', function() {
-            const val = $(this).val();
-            $(`#qualExplorerChips .explorer-chip[data-id="${val || ''}"]`).addClass('active').siblings().removeClass('active');
+        // Submit search on Enter keypress
+        $('#searchKeywords').on('keypress', function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                clearTimeout(searchTimeout);
+                fetchJobs(1);
+                $('#autocompleteDropdown').hide();
+            }
         });
 
         // Search Input Keyup Debouncing
         let searchTimeout = null;
         let autocompleteTimeout = null;
 
-        $('#searchKeywords').on('keyup', function() {
+        $('#searchKeywords').on('input keyup', function() {
             const query = $(this).val();
+
+            if (query.length > 0) {
+                $('#clearSearchBtn').show();
+            } else {
+                $('#clearSearchBtn').hide();
+            }
 
             clearTimeout(searchTimeout);
             searchTimeout = setTimeout(function() {
@@ -1929,7 +2920,7 @@
                                 $('#homeTypoBanner').html(`
                                     <div class="typo-banner">
                                         <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
-                                        <span>Did you mean: <a id="homeSuggestedQueryLink" href="#" data-query="${res.data.suggestion}">${res.data.suggestion}</a> ?</span>
+                                        <span>${window.t('did_you_mean', 'Did you mean:')} <a id="homeSuggestedQueryLink" href="#" data-query="${res.data.suggestion}">${res.data.suggestion}</a> ?</span>
                                     </div>
                                 `).fadeIn();
                             } else {
@@ -2010,6 +3001,15 @@
             }, 150);
         });
 
+        // Clear search text
+        $(document).on('click', '#clearSearchBtn', function() {
+            $('#searchKeywords').val('');
+            $(this).hide();
+            $('#autocompleteDropdown').hide().empty();
+            $('#homeTypoBanner').hide().empty();
+            fetchJobs(1);
+        });
+
         // Autocomplete click actions on homepage
         $(document).on('click', '.select-suggest-job', function() {
             const slug = $(this).data('slug');
@@ -2035,7 +3035,27 @@
             const query = $(this).data('query');
             $('#searchKeywords').val(query);
             $('#homeTypoBanner').hide().empty();
+            $('#clearSearchBtn').show();
             fetchJobs(1);
+        });
+
+        // Reset all filters trigger
+        $('#resetFiltersTriggerBtn').on('click', function() {
+            $('#searchKeywords').val('');
+            $('#stateSelect').val('').trigger('change');
+            $('#qualificationSelect').val('').trigger('change');
+            $('#categorySelect').val('').trigger('change');
+            $('#noFeeCheck').prop('checked', false).trigger('change');
+            $('#clearSearchBtn').hide();
+            $('#autocompleteDropdown').hide().empty();
+            $('#homeTypoBanner').hide().empty();
+            $('#advancedDrawer, #advancedDrawerOverlay').removeClass('open');
+            $('#toggleAdvancedFiltersBtn').removeClass('active');
+            fetchJobs(1);
+        });
+
+        $('#resetFiltersDrawerBtn').on('click', function() {
+            $('#resetFiltersTriggerBtn').trigger('click');
         });
 
         $(document).on('click', '.page-link', function(e) {
@@ -2059,9 +3079,9 @@
                     btn.prop('disabled', false);
                     showToast(res.message, 'success');
                     if (res.action === 'added') {
-                        btn.text('Remove Save').css({'color': '#ef4444', 'border-color': 'rgba(239,68,68,0.15)', 'background': 'rgba(239,68,68,0.06)'});
+                        btn.text(window.t('btn_remove_save', 'Remove Save')).css({'color': '#ef4444', 'border-color': 'rgba(239,68,68,0.15)', 'background': 'rgba(239,68,68,0.06)'});
                     } else {
-                        btn.text('Save Job').css({'color': 'var(--accent-color)', 'border-color': 'rgba(37,99,235,0.15)', 'background': 'rgba(37,99,235,0.06)'});
+                        btn.text(window.t('btn_save_job', 'Save Job')).css({'color': 'var(--accent-color)', 'border-color': 'rgba(37,99,235,0.15)', 'background': 'rgba(37,99,235,0.06)'});
                     }
                 },
                 error: function(err) {
@@ -2095,48 +3115,47 @@
                 success: function(res) {
                     if (res.status === 'success') {
                         const job = res.data;
+                        const type = job.post_type;
                         let html = '';
-                        const type = job.post_type || 'job';
-                        
                         if (type === 'job') {
                             html = `
                                 <div class="theme-accent-job">
                                     <div class="category-visual-header">
-                                        <h2>💼 ${job.title}</h2>
-                                        <p>${job.department} &bull; ${job.state} &bull; ${job.category}</p>
+                                        <h2>💼 <span class="notranslate" translate="no" data-translate-title="${job.title}">${window.translateJobTitle(job.title)}</span></h2>
+                                        <p>${window.t(job.department, job.department)} &bull; ${window.t(job.state, job.state)} &bull; ${window.t(job.category, job.category)}</p>
                                     </div>
                                     
                                     <div class="details-summary-grid">
                                         <div class="details-summary-item">
-                                            <div style="font-size:0.75rem; text-transform:uppercase; color:var(--text-secondary);">Monthly Salary Index</div>
+                                            <div style="font-size:0.75rem; text-transform:uppercase; color:var(--text-secondary);">${window.t('modal_salary_lbl_index', 'Monthly Salary Index')}</div>
                                             <div style="font-size:1.15rem; font-weight:700; color:var(--text-primary); margin-top:0.25rem;">₹ ${job.salary_min} - ₹ ${job.salary_max}</div>
                                         </div>
                                         <div class="details-summary-item">
-                                            <div style="font-size:0.75rem; text-transform:uppercase; color:var(--text-secondary);">Total Vacancies</div>
-                                            <div style="font-size:1.15rem; font-weight:700; color:var(--accent-color); margin-top:0.25rem;">${job.vacancy_count} Active Posts</div>
+                                            <div style="font-size:0.75rem; text-transform:uppercase; color:var(--text-secondary);">${window.t('modal_vacancies_lbl', 'Total Vacancies')}</div>
+                                            <div style="font-size:1.15rem; font-weight:700; color:var(--accent-color); margin-top:0.25rem;">${job.vacancy_count} ${window.t('active_posts_lbl', 'Active Posts')}</div>
                                         </div>
                                         <div class="details-summary-item">
-                                            <div style="font-size:0.75rem; text-transform:uppercase; color:var(--text-secondary);">Application Fees</div>
+                                            <div style="font-size:0.75rem; text-transform:uppercase; color:var(--text-secondary);">${window.t('modal_fees_lbl', 'Application Fees')}</div>
                                             <div style="font-size:1.15rem; font-weight:700; color:var(--text-primary); margin-top:0.25rem;">₹ ${job.application_fee}</div>
                                         </div>
                                         <div class="details-summary-item">
-                                            <div style="font-size:0.75rem; text-transform:uppercase; color:var(--text-secondary);">Age Requirements</div>
+                                            <div style="font-size:0.75rem; text-transform:uppercase; color:var(--text-secondary);">${window.t('modal_age_lbl', 'Age Requirements')}</div>
                                             <div style="font-size:1.15rem; font-weight:700; color:var(--text-primary); margin-top:0.25rem;">${job.age_limit}</div>
                                         </div>
                                     </div>
 
                                     <div class="details-full-section" style="margin-top:1.5rem;">
-                                        <h4 style="color: var(--accent-color); font-weight:700; font-family:'Outfit';">Recruitment Overview & Eligibility</h4>
+                                        <h4 style="color: var(--accent-color); font-weight:700; font-family:'Outfit';">${window.t('modal_overview', 'Recruitment Overview & Eligibility')}</h4>
                                         <p style="color: var(--text-secondary); line-height:1.75; font-size:0.95rem; margin-top:0.5rem;">${job.description}</p>
                                     </div>
 
                                     <div class="details-full-section" style="margin-top:1.5rem;">
-                                        <h4 style="color: var(--accent-color); font-weight:700; font-family:'Outfit';">Selection Process Steps</h4>
+                                        <h4 style="color: var(--accent-color); font-weight:700; font-family:'Outfit';">${window.t('modal_selection', 'Selection Process Steps')}</h4>
                                         <p style="color: var(--text-secondary); line-height:1.75; font-size:0.95rem; margin-top:0.5rem;">${job.selection_process}</p>
                                     </div>
 
                                     <div class="details-full-section" style="margin-top:1.5rem;">
-                                        <h4 style="color: var(--accent-color); font-weight:700; font-family:'Outfit';">Exam Scheme & Syllabus Patterns</h4>
+                                        <h4 style="color: var(--accent-color); font-weight:700; font-family:'Outfit';">${window.t('modal_syllabus', 'Exam Scheme & Syllabus Patterns')}</h4>
                                         <div class="details-syllabus-container" style="max-height: none; overflow: visible; margin-top:0.5rem; color:var(--text-secondary); line-height:1.75;">
                                             ${job.exam_pattern}
                                         </div>
@@ -2145,75 +3164,75 @@
                                     <div style="display: flex; gap: 1rem; margin-top: 2rem; border-top: 1px solid var(--border-color); padding-top: 1.5rem; flex-wrap: wrap;">
                                         <a href="${job.official_website_link}" target="_blank" class="btn-view" style="flex:1; text-align:center; display:flex; align-items:center; justify-content:center; gap:0.4rem; font-weight:600; text-decoration:none;">
                                             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle;"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
-                                            Official Advertisement
+                                            ${window.t('modal_advertisement', 'Official Advertisement')}
                                         </a>
-                                        \\%isLoggedIn%
+                                        %isLoggedIn%
                                     </div>
                                 </div>
                             `;
-                            html = html.replace('\\%isLoggedIn%', isLoggedIn ? `
+                            html = html.replace('%isLoggedIn%', isLoggedIn ? `
                                 <button id="modalApplyBtn" class="form-btn" style="flex:1.5; margin-top:0; padding: 0.8rem; background: var(--accent-color); font-weight:700;" data-id="${job.id}">
-                                    Apply Recruitment Now
+                                    ${window.t('modal_apply_now', 'Apply Recruitment Now')}
                                 </button>
                             ` : `
                                 <button class="form-btn trigger-auth-redirect-btn" style="flex:1.5; margin-top:0; padding: 0.8rem; background: var(--text-secondary); color:#ffffff; font-weight:700;">
-                                    Login to Apply Now
+                                    ${window.t('modal_login_apply', 'Login to Apply Now')}
                                 </button>
                             `);
                         } else if (type === 'admit_card') {
                             html = `
                                 <div class="theme-accent-admit_card">
                                     <div class="category-visual-header">
-                                        <h2>🎟️ ${job.title} Admit Card</h2>
-                                        <p>${job.department} &bull; ${job.state} &bull; Official Call Letter</p>
+                                        <h2>🎟️ <span class="notranslate" translate="no" data-translate-title="${job.title}">${window.translateJobTitle(job.title)}</span> ${window.t('trend_admit_cards', 'Admit Card')}</h2>
+                                        <p>${window.t(job.department, job.department)} &bull; ${window.t(job.state, job.state)} &bull; ${window.t('modal_official_call_letter', 'Official Call Letter')}</p>
                                     </div>
 
                                     <div class="details-summary-grid">
                                         <div class="details-summary-item">
-                                            <div style="font-size:0.75rem; text-transform:uppercase; color:var(--text-secondary);">Admit Card Status</div>
-                                            <div style="font-size:1.15rem; font-weight:700; color: #10b981; margin-top:0.25rem;">⚡ RELEASED & ACTIVE</div>
+                                            <div style="font-size:0.75rem; text-transform:uppercase; color:var(--text-secondary);">${window.t('modal_admit_card_status', 'Admit Card Status')}</div>
+                                            <div style="font-size:1.15rem; font-weight:700; color: #10b981; margin-top:0.25rem;">${window.t('modal_released_active', '⚡ RELEASED & ACTIVE')}</div>
                                         </div>
                                         <div class="details-summary-item">
-                                            <div style="font-size:0.75rem; text-transform:uppercase; color:var(--text-secondary);">Expected Exam Date</div>
+                                            <div style="font-size:0.75rem; text-transform:uppercase; color:var(--text-secondary);">${window.t('modal_exam_lbl', 'Expected Exam Date')}</div>
                                             <div style="font-size:1.15rem; font-weight:700; color: var(--text-primary); margin-top:0.25rem;">${job.exam_date}</div>
                                         </div>
                                         <div class="details-summary-item">
-                                            <div style="font-size:0.75rem; text-transform:uppercase; color:var(--text-secondary);">Total Vacancies</div>
-                                            <div style="font-size:1.15rem; font-weight:700; color: var(--text-primary); margin-top:0.25rem;">${job.vacancy_count} Posts</div>
+                                            <div style="font-size:0.75rem; text-transform:uppercase; color:var(--text-secondary);">${window.t('modal_vacancies_lbl', 'Total Vacancies')}</div>
+                                            <div style="font-size:1.15rem; font-weight:700; color: var(--text-primary); margin-top:0.25rem;">${job.vacancy_count} ${window.t('vacancies_count', 'Posts')}</div>
                                         </div>
                                         <div class="details-summary-item">
-                                            <div style="font-size:0.75rem; text-transform:uppercase; color:var(--text-secondary);">Download Deadline</div>
+                                            <div style="font-size:0.75rem; text-transform:uppercase; color:var(--text-secondary);">${window.t('modal_download_deadline', 'Download Deadline')}</div>
                                             <div style="font-size:1.15rem; font-weight:700; color: #ef4444; margin-top:0.25rem;">${job.last_date}</div>
                                         </div>
                                     </div>
 
                                     <div class="details-full-section" style="margin-top:1.5rem;">
-                                        <h4 style="color: #10b981; font-weight:700; font-family:'Outfit';">Download Call Letter Instructions</h4>
+                                        <h4 style="color: #10b981; font-weight:700; font-family:'Outfit';">${window.t('modal_download_instructions', 'Download Call Letter Instructions')}</h4>
                                         <p style="color: var(--text-secondary); line-height:1.75; font-size:0.95rem; margin-top:0.5rem;">
-                                            The selection board has released the admit cards for <strong>${job.title}</strong>. Please download your entry card prior to the download deadline.
+                                            ${window.t('modal_board_released_admit', 'The selection board has released the admit cards for')} <strong><span class="notranslate" translate="no" data-translate-title="${job.title}">${window.translateJobTitle(job.title)}</span></strong>. ${window.t('modal_download_prior', 'Please download your entry card prior to the download deadline.')}
                                         </p>
                                         <div style="background: rgba(16, 185, 129, 0.05); padding: 1.25rem; border-radius: 8px; border: 1px dashed rgba(16, 185, 129, 0.2); margin: 1.25rem 0;">
-                                            <h5 style="color: #10b981; margin-bottom: 0.5rem; font-weight: 700; font-size:0.95rem;">Required Credentials Checklist:</h5>
+                                            <h5 style="color: #10b981; margin-bottom: 0.5rem; font-weight: 700; font-size:0.95rem;">${window.t('modal_credentials_checklist', 'Required Credentials Checklist:')}</h5>
                                             <ul style="list-style: none; display: flex; flex-direction: column; gap: 0.4rem; padding: 0; margin: 0; font-size: 0.9rem; color: var(--text-secondary);">
-                                                <li>🔑 1. Registered Application Number / Registration ID</li>
-                                                <li>🎂 2. Candidate Date of Birth (DD-MM-YYYY format)</li>
-                                                <li>🧩 3. Security Verification Code Captcha</li>
+                                                <li>${window.t('modal_chk_1', '🔑 1. Registered Application Number / Registration ID')}</li>
+                                                <li>${window.t('modal_chk_2', '🎂 2. Candidate Date of Birth (DD-MM-YYYY format)')}</li>
+                                                <li>${window.t('modal_chk_3', '🧩 3. Security Verification Code Captcha')}</li>
                                             </ul>
                                         </div>
                                         <p style="color: var(--text-secondary); font-size: 0.9rem; line-height:1.5;">
-                                            ⚠️ <strong>Note:</strong> Carry a printed color copy of this Admit Card along with an active government photo ID proof (Aadhaar Card, Passport, driving license, PAN card) and two passport-sized color photos to the test venue.
+                                            ⚠️ <strong>${window.t('modal_note', 'Note:')}</strong> ${window.t('modal_admit_card_note_text', 'Carry a printed color copy of this Admit Card along with an active government photo ID proof (Aadhaar Card, Passport, driving license, PAN card) and two passport-sized color photos to the test venue.')}
                                         </p>
                                     </div>
 
                                     <div class="download-callout-panel">
-                                        <h4 style="color: var(--text-primary); margin-bottom: 0.5rem; font-weight: 700;">Direct Candidate Server Access</h4>
-                                        <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 1.25rem;">Select Server 1 or 2 to download call letters instantly.</p>
+                                        <h4 style="color: var(--text-primary); margin-bottom: 0.5rem; font-weight: 700;">${window.t('modal_direct_access', 'Direct Candidate Server Access')}</h4>
+                                        <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 1.25rem;">${window.t('modal_select_server', 'Select Server 1 or 2 to download call letters instantly.')}</p>
                                         <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
                                             <a href="${job.apply_link || job.official_website_link}" target="_blank" class="download-button-premium">
-                                                🚀 Download Call Letter (Server 1)
+                                                ${window.t('modal_download_s1', '🚀 Download Call Letter (Server 1)')}
                                             </a>
                                             <a href="${job.official_website_link}" target="_blank" class="download-button-premium" style="background: var(--bg-secondary); border: 1px solid var(--border-color); color: var(--text-primary); box-shadow: none;">
-                                                🌐 Alternative Login (Server 2)
+                                                ${window.t('modal_alt_login_s2', '🌐 Alternative Login (Server 2)')}
                                             </a>
                                         </div>
                                     </div>
@@ -2223,80 +3242,80 @@
                             html = `
                                 <div class="theme-accent-result">
                                     <div class="category-visual-header">
-                                        <h2>🏆 ${job.title} Exam Result</h2>
-                                        <p>${job.department} &bull; ${job.state} &bull; Merit & Cutoff Scores</p>
+                                        <h2>🏆 <span class="notranslate" translate="no" data-translate-title="${job.title}">${window.translateJobTitle(job.title)}</span> ${window.t('trend_results', 'Exam Result')}</h2>
+                                        <p>${window.t(job.department, job.department)} &bull; ${window.t(job.state, job.state)} &bull; ${window.t('modal_merit_cutoff', 'Merit & Cutoff Scores')}</p>
                                     </div>
 
                                     <div class="details-summary-grid">
                                         <div class="details-summary-item">
-                                            <div style="font-size:0.75rem; text-transform:uppercase; color:var(--text-secondary);">Result Status</div>
-                                            <div style="font-size:1.15rem; font-weight:700; color: #8b5cf6; margin-top:0.25rem;">🎉 MERIT LIST RELEASED</div>
+                                            <div style="font-size:0.75rem; text-transform:uppercase; color:var(--text-secondary);">${window.t('modal_result_status', 'Result Status')}</div>
+                                            <div style="font-size:1.15rem; font-weight:700; color: #8b5cf6; margin-top:0.25rem;">${window.t('modal_merit_released', '🎉 MERIT LIST RELEASED')}</div>
                                         </div>
                                         <div class="details-summary-item">
-                                            <div style="font-size:0.75rem; text-transform:uppercase; color:var(--text-secondary);">Cutoff Verification</div>
-                                            <div style="font-size:1.15rem; font-weight:700; color: var(--text-primary); margin-top:0.25rem;">COMPLETED</div>
+                                            <div style="font-size:0.75rem; text-transform:uppercase; color:var(--text-secondary);">${window.t('modal_cutoff_verification', 'Cutoff Verification')}</div>
+                                            <div style="font-size:1.15rem; font-weight:700; color: var(--text-primary); margin-top:0.25rem;">${window.t('modal_completed', 'COMPLETED')}</div>
                                         </div>
                                         <div class="details-summary-item">
-                                            <div style="font-size:0.75rem; text-transform:uppercase; color:var(--text-secondary);">Total Selected Candidates</div>
-                                            <div style="font-size:1.15rem; font-weight:700; color: var(--text-primary); margin-top:0.25rem;">${job.vacancy_count} Allotments</div>
+                                            <div style="font-size:0.75rem; text-transform:uppercase; color:var(--text-secondary);">${window.t('modal_total_selected', 'Total Selected Candidates')}</div>
+                                            <div style="font-size:1.15rem; font-weight:700; color: var(--text-primary); margin-top:0.25rem;">${job.vacancy_count} ${window.t('modal_allotments', 'Allotments')}</div>
                                         </div>
                                         <div class="details-summary-item">
-                                            <div style="font-size:0.75rem; text-transform:uppercase; color:var(--text-secondary);">Allotment Date</div>
+                                            <div style="font-size:0.75rem; text-transform:uppercase; color:var(--text-secondary);">${window.t('modal_allotment_date', 'Allotment Date')}</div>
                                             <div style="font-size:1.15rem; font-weight:700; color: var(--text-primary); margin-top:0.25rem;">${job.last_date}</div>
                                         </div>
                                     </div>
 
                                     <div class="details-full-section" style="margin-top:1.5rem;">
-                                        <h4 style="color: #8b5cf6; font-weight:700; font-family:'Outfit';">Category-Wise Cutoff Marks</h4>
+                                        <h4 style="color: #8b5cf6; font-weight:700; font-family:'Outfit';">${window.t('modal_cutoff_marks', 'Category-Wise Cutoff Marks')}</h4>
                                         <table class="details-cutoff-table">
                                             <thead>
                                                 <tr>
-                                                    <th>Category Segment</th>
-                                                    <th>Cutoff Marks (%)</th>
-                                                    <th>Status Index</th>
+                                                    <th>${window.t('modal_category_segment', 'Category Segment')}</th>
+                                                    <th>${window.t('modal_cutoff_percent', 'Cutoff Marks (%)')}</th>
+                                                    <th>${window.t('modal_status_index', 'Status Index')}</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
                                                 <tr>
-                                                    <td><strong>General (UR)</strong></td>
+                                                    <td><strong>${window.t('modal_cat_gen', 'General (UR)')}</strong></td>
                                                     <td>78.50%</td>
-                                                    <td>Active / Cleared</td>
+                                                    <td>${window.t('modal_status_active_cleared', 'Active / Cleared')}</td>
                                                 </tr>
                                                 <tr>
                                                     <td><strong>OBC</strong></td>
                                                     <td>72.40%</td>
-                                                    <td>Active / Cleared</td>
+                                                    <td>${window.t('modal_status_active_cleared', 'Active / Cleared')}</td>
                                                 </tr>
                                                 <tr>
                                                     <td><strong>SC / ST</strong></td>
                                                     <td>65.00%</td>
-                                                    <td>Active / Cleared</td>
+                                                    <td>${window.t('modal_status_active_cleared', 'Active / Cleared')}</td>
                                                 </tr>
                                                 <tr>
                                                     <td><strong>EWS</strong></td>
                                                     <td>70.15%</td>
-                                                    <td>Active / Cleared</td>
+                                                    <td>${window.t('modal_status_active_cleared', 'Active / Cleared')}</td>
                                                 </tr>
                                             </tbody>
                                         </table>
                                     </div>
 
                                     <div class="details-full-section" style="margin-top:1.5rem;">
-                                        <h4 style="color: #8b5cf6; font-weight:700; font-family:'Outfit';">Next Steps & Counselling Process</h4>
+                                        <h4 style="color: #8b5cf6; font-weight:700; font-family:'Outfit';">${window.t('modal_next_steps', 'Next Steps & Counselling Process')}</h4>
                                         <p style="color: var(--text-secondary); line-height: 1.75; font-size: 0.95rem; margin-top:0.5rem;">
-                                            All qualifying candidates whose roll numbers are highlighted in the merit list must prepare documents for the biometric validation and certificate screening. Individual counseling invitations will be sent via registered candidate emails soon.
+                                            ${window.t('modal_merit_note_text', 'All qualifying candidates whose roll numbers are highlighted in the merit list must prepare documents for the biometric validation and certificate screening. Individual counseling invitations will be sent via registered candidate emails soon.')}
                                         </p>
                                     </div>
 
                                     <div class="download-callout-panel">
-                                        <h4 style="color: var(--text-primary); margin-bottom: 0.5rem; font-weight: 700;">Direct Merit PDF Downloads</h4>
-                                        <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 1.25rem;">Download final selection indexes or cutoff list directly from secure servers.</p>
+                                        <h4 style="color: var(--text-primary); margin-bottom: 0.5rem; font-weight: 700;">${window.t('modal_direct_merit_dl', 'Direct Merit PDF Downloads')}</h4>
+                                        <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 1.25rem;">${window.t('modal_dl_cutoff_text', 'Download final selection indexes or cutoff list directly from secure servers.')}</p>
                                         <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
                                             <a href="${job.apply_link || job.official_website_link}" target="_blank" class="download-button-premium">
-                                                📄 Download Merit List (PDF)
+                                                ${window.t('modal_download_merit_pdf', '📄 Download Merit List (PDF)')}
                                             </a>
                                             <a href="${job.official_website_link}" target="_blank" class="download-button-premium" style="background: var(--bg-secondary); border: 1px solid var(--border-color); color: var(--text-primary); box-shadow: none;">
-                                                📊 Download Official Cutoff
+                                                ${window.t('modal_download_cutoff', '📊 Download Official Cutoff')}
                                             </a>
                                         </div>
                                     </div>
@@ -2306,50 +3325,50 @@
                             html = `
                                 <div class="theme-accent-syllabus">
                                     <div class="category-visual-header">
-                                        <h2>📖 ${job.title} Exam Syllabus</h2>
-                                        <p>${job.department} &bull; ${job.state} &bull; Topics & Marking Pattern</p>
+                                        <h2>📖 <span class="notranslate" translate="no" data-translate-title="${job.title}">${window.translateJobTitle(job.title)}</span> ${window.t('trend_syllabus', 'Exam Syllabus')}</h2>
+                                        <p>${window.t(job.department, job.department)} &bull; ${window.t(job.state, job.state)} &bull; ${window.t('modal_syllabus_topics', 'Topics & Marking Pattern')}</p>
                                     </div>
 
                                     <div class="details-summary-grid">
                                         <div class="details-summary-item">
-                                            <div style="font-size:0.75rem; text-transform:uppercase; color:var(--text-secondary);">Syllabus Status</div>
-                                            <div style="font-size:1.15rem; font-weight:700; color: #db2777; margin-top:0.25rem;">⭐ OFFICIAL OVERHAUL</div>
+                                            <div style="font-size:0.75rem; text-transform:uppercase; color:var(--text-secondary);">${window.t('modal_syllabus_status', 'Syllabus Status')}</div>
+                                            <div style="font-size:1.15rem; font-weight:700; color: #db2777; margin-top:0.25rem;">${window.t('modal_official_overhaul', '⭐ OFFICIAL OVERHAUL')}</div>
                                         </div>
                                         <div class="details-summary-item">
-                                            <div style="font-size:0.75rem; text-transform:uppercase; color:var(--text-secondary);">Total Exam Marks</div>
+                                            <div style="font-size:0.75rem; text-transform:uppercase; color:var(--text-secondary);">${window.t('modal_total_marks', 'Total Exam Marks')}</div>
                                             <div style="font-size:1.15rem; font-weight:700; color: var(--text-primary); margin-top:0.25rem;">200 - 300 Marks</div>
                                         </div>
                                         <div class="details-summary-item">
-                                            <div style="font-size:0.75rem; text-transform:uppercase; color:var(--text-secondary);">Negative Marking</div>
+                                            <div style="font-size:0.75rem; text-transform:uppercase; color:var(--text-secondary);">${window.t('modal_negative_marking', 'Negative Marking')}</div>
                                             <div style="font-size:1.15rem; font-weight:700; color: #ef4444; margin-top:0.25rem;">0.25 Points / Wrong</div>
                                         </div>
                                         <div class="details-summary-item">
-                                            <div style="font-size:0.75rem; text-transform:uppercase; color:var(--text-secondary);">Duration Allowance</div>
+                                            <div style="font-size:0.75rem; text-transform:uppercase; color:var(--text-secondary);">${window.t('modal_duration_allowance', 'Duration Allowance')}</div>
                                             <div style="font-size:1.15rem; font-weight:700; color: var(--text-primary); margin-top:0.25rem;">120 - 180 Minutes</div>
                                         </div>
                                     </div>
 
                                     <div class="details-full-section" style="margin-top:1.5rem;">
-                                        <h4 style="color: #db2777; font-weight:700; font-family:'Outfit';">Exam Scheme & Section Breakdown</h4>
+                                        <h4 style="color: #db2777; font-weight:700; font-family:'Outfit';">${window.t('modal_exam_scheme', 'Exam Scheme & Section Breakdown')}</h4>
                                         <p style="color: var(--text-secondary); line-height: 1.75; font-size: 0.95rem; margin-top:0.5rem;">${job.exam_pattern}</p>
                                     </div>
 
                                     <div class="details-full-section" style="margin-top:1.5rem;">
-                                        <h4 style="color: #db2777; font-weight:700; font-family:'Outfit';">Important Subjects & Key Syllabus Focus</h4>
+                                        <h4 style="color: #db2777; font-weight:700; font-family:'Outfit';">${window.t('modal_important_subjects', 'Important Subjects & Key Syllabus Focus')}</h4>
                                         <div class="details-syllabus-container" style="max-height: none; overflow: visible; margin-top:0.5rem; color:var(--text-secondary); line-height:1.75;">
                                             ${job.description}
                                         </div>
                                     </div>
 
                                     <div class="download-callout-panel">
-                                        <h4 style="color: var(--text-primary); margin-bottom: 0.5rem; font-weight: 700;">Download Official Study Resources</h4>
-                                        <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 1.25rem;">Grab verified syllabus copy and previous year mock papers instantly.</p>
+                                        <h4 style="color: var(--text-primary); margin-bottom: 0.5rem; font-weight: 700;">${window.t('modal_download_resources', 'Download Official Study Resources')}</h4>
+                                        <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 1.25rem;">${window.t('modal_grab_syllabus_text', 'Grab verified syllabus copy and previous year mock papers instantly.')}</p>
                                         <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
                                             <a href="${job.official_website_link}" target="_blank" class="download-button-premium">
-                                                📚 Download Detailed Syllabus (PDF)
+                                                ${window.t('modal_download_syllabus_pdf', '📚 Download Detailed Syllabus (PDF)')}
                                             </a>
                                             <a href="${job.official_website_link}" target="_blank" class="download-button-premium" style="background: var(--bg-secondary); border: 1px solid var(--border-color); color: var(--text-primary); box-shadow: none;">
-                                                ✏️ Mock Question Papers
+                                                ${window.t('modal_mock_papers', '✏️ Mock Question Papers')}
                                             </a>
                                         </div>
                                     </div>
@@ -2359,58 +3378,58 @@
                             html = `
                                 <div class="theme-accent-answer_key">
                                     <div class="category-visual-header">
-                                        <h2>🔑 ${job.title} Answer Key</h2>
-                                        <p>${job.department} &bull; ${job.state} &bull; Official Key & Objection Window</p>
+                                        <h2>🔑 <span class="notranslate" translate="no" data-translate-title="${job.title}">${window.translateJobTitle(job.title)}</span> ${window.t('trend_answer_keys', 'Answer Key')}</h2>
+                                        <p>${window.t(job.department, job.department)} &bull; ${window.t(job.state, job.state)} &bull; ${window.t('modal_answer_key_objection_window', 'Official Key & Objection Window')}</p>
                                     </div>
 
                                     <div class="details-summary-grid">
                                         <div class="details-summary-grid">
                                             <div class="details-summary-item">
-                                                <div style="font-size:0.75rem; text-transform:uppercase; color:var(--text-secondary);">Answer Key State</div>
-                                                <div style="font-size:1.15rem; font-weight:700; color: #d97706; margin-top:0.25rem;">📝 ACTIVE / OBJECTION OPEN</div>
+                                                <div style="font-size:0.75rem; text-transform:uppercase; color:var(--text-secondary);">${window.t('modal_answer_key_state', 'Answer Key State')}</div>
+                                                <div style="font-size:1.15rem; font-weight:700; color: #d97706; margin-top:0.25rem;">${window.t('modal_answer_key_active_objection_open', '📝 ACTIVE / OBJECTION OPEN')}</div>
                                             </div>
                                             <div class="details-summary-item">
-                                                <div style="font-size:0.75rem; text-transform:uppercase; color:var(--text-secondary);">Release Date</div>
+                                                <div style="font-size:0.75rem; text-transform:uppercase; color:var(--text-secondary);">${window.t('modal_release_date', 'Release Date')}</div>
                                                 <div style="font-size:1.15rem; font-weight:700; color: var(--text-primary); margin-top:0.25rem;">${job.exam_date}</div>
                                             </div>
                                             <div class="details-summary-item">
-                                                <div style="font-size:0.75rem; text-transform:uppercase; color:var(--text-secondary);">Objection Filing Fee</div>
+                                                <div style="font-size:0.75rem; text-transform:uppercase; color:var(--text-secondary);">${window.t('modal_objection_fee', 'Objection Filing Fee')}</div>
                                                 <div style="font-size:1.15rem; font-weight:700; color: var(--text-primary); margin-top:0.25rem;">₹ 100 / Question</div>
                                             </div>
                                             <div class="details-summary-item">
-                                                <div style="font-size:0.75rem; text-transform:uppercase; color:var(--text-secondary);">Closing Date</div>
+                                                <div style="font-size:0.75rem; text-transform:uppercase; color:var(--text-secondary);">${window.t('modal_closing_date', 'Closing Date')}</div>
                                                 <div style="font-size:1.15rem; font-weight:700; color: #ef4444; margin-top:0.25rem;">${job.last_date}</div>
                                             </div>
                                         </div>
                                     </div>
 
                                     <div class="details-full-section" style="margin-top:1.5rem;">
-                                        <h4 style="color: #d97706; font-weight:700; font-family:'Outfit';">Important Objection Filing Milestones</h4>
+                                        <h4 style="color: #d97706; font-weight:700; font-family:'Outfit';">${window.t('modal_objection_milestones', 'Important Objection Filing Milestones')}</h4>
                                         <div class="objections-timeline">
                                             <div class="timeline-milestone">
-                                                <div class="timeline-milestone-title">1. Release of Provisional Key</div>
-                                                <div class="timeline-milestone-desc">Candidates can access their individual exam response sheets along with official answer options.</div>
+                                                <div class="timeline-milestone-title">${window.t('modal_milestone_1', '1. Release of Provisional Key')}</div>
+                                                <div class="timeline-milestone-desc">${window.t('modal_milestone_1_desc', 'Candidates can access their individual exam response sheets along with official answer options.')}</div>
                                             </div>
                                             <div class="timeline-milestone">
-                                                <div class="timeline-milestone-title">2. Objection Submission Gate (OPEN)</div>
-                                                <div class="timeline-milestone-desc">If any answer candidate selected differs from the key, they can upload substantial text book proof.</div>
+                                                <div class="timeline-milestone-title">${window.t('modal_milestone_2', '2. Objection Submission Gate (OPEN)')}</div>
+                                                <div class="timeline-milestone-desc">${window.t('modal_milestone_2_desc', 'If any answer candidate selected differs from the key, they can upload substantial text book proof.')}</div>
                                             </div>
                                             <div class="timeline-milestone">
-                                                <div class="timeline-milestone-title">3. Announcement of Final Key</div>
-                                                <div class="timeline-milestone-desc">The advisory committee will evaluate objections and launch the overridden final answer key copy.</div>
+                                                <div class="timeline-milestone-title">${window.t('modal_milestone_3', '3. Announcement of Final Key')}</div>
+                                                <div class="timeline-milestone-desc">${window.t('modal_milestone_3_desc', 'The advisory committee will evaluate objections and launch the overridden final answer key copy.')}</div>
                                             </div>
                                         </div>
                                     </div>
 
                                     <div class="download-callout-panel">
-                                        <h4 style="color: var(--text-primary); margin-bottom: 0.5rem; font-weight: 700;">Download Keys & File Objections</h4>
-                                        <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 1.25rem;">Check your scores against the keys or raise concerns directly.</p>
+                                        <h4 style="color: var(--text-primary); margin-bottom: 0.5rem; font-weight: 700;">${window.t('modal_download_keys_objection', 'Download Keys & File Objections')}</h4>
+                                        <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 1.25rem;">${window.t('modal_check_scores_text', 'Check your scores against the keys or raise concerns directly.')}</p>
                                         <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
                                             <a href="${job.apply_link || job.official_website_link}" target="_blank" class="download-button-premium">
-                                                🔑 Download Provisional Key (PDF)
+                                                ${window.t('modal_download_prov_key', '🔑 Download Provisional Key (PDF)')}
                                             </a>
                                             <a href="${job.official_website_link}" target="_blank" class="download-button-premium" style="background: var(--bg-secondary); border: 1px solid var(--border-color); color: var(--text-primary); box-shadow: none;">
-                                                🛡️ Raise Key Objections Now
+                                                ${window.t('modal_raise_objections', '🛡️ Raise Key Objections Now')}
                                             </a>
                                         </div>
                                     </div>
@@ -2420,173 +3439,173 @@
                             html = `
                                 <div class="theme-accent-admission">
                                     <div class="category-visual-header">
-                                        <h2>🎓 ${job.title}</h2>
-                                        <p>${job.department} &bull; Entrance & Counselling Board</p>
+                                        <h2>🎓 <span class="notranslate" translate="no" data-translate-title="${job.title}">${window.translateJobTitle(job.title)}</span></h2>
+                                        <p>${window.t(job.department, job.department)} &bull; ${window.t('modal_entrance_counselling_board', 'Entrance & Counselling Board')}</p>
                                     </div>
 
                                     <div class="details-summary-grid">
                                         <div class="details-summary-item">
-                                            <div style="font-size:0.75rem; text-transform:uppercase; color:var(--text-secondary);">Program Stream</div>
-                                            <div style="font-size:1.15rem; font-weight:700; color: #0891b2; margin-top:0.25rem;">Academic & Technical</div>
+                                            <div style="font-size:0.75rem; text-transform:uppercase; color:var(--text-secondary);">${window.t('modal_program_stream', 'Program Stream')}</div>
+                                            <div style="font-size:1.15rem; font-weight:700; color: #0891b2; margin-top:0.25rem;">${window.t('modal_academic_technical', 'Academic & Technical')}</div>
                                         </div>
                                         <div class="details-summary-item">
-                                            <div style="font-size:0.75rem; text-transform:uppercase; color:var(--text-secondary);">Entrance Exam Fee</div>
+                                            <div style="font-size:0.75rem; text-transform:uppercase; color:var(--text-secondary);">${window.t('modal_entrance_exam_fee', 'Entrance Exam Fee')}</div>
                                             <div style="font-size:1.15rem; font-weight:700; color: var(--text-primary); margin-top:0.25rem;">₹ ${job.application_fee}</div>
                                         </div>
                                         <div class="details-summary-item">
-                                            <div style="font-size:0.75rem; text-transform:uppercase; color:var(--text-secondary);">Seat Intake Cap</div>
-                                            <div style="font-size:1.15rem; font-weight:700; color: var(--text-primary); margin-top:0.25rem;">${job.vacancy_count} Open Seats</div>
+                                            <div style="font-size:0.75rem; text-transform:uppercase; color:var(--text-secondary);">${window.t('modal_seat_intake_cap', 'Seat Intake Cap')}</div>
+                                            <div style="font-size:1.15rem; font-weight:700; color: var(--text-primary); margin-top:0.25rem;">${job.vacancy_count} ${window.t('modal_open_seats', 'Open Seats')}</div>
                                         </div>
                                         <div class="details-summary-item">
-                                            <div style="font-size:0.75rem; text-transform:uppercase; color:var(--text-secondary);">Counseling Deadline</div>
+                                            <div style="font-size:0.75rem; text-transform:uppercase; color:var(--text-secondary);">${window.t('modal_counselling_deadline', 'Counseling Deadline')}</div>
                                             <div style="font-size:1.15rem; font-weight:700; color: #ef4444; margin-top:0.25rem;">${job.last_date}</div>
                                         </div>
                                     </div>
 
                                     <div class="details-full-section" style="margin-top:1.5rem;">
-                                        <h4 style="color: #0891b2; font-weight:700; font-family:'Outfit';">Course Scope & Eligibility Guidelines</h4>
+                                        <h4 style="color: #0891b2; font-weight:700; font-family:'Outfit';">${window.t('modal_course_scope', 'Course Scope & Eligibility Guidelines')}</h4>
                                         <p style="color: var(--text-secondary); line-height: 1.75; font-size: 0.95rem; margin-top:0.5rem;">${job.description}</p>
                                     </div>
 
                                     <div class="details-full-section" style="margin-top:1.5rem;">
-                                        <h4 style="color: #0891b2; font-weight:700; font-family:'Outfit';">Semester Fee & Academic Allocation</h4>
+                                        <h4 style="color: #0891b2; font-weight:700; font-family:'Outfit';">${window.t('modal_semester_fee_allocation', 'Semester Fee & Academic Allocation')}</h4>
                                         <div class="fees-info-grid">
                                             <div style="background: rgba(255,255,255,0.01); border: 1px solid var(--border-color); padding: 1rem; border-radius: 8px;">
-                                                <div style="font-size:0.75rem; text-transform:uppercase; color:var(--text-secondary);">Regular Stream Fee</div>
+                                                <div style="font-size:0.75rem; text-transform:uppercase; color:var(--text-secondary);">${window.t('modal_regular_stream_fee', 'Regular Stream Fee')}</div>
                                                 <div style="font-size:1.15rem; font-weight:700; color:var(--text-primary); margin-top:0.25rem;">₹ 25,000 / Year</div>
                                             </div>
                                             <div style="background: rgba(255,255,255,0.01); border: 1px solid var(--border-color); padding: 1rem; border-radius: 8px;">
-                                                <div style="font-size:0.75rem; text-transform:uppercase; color:var(--text-secondary);">Selection / Entry Criteria</div>
-                                                <div style="font-size:1.15rem; font-weight:700; color:#0891b2; margin-top:0.25rem;">Entrance Score Merit</div>
+                                                <div style="font-size:0.75rem; text-transform:uppercase; color:var(--text-secondary);">${window.t('modal_selection_entry_criteria', 'Selection / Entry Criteria')}</div>
+                                                <div style="font-size:1.15rem; font-weight:700; color:#0891b2; margin-top:0.25rem;">${window.t('modal_entrance_score_merit', 'Entrance Score Merit')}</div>
                                             </div>
                                         </div>
                                     </div>
 
                                     <div style="display: flex; gap: 1rem; margin-top: 2rem; border-top: 1px solid var(--border-color); padding-top: 1.5rem; flex-wrap: wrap;">
                                         <a href="${job.official_website_link}" target="_blank" class="btn-view" style="flex:1; text-align:center; display:flex; align-items:center; justify-content:center; gap:0.4rem; font-weight:600; text-decoration:none;">
-                                            🌐 Official Admissions Portal
+                                            ${window.t('modal_official_admissions_portal', '🌐 Official Admissions Portal')}
                                         </a>
-                                        \%isLoggedIn%
+                                        %isLoggedIn%
                                     </div>
                                 </div>
                             `;
-                            html = html.replace('\%isLoggedIn%', isLoggedIn ? `
+                            html = html.replace('%isLoggedIn%', isLoggedIn ? `
                                 <button id="modalApplyBtn" class="form-btn" style="flex:1.5; margin-top:0; padding: 0.8rem; background: #0891b2; font-weight:700;" data-id="${job.id}">
-                                    Submit Admissions Form
+                                    ${window.t('modal_submit_admissions_form', 'Submit Admissions Form')}
                                 </button>
                             ` : `
                                 <button class="form-btn trigger-auth-redirect-btn" style="flex:1.5; margin-top:0; padding: 0.8rem; background: var(--text-secondary); color:#ffffff; font-weight:700;">
-                                    Login to Apply Now
+                                    ${window.t('modal_login_apply', 'Login to Apply Now')}
                                 </button>
                             `);
                         } else if (type === 'scholarship') {
                             html = `
                                 <div class="theme-accent-scholarship">
                                     <div class="category-visual-header">
-                                        <h2>💰 ${job.title} Scheme</h2>
-                                        <p>${job.department} &bull; ${job.state} &bull; Merit & Means Financial Grant</p>
+                                        <h2>💰 <span class="notranslate" translate="no" data-translate-title="${job.title}">${window.translateJobTitle(job.title)}</span> ${window.t('trend_scholarships', 'Scheme')}</h2>
+                                        <p>${window.t(job.department, job.department)} &bull; ${window.t(job.state, job.state)} &bull; ${window.t('modal_scholarship_grant_sub', 'Merit & Means Financial Grant')}</p>
                                     </div>
 
                                     <div class="details-summary-grid">
                                         <div class="details-summary-item">
-                                            <div style="font-size:0.75rem; text-transform:uppercase; color:var(--text-secondary);">Financial Grant Scope</div>
+                                            <div style="font-size:0.75rem; text-transform:uppercase; color:var(--text-secondary);">${window.t('modal_financial_grant_scope', 'Financial Grant Scope')}</div>
                                             <div style="font-size:1.15rem; font-weight:700; color: #ea580c; margin-top:0.25rem;">₹ 50,000 / Academic Year</div>
                                         </div>
                                         <div class="details-summary-item">
-                                            <div style="font-size:0.75rem; text-transform:uppercase; color:var(--text-secondary);">Income Eligibility Cap</div>
+                                            <div style="font-size:0.75rem; text-transform:uppercase; color:var(--text-secondary);">${window.t('modal_income_eligibility_cap', 'Income Eligibility Cap')}</div>
                                             <div style="font-size:1.15rem; font-weight:700; color: var(--text-primary); margin-top:0.25rem;">&lt; ₹ 2.5 Lakhs / Year</div>
                                         </div>
                                         <div class="details-summary-item">
-                                            <div style="font-size:0.75rem; text-transform:uppercase; color:var(--text-secondary);">Allotment Seats Limit</div>
-                                            <div style="font-size:1.15rem; font-weight:700; color: var(--text-primary); margin-top:0.25rem;">${job.vacancy_count} Beneficiaries</div>
+                                            <div style="font-size:0.75rem; text-transform:uppercase; color:var(--text-secondary);">${window.t('modal_allotment_seats_limit', 'Allotment Seats Limit')}</div>
+                                            <div style="font-size:1.15rem; font-weight:700; color: var(--text-primary); margin-top:0.25rem;">${job.vacancy_count} ${window.t('modal_beneficiaries', 'Beneficiaries')}</div>
                                         </div>
                                         <div class="details-summary-item">
-                                            <div style="font-size:0.75rem; text-transform:uppercase; color:var(--text-secondary);">Submission Deadline</div>
+                                            <div style="font-size:0.75rem; text-transform:uppercase; color:var(--text-secondary);">${window.t('modal_submission_deadline', 'Submission Deadline')}</div>
                                             <div style="font-size:1.15rem; font-weight:700; color: #ef4444; margin-top:0.25rem;">${job.last_date}</div>
                                         </div>
                                     </div>
 
                                     <div class="details-full-section" style="margin-top:1.5rem;">
-                                        <h4 style="color: #ea580c; font-weight:700; font-family:'Outfit';">Scholarship Objective & Grant Criteria</h4>
+                                        <h4 style="color: #ea580c; font-weight:700; font-family:'Outfit';">${window.t('modal_scholarship_objective', 'Scholarship Objective & Grant Criteria')}</h4>
                                         <p style="color: var(--text-secondary); line-height: 1.75; font-size: 0.95rem; margin-top:0.5rem;">${job.description}</p>
                                     </div>
 
                                     <div class="details-full-section" style="margin-top:1.5rem;">
-                                        <h4 style="color: #ea580c; font-weight:700; font-family:'Outfit';">Mandatory Required Documents Checklist</h4>
+                                        <h4 style="color: #ea580c; font-weight:700; font-family:'Outfit';">${window.t('modal_mandatory_documents', 'Mandatory Required Documents Checklist')}</h4>
                                         <div class="documents-checklist">
                                             <div class="checklist-item">
                                                 <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24" style="margin-right:4px;"><polyline points="20 6 9 17 4 12"></polyline></svg>
-                                                <span>1. Valid Income Certificate verified by local Revenue Inspector (Tahsildar)</span>
+                                                <span>${window.t('modal_doc_chk_1', '1. Valid Income Certificate verified by local Revenue Inspector (Tahsildar)')}</span>
                                             </div>
                                             <div class="checklist-item">
                                                 <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24" style="margin-right:4px;"><polyline points="20 6 9 17 4 12"></polyline></svg>
-                                                <span>2. Candidate Caste & Domicile certificate files</span>
+                                                <span>${window.t('modal_doc_chk_2', '2. Candidate Caste & Domicile certificate files')}</span>
                                             </div>
                                             <div class="checklist-item">
                                                 <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24" style="margin-right:4px;"><polyline points="20 6 9 17 4 12"></polyline></svg>
-                                                <span>3. Previous Academic year Marks memo Card / Qualifying certificates</span>
+                                                <span>${window.t('modal_doc_chk_3', '3. Previous Academic year Marks memo Card / Qualifying certificates')}</span>
                                             </div>
                                             <div class="checklist-item">
                                                 <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24" style="margin-right:4px;"><polyline points="20 6 9 17 4 12"></polyline></svg>
-                                                <span>4. Candidate Bank Passbook linking Aadhaar profile for direct DBTs</span>
+                                                <span>${window.t('modal_doc_chk_4', '4. Candidate Bank Passbook linking Aadhaar profile for direct DBTs')}</span>
                                             </div>
                                         </div>
                                     </div>
 
                                     <div style="display: flex; gap: 1rem; margin-top: 2rem; border-top: 1px solid var(--border-color); padding-top: 1.5rem; flex-wrap: wrap;">
                                         <a href="${job.official_website_link}" target="_blank" class="btn-view" style="flex:1; text-align:center; display:flex; align-items:center; justify-content:center; gap:0.4rem; font-weight:600; text-decoration:none;">
-                                            🌐 Official Scheme Guidelines
+                                            ${window.t('modal_official_scheme_guidelines', 'Official Scheme Guidelines')}
                                         </a>
-                                        \%isLoggedIn%
+                                        %isLoggedIn%
                                     </div>
                                 </div>
                             `;
-                            html = html.replace('\%isLoggedIn%', isLoggedIn ? `
+                            html = html.replace('%isLoggedIn%', isLoggedIn ? `
                                 <button id="modalApplyBtn" class="form-btn" style="flex:1.5; margin-top:0; padding: 0.8rem; background: #ea580c; font-weight:700;" data-id="${job.id}">
-                                    Apply Scholarship Now
+                                    ${window.t('modal_apply_scholarship_now', 'Apply Scholarship Now')}
                                 </button>
                             ` : `
                                 <button class="form-btn trigger-auth-redirect-btn" style="flex:1.5; margin-top:0; padding: 0.8rem; background: var(--text-secondary); color:#ffffff; font-weight:700;">
-                                    Login to Apply Now
+                                    ${window.t('modal_login_apply', 'Login to Apply Now')}
                                 </button>
                             `);
                         } else {
                             html = `
                                 <div class="theme-accent-notice">
                                     <div class="category-visual-header">
-                                        <h2>📢 ${job.title}</h2>
-                                        <p>${job.department} &bull; ${job.state} &bull; Official Important Alert</p>
+                                        <h2>📢 <span class="notranslate" translate="no" data-translate-title="${job.title}">${window.translateJobTitle(job.title)}</span></h2>
+                                        <p>${window.t(job.department, job.department)} &bull; ${window.t(job.state, job.state)} &bull; ${window.t('modal_official_important_alert', 'Official Important Alert')}</p>
                                     </div>
 
                                     <div class="notice-critical-alert">
                                         <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" style="margin-top: 2px; flex-shrink: 0;"><path d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
                                         <div>
-                                            <strong>Critical Calendar Notice:</strong> The examination date has been scheduled/updated. Please review the official notice specifications below and align your schedules.
+                                            <strong>${window.t('modal_critical_calendar_notice', 'Critical Calendar Notice:')}</strong> ${window.t('modal_critical_calendar_notice_text', 'The examination date has been scheduled/updated. Please review the official notice specifications below and align your schedules.')}
                                         </div>
                                     </div>
 
                                     <div class="details-summary-grid">
                                         <div class="details-summary-item">
-                                            <div style="font-size:0.75rem; text-transform:uppercase; color:var(--text-secondary);">Announced Exam Date</div>
+                                            <div style="font-size:0.75rem; text-transform:uppercase; color:var(--text-secondary);">${window.t('modal_announced_exam_date', 'Announced Exam Date')}</div>
                                             <div style="font-size:1.15rem; font-weight:700; color: #dc2626; margin-top:0.25rem;">${job.exam_date}</div>
                                         </div>
                                         <div class="details-summary-item">
-                                            <div style="font-size:0.75rem; text-transform:uppercase; color:var(--text-secondary);">Notice Published Date</div>
+                                            <div style="font-size:0.75rem; text-transform:uppercase; color:var(--text-secondary);">${window.t('modal_notice_published_date', 'Notice Published Date')}</div>
                                             <div style="font-size:1.15rem; font-weight:700; color: var(--text-primary); margin-top:0.25rem;">${job.last_date}</div>
                                         </div>
                                     </div>
 
                                     <div class="details-full-section" style="margin-top:1.5rem;">
-                                        <h4 style="color: #dc2626; font-weight:700; font-family:'Outfit';">Important Circular Specifications</h4>
+                                        <h4 style="color: #dc2626; font-weight:700; font-family:'Outfit';">${window.t('modal_important_circular_specs', 'Important Circular Specifications')}</h4>
                                         <p style="color: var(--text-secondary); line-height: 1.75; font-size: 0.95rem; margin-top:0.5rem;">${job.description}</p>
                                     </div>
 
                                     <div class="download-callout-panel">
-                                        <h4 style="color: var(--text-primary); margin-bottom: 0.5rem; font-weight: 700;">Download Official Circular</h4>
-                                        <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 1.25rem;">Download the full, official notice PDF released by the department.</p>
+                                        <h4 style="color: var(--text-primary); margin-bottom: 0.5rem; font-weight: 700;">${window.t('modal_download_official_circular', 'Download Official Circular')}</h4>
+                                        <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 1.25rem;">${window.t('modal_download_notice_pdf_desc', 'Download the full, official notice PDF released by the department.')}</p>
                                         <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
                                             <a href="${job.official_website_link}" target="_blank" class="download-button-premium">
-                                                📄 Download Official Notice (PDF)
+                                                ${window.t('modal_download_notice_pdf', '📄 Download Official Notice (PDF)')}
                                             </a>
                                         </div>
                                     </div>
@@ -2670,9 +3689,9 @@
             const aTable = $('#dashboardApplicationsTable tbody');
             const rTable = $('#dashboardRecentlyViewedTable tbody');
 
-            bTable.html('<tr><td colspan="4" style="text-align:center;">Loading Saved bookmarks...</td></tr>');
-            aTable.html('<tr><td colspan="4" style="text-align:center;">Loading Submitted applications...</td></tr>');
-            rTable.html('<tr><td colspan="4" style="text-align:center;">Loading recently viewed...</td></tr>');
+            bTable.html(`<tr><td colspan="4" style="text-align:center;">${window.t('dash_loading_bookmarks', 'Loading Saved bookmarks...')}</td></tr>`);
+            aTable.html(`<tr><td colspan="4" style="text-align:center;">${window.t('dash_loading_applications', 'Loading Submitted applications...')}</td></tr>`);
+            rTable.html(`<tr><td colspan="4" style="text-align:center;">${window.t('dash_loading_recently_viewed', 'Loading recently viewed...')}</td></tr>`);
 
             $.ajax({
                 url: '/api/dashboard',
@@ -2697,18 +3716,18 @@
 
                         // Render Saved Bookmarks
                         if (data.bookmarks.length === 0) {
-                            bTable.html('<tr><td colspan="4" style="text-align:center; color: var(--text-secondary);">No recruitment alerts bookmarked.</td></tr>');
+                            bTable.html(`<tr><td colspan="4" style="text-align:center; color: var(--text-secondary);">${window.t('dash_no_bookmarks', 'No recruitment alerts bookmarked.')}</td></tr>`);
                         } else {
                             let bHtml = '';
                             data.bookmarks.forEach(book => {
                                 bHtml += `
                                     <tr>
-                                        <td style="font-weight:600;">${book.title}</td>
-                                        <td>${book.state}</td>
+                                        <td style="font-weight:600;"><span class="notranslate" translate="no" data-translate-title="${book.title}">${window.translateJobTitle(book.title)}</span></td>
+                                        <td>${window.t(book.state, book.state)}</td>
                                         <td style="color:#ef4444; font-weight:500;">${book.last_date}</td>
                                         <td style="text-align:center;">
-                                            <button class="btn-sm-danger delete-bookmark-btn" data-id="${book.job_id}" style="margin-right:0.5rem;">Delete</button>
-                                            <a href="#" class="btn-view btn-view-sm" data-slug="${book.slug}" style="padding: 0.35rem 0.75rem; font-size:0.75rem;">View</a>
+                                            <button class="btn-sm-danger delete-bookmark-btn" data-id="${book.job_id}" style="margin-right:0.5rem;">${window.t('btn_delete', 'Delete')}</button>
+                                            <a href="#" class="btn-view btn-view-sm" data-slug="${book.slug}" style="padding: 0.35rem 0.75rem; font-size:0.75rem;">${window.t('btn_view', 'View')}</a>
                                         </td>
                                     </tr>
                                 `;
@@ -2718,7 +3737,7 @@
 
                         // Render Submitted Applications
                         if (data.applications.length === 0) {
-                            aTable.html('<tr><td colspan="4" style="text-align:center; color: var(--text-secondary);">No job applications submitted.</td></tr>');
+                            aTable.html(`<tr><td colspan="4" style="text-align:center; color: var(--text-secondary);">${window.t('dash_no_applications', 'No job applications submitted.')}</td></tr>`);
                         } else {
                             let aHtml = '';
                             data.applications.forEach(app => {
@@ -2729,11 +3748,11 @@
 
                                 aHtml += `
                                     <tr>
-                                        <td style="font-weight:600;">${app.title}</td>
-                                        <td>${app.department}</td>
+                                        <td style="font-weight:600;"><span class="notranslate" translate="no" data-translate-title="${app.title}">${window.translateJobTitle(app.title)}</span></td>
+                                        <td>${window.t(app.department, app.department)}</td>
                                         <td>${app.applied_at}</td>
                                         <td>
-                                            <span class="status-badge ${statusClass}">${app.status}</span>
+                                            <span class="status-badge ${statusClass}">${window.t('status_' + app.status.toLowerCase(), app.status)}</span>
                                         </td>
                                     </tr>
                                 `;
@@ -2743,21 +3762,23 @@
 
                         // Render Recently Viewed
                         if (!data.recently_viewed || data.recently_viewed.length === 0) {
-                            rTable.html('<tr><td colspan="4" style="text-align:center; color: var(--text-secondary);">No recently viewed recruitments.</td></tr>');
+                            rTable.html(`<tr><td colspan="4" style="text-align:center; color: var(--text-secondary);">${window.t('dash_no_recently_viewed', 'No recently viewed recruitments.')}</td></tr>`);
                         } else {
                             let rHtml = '';
                             data.recently_viewed.forEach(recent => {
                                 rHtml += `
                                     <tr>
-                                        <td style="font-weight:600;">${recent.title}</td>
-                                        <td>${recent.state}</td>
+                                        <td style="font-weight:600;"><span class="notranslate" translate="no" data-translate-title="${recent.title}">${window.translateJobTitle(recent.title)}</span></td>
+                                        <td>${window.t(recent.state, recent.state)}</td>
                                         <td style="color:#ef4444; font-weight:500;">${recent.last_date}</td>
                                         <td style="text-align:center;">
-                                            <a href="#" class="btn-view btn-view-sm" data-slug="${recent.slug}" style="padding: 0.35rem 0.75rem; font-size:0.75rem;">View</a>
+                                            <a href="#" class="btn-view btn-view-sm" data-slug="${recent.slug}" style="padding: 0.35rem 0.75rem; font-size:0.75rem;">${window.t('btn_view', 'View')}</a>
                                         </td>
                                     </tr>
                                 `;
                             });
+                            rHtml += `
+                                `;
                             rTable.html(rHtml);
                         }
                     }

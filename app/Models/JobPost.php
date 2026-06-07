@@ -49,6 +49,11 @@ class JobPost extends Model
         'is_historical',
         'fingerprint',
         'expires_at',
+        'advertisement_number',
+        'pdf_hash',
+        'experience_required',
+        'start_date',
+        'result_date',
     ];
 
     protected $casts = [
@@ -63,6 +68,8 @@ class JobPost extends Model
         'is_sponsored' => 'boolean',
         'is_historical' => 'boolean',
         'expires_at' => 'date',
+        'start_date' => 'date',
+        'result_date' => 'date',
     ];
 
     /*
@@ -114,6 +121,11 @@ class JobPost extends Model
     public function applications(): HasMany
     {
         return $this->hasMany(JobApplication::class);
+    }
+
+    public function categoryVacancies(): HasMany
+    {
+        return $this->hasMany(CategoryVacancy::class, 'job_post_id');
     }
 
     /**

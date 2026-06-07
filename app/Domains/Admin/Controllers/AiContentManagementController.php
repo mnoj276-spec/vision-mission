@@ -130,7 +130,7 @@ class AiContentManagementController extends Controller
     public function generate(Request $request, int $jobPostId): JsonResponse
     {
         $jobPost = JobPost::findOrFail($jobPostId);
-        $provider = $request->string('provider')->nullable();
+        $provider = $request->input('provider');
 
         // Dispatch job in the background
         GenerateJobContentJob::dispatch($jobPost->id, $provider, true);
