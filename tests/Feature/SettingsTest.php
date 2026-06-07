@@ -200,4 +200,53 @@ class SettingsTest extends TestCase
         $host = email_setting('smtp_host');
         $this->assertEquals('smtp.mailtrap.io', $host);
     }
+
+    /**
+     * Verify reordering of menu items.
+     */
+    public function test_admin_can_reorder_menu_items(): void
+    {
+        $this->actingAs($this->admin);
+
+        // Get the first menu and its items
+        $menu = \App\Models\Menu::first();
+        $this->assertNotNull($menu);
+
+        $items = \App\Models\MenuItem::where('menu_id', $menu->id)->orderBy('order_index')->get();
+        $this->assertGreaterThanOrEqual(2, $items->count());
+
+        $firstItem = $items[0];
+        $secondItem = $items[1];
+
+        // Prepare reorder payload (swapping the first two items)
+        $payload = [
+            'menu_id' => $menu->id,
+            'items' => [
+                [
+                    'id' => $secondItem->id,
+                    'parent_id' => $secondItem->parent_id,
+                ],
+                [
+                    'id' => $firstItem->id,
+                    'parent_id' => $firstItem->parent_id,
+                ]
+            ]
+        ];
+
+        $response = $this->postJson(route('admin.settings.menus.reorder'), $payload);
+
+        $response->assertStatus(200)
+            ->assertJsonPath('status', 'success');
+
+        // Assert updated order_index values in database
+        $this->assertDatabaseHas('menu_items', [
+            'id' => $secondItem->id,
+            'order_index' => 0
+        ]);
+
+        $this->assertDatabaseHas('menu_items', [
+            'id' => $firstItem->id,
+            'order_index' => 1
+        ]);
+    }
 }

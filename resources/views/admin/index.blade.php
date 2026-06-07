@@ -2343,10 +2343,10 @@
                                     <td class="text-nowrap" style="text-align:center; width: 1%;">
                                         <div style="display:flex; gap:0.5rem; justify-content:center; align-items:center; flex-wrap:nowrap; flex-shrink:0;">
                                             <button class="btn-sm-ai btn-trigger-ai-gen" data-id="${job.id}">
-                                                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg> Verify Listing
+                                                <i class="fas fa-check-circle" style="margin-right: 4px; font-size: 0.75rem;"></i> Verify Listing
                                             </button>
-                                            <button class="btn-sm-view btn-edit-job" data-id="${job.id}" data-title="${job.title}" data-category="${job.category_id}" data-dept="${job.department_id}" data-state="${job.state_id}" data-qual="${job.qualification_id}" data-desc="${job.description}" data-min="${job.salary_min}" data-max="${job.salary_max}" data-vac="${job.vacancy_count}" data-fee="${job.application_fee}" data-deadline="${job.last_date_to_apply ? job.last_date_to_apply.substring(0, 10) : ''}" data-url="${job.official_website_link}">Edit</button>
-                                            <button class="btn-sm-danger btn-delete-job" data-id="${job.id}">Delete</button>
+                                            <button class="btn-sm-view btn-edit-job" data-id="${job.id}" data-title="${job.title}" data-category="${job.category_id}" data-dept="${job.department_id}" data-state="${job.state_id}" data-qual="${job.qualification_id}" data-desc="${job.description}" data-min="${job.salary_min}" data-max="${job.salary_max}" data-vac="${job.vacancy_count}" data-fee="${job.application_fee}" data-deadline="${job.last_date_to_apply ? job.last_date_to_apply.substring(0, 10) : ''}" data-url="${job.official_website_link}"><i class="fas fa-edit" style="margin-right: 4px; font-size: 0.75rem;"></i> Edit</button>
+                                            <button class="btn-sm-danger btn-delete-job" data-id="${job.id}"><i class="fas fa-trash-alt" style="margin-right: 4px; font-size: 0.75rem;"></i> Delete</button>
                                         </div>
                                     </td>
                                 </tr>
@@ -3682,7 +3682,7 @@
             const postId = $(this).data('id');
             const btn = $(this);
 
-            btn.prop('disabled', true).text('Verifying...');
+            btn.prop('disabled', true).html('<i class="fas fa-spinner fa-spin" style="margin-right: 4px; font-size: 0.75rem;"></i> Verifying...');
             $.ajax({
                 url: `/api/admin/ai-contents/generate/${postId}`,
                 method: 'POST',
@@ -3694,7 +3694,7 @@
                     showToast('Failed to queue verification task.', 'error');
                 },
                 complete: function() {
-                    btn.prop('disabled', false).html('<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg> Verify Listing');
+                    btn.prop('disabled', false).html('<i class="fas fa-check-circle" style="margin-right: 4px; font-size: 0.75rem;"></i> Verify Listing');
                 }
             });
         });
@@ -4457,7 +4457,13 @@
             if (!item) return;
 
             // Get siblings (same parent level)
-            const siblings = items.filter(i => i.parent_id == item.parent_id).sort((a, b) => a.order_index - b.order_index);
+            const siblings = items.filter(i => i.parent_id == item.parent_id).sort((a, b) => (a.order_index || 0) - (b.order_index || 0));
+            
+            // Normalize sibling order indices to ensure they are sequential and distinct
+            siblings.forEach((sib, sIdx) => {
+                sib.order_index = sIdx;
+            });
+
             const idx = siblings.findIndex(i => i.id == item.id);
 
             if (direction === 'up' && idx > 0) {
@@ -4476,8 +4482,24 @@
                 return; // already at extreme boundaries
             }
 
-            // Sync order changes back to server
-            const payloadItems = items.map(i => ({ id: i.id, parent_id: i.parent_id }));
+            // Construct payload items sorted hierarchically
+            const orderedPayloadItems = [];
+            const sortedRootItems = items.filter(i => !i.parent_id).sort((a, b) => (a.order_index || 0) - (b.order_index || 0));
+            
+            sortedRootItems.forEach(root => {
+                orderedPayloadItems.push({ id: root.id, parent_id: null });
+                const sortedChildren = items.filter(i => i.parent_id == root.id).sort((a, b) => (a.order_index || 0) - (b.order_index || 0));
+                sortedChildren.forEach(child => {
+                    orderedPayloadItems.push({ id: child.id, parent_id: root.id });
+                });
+            });
+
+            // Fallback for any orphaned items
+            items.forEach(i => {
+                if (!orderedPayloadItems.some(p => p.id === i.id)) {
+                    orderedPayloadItems.push({ id: i.id, parent_id: i.parent_id });
+                }
+            });
 
             $.ajax({
                 url: '/api/admin/settings/menus/reorder',
@@ -4485,7 +4507,7 @@
                 data: {
                     _token: '{{ csrf_token() }}',
                     menu_id: menuId,
-                    items: payloadItems
+                    items: orderedPayloadItems
                 },
                 success: function(res) {
                     showToast('Navigation ordering updated!', 'success');
