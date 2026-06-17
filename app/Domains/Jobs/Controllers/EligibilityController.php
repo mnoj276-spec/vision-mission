@@ -34,6 +34,17 @@ class EligibilityController extends Controller
 
         $query = JobPost::published()->jobs();
 
+        if ($request->filled('age')) {
+            $age = (int) $request->input('age');
+            $query->where(function ($q) use ($age) {
+                $q->whereNull('age_min')
+                  ->orWhere('age_min', '<=', $age);
+            })->where(function ($q) use ($age) {
+                $q->whereNull('age_max')
+                  ->orWhere('age_max', '>=', $age);
+            });
+        }
+
         if ($request->filled('qualification_id')) {
             $query->where('qualification_id', $request->qualification_id);
         }

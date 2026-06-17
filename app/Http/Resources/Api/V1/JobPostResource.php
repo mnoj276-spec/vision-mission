@@ -80,6 +80,19 @@ class JobPostResource extends JsonResource
             'isBookmarked'      => auth('api')->check() 
                 ? $this->bookmarks()->where('user_id', auth('api')->id())->exists() 
                 : false,
+
+            'parentId'          => $this->parent_id ? (int) $this->parent_id : null,
+            'parent'            => $this->parent_id && $this->parent ? [
+                'id'    => (int) $this->parent->id,
+                'title' => (string) $this->parent->title,
+                'slug'  => (string) $this->parent->slug,
+            ] : null,
+            'children'          => $this->children && $this->children->count() > 0 ? $this->children->map(fn($child) => [
+                'id'       => (int) $child->id,
+                'title'    => (string) $child->title,
+                'slug'     => (string) $child->slug,
+                'postType' => (string) $child->post_type,
+            ])->toArray() : [],
         ];
     }
 }

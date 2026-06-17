@@ -164,7 +164,7 @@ class ExtractionController extends Controller
         }
 
         try {
-            $jobPost = DB::transaction(function () use ($notification, $extractedData) {
+            $jobPost = DB::transaction(function () use ($notification, $extractedData, $request) {
                 // Compile combined text for mapping semantic categories and states
                 $textForMapping = ($extractedData['title'] ?? '') . ' ' . ($extractedData['department'] ?? '');
 
@@ -244,6 +244,11 @@ class ExtractionController extends Controller
                 $description = "Recruitment notification for " . ($extractedData['title'] ?? 'Job Post') . " at " . $department->name . ".";
                 $slug = Str::slug($extractedData['title']) . '-' . rand(100, 999);
 
+                $postType = $request->input('post_type') ?: $this->classifyPostType(
+                    $extractedData['title'] ?? '', 
+                    $notification->raw_text ?? ''
+                );
+
                 $jobPost = JobPost::create([
                     'title'                 => $extractedData['title'],
                     'slug'                  => $slug,
@@ -252,7 +257,7 @@ class ExtractionController extends Controller
                     'state_id'              => $stateId,
                     'qualification_id'      => $qualification->id,
                     'category_id'           => $categoryId,
-                    'post_type'             => 'job',
+                    'post_type'             => $postType,
                     'vacancy_count'         => $extractedData['vacancy_count'] ?? 0,
                     'application_fee'       => $extractedData['application_fee'] ?? 0.00,
                     'official_website_link' => $officialLink,
@@ -331,5 +336,21 @@ class ExtractionController extends Controller
             $s = State::where('code', 'KA')->first();
         }
         return isset($s) && $s ? $s->id : $defaultId;
+    }
+
+    /**
+     * Classify the post type dynamically based on title and raw text.
+     */
+    protected function classifyPostType(string $title, string $rawText): string
+    {
+        $t = strtolower($title . ' ' . $rawText);
+        if (str_contains($t, 'admit card') || str_contains($t, 'hall ticket') || str_contains($t, 'call letter')) return 'admit_card';
+        if (str_contains($t, 'result') || str_contains($t, 'merit list') || str_contains($t, 'cutoff') || str_contains($t, 'scorecard')) return 'result';
+        if (str_contains($t, 'answer key') || str_contains($t, 'response sheet')) return 'answer_key';
+        if (str_contains($t, 'syllabus') || str_contains($t, 'exam pattern') || str_contains($t, 'scheme of examination')) return 'syllabus';
+        if (str_contains($t, 'admission') || str_contains($t, 'entrance exam') || str_contains($t, 'counseling')) return 'admission';
+        if (str_contains($t, 'scholarship') || str_contains($t, 'fellowship') || str_contains($t, 'stipend')) return 'scholarship';
+        if (str_contains($t, 'notice') || str_contains($t, 'circular') || str_contains($t, 'corrigendum') || str_contains($t, 'postponement')) return 'notice';
+        return 'job';
     }
 }

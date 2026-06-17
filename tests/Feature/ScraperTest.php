@@ -297,4 +297,105 @@ class ScraperTest extends TestCase
         $this->assertEquals(64, strlen($auditLog->incoming_fingerprint), 'Fingerprint must be 64 chars.');
         $this->assertNotNull($auditLog->raw_payload, 'raw_payload must be stored for re-processing.');
     }
+
+    /**
+     * Test that corrigenda and updates are linked via parent_id instead of being discarded.
+     */
+    public function test_child_notice_linked_instead_of_duplicate_discard(): void
+    {
+        $rawMaster = [
+            'title'         => 'UPSC Scientific Officer Recruitment 2026',
+            'deadline_raw'  => '30-10-2026',
+            'fee_raw'       => 'Rs 200',
+            'official_link' => 'https://upsc.gov.in',
+            'apply_link'    => 'https://upsconline.nic.in',
+            'raw_text'      => 'UPSC Scientific Officer Recruitment 2026. Graduate. Last date: 30-10-2026. Fee Rs 200.',
+        ];
+
+        $rawCorrigendum = [
+            'title'         => 'UPSC Scientific Officer Corrigendum Notice 2026',
+            'deadline_raw'  => '30-10-2026',
+            'fee_raw'       => 'Rs 200',
+            'official_link' => 'https://upsc.gov.in',
+            'apply_link'    => 'https://upsconline.nic.in',
+            'raw_text'      => 'UPSC Scientific Officer Corrigendum Notice 2026. Minor typo corrigendum.',
+            'department_name' => 'UPSC Board', // Keep same department to match fuzzy lookback pool
+        ];
+
+        $reflection = new \ReflectionClass(ScrapingService::class);
+        $method = $reflection->getMethod('processScrapedItem');
+        $method->setAccessible(true);
+
+        // 1. Process Master Post: Should succeed
+        $resultMaster = $method->invokeArgs($this->scrapingService, [$this->source, $rawMaster]);
+        $this->assertEquals('success', $resultMaster['status']);
+        $masterPost = JobPost::where('title', 'UPSC Scientific Officer Recruitment 2026')->first();
+        $this->assertNotNull($masterPost);
+
+        // 2. Process Corrigendum: Should succeed and be LINKED
+        $resultCorrigendum = $method->invokeArgs($this->scrapingService, [$this->source, $rawCorrigendum]);
+        $this->assertEquals('success', $resultCorrigendum['status']);
+        $this->assertTrue($resultCorrigendum['linked'] ?? false);
+
+        // 3. Assert relationship and post type
+        $corrigendumPost = JobPost::where('title', 'UPSC Scientific Officer Corrigendum Notice 2026')->first();
+        $this->assertNotNull($corrigendumPost);
+        $this->assertEquals($masterPost->id, $corrigendumPost->parent_id);
+        $this->assertEquals('notice', $corrigendumPost->post_type);
+    }
+
+    /**
+     * Test status propagation on cancellation and date extension.
+     */
+    public function test_status_date_propagation(): void
+    {
+        $rawMaster = [
+            'title'         => 'UPSC Assistant Professor Recruitment 2026',
+            'deadline_raw'  => '30-10-2026',
+            'fee_raw'       => 'Rs 200',
+            'official_link' => 'https://upsc.gov.in',
+            'apply_link'    => 'https://upsconline.nic.in',
+            'raw_text'      => 'UPSC Assistant Professor Recruitment 2026. Graduate. Last date: 30-10-2026. Fee Rs 200.',
+        ];
+
+        $rawExtension = [
+            'title'         => 'UPSC Assistant Professor Extension Notice 2026',
+            'deadline_raw'  => '15-11-2026', // Extended date
+            'fee_raw'       => 'Rs 200',
+            'official_link' => 'https://upsc.gov.in',
+            'apply_link'    => 'https://upsconline.nic.in',
+            'raw_text'      => 'UPSC Assistant Professor Recruitment Extension Notice. Extended last date: 15-11-2026.',
+            'department_name' => 'UPSC Board',
+        ];
+
+        $rawCancellation = [
+            'title'         => 'UPSC Assistant Professor Cancellation Notice 2026',
+            'deadline_raw'  => '15-11-2026',
+            'fee_raw'       => 'Rs 200',
+            'official_link' => 'https://upsc.gov.in',
+            'apply_link'    => 'https://upsconline.nic.in',
+            'raw_text'      => 'UPSC Assistant Professor Cancellation Notice. Recruitment Cancelled.',
+            'department_name' => 'UPSC Board',
+        ];
+
+        $reflection = new \ReflectionClass(ScrapingService::class);
+        $method = $reflection->getMethod('processScrapedItem');
+        $method->setAccessible(true);
+
+        // 1. Process Master: Should succeed
+        $method->invokeArgs($this->scrapingService, [$this->source, $rawMaster]);
+        $masterPost = JobPost::where('title', 'UPSC Assistant Professor Recruitment 2026')->first();
+        $this->assertEquals('2026-10-30', $masterPost->last_date_to_apply->format('Y-m-d'));
+        $this->assertEquals('published', $masterPost->status);
+
+        // 2. Process Extension: Parent last date should be updated
+        $method->invokeArgs($this->scrapingService, [$this->source, $rawExtension]);
+        $masterPost->refresh();
+        $this->assertEquals('2026-11-15', $masterPost->last_date_to_apply->format('Y-m-d'));
+
+        // 3. Process Cancellation: Parent status should be updated to archived
+        $method->invokeArgs($this->scrapingService, [$this->source, $rawCancellation]);
+        $masterPost->refresh();
+        $this->assertEquals('archived', $masterPost->status);
+    }
 }
