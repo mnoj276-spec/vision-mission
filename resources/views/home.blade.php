@@ -1353,7 +1353,7 @@
                     <svg class="search-icon" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
                         <path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
                     </svg>
-                    <input type="text" id="searchKeywords" placeholder="Search Government Jobs, UPSC, SSC, Railway..." data-i18n="search_placeholder" autocomplete="off">
+                    <input type="text" id="searchKeywords" placeholder="Search Government Jobs, UPSC, SSC, Railway..." data-i18n="search_placeholder" autocomplete="off" value="{{ request('search') ?? request('q') }}">
                     <button type="button" id="clearSearchBtn" class="clear-search-btn" style="display: none;">
                         <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M6 18L18 6M6 6l12 12"></path></svg>
                     </button>
@@ -1409,13 +1409,13 @@
         <select id="stateSelect" style="display: none;">
             <option value="" data-i18n="select_state">Select Region/State</option>
             @foreach($states as $state)
-                <option value="{{ $state->id }}">{{ $state->name }}</option>
+                <option value="{{ $state->id }}" {{ request('state') === $state->slug ? 'selected' : '' }}>{{ $state->name }}</option>
             @endforeach
         </select>
         <select id="qualificationSelect" style="display: none;">
             <option value="" data-i18n="select_qual">Select Qualification</option>
             @foreach($qualifications as $qual)
-                <option value="{{ $qual->id }}">{{ $qual->name }}</option>
+                <option value="{{ $qual->id }}" {{ request('qualification') === $qual->slug ? 'selected' : '' }}>{{ $qual->name }}</option>
             @endforeach
         </select>
 
@@ -1474,7 +1474,7 @@
                 <select class="filter-select" id="categorySelect" style="display: none;">
                     <option value="" data-i18n="all_streams">All Streams</option>
                     @foreach($categories as $category)
-                        <option value="{{ $category->id }}">{{ $category->name }}</option>
+                        <option value="{{ $category->id }}" {{ request('category') === $category->slug ? 'selected' : '' }}>{{ $category->name }}</option>
                     @endforeach
                 </select>
             </div>
@@ -2785,6 +2785,16 @@
 
         // Render initial chips on load
         updateFilterChips();
+
+        // Show clear search button on load if keywords exist
+        if ($('#searchKeywords').val()) {
+            $('#clearSearchBtn').show();
+        }
+
+        // Auto-fetch jobs if any query/filter is pre-selected on load
+        if ($('#categorySelect').val() || $('#stateSelect').val() || $('#qualificationSelect').val() || $('#noFeeCheck').is(':checked') || $('#searchKeywords').val()) {
+            fetchJobs(1);
+        }
 
         // Close dropdowns clicking outside
         $(document).on('click', function(e) {
