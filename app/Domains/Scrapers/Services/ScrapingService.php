@@ -22,7 +22,8 @@ class ScrapingService implements ScrapingServiceInterface
     public function __construct(
         protected JobRepositoryInterface $jobRepo,
         protected AIService $aiService,
-        protected FingerprintService $fingerprintService
+        protected FingerprintService $fingerprintService,
+        protected HybridScrapingEngine $hybridEngine
     ) {}
 
     public function scrapeSource(ScrapingSource $source, int $attempt = 1): array
@@ -40,11 +41,8 @@ class ScrapingService implements ScrapingServiceInterface
                 throw new \Exception("SSRF Block: The source URL '{$url}' is not a permitted domain.");
             }
 
-            $response = Http::timeout(30)->get($url);
-            if ($response->failed()) {
-                throw new \Exception("HTTP Request failed with status: " . $response->status());
-            }
-            $rawJobs = $this->extractJobPostNodes($response->body(), $source);
+            $html = $this->hybridEngine->fetch($source);
+            $rawJobs = $this->extractJobPostNodes($html, $source);
             $s = $d = $q = $f = 0;
             foreach ($rawJobs as $rawJobData) {
                 $result = $this->processScrapedItem($source, $rawJobData);
