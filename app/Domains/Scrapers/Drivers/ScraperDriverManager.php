@@ -19,6 +19,11 @@ class ScraperDriverManager
         PsuScraperDriver::class,
         StatePscScraperDriver::class,
         DefenceScraperDriver::class,
+        HighCourtScraperDriver::class,
+        MunicipalScraperDriver::class,
+        AcademicScraperDriver::class,
+        NaturalResourcesScraperDriver::class,
+        PoliceScraperDriver::class,
     ];
 
     /**
