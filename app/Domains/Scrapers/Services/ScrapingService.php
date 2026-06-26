@@ -509,20 +509,6 @@ class ScrapingService implements ScrapingServiceInterface
         $finalJobData['parent_id']  = $masterPost->id;
         $finalJobData['source_id']  = $source->id;
         $finalJobData['expires_at'] = $finalJobData['last_date_to_apply'] ?? null;
-        
-        // Propagate Status / Dates to Parent
-        $t = strtolower($finalJobData['title']);
-        if (str_contains($t, 'cancellation') || str_contains($t, 'cancelled')) {
-            $masterPost->update(['status' => 'archived']);
-        }
-        if (str_contains($t, 'extension') || str_contains($t, 'extend')) {
-            if (!empty($finalJobData['last_date_to_apply'])) {
-                $masterPost->update([
-                    'last_date_to_apply' => $finalJobData['last_date_to_apply'],
-                    'expires_at'         => $finalJobData['last_date_to_apply'],
-                ]);
-            }
-        }
 
         $jobPost = DB::transaction(function () use ($finalJobData, $source, $rawLogPayload, $rawData) {
             $finalJobData['slug'] = str()->slug($finalJobData['title']) . '-' . rand(100, 999);
@@ -544,6 +530,9 @@ class ScrapingService implements ScrapingServiceInterface
             ]);
             return $jobPost;
         });
+
+        // Trigger State Machine Lifecycle Transitions on Parent
+        app(\App\Domains\Jobs\Services\RecruitmentLifecycleManager::class)->transition($masterPost, $jobPost);
 
         // Trigger content generation if needed
         if (!app()->environment('testing')) {

@@ -29,6 +29,7 @@ Route::prefix('v1')->group(function () {
     Route::middleware(['throttle:api'])->group(function () {
         Route::get('/jobs',                [\App\Http\Controllers\Api\V1\Jobs\JobController::class, 'index'])->name('api.v1.jobs.index');
         Route::get('/jobs/{slug}',         [\App\Http\Controllers\Api\V1\Jobs\JobController::class, 'show'])->name('api.v1.jobs.show');
+        Route::get('/jobs/{id}/timeline',  [\App\Http\Controllers\Api\V1\Jobs\JobController::class, 'timeline'])->name('api.v1.jobs.timeline');
         Route::get('/search/autocomplete', [\App\Http\Controllers\Api\V1\Search\SearchController::class, 'autocomplete'])->name('api.v1.search.autocomplete');
         Route::get('/search/typo',         [\App\Http\Controllers\Api\V1\Search\SearchController::class, 'typoCorrection'])->name('api.v1.search.typo');
         

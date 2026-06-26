@@ -347,6 +347,18 @@ class ProgrammaticSeoController extends Controller
         // Build automated internal links for this detail page
         $internalLinks = $this->linkingService->getLinksForDetailPage($job);
 
+        // Fetch parent + children timeline sorted by published_at & created_at
+        $root = $job->parent_id ? JobPost::find($job->parent_id) : $job;
+        if (!$root) {
+            $root = $job;
+        }
+
+        $timeline = JobPost::where('id', $root->id)
+            ->orWhere('parent_id', $root->id)
+            ->orderBy('published_at', 'asc')
+            ->orderBy('created_at', 'asc')
+            ->get();
+
         return view('seo_detail', [
             'job' => $job,
             'aiContent' => $aiContent,
@@ -357,6 +369,7 @@ class ProgrammaticSeoController extends Controller
             'breadcrumbs' => $seo['breadcrumbs'],
             'schema' => $schema,
             'internalLinks' => $internalLinks,
+            'timeline' => $timeline,
         ]);
     }
 
