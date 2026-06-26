@@ -1353,7 +1353,7 @@
                     <svg class="search-icon" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
                         <path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
                     </svg>
-                    <input type="text" id="searchKeywords" placeholder="Search Government Jobs, UPSC, SSC, Railway..." data-i18n="search_placeholder" autocomplete="off">
+                    <input type="text" id="searchKeywords" placeholder="Search Government Jobs, UPSC, SSC, Railway..." data-i18n="search_placeholder" autocomplete="off" value="{{ request('search') ?? request('q') }}">
                     <button type="button" id="clearSearchBtn" class="clear-search-btn" style="display: none;">
                         <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M6 18L18 6M6 6l12 12"></path></svg>
                     </button>
@@ -1409,13 +1409,13 @@
         <select id="stateSelect" style="display: none;">
             <option value="" data-i18n="select_state">Select Region/State</option>
             @foreach($states as $state)
-                <option value="{{ $state->id }}">{{ $state->name }}</option>
+                <option value="{{ $state->id }}" {{ request('state') === $state->slug ? 'selected' : '' }}>{{ $state->name }}</option>
             @endforeach
         </select>
         <select id="qualificationSelect" style="display: none;">
             <option value="" data-i18n="select_qual">Select Qualification</option>
             @foreach($qualifications as $qual)
-                <option value="{{ $qual->id }}">{{ $qual->name }}</option>
+                <option value="{{ $qual->id }}" {{ request('qualification') === $qual->slug ? 'selected' : '' }}>{{ $qual->name }}</option>
             @endforeach
         </select>
 
@@ -1474,7 +1474,7 @@
                 <select class="filter-select" id="categorySelect" style="display: none;">
                     <option value="" data-i18n="all_streams">All Streams</option>
                     @foreach($categories as $category)
-                        <option value="{{ $category->id }}">{{ $category->name }}</option>
+                        <option value="{{ $category->id }}" {{ request('category') === $category->slug ? 'selected' : '' }}>{{ $category->name }}</option>
                     @endforeach
                 </select>
             </div>
@@ -2786,6 +2786,16 @@
         // Render initial chips on load
         updateFilterChips();
 
+        // Show clear search button on load if keywords exist
+        if ($('#searchKeywords').val()) {
+            $('#clearSearchBtn').show();
+        }
+
+        // Auto-fetch jobs if any query/filter is pre-selected on load
+        if ($('#categorySelect').val() || $('#stateSelect').val() || $('#qualificationSelect').val() || $('#noFeeCheck').is(':checked') || $('#searchKeywords').val()) {
+            fetchJobs(1);
+        }
+
         // Close dropdowns clicking outside
         $(document).on('click', function(e) {
             if (!$(e.target).closest('.searchable-dropdown').length) {
@@ -3100,9 +3110,9 @@
         const detailsModal = $('#jobDetailsModal');
 
         $(document).on('click', '.btn-view', function(e) {
-            e.preventDefault();
             const slug = $(this).data('slug');
             if (!slug) return;
+            e.preventDefault();
 
             detailsModal.addClass('active');
             $('#modalSkeletonLoader').show();
@@ -3162,23 +3172,15 @@
                                     </div>
 
                                     <div style="display: flex; gap: 1rem; margin-top: 2rem; border-top: 1px solid var(--border-color); padding-top: 1.5rem; flex-wrap: wrap;">
+                                        ${job.official_website_link ? `
                                         <a href="${job.official_website_link}" target="_blank" class="btn-view" style="flex:1; text-align:center; display:flex; align-items:center; justify-content:center; gap:0.4rem; font-weight:600; text-decoration:none;">
                                             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle;"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
                                             ${window.t('modal_advertisement', 'Official Advertisement')}
                                         </a>
-                                        %isLoggedIn%
+                                        ` : ''}
                                     </div>
                                 </div>
                             `;
-                            html = html.replace('%isLoggedIn%', isLoggedIn ? `
-                                <button id="modalApplyBtn" class="form-btn" style="flex:1.5; margin-top:0; padding: 0.8rem; background: var(--accent-color); font-weight:700;" data-id="${job.id}">
-                                    ${window.t('modal_apply_now', 'Apply Recruitment Now')}
-                                </button>
-                            ` : `
-                                <button class="form-btn trigger-auth-redirect-btn" style="flex:1.5; margin-top:0; padding: 0.8rem; background: var(--text-secondary); color:#ffffff; font-weight:700;">
-                                    ${window.t('modal_login_apply', 'Login to Apply Now')}
-                                </button>
-                            `);
                         } else if (type === 'admit_card') {
                             html = `
                                 <div class="theme-accent-admit_card">
@@ -3224,18 +3226,24 @@
                                         </p>
                                     </div>
 
+                                    ${(job.apply_link || job.official_website_link) ? `
                                     <div class="download-callout-panel">
                                         <h4 style="color: var(--text-primary); margin-bottom: 0.5rem; font-weight: 700;">${window.t('modal_direct_access', 'Direct Candidate Server Access')}</h4>
                                         <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 1.25rem;">${window.t('modal_select_server', 'Select Server 1 or 2 to download call letters instantly.')}</p>
                                         <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+                                            ${(job.apply_link || job.official_website_link) ? `
                                             <a href="${job.apply_link || job.official_website_link}" target="_blank" class="download-button-premium">
                                                 ${window.t('modal_download_s1', '🚀 Download Call Letter (Server 1)')}
                                             </a>
+                                            ` : ''}
+                                            ${job.official_website_link ? `
                                             <a href="${job.official_website_link}" target="_blank" class="download-button-premium" style="background: var(--bg-secondary); border: 1px solid var(--border-color); color: var(--text-primary); box-shadow: none;">
                                                 ${window.t('modal_alt_login_s2', '🌐 Alternative Login (Server 2)')}
                                             </a>
+                                            ` : ''}
                                         </div>
                                     </div>
+                                    ` : ''}
                                 </div>
                             `;
                         } else if (type === 'result') {
@@ -3307,18 +3315,24 @@
                                         </p>
                                     </div>
 
+                                    ${(job.apply_link || job.official_website_link) ? `
                                     <div class="download-callout-panel">
                                         <h4 style="color: var(--text-primary); margin-bottom: 0.5rem; font-weight: 700;">${window.t('modal_direct_merit_dl', 'Direct Merit PDF Downloads')}</h4>
                                         <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 1.25rem;">${window.t('modal_dl_cutoff_text', 'Download final selection indexes or cutoff list directly from secure servers.')}</p>
                                         <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+                                            ${(job.apply_link || job.official_website_link) ? `
                                             <a href="${job.apply_link || job.official_website_link}" target="_blank" class="download-button-premium">
                                                 ${window.t('modal_download_merit_pdf', '📄 Download Merit List (PDF)')}
                                             </a>
+                                            ` : ''}
+                                            ${job.official_website_link ? `
                                             <a href="${job.official_website_link}" target="_blank" class="download-button-premium" style="background: var(--bg-secondary); border: 1px solid var(--border-color); color: var(--text-primary); box-shadow: none;">
                                                 ${window.t('modal_download_cutoff', '📊 Download Official Cutoff')}
                                             </a>
+                                            ` : ''}
                                         </div>
                                     </div>
+                                    ` : ''}
                                 </div>
                             `;
                         } else if (type === 'syllabus') {
@@ -3360,6 +3374,7 @@
                                         </div>
                                     </div>
 
+                                    ${job.official_website_link ? `
                                     <div class="download-callout-panel">
                                         <h4 style="color: var(--text-primary); margin-bottom: 0.5rem; font-weight: 700;">${window.t('modal_download_resources', 'Download Official Study Resources')}</h4>
                                         <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 1.25rem;">${window.t('modal_grab_syllabus_text', 'Grab verified syllabus copy and previous year mock papers instantly.')}</p>
@@ -3372,6 +3387,7 @@
                                             </a>
                                         </div>
                                     </div>
+                                    ` : ''}
                                 </div>
                             `;
                         } else if (type === 'answer_key') {
@@ -3421,18 +3437,24 @@
                                         </div>
                                     </div>
 
+                                    ${(job.apply_link || job.official_website_link) ? `
                                     <div class="download-callout-panel">
                                         <h4 style="color: var(--text-primary); margin-bottom: 0.5rem; font-weight: 700;">${window.t('modal_download_keys_objection', 'Download Keys & File Objections')}</h4>
                                         <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 1.25rem;">${window.t('modal_check_scores_text', 'Check your scores against the keys or raise concerns directly.')}</p>
                                         <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+                                            ${(job.apply_link || job.official_website_link) ? `
                                             <a href="${job.apply_link || job.official_website_link}" target="_blank" class="download-button-premium">
                                                 ${window.t('modal_download_prov_key', '🔑 Download Provisional Key (PDF)')}
                                             </a>
+                                            ` : ''}
+                                            ${job.official_website_link ? `
                                             <a href="${job.official_website_link}" target="_blank" class="download-button-premium" style="background: var(--bg-secondary); border: 1px solid var(--border-color); color: var(--text-primary); box-shadow: none;">
                                                 ${window.t('modal_raise_objections', '🛡️ Raise Key Objections Now')}
                                             </a>
+                                            ` : ''}
                                         </div>
                                     </div>
+                                    ` : ''}
                                 </div>
                             `;
                         } else if (type === 'admission') {
@@ -3482,22 +3504,14 @@
                                     </div>
 
                                     <div style="display: flex; gap: 1rem; margin-top: 2rem; border-top: 1px solid var(--border-color); padding-top: 1.5rem; flex-wrap: wrap;">
+                                        ${job.official_website_link ? `
                                         <a href="${job.official_website_link}" target="_blank" class="btn-view" style="flex:1; text-align:center; display:flex; align-items:center; justify-content:center; gap:0.4rem; font-weight:600; text-decoration:none;">
                                             ${window.t('modal_official_admissions_portal', '🌐 Official Admissions Portal')}
                                         </a>
-                                        %isLoggedIn%
+                                        ` : ''}
                                     </div>
                                 </div>
                             `;
-                            html = html.replace('%isLoggedIn%', isLoggedIn ? `
-                                <button id="modalApplyBtn" class="form-btn" style="flex:1.5; margin-top:0; padding: 0.8rem; background: #0891b2; font-weight:700;" data-id="${job.id}">
-                                    ${window.t('modal_submit_admissions_form', 'Submit Admissions Form')}
-                                </button>
-                            ` : `
-                                <button class="form-btn trigger-auth-redirect-btn" style="flex:1.5; margin-top:0; padding: 0.8rem; background: var(--text-secondary); color:#ffffff; font-weight:700;">
-                                    ${window.t('modal_login_apply', 'Login to Apply Now')}
-                                </button>
-                            `);
                         } else if (type === 'scholarship') {
                             html = `
                                 <div class="theme-accent-scholarship">
@@ -3553,22 +3567,14 @@
                                     </div>
 
                                     <div style="display: flex; gap: 1rem; margin-top: 2rem; border-top: 1px solid var(--border-color); padding-top: 1.5rem; flex-wrap: wrap;">
+                                        ${job.official_website_link ? `
                                         <a href="${job.official_website_link}" target="_blank" class="btn-view" style="flex:1; text-align:center; display:flex; align-items:center; justify-content:center; gap:0.4rem; font-weight:600; text-decoration:none;">
                                             ${window.t('modal_official_scheme_guidelines', 'Official Scheme Guidelines')}
                                         </a>
-                                        %isLoggedIn%
+                                        ` : ''}
                                     </div>
                                 </div>
                             `;
-                            html = html.replace('%isLoggedIn%', isLoggedIn ? `
-                                <button id="modalApplyBtn" class="form-btn" style="flex:1.5; margin-top:0; padding: 0.8rem; background: #ea580c; font-weight:700;" data-id="${job.id}">
-                                    ${window.t('modal_apply_scholarship_now', 'Apply Scholarship Now')}
-                                </button>
-                            ` : `
-                                <button class="form-btn trigger-auth-redirect-btn" style="flex:1.5; margin-top:0; padding: 0.8rem; background: var(--text-secondary); color:#ffffff; font-weight:700;">
-                                    ${window.t('modal_login_apply', 'Login to Apply Now')}
-                                </button>
-                            `);
                         } else {
                             html = `
                                 <div class="theme-accent-notice">
@@ -3600,6 +3606,7 @@
                                         <p style="color: var(--text-secondary); line-height: 1.75; font-size: 0.95rem; margin-top:0.5rem;">${job.description}</p>
                                     </div>
 
+                                    ${job.official_website_link ? `
                                     <div class="download-callout-panel">
                                         <h4 style="color: var(--text-primary); margin-bottom: 0.5rem; font-weight: 700;">${window.t('modal_download_official_circular', 'Download Official Circular')}</h4>
                                         <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 1.25rem;">${window.t('modal_download_notice_pdf_desc', 'Download the full, official notice PDF released by the department.')}</p>
@@ -3609,11 +3616,42 @@
                                             </a>
                                         </div>
                                     </div>
+                                    ` : ''}
                                 </div>
                             `;
                         }
 
                         $('#modalRealContent').html(html);
+
+                        // Inject related parent recruitment or child notices/corrigenda dynamically
+                        let hierarchyHtml = '';
+                        if (job.parent) {
+                            hierarchyHtml = `
+                                <div style="background: rgba(59, 130, 246, 0.08); padding: 0.85rem 1.25rem; border-radius: 8px; border: 1px solid rgba(59, 130, 246, 0.2); margin-top: 1.25rem; margin-bottom: 1.25rem; display: flex; align-items: center; gap: 0.5rem; font-size: 0.9rem;">
+                                    <span style="color: #60a5fa;">ℹ️</span>
+                                    <span>${window.t('modal_related_to_main', 'This is related to the main recruitment:')}</span>
+                                    <a href="#" class="btn-view" data-slug="${job.parent.slug}" style="color: #60a5fa; font-weight: 600; text-decoration: none; border-bottom: 1px dashed #60a5fa;">${window.translateJobTitle(job.parent.title)}</a>
+                                </div>
+                            `;
+                        } else if (job.children && job.children.length > 0) {
+                            hierarchyHtml = `
+                                <div style="background: rgba(139, 92, 246, 0.08); padding: 0.85rem 1.25rem; border-radius: 8px; border: 1px dashed rgba(139, 92, 246, 0.3); margin-top: 1.25rem; margin-bottom: 1.25rem; font-size: 0.9rem;">
+                                    <strong style="color: #a78bfa; display: block; margin-bottom: 0.5rem;">🔔 ${window.t('modal_related_updates', 'Related Updates & Notices:')}</strong>
+                                    <ul style="list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 0.4rem;">
+                                        ${job.children.map(child => `
+                                            <li style="display: flex; align-items: center; gap: 0.5rem;">
+                                                <span style="font-size: 0.7rem; text-transform: uppercase; padding: 0.15rem 0.4rem; border-radius: 4px; background: rgba(139, 92, 246, 0.2); color: #c084fc; font-weight: 700;">${window.t(child.postType, child.postType.replace('_', ' '))}</span>
+                                                <a href="#" class="btn-view" data-slug="${child.slug}" style="color: var(--text-primary); text-decoration: none; border-bottom: 1px solid rgba(255,255,255,0.15); font-weight: 500;">${window.translateJobTitle(child.title)}</a>
+                                            </li>
+                                        `).join('')}
+                                    </ul>
+                                </div>
+                            `;
+                        }
+
+                        if (hierarchyHtml) {
+                            $('#modalRealContent').find('.category-visual-header').after(hierarchyHtml);
+                        }
                         $('#applicationFormJobId').val(job.id);
                         
                         $('#modalSkeletonLoader').hide();

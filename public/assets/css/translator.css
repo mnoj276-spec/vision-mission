@@ -220,8 +220,12 @@ html.lang-hi body,
 html.lang-hi button,
 html.lang-hi input,
 html.lang-hi select,
-html.lang-hi textarea,
-html.lang-hi * {
+html.lang-hi textarea {
+    font-family: 'Hind', 'Noto Sans Devanagari', 'Inter', sans-serif !important;
+}
+
+html[lang="hi"] *:not(.fa):not(.fab):not(.fad):not(.fal):not(.far):not(.fas):not([class*="fa-"]):not(i),
+html.lang-hi *:not(.fa):not(.fab):not(.fad):not(.fal):not(.far):not(.fas):not([class*="fa-"]):not(i) {
     font-family: 'Hind', 'Noto Sans Devanagari', 'Inter', sans-serif !important;
 }
 

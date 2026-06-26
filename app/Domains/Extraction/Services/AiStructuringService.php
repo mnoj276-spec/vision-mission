@@ -53,6 +53,8 @@ class AiStructuringService
             . "- vacancy_count (integer): Vacancy count (0 if not mentioned)\n"
             . "- qualification (string or null): Required Qualification\n"
             . "- age_limit (string or null): Age constraints\n"
+            . "- age_min (integer or null): Minimum age required (e.g., 18 or 21)\n"
+            . "- age_max (integer or null): Maximum age allowed (e.g., 30 or 32)\n"
             . "- salary (string or null): Salary range or pay scale details\n"
             . "- application_fee (numeric): Application fee amount (0.00 if free or not mentioned)\n"
             . "- selection_process (string or null): Details on how candidates are selected\n"
@@ -108,6 +110,8 @@ class AiStructuringService
             'vacancy_count' => 0,
             'qualification' => null,
             'age_limit' => null,
+            'age_min' => null,
+            'age_max' => null,
             'salary' => null,
             'application_fee' => 0.00,
             'selection_process' => null,
@@ -153,6 +157,15 @@ class AiStructuringService
         // 5. Age Limit
         if (preg_match('/(?:Age|Age\s+Limit)\s*:\s*([^\n\r]+)/i', $text, $m)) {
             $data['age_limit'] = trim($m[1]);
+            if (preg_match('/(\d+)\s*(?:-|to)\s*(\d+)/i', $data['age_limit'], $am)) {
+                $data['age_min'] = (int)$am[1];
+                $data['age_max'] = (int)$am[2];
+            } elseif (preg_match('/(?:max|maximum|under|up to)\s*(\d+)/i', $data['age_limit'], $am)) {
+                $data['age_max'] = (int)$am[1];
+                $data['age_min'] = 18;
+            } elseif (preg_match('/(?:min|minimum|above|from)\s*(\d+)/i', $data['age_limit'], $am)) {
+                $data['age_min'] = (int)$am[1];
+            }
         }
 
         // 6. Salary

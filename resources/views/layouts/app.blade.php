@@ -171,7 +171,7 @@
                                         @endif
                                     </span>
                                 @endif
-                                {{ $mItem->title }}
+                                <span data-translate-lookup="{{ $mItem->title }}">{{ $mItem->title }}</span>
                                 <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
                             </a>
                             <ul class="dropdown-menu-list glass-panel" style="display: none; position: absolute; top: 100%; left: 0; min-width: 200px; list-style: none; padding: 0.5rem; border-radius: 8px; box-shadow: var(--card-shadow); z-index: 100;">
@@ -187,7 +187,7 @@
                                                     @endif
                                                 </span>
                                             @endif
-                                            {{ $childItem->title }}
+                                            <span data-translate-lookup="{{ $childItem->title }}">{{ $childItem->title }}</span>
                                         </a>
                                     </li>
                                 @endforeach
@@ -205,7 +205,7 @@
                                         @endif
                                     </span>
                                 @endif
-                                {{ $mItem->title }}
+                                <span data-translate-lookup="{{ $mItem->title }}">{{ $mItem->title }}</span>
                             </a>
                         </li>
                     @endif
@@ -289,7 +289,7 @@
                                 @endif
                             </span>
                         @endif
-                        {{ $mItem->title }}
+                        <span data-translate-lookup="{{ $mItem->title }}">{{ $mItem->title }}</span>
                     </a>
                 </li>
             @empty
@@ -354,39 +354,39 @@
                     </div>
                 @endif
             </div>
-            <div>
-                <h4 style="color: var(--text-primary); margin-bottom: 1rem; font-family: 'Outfit';">Quick Links</h4>
+             <div>
+                <h4 style="color: var(--text-primary); margin-bottom: 1rem; font-family: 'Outfit';" data-translate-lookup="Quick Links">Quick Links</h4>
                 <ul style="list-style: none; display: grid; gap: 0.5rem; padding: 0;">
                     @forelse($footerMenu1 as $mItem)
-                        <li><a href="{{ $mItem->url }}" target="{{ $mItem->target }}" style="color: var(--text-secondary); text-decoration: none;">{{ $mItem->title }}</a></li>
+                        <li><a href="{{ $mItem->url }}" target="{{ $mItem->target }}" style="color: var(--text-secondary); text-decoration: none;"><span data-translate-lookup="{{ $mItem->title }}">{{ $mItem->title }}</span></a></li>
                     @empty
-                        <li><a href="/#jobs-search-section" class="nav-tab-trigger" data-target="jobs" style="color: var(--text-secondary); text-decoration: none;">Recruitments Board</a></li>
-                        <li><a href="/#info-hub-section" class="nav-tab-trigger" data-target="info-hub" style="color: var(--text-secondary); text-decoration: none;">Information Hub</a></li>
-                        <li><a href="/#info-hub-section" class="nav-tab-trigger" data-target="info-hub" style="color: var(--text-secondary); text-decoration: none;">FAQ Accordions</a></li>
+                        <li><a href="/#jobs-search-section" class="nav-tab-trigger" data-target="jobs" style="color: var(--text-secondary); text-decoration: none;"><span data-translate-lookup="Recruitments Board">Recruitments Board</span></a></li>
+                        <li><a href="/#info-hub-section" class="nav-tab-trigger" data-target="info-hub" style="color: var(--text-secondary); text-decoration: none;"><span data-translate-lookup="Information Hub">Information Hub</span></a></li>
+                        <li><a href="/#info-hub-section" class="nav-tab-trigger" data-target="info-hub" style="color: var(--text-secondary); text-decoration: none;"><span data-translate-lookup="FAQ Accordions">FAQ Accordions</span></a></li>
                     @endforelse
                 </ul>
             </div>
             <div>
-                <h4 style="color: var(--text-primary); margin-bottom: 1rem; font-family: 'Outfit';">Useful Links</h4>
+                <h4 style="color: var(--text-primary); margin-bottom: 1rem; font-family: 'Outfit';" data-translate-lookup="Useful Links">Useful Links</h4>
                 <ul style="list-style: none; display: grid; gap: 0.5rem; padding: 0;">
                     @forelse($footerMenu2 as $mItem)
-                        <li><a href="{{ $mItem->url }}" target="{{ $mItem->target }}" style="color: var(--text-secondary); text-decoration: none;">{{ $mItem->title }}</a></li>
+                        <li><a href="{{ $mItem->url }}" target="{{ $mItem->target }}" style="color: var(--text-secondary); text-decoration: none;"><span data-translate-lookup="{{ $mItem->title }}">{{ $mItem->title }}</span></a></li>
                     @empty
-                        <li><a href="#" style="color: var(--text-secondary); text-decoration: none;">Union Public Service Commission (UPSC)</a></li>
-                        <li><a href="#" style="color: var(--text-secondary); text-decoration: none;">Staff Selection Commission (SSC)</a></li>
-                        <li><a href="#" style="color: var(--text-secondary); text-decoration: none;">Reserve Bank of India (RBI)</a></li>
+                        <li><a href="#" style="color: var(--text-secondary); text-decoration: none;"><span data-translate-lookup="Union Public Service Commission (UPSC)">Union Public Service Commission (UPSC)</span></a></li>
+                        <li><a href="#" style="color: var(--text-secondary); text-decoration: none;"><span data-translate-lookup="Staff Selection Commission (SSC)">Staff Selection Commission (SSC)</span></a></li>
+                        <li><a href="#" style="color: var(--text-secondary); text-decoration: none;"><span data-translate-lookup="Reserve Bank of India (RBI)">Reserve Bank of India (RBI)</span></a></li>
                     @endforelse
                 </ul>
             </div>
             <div>
-                <h4 style="color: var(--text-primary); margin-bottom: 1rem; font-family: 'Outfit';">Legal & Info</h4>
+                <h4 style="color: var(--text-primary); margin-bottom: 1rem; font-family: 'Outfit';" data-translate-lookup="Legal & Info">Legal & Info</h4>
                 <ul style="list-style: none; display: grid; gap: 0.5rem; padding: 0;">
                     @forelse($cmsPagesList as $cmsPage)
-                        <li><a href="/p/{{ $cmsPage->slug }}" style="color: var(--text-secondary); text-decoration: none;">{{ $cmsPage->title }}</a></li>
+                        <li><a href="/p/{{ $cmsPage->slug }}" style="color: var(--text-secondary); text-decoration: none;"><span data-translate-lookup="{{ $cmsPage->title }}">{{ $cmsPage->title }}</span></a></li>
                     @empty
-                        <li><a href="/p/about-us" style="color: var(--text-secondary); text-decoration: none;">About Us</a></li>
-                        <li><a href="/p/privacy-policy" style="color: var(--text-secondary); text-decoration: none;">Privacy Policy</a></li>
-                        <li><a href="/p/terms-and-conditions" style="color: var(--text-secondary); text-decoration: none;">Terms & Conditions</a></li>
+                        <li><a href="/p/about-us" style="color: var(--text-secondary); text-decoration: none;"><span data-translate-lookup="About Us">About Us</span></a></li>
+                        <li><a href="/p/privacy-policy" style="color: var(--text-secondary); text-decoration: none;"><span data-translate-lookup="Privacy Policy">Privacy Policy</span></a></li>
+                        <li><a href="/p/terms-and-conditions" style="color: var(--text-secondary); text-decoration: none;"><span data-translate-lookup="Terms & Conditions">Terms & Conditions</span></a></li>
                     @endforelse
                 </ul>
             </div>
@@ -400,7 +400,7 @@
     <!-- ================= DYNAMIC MODALS OVERLAYS ================= -->
 
     <!-- A. Authenticatable Login/Register Modal -->
-    <div class="modal-overlay" id="authModal">
+    <div class="modal-overlay" id="authModal" style="z-index: 1200;">
         <div class="modal-box glass-panel">
             <button class="modal-close-btn" id="closeAuthModal" aria-label="Close Authentication Dialog">&times;</button>
             <div class="auth-tabs">
@@ -573,15 +573,7 @@
                         Official Advertisement
                     </a>
                     
-                    @auth
-                        <button id="modalApplyBtn" class="form-btn" style="flex:1.5; margin-top:0; padding: 0.8rem;">
-                            Apply Recruitment Now
-                        </button>
-                    @else
-                        <button class="form-btn trigger-auth-redirect-btn" style="flex:1.5; margin-top:0; padding: 0.8rem; background: var(--text-secondary);">
-                            Login to Apply Now
-                        </button>
-                    @endauth
+                    <!-- Detail Apply button removed -->
                 </div>
             </div>
 

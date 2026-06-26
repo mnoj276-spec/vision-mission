@@ -15,6 +15,7 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', [JobController::class, 'index'])->name('home');
+Route::get('/jobs', [JobController::class, 'index'])->name('jobs');
 
 // Growth & SEO Landing Pages
 Route::get('/ssc-jobs',     [JobController::class, 'sscJobs'])->name('seo.ssc');

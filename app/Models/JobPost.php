@@ -54,6 +54,9 @@ class JobPost extends Model
         'experience_required',
         'start_date',
         'result_date',
+        'parent_id',
+        'age_min',
+        'age_max',
     ];
 
     protected $casts = [
@@ -70,13 +73,27 @@ class JobPost extends Model
         'expires_at' => 'date',
         'start_date' => 'date',
         'result_date' => 'date',
+        'parent_id' => 'integer',
+        'age_min' => 'integer',
+        'age_max' => 'integer',
     ];
 
     /*
     |--------------------------------------------------------------------------
     | Relationships
     |--------------------------------------------------------------------------
+    |
     */
+
+    public function parent(): BelongsTo
+    {
+        return $this->belongsTo(JobPost::class, 'parent_id');
+    }
+
+    public function children(): HasMany
+    {
+        return $this->hasMany(JobPost::class, 'parent_id');
+    }
 
     public function category(): BelongsTo
     {
@@ -199,6 +216,14 @@ class JobPost extends Model
     public function scopeScholarships(Builder $query): Builder
     {
         return $query->where('post_type', 'scholarship');
+    }
+
+    /**
+     * Scope to retrieve only root posts (not child corrigenda/notices/results).
+     */
+    public function scopeRootPosts(Builder $query): Builder
+    {
+        return $query->whereNull('parent_id');
     }
 
     /**

@@ -100,6 +100,8 @@ class ScrapingService implements ScrapingServiceInterface
                 'application_fee'       => $parsedData['application_fee']       ?? $aiData['application_fee']       ?? 0.00,
                 'official_website_link' => $parsedData['official_website_link'] ?? $aiData['official_website_link'] ?? null,
                 'apply_link'            => $parsedData['apply_link']            ?? $aiData['apply_link']            ?? null,
+                'age_min'               => $parsedData['age_min']               ?? $aiData['age_min']               ?? null,
+                'age_max'               => $parsedData['age_max']               ?? $aiData['age_max']               ?? null,
             ]);
 
             // Prevent Stored XSS from scraped rich-text or title strings
@@ -196,6 +198,10 @@ class ScrapingService implements ScrapingServiceInterface
 
             $masterByFingerprint = $this->jobRepo->findByFingerprint($incomingFingerprint);
             if ($masterByFingerprint) {
+                if ($this->isChildNotice($finalJobData['title'])) {
+                    $masterPost = $this->resolveRootPost($masterByFingerprint);
+                    return $this->handleChildNotice($masterPost, $finalJobData, $source, $rawLogPayload, $rawData);
+                }
                 $log = ScrapingLog::create([
                     'scraping_source_id' => $source->id,
                     'status'             => 'duplicate',
@@ -219,6 +225,10 @@ class ScrapingService implements ScrapingServiceInterface
             $recentPosts   = $this->jobRepo->findFuzzyDuplicates($finalJobData['department_id']);
             $fuzzyHit      = $this->fingerprintService->isFuzzyDuplicate($finalJobData['title'], $recentPosts);
             if ($fuzzyHit) {
+                if ($this->isChildNotice($finalJobData['title'])) {
+                    $masterPost = $this->resolveRootPost($fuzzyHit['post']);
+                    return $this->handleChildNotice($masterPost, $finalJobData, $source, $rawLogPayload, $rawData);
+                }
                 $log = ScrapingLog::create([
                     'scraping_source_id' => $source->id,
                     'status'             => 'duplicate',
@@ -242,6 +252,10 @@ class ScrapingService implements ScrapingServiceInterface
             // -----------------------------------------------------------------
             $variantHit = $this->fingerprintService->detectTitleVariant($finalJobData['title'], $recentPosts);
             if ($variantHit) {
+                if ($this->isChildNotice($finalJobData['title'])) {
+                    $masterPost = $this->resolveRootPost($variantHit['post']);
+                    return $this->handleChildNotice($masterPost, $finalJobData, $source, $rawLogPayload, $rawData);
+                }
                 $log = ScrapingLog::create([
                     'scraping_source_id' => $source->id,
                     'status'             => 'duplicate',
@@ -324,11 +338,40 @@ class ScrapingService implements ScrapingServiceInterface
 
     protected function runDeterministicPreParser(array $rawData): array
     {
-        $parsed = $rawData;
-        if (!empty($rawData['deadline_raw'])) $parsed['last_date_to_apply'] = $this->parseDateDeterministic($rawData['deadline_raw']);
-        if (!empty($rawData['fee_raw']))      $parsed['application_fee']    = $this->parseFeeDeterministic($rawData['fee_raw']);
+        $parsed = [
+            'title'                 => $rawData['title'] ?? null,
+            'description'           => $rawData['description'] ?? '',
+            'raw_text'              => $rawData['raw_text'] ?? ($rawData['title'] ?? ''),
+            'last_date_to_apply'    => null,
+            'application_fee'       => 0.00,
+            'official_website_link' => null,
+            'apply_link'            => null,
+            'age_min'               => null,
+            'age_max'               => null,
+        ];
+
+        if (!empty($rawData['deadline_raw']))  $parsed['last_date_to_apply']    = $this->parseDateDeterministic($rawData['deadline_raw']);
+        if (!empty($rawData['fee_raw']))       $parsed['application_fee']       = $this->parseFeeDeterministic($rawData['fee_raw']);
         if (!empty($rawData['official_link'])) $parsed['official_website_link'] = filter_var($rawData['official_link'], FILTER_VALIDATE_URL) ? $rawData['official_link'] : null;
         if (!empty($rawData['apply_link']))    $parsed['apply_link']             = filter_var($rawData['apply_link'],    FILTER_VALIDATE_URL) ? $rawData['apply_link']    : null;
+        
+        $ageLimit = $rawData['age_limit'] ?? null;
+        if (empty($ageLimit) && !empty($rawData['raw_text'])) {
+            if (preg_match('/(?:age\s+limit|age)\s*:?\s*([^\n\r.]+)/i', $rawData['raw_text'], $am)) {
+                $ageLimit = trim($am[1]);
+            }
+        }
+        if (!empty($ageLimit)) {
+            if (preg_match('/(\d+)\s*(?:-|to)\s*(\d+)/i', $ageLimit, $am)) {
+                $parsed['age_min'] = (int)$am[1];
+                $parsed['age_max'] = (int)$am[2];
+            } elseif (preg_match('/(?:max|maximum|under|up to)\s*(\d+)/i', $ageLimit, $am)) {
+                $parsed['age_max'] = (int)$am[1];
+                $parsed['age_min'] = 18;
+            } elseif (preg_match('/(?:min|minimum|above|from)\s*(\d+)/i', $ageLimit, $am)) {
+                $parsed['age_min'] = (int)$am[1];
+            }
+        }
         return $parsed;
     }
 
@@ -423,5 +466,93 @@ class ScrapingService implements ScrapingServiceInterface
         elseif (str_contains($l, '10th') || str_contains($l, 'high school'))
             $q = Qualification::where('slug', '10th-pass')->first();
         return isset($q) && $q ? $q->id : $defaultId;
+    }
+
+    /**
+     * Detect if a title implies a child notice/update to a main recruitment.
+     */
+    protected function isChildNotice(string $title): bool
+    {
+        $t = strtolower($title);
+        $childKeywords = [
+            'corrigendum', 'addendum', 'admit card', 'hall ticket', 'call letter',
+            'result', 'merit list', 'cutoff', 'scorecard', 'cancellation',
+            'postponement', 'extension', 'reopen', 'schedule', 'answer key',
+            'response sheet', 'syllabus', 'objection', 'revised key'
+        ];
+        foreach ($childKeywords as $kw) {
+            if (str_contains($t, $kw)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Create a child notice linked to its parent recruitment, and propagate status/dates.
+     */
+    protected function handleChildNotice(\App\Models\JobPost $masterPost, array $finalJobData, ScrapingSource $source, array $rawLogPayload, array $rawData): array
+    {
+        $finalJobData['parent_id']  = $masterPost->id;
+        $finalJobData['source_id']  = $source->id;
+        $finalJobData['expires_at'] = $finalJobData['last_date_to_apply'] ?? null;
+        
+        // Propagate Status / Dates to Parent
+        $t = strtolower($finalJobData['title']);
+        if (str_contains($t, 'cancellation') || str_contains($t, 'cancelled')) {
+            $masterPost->update(['status' => 'archived']);
+        }
+        if (str_contains($t, 'extension') || str_contains($t, 'extend')) {
+            if (!empty($finalJobData['last_date_to_apply'])) {
+                $masterPost->update([
+                    'last_date_to_apply' => $finalJobData['last_date_to_apply'],
+                    'expires_at'         => $finalJobData['last_date_to_apply'],
+                ]);
+            }
+        }
+
+        $jobPost = DB::transaction(function () use ($finalJobData, $source, $rawLogPayload, $rawData) {
+            $finalJobData['slug'] = str()->slug($finalJobData['title']) . '-' . rand(100, 999);
+            $jobPost = $this->jobRepo->create($finalJobData);
+            if (!empty($rawData['tags'])) {
+                $tagsArray = is_array($rawData['tags']) ? $rawData['tags'] : array_map('trim', explode(',', $rawData['tags']));
+                $tagIds = [];
+                foreach (array_filter(array_map('trim', $tagsArray)) as $tagName) {
+                    $tagIds[] = Tag::firstOrCreate(['slug' => str()->slug($tagName)], ['name' => $tagName])->id;
+                }
+                $jobPost->tags()->sync($tagIds);
+            }
+            ScrapingLog::create([
+                'scraping_source_id' => $source->id,
+                'job_post_id'        => $jobPost->id,
+                'status'             => 'success',
+                'items_found'        => 1,
+                'raw_payload'        => $rawLogPayload
+            ]);
+            return $jobPost;
+        });
+
+        // Trigger content generation if needed
+        if (!app()->environment('testing')) {
+            \App\Jobs\GenerateJobContentJob::dispatch($jobPost->id);
+        }
+
+        return ['status' => 'success', 'linked' => true, 'job_post_id' => $jobPost->id];
+    }
+
+    /**
+     * Resolve the matched post to its root parent (climbing the parent chain if needed).
+     */
+    protected function resolveRootPost(\App\Models\JobPost $post): \App\Models\JobPost
+    {
+        $current = $post;
+        while ($current->parent_id) {
+            $parent = $this->jobRepo->findById($current->parent_id);
+            if (!$parent) {
+                break;
+            }
+            $current = $parent;
+        }
+        return $current;
     }
 }

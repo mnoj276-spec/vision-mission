@@ -748,6 +748,22 @@
 
     // 3. Dynamic Database Value Mapper Lookups
     const dynamicLookups = {
+        // Menu Titles
+        "Home": "होम",
+        "All Jobs": "सभी नौकरियाँ",
+        "UPSC & SSC": "यूपीएससी और एसएससी",
+        "Banking": "बैंकिंग",
+        "Railways": "रेलवे",
+        "About Us": "हमारे बारे में",
+        "Contact Us": "संपर्क करें",
+        "Careers": "करियर",
+        "Privacy Policy": "गोपनीयता नीति",
+        "Terms of Service": "सेवा की शर्तें",
+        "Disclaimer": "अस्वीकरण",
+        "Quick Links": "त्वरित लिंक्स",
+        "Useful Links": "उपयोगी लिंक्स",
+        "Legal & Info": "कानूनी और जानकारी",
+
         // Categories & Streams
         "Gov Job": "सरकारी नौकरी",
         "railway": "रेलवे",

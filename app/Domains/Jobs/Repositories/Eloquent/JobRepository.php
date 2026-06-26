@@ -18,6 +18,7 @@ class JobRepository implements JobRepositoryInterface
     {
         return JobPost::query()
             ->published()
+            ->rootPosts()
             ->search($filters['search'] ?? null)
             ->filterBy($filters)
             ->with(['category', 'department', 'state', 'qualification', 'source'])
@@ -29,14 +30,14 @@ class JobRepository implements JobRepositoryInterface
 
     public function getFeatured(int $limit = 5): Collection
     {
-        return JobPost::query()->published()->featured()
+        return JobPost::query()->published()->rootPosts()->featured()
             ->with(['category', 'department', 'state', 'qualification', 'source'])
             ->limit($limit)->get();
     }
 
     public function getRecent(int $limit = 10): Collection
     {
-        return JobPost::query()->published()
+        return JobPost::query()->published()->rootPosts()
             ->with(['category', 'department', 'state', 'qualification', 'source'])
             ->orderBy('published_at', 'desc')->limit($limit)->get();
     }
@@ -44,7 +45,7 @@ class JobRepository implements JobRepositoryInterface
     public function findBySlug(string $slug): ?JobPost
     {
         return JobPost::query()->published()
-            ->with(['category', 'department', 'state', 'qualification', 'tags', 'source'])
+            ->with(['category', 'department', 'state', 'qualification', 'tags', 'source', 'parent', 'children'])
             ->where('slug', $slug)->first();
     }
 
@@ -100,7 +101,7 @@ class JobRepository implements JobRepositoryInterface
         return JobPost::query()
             ->where('department_id', $departmentId)
             ->where('created_at', '>=', Carbon::now()->subDays($lookbackDays))
-            ->select(['id', 'title', 'fingerprint'])
+            ->select(['id', 'title', 'fingerprint', 'parent_id'])
             ->get();
     }
 }

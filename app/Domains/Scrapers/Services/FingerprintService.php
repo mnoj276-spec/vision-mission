@@ -178,7 +178,7 @@ class FingerprintService
             '/\b(recruitment|notification|vacancy|vacancies|apply online|registration|'
             . 'application|form|online|advertisement|advt|advt\.|post|posts|exam|'
             . 'examination|result|merit list|cutoff|answer key|admit card|hall ticket|'
-            . 'syllabus|notice|circular|corrigendum)\b/i',
+            . 'syllabus|notice|circular|corrigendum|cancellation|extension)\b/i',
             ' ',
             $norm
         );
