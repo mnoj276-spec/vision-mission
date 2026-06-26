@@ -37,6 +37,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'spatie_role'        => \Spatie\Permission\Middleware\RoleMiddleware::class,
             'spatie_permission'  => \Spatie\Permission\Middleware\PermissionMiddleware::class,
             'internal_linking'   => \App\Http\Middleware\InternalLinkingHeaders::class,
+            'feature'            => \App\Http\Middleware\EnsureFeatureEnabled::class,
         ]);
 
         $middleware->prependToGroup('web', \App\Http\Middleware\DynamicMaintenanceMode::class);

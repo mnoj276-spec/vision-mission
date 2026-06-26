@@ -207,6 +207,7 @@ class SettingsTest extends TestCase
     public function test_admin_can_reorder_menu_items(): void
     {
         $this->actingAs($this->admin);
+        config(['features.version' => 2]);
 
         // Get the first menu and its items
         $menu = \App\Models\Menu::first();

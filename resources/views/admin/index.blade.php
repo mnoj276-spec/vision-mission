@@ -18,6 +18,11 @@
         ['block' => 'rbac',       'permission' => 'manage_users',      'label' => 'RBAC Clearance Matrix',    'icon' => '<rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path>'],
     ];
 
+    // Filter sidebar menu items by active feature version
+    $sidebarMenu = array_filter($sidebarMenu, function ($item) {
+        return feature_enabled($item['block']);
+    });
+
     $activeBlock = null;
     foreach ($sidebarMenu as $item) {
         if (auth()->user()->can($item['permission'])) {
@@ -497,14 +502,27 @@
             
             <!-- Settings Sub-Navigation Tabs -->
             <div class="sub-tab-headers" style="margin-bottom: 2rem; display: flex; gap: 0.5rem; flex-wrap: wrap;">
-                <button class="sub-tab-btn active settings-sub-trigger" data-target="settings-site">Site Configs</button>
-                <button class="sub-tab-btn settings-sub-trigger" data-target="settings-layout">Look & Layout</button>
-                <button class="sub-tab-btn settings-sub-trigger" data-target="settings-operations">Operations & CMS</button>
-                <button class="sub-tab-btn settings-sub-trigger" data-target="settings-integrations">SMTP & APIs</button>
-                <button class="sub-tab-btn settings-sub-trigger" data-target="settings-security">Security</button>
-                <button class="sub-tab-btn settings-sub-trigger" data-target="settings-media">Media Manager</button>
+                @if(feature_enabled('settings.site'))
+                    <button class="sub-tab-btn active settings-sub-trigger" data-target="settings-site">Site Configs</button>
+                @endif
+                @if(feature_enabled('settings.layout'))
+                    <button class="sub-tab-btn settings-sub-trigger" data-target="settings-layout">Look & Layout</button>
+                @endif
+                @if(feature_enabled('settings.operations'))
+                    <button class="sub-tab-btn settings-sub-trigger" data-target="settings-operations">Operations & CMS</button>
+                @endif
+                @if(feature_enabled('settings.integrations'))
+                    <button class="sub-tab-btn settings-sub-trigger" data-target="settings-integrations">SMTP & APIs</button>
+                @endif
+                @if(feature_enabled('settings.security'))
+                    <button class="sub-tab-btn settings-sub-trigger" data-target="settings-security">Security</button>
+                @endif
+                @if(feature_enabled('settings.media'))
+                    <button class="sub-tab-btn settings-sub-trigger" data-target="settings-media">Media Manager</button>
+                @endif
             </div>
 
+            @if(feature_enabled('settings.site'))
             <!-- SUB-PANEL 1: SITE CONFIGS -->
             <div class="settings-sub-panel active" id="settings-site">
                 <div class="settings-responsive-grid">
@@ -712,7 +730,9 @@
 
                 </div>
             </div>
+            @endif
 
+            @if(feature_enabled('settings.layout'))
             <!-- SUB-PANEL 2: LOOK & LAYOUT -->
             <div class="settings-sub-panel" id="settings-layout" style="display: none;">
                 <div class="settings-responsive-grid-theme">
@@ -813,7 +833,9 @@
 
                 </div>
             </div>
+            @endif
 
+            @if(feature_enabled('settings.operations'))
             <!-- SUB-PANEL 3: OPERATIONS & CMS -->
             <div class="settings-sub-panel" id="settings-operations" style="display: none;">
                 <div class="settings-responsive-grid-ops">
@@ -854,7 +876,9 @@
 
                 </div>
             </div>
+            @endif
 
+            @if(feature_enabled('settings.integrations'))
             <!-- SUB-PANEL 4: SMTP & APIS -->
             <div class="settings-sub-panel" id="settings-integrations" style="display: none;">
                 <div class="settings-responsive-grid-ops">
@@ -963,7 +987,9 @@
 
                 </div>
             </div>
+            @endif
 
+            @if(feature_enabled('settings.security'))
             <!-- SUB-PANEL 5: SECURITY & BACKUPS -->
             <div class="settings-sub-panel" id="settings-security" style="display: none;">
                 <div class="settings-responsive-grid-ops">
@@ -1014,6 +1040,7 @@
                         </form>
                     </div>
 
+                    @if(feature_enabled('settings.security.backups'))
                     <!-- Database Backups -->
                     <div class="glass-panel" style="padding: 1.5rem; border-radius: 16px;">
                         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem;">
@@ -1036,10 +1063,13 @@
                             </table>
                         </div>
                     </div>
+                    @endif
 
                 </div>
             </div>
+            @endif
 
+            @if(feature_enabled('settings.media'))
             <!-- SUB-PANEL 6: MEDIA MANAGER -->
             <div class="settings-sub-panel" id="settings-media" style="display: none;">
                 <div class="glass-panel" style="padding: 1.5rem; border-radius: 16px;">
@@ -1067,6 +1097,7 @@
                     </div>
                 </div>
             </div>
+            @endif
 
         </section>
 
