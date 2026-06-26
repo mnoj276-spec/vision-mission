@@ -408,14 +408,29 @@ class ScrapingService implements ScrapingServiceInterface
 
     public function classifyPostType(string $title, string $rawText): string
     {
+        // 1. Run legacy overrides first to maintain compatibility
         $t = strtolower($title . ' ' . $rawText);
-        if (str_contains($t, 'admit card') || str_contains($t, 'hall ticket') || str_contains($t, 'call letter')) return 'admit_card';
-        if (str_contains($t, 'result') || str_contains($t, 'merit list') || str_contains($t, 'cutoff') || str_contains($t, 'scorecard')) return 'result';
-        if (str_contains($t, 'answer key') || str_contains($t, 'response sheet')) return 'answer_key';
-        if (str_contains($t, 'syllabus') || str_contains($t, 'exam pattern') || str_contains($t, 'scheme of examination')) return 'syllabus';
-        if (str_contains($t, 'admission') || str_contains($t, 'entrance exam') || str_contains($t, 'counseling')) return 'admission';
-        if (str_contains($t, 'scholarship') || str_contains($t, 'fellowship') || str_contains($t, 'stipend')) return 'scholarship';
-        if (str_contains($t, 'notice') || str_contains($t, 'circular') || str_contains($t, 'corrigendum') || str_contains($t, 'postponement')) return 'notice';
+        if (str_contains($t, 'notice') || str_contains($t, 'circular') || str_contains($t, 'corrigendum') || str_contains($t, 'postponement')) {
+            return 'notice';
+        }
+        if (str_contains($t, 'syllabus') || str_contains($t, 'exam pattern') || str_contains($t, 'scheme of examination')) {
+            return 'syllabus';
+        }
+        if (str_contains($t, 'admission') || str_contains($t, 'entrance exam') || str_contains($t, 'counseling')) {
+            return 'admission';
+        }
+        if (str_contains($t, 'scholarship') || str_contains($t, 'fellowship') || str_contains($t, 'stipend')) {
+            return 'scholarship';
+        }
+
+        // 2. Classify via the new master taxonomy classifier
+        $classified = app(\App\Domains\Scrapers\Services\NotificationClassifier::class)->classify($title, $rawText);
+        $enumType = \App\Domains\Scrapers\Enums\NotificationType::tryFrom($classified);
+
+        if ($enumType) {
+            return $enumType->getBaseType();
+        }
+
         return 'job';
     }
 
