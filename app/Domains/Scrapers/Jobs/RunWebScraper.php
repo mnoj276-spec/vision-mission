@@ -32,7 +32,8 @@ class RunWebScraper implements ShouldQueue
 
     public function __construct(protected ScrapingSource $source)
     {
-        $this->queue = 'scrapers';
+        $priority = $source->priority ?: 'default';
+        $this->queue = 'scrapers-' . $priority;
     }
 
     public function handle(ScrapingService $scrapingService): void
@@ -43,9 +44,14 @@ class RunWebScraper implements ShouldQueue
             try {
                 Log::info("Async scraper job started for source ID: {$this->source->id} (Attempt #{$this->attempts()})");
                 $result = $scrapingService->scrapeSource($this->source, $this->attempts());
-                $result['success']
-                    ? Log::info("Async scraper job completed successfully.")
-                    : Log::error("Async scraper job failed: " . ($result['error'] ?? 'Unknown Error'));
+                if (isset($result['success']) && $result['success']) {
+                    Log::info("Async scraper job completed successfully.");
+                } else {
+                    Log::error("Async scraper job failed: " . ($result['error'] ?? 'Unknown Error'));
+                }
+            } catch (\App\Domains\Scrapers\Exceptions\RateLimitExceededException $e) {
+                Log::warning("Rate limit exceeded for source ID {$this->source->id}: " . $e->getMessage() . ". Releasing job back to queue.");
+                $this->release(60); // Release back to queue in 60 seconds
             } finally {
                 $lock->release();
             }

@@ -20,6 +20,8 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withCommands([
         \App\Domains\Scrapers\Commands\RunScraperCommand::class,
         \App\Domains\Scrapers\Commands\RunResultEngineCommand::class,
+        \App\Domains\Scrapers\Commands\RecoverDeadQueueCommand::class,
+        \App\Domains\Scrapers\Commands\GenerateScalingReportCommand::class,
         \App\Console\Commands\WarmInternalLinksCache::class,
         \App\Console\Commands\WelcomeSeriesScheduler::class,
         \App\Console\Commands\AlertsScheduler::class,

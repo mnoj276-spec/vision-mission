@@ -67,6 +67,8 @@ class HybridScrapingEngine
 
                     $this->browserPool->releaseSession($sessionId);
                     return $html;
+                } catch (\App\Domains\Scrapers\Exceptions\UnchangedContentException $e) {
+                    throw $e;
                 } catch (\Exception $e) {
                     Log::warning("Engine {$engine} failed for [{$url}]: " . $e->getMessage());
                     $lastError = $e;
@@ -156,10 +158,18 @@ class HybridScrapingEngine
         $url = $source->source_url;
         $cookieHeader = $this->cookieManager->getCookieHeaderString($source);
         
-        $request = Http::timeout(15);
+        $headers = [];
         if ($cookieHeader) {
-            $request = $request->withHeaders(['Cookie' => $cookieHeader]);
+            $headers['Cookie'] = $cookieHeader;
         }
+        if ($source->last_modified) {
+            $headers['If-Modified-Since'] = $source->last_modified;
+        }
+        if ($source->etag) {
+            $headers['If-None-Match'] = $source->etag;
+        }
+
+        $request = Http::timeout(15)->withHeaders($headers);
 
         // Get rotated proxy
         $proxy = $this->proxyManager->getProxy();
@@ -169,11 +179,25 @@ class HybridScrapingEngine
 
         $response = $request->get($url);
 
+        if ($response->status() === 304) {
+            throw new \App\Domains\Scrapers\Exceptions\UnchangedContentException("URL {$url} content unchanged (304 Not Modified).");
+        }
+
         if ($response->failed()) {
             if ($proxy) {
                 $this->proxyManager->markFailed($proxy);
             }
             throw new \Exception("HTTP Client request failed with status: " . $response->status());
+        }
+
+        // Store ETag and Last-Modified
+        $lastModified = $response->header('Last-Modified');
+        $etag = $response->header('ETag');
+        if ($lastModified || $etag) {
+            $source->update([
+                'last_modified' => $lastModified,
+                'etag' => $etag,
+            ]);
         }
 
         // Parse and store cookies
@@ -204,20 +228,27 @@ class HybridScrapingEngine
         $url = $source->source_url;
         $cookieHeader = $this->cookieManager->getCookieHeaderString($source);
 
-        $request = Http::timeout(20)
-            ->withHeaders([
-                'User-Agent' => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
-                'Accept' => 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8',
-                'Accept-Language' => 'en-US,en;q=0.9',
-                'Sec-Ch-Ua' => '"Not_A Brand";v="8", "Chromium";v="120", "Google Chrome";v="120"',
-                'Sec-Ch-Ua-Mobile' => '?0',
-                'Sec-Ch-Ua-Platform' => '"Windows"',
-                'Upgrade-Insecure-Requests' => '1',
-            ]);
+        $headers = [
+            'User-Agent' => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+            'Accept' => 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8',
+            'Accept-Language' => 'en-US,en;q=0.9',
+            'Sec-Ch-Ua' => '"Not_A Brand";v="8", "Chromium";v="120", "Google Chrome";v="120"',
+            'Sec-Ch-Ua-Mobile' => '?0',
+            'Sec-Ch-Ua-Platform' => '"Windows"',
+            'Upgrade-Insecure-Requests' => '1',
+        ];
 
         if ($cookieHeader) {
-            $request = $request->withHeaders(['Cookie' => $cookieHeader]);
+            $headers['Cookie'] = $cookieHeader;
         }
+        if ($source->last_modified) {
+            $headers['If-Modified-Since'] = $source->last_modified;
+        }
+        if ($source->etag) {
+            $headers['If-None-Match'] = $source->etag;
+        }
+
+        $request = Http::timeout(20)->withHeaders($headers);
 
         $proxy = $this->proxyManager->getProxy();
         if ($proxy) {
@@ -226,11 +257,25 @@ class HybridScrapingEngine
 
         $response = $request->get($url);
 
+        if ($response->status() === 304) {
+            throw new \App\Domains\Scrapers\Exceptions\UnchangedContentException("URL {$url} content unchanged (304 Not Modified) via Headless Client.");
+        }
+
         if ($response->failed()) {
             if ($proxy) {
                 $this->proxyManager->markFailed($proxy);
             }
             throw new \Exception("Headless Client simulation failed with status: " . $response->status());
+        }
+
+        // Store ETag and Last-Modified
+        $lastModified = $response->header('Last-Modified');
+        $etag = $response->header('ETag');
+        if ($lastModified || $etag) {
+            $source->update([
+                'last_modified' => $lastModified,
+                'etag' => $etag,
+            ]);
         }
 
         return $response->body();

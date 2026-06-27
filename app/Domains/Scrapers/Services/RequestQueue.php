@@ -5,6 +5,8 @@ namespace App\Domains\Scrapers\Services;
 use App\Models\ScrapingSource;
 use Illuminate\Support\Facades\Cache;
 
+use Illuminate\Support\Facades\RateLimiter;
+
 class RequestQueue
 {
     /**
@@ -12,14 +14,25 @@ class RequestQueue
      *
      * @param string $url
      * @return void
+     * @throws \App\Domains\Scrapers\Exceptions\RateLimitExceededException
      */
     public function throttle(string $url): void
     {
         $host = parse_url($url, PHP_URL_HOST) ?: 'default_host';
-        $key = 'scraper:throttle:' . md5($host);
+        
+        // 1. Distributed Rate Limiting (e.g., max 30 requests per minute per host)
+        $rateLimitKey = 'scraper:ratelimit:' . md5($host);
+        if (RateLimiter::tooManyAttempts($rateLimitKey, 30)) {
+            $seconds = RateLimiter::availableIn($rateLimitKey);
+            throw new \App\Domains\Scrapers\Exceptions\RateLimitExceededException(
+                "Rate limit exceeded for host: {$host}. Available in {$seconds} seconds."
+            );
+        }
+        RateLimiter::hit($rateLimitKey, 60);
 
-        // Standard politeness delay (e.g., min 1 second between hits)
-        $lastRequest = Cache::get($key);
+        // 2. Micro Politeness Sleep (min 1 second delay between consecutive requests on a worker)
+        $throttleKey = 'scraper:throttle:' . md5($host);
+        $lastRequest = Cache::get($throttleKey);
         if ($lastRequest) {
             $elapsed = microtime(true) - $lastRequest;
             $requiredDelay = 1.0; // 1 second
@@ -28,7 +41,7 @@ class RequestQueue
                 usleep($sleepUs);
             }
         }
-        Cache::put($key, microtime(true), 60);
+        Cache::put($throttleKey, microtime(true), 60);
     }
 
     /**

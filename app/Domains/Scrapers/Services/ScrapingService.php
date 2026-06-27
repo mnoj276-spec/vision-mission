@@ -68,7 +68,27 @@ class ScrapingService implements ScrapingServiceInterface
                     'retried' => $attempt > 1,
                 ],
             ]);
+            
+            $this->updateAdaptiveFrequency($source, $s);
+
             return ['success' => true, 'summary' => ['success' => $s, 'duplicate' => $d, 'quarantined' => $q, 'failed' => $f]];
+        } catch (\App\Domains\Scrapers\Exceptions\UnchangedContentException $e) {
+            Log::info("Delta Crawl: Content unchanged for {$source->name} (304 Not Modified). Skipping.");
+            ScrapingLog::create([
+                'scraping_source_id' => $source->id,
+                'status'             => 'success',
+                'items_found'        => 0,
+                'error_message'      => '[Delta Crawl] 304 Not Modified. Content unchanged.',
+                'raw_payload'        => [
+                    'unchanged' => true,
+                    'attempt'   => $attempt,
+                    'retried'   => $attempt > 1,
+                ],
+            ]);
+
+            $this->updateAdaptiveFrequency($source, 0);
+
+            return ['success' => true, 'unchanged' => true, 'summary' => ['success' => 0, 'duplicate' => 0, 'quarantined' => 0, 'failed' => 0]];
         } catch (\Exception $e) {
             Log::error("Scraper crash for {$source->name}: " . $e->getMessage());
             ScrapingLog::create([
@@ -82,6 +102,11 @@ class ScrapingService implements ScrapingServiceInterface
                     'trace' => substr($e->getTraceAsString(), 0, 1000)
                 ],
             ]);
+
+            $source->update([
+                'next_run_at' => now()->addMinutes(10), // Short backoff retry for network/scraping errors
+            ]);
+
             return ['success' => false, 'error' => $e->getMessage()];
         }
     }
@@ -556,5 +581,26 @@ class ScrapingService implements ScrapingServiceInterface
             $current = $parent;
         }
         return $current;
+    }
+
+    protected function updateAdaptiveFrequency(ScrapingSource $source, int $newItemsCount): void
+    {
+        $currentInterval = $source->crawl_interval_minutes ?: 60;
+        
+        if ($newItemsCount > 0) {
+            // Reset back to base interval if new items found (active posting period)
+            $newInterval = 30; // 30 minutes base interval for active feeds
+        } else {
+            // Scale up interval by 1.5x if no new content found (idle feed)
+            $newInterval = (int) ($currentInterval * 1.5);
+        }
+        
+        // Cap interval between 15 minutes and 1440 minutes (24 hours)
+        $newInterval = max(15, min(1440, $newInterval));
+        
+        $source->update([
+            'crawl_interval_minutes' => $newInterval,
+            'next_run_at' => now()->addMinutes($newInterval),
+        ]);
     }
 }

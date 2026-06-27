@@ -26,16 +26,21 @@ class RunScraperCommand extends Command
             $this->info("Initializing Scraping Engine Scheduler...");
             Log::info("Artisan command scraper:run executed.");
 
-            $sources = ScrapingSource::where('is_active', true)->get();
+            $sources = ScrapingSource::where('is_active', true)
+                ->where(function ($query) {
+                    $query->whereNull('next_run_at')
+                          ->orWhere('next_run_at', '<=', now());
+                })
+                ->get();
 
             if ($sources->isEmpty()) {
-                $this->warn("No active scraping sources configured.");
+                $this->info("No scraping sources are due for execution.");
                 return Command::SUCCESS;
             }
 
-            $this->info("Found {$sources->count()} active targets. Dispatching...");
+            $this->info("Found {$sources->count()} scheduled targets due. Dispatching...");
             foreach ($sources as $source) {
-                $this->line("Dispatching: {$source->name}");
+                $this->line("Dispatching: {$source->name} (Priority: {$source->priority})");
                 RunWebScraper::dispatch($source);
             }
 

@@ -22,7 +22,12 @@ class ScrapingSource extends Model
         'detected_features',
         'preferred_engine',
         'cookies',
-        'performance_stats'
+        'performance_stats',
+        'priority',
+        'last_modified',
+        'etag',
+        'crawl_interval_minutes',
+        'next_run_at',
     ];
 
     protected $casts = [
@@ -31,6 +36,7 @@ class ScrapingSource extends Model
         'detected_features' => 'array',
         'cookies' => 'array',
         'performance_stats' => 'array',
+        'next_run_at' => 'datetime',
     ];
 
     /**
