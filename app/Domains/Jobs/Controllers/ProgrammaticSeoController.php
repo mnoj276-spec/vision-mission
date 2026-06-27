@@ -61,7 +61,7 @@ class ProgrammaticSeoController extends Controller
             ->with(['category', 'department', 'state', 'qualification', 'district'])
             ->where('state_id', $state->id)
             ->orderBy('id', 'desc')
-            ->get();
+            ->paginate(20)->withQueryString();
 
         return $this->renderLandingPage('state', $jobs, [
             'state_name' => $state->name,
@@ -82,7 +82,7 @@ class ProgrammaticSeoController extends Controller
             ->where('state_id', $state->id)
             ->where('district_id', $district->id)
             ->orderBy('id', 'desc')
-            ->get();
+            ->paginate(20)->withQueryString();
 
         return $this->renderLandingPage('district', $jobs, [
             'state_name' => $state->name,
@@ -108,7 +108,7 @@ class ProgrammaticSeoController extends Controller
                   });
             })
             ->orderBy('id', 'desc')
-            ->get();
+            ->paginate(20)->withQueryString();
 
         return $this->renderLandingPage('railway', $jobs, [], 'Railway Jobs', 'railway');
     }
@@ -132,7 +132,7 @@ class ProgrammaticSeoController extends Controller
                   });
             })
             ->orderBy('id', 'desc')
-            ->get();
+            ->paginate(20)->withQueryString();
 
         return $this->renderLandingPage('banking', $jobs, [], 'Banking Jobs', 'banking');
     }
@@ -152,7 +152,7 @@ class ProgrammaticSeoController extends Controller
                   });
             })
             ->orderBy('id', 'desc')
-            ->get();
+            ->paginate(20)->withQueryString();
 
         return $this->renderLandingPage('ssc', $jobs, [], 'SSC Jobs', 'ssc');
     }
@@ -173,7 +173,7 @@ class ProgrammaticSeoController extends Controller
                   });
             })
             ->orderBy('id', 'desc')
-            ->get();
+            ->paginate(20)->withQueryString();
 
         return $this->renderLandingPage('upsc', $jobs, [], 'UPSC Jobs', 'upsc');
     }
@@ -198,7 +198,7 @@ class ProgrammaticSeoController extends Controller
                   });
             })
             ->orderBy('id', 'desc')
-            ->get();
+            ->paginate(20)->withQueryString();
 
         return $this->renderLandingPage('defence', $jobs, [], 'Defence Jobs', 'defence');
     }
@@ -218,7 +218,7 @@ class ProgrammaticSeoController extends Controller
                   ->orWhere('description', 'like', '%public sector%');
             })
             ->orderBy('id', 'desc')
-            ->get();
+            ->paginate(20)->withQueryString();
 
         return $this->renderLandingPage('psu', $jobs, [], 'PSU Jobs', 'psu');
     }
@@ -228,7 +228,7 @@ class ProgrammaticSeoController extends Controller
      */
     public function results()
     {
-        $jobs = JobPost::published()->with(['category', 'department', 'state', 'qualification', 'district'])->results()->orderBy('id', 'desc')->get();
+        $jobs = JobPost::published()->with(['category', 'department', 'state', 'qualification', 'district'])->results()->orderBy('id', 'desc')->paginate(20)->withQueryString();
         return $this->renderLandingPage('results', $jobs, [], 'Exam Results', 'results');
     }
 
@@ -237,7 +237,7 @@ class ProgrammaticSeoController extends Controller
      */
     public function admitCards()
     {
-        $jobs = JobPost::published()->with(['category', 'department', 'state', 'qualification', 'district'])->admitCards()->orderBy('id', 'desc')->get();
+        $jobs = JobPost::published()->with(['category', 'department', 'state', 'qualification', 'district'])->admitCards()->orderBy('id', 'desc')->paginate(20)->withQueryString();
         return $this->renderLandingPage('admit_cards', $jobs, [], 'Admit Cards', 'admit_cards');
     }
 
@@ -246,7 +246,7 @@ class ProgrammaticSeoController extends Controller
      */
     public function answerKeys()
     {
-        $jobs = JobPost::published()->with(['category', 'department', 'state', 'qualification', 'district'])->answerKeys()->orderBy('id', 'desc')->get();
+        $jobs = JobPost::published()->with(['category', 'department', 'state', 'qualification', 'district'])->answerKeys()->orderBy('id', 'desc')->paginate(20)->withQueryString();
         return $this->renderLandingPage('answer_keys', $jobs, [], 'Answer Keys', 'answer_keys');
     }
 
@@ -255,7 +255,7 @@ class ProgrammaticSeoController extends Controller
      */
     public function syllabus()
     {
-        $jobs = JobPost::published()->with(['category', 'department', 'state', 'qualification', 'district'])->syllabi()->orderBy('id', 'desc')->get();
+        $jobs = JobPost::published()->with(['category', 'department', 'state', 'qualification', 'district'])->syllabi()->orderBy('id', 'desc')->paginate(20)->withQueryString();
         return $this->renderLandingPage('syllabus', $jobs, [], 'Syllabus Hub', 'syllabus');
     }
 
@@ -264,7 +264,7 @@ class ProgrammaticSeoController extends Controller
      */
     public function cutoffs()
     {
-        $jobs = JobPost::published()->with(['category', 'department', 'state', 'qualification', 'district'])->where('post_type', 'cutoff')->orderBy('id', 'desc')->get();
+        $jobs = JobPost::published()->with(['category', 'department', 'state', 'qualification', 'district'])->where('post_type', 'cutoff')->orderBy('id', 'desc')->paginate(20)->withQueryString();
         return $this->renderLandingPage('cutoffs', $jobs, [], 'Exam Cutoffs', 'cutoffs');
     }
 
@@ -273,7 +273,7 @@ class ProgrammaticSeoController extends Controller
      */
     public function examCalendars()
     {
-        $jobs = JobPost::published()->with(['category', 'department', 'state', 'qualification', 'district'])->where('post_type', 'exam_calendar')->orderBy('id', 'desc')->get();
+        $jobs = JobPost::published()->with(['category', 'department', 'state', 'qualification', 'district'])->where('post_type', 'exam_calendar')->orderBy('id', 'desc')->paginate(20)->withQueryString();
         return $this->renderLandingPage('exam_calendars', $jobs, [], 'Exam Calendars', 'exam_calendars');
     }
 
@@ -282,7 +282,7 @@ class ProgrammaticSeoController extends Controller
      */
     public function previousYearPapers()
     {
-        $jobs = JobPost::published()->with(['category', 'department', 'state', 'qualification', 'district'])->where('post_type', 'prev_paper')->orderBy('id', 'desc')->get();
+        $jobs = JobPost::published()->with(['category', 'department', 'state', 'qualification', 'district'])->where('post_type', 'prev_paper')->orderBy('id', 'desc')->paginate(20)->withQueryString();
         return $this->renderLandingPage('previous_year_papers', $jobs, [], 'Previous Year Papers', 'previous_year_papers');
     }
 
