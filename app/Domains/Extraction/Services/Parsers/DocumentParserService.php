@@ -491,7 +491,12 @@ class DocumentParserService
         $doc = new \DOMDocument();
         $doc->preserveWhiteSpace = false;
         libxml_use_internal_errors(true);
-        $doc->loadXML($content);
+        if (function_exists('libxml_set_external_entity_loader')) {
+            libxml_set_external_entity_loader(function ($public, $system, $context) {
+                return null;
+            });
+        }
+        $doc->loadXML($content, LIBXML_NONET);
         libxml_clear_errors();
 
         $text = '';
@@ -609,6 +614,11 @@ class DocumentParserService
         $zip = new \ZipArchive();
         if ($zip->open($filePath) === true) {
             if (($index = $zip->locateName('word/document.xml')) !== false) {
+                $stat = $zip->statIndex($index);
+                if ($stat && isset($stat['size']) && $stat['size'] > 20971520) { // 20MB Limit
+                    $zip->close();
+                    throw new \Exception("Zip bomb warning: word/document.xml size exceeds 20MB limit.");
+                }
                 $xmlContent = $zip->getFromIndex($index);
                 $zip->close();
 
@@ -632,6 +642,11 @@ class DocumentParserService
         if ($zip->open($filePath) === true) {
             $sharedStrings = [];
             if (($index = $zip->locateName('xl/sharedStrings.xml')) !== false) {
+                $stat = $zip->statIndex($index);
+                if ($stat && isset($stat['size']) && $stat['size'] > 20971520) { // 20MB Limit
+                    $zip->close();
+                    throw new \Exception("Zip bomb warning: xl/sharedStrings.xml size exceeds 20MB limit.");
+                }
                 $xmlContent = $zip->getFromIndex($index);
                 preg_match_all('/<t[^>]*>(.*?)<\/t>/', $xmlContent, $matches);
                 $sharedStrings = $matches[1];
@@ -639,6 +654,11 @@ class DocumentParserService
 
             $sheetIndex = 1;
             while (($index = $zip->locateName("xl/worksheets/sheet{$sheetIndex}.xml")) !== false) {
+                $stat = $zip->statIndex($index);
+                if ($stat && isset($stat['size']) && $stat['size'] > 20971520) { // 20MB Limit
+                    $zip->close();
+                    throw new \Exception("Zip bomb warning: xl/worksheets/sheet{$sheetIndex}.xml size exceeds 20MB limit.");
+                }
                 $xmlContent = $zip->getFromIndex($index);
 
                 preg_match_all('/<c[^>]*t="s"[^>]*><v>(\d+)<\/v><\/c>/', $xmlContent, $sMatches);

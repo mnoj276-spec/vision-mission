@@ -34,9 +34,11 @@ Route::prefix('v1')->group(function () {
         Route::get('/search/typo',         [\App\Http\Controllers\Api\V1\Search\SearchController::class, 'typoCorrection'])->name('api.v1.search.typo');
         
         // Universal Notification Extraction Engine API
-        Route::post('/extraction/upload',       [\App\Http\Controllers\Api\V1\Extraction\ExtractionController::class, 'upload'])->name('api.v1.extraction.upload');
-        Route::get('/extraction/status/{id}',    [\App\Http\Controllers\Api\V1\Extraction\ExtractionController::class, 'status'])->name('api.v1.extraction.status');
-        Route::post('/extraction/approve/{id}',  [\App\Http\Controllers\Api\V1\Extraction\ExtractionController::class, 'approve'])->name('api.v1.extraction.approve');
+        Route::middleware(['auth:api', 'admin'])->group(function () {
+            Route::post('/extraction/upload',       [\App\Http\Controllers\Api\V1\Extraction\ExtractionController::class, 'upload'])->name('api.v1.extraction.upload');
+            Route::get('/extraction/status/{id}',    [\App\Http\Controllers\Api\V1\Extraction\ExtractionController::class, 'status'])->name('api.v1.extraction.status');
+            Route::post('/extraction/approve/{id}',  [\App\Http\Controllers\Api\V1\Extraction\ExtractionController::class, 'approve'])->name('api.v1.extraction.approve');
+        });
     });
 
     // Authenticated Candidate Profile & Interaction Endpoints (Throttled to 60 requests per minute)

@@ -27,7 +27,7 @@ class ExtractionController extends Controller
     public function upload(Request $request)
     {
         $request->validate([
-            'file' => 'required_without:url|file|max:20480', // max 20MB
+            'file' => 'required_without:url|file|max:20480|mimes:html,htm,pdf,docx,xlsx,doc,xls,csv,xml,png,jpg,jpeg,tiff,bmp,webp,tif',
             'url'  => 'required_without:file|url',
         ]);
 
@@ -55,22 +55,80 @@ class ExtractionController extends Controller
                     ], 400);
                 }
 
-                // Download file
-                Log::info("Universal Extraction Engine: Downloading remote file from {$url}");
-                $response = Http::timeout(30)->get($url);
-                if ($response->failed()) {
-                    return response()->json([
-                        'success' => false,
-                        'message' => 'Failed to download file from the provided URL.',
-                    ], 400);
-                }
-
                 $originalName = basename(parse_url($url, PHP_URL_PATH) ?: 'notification');
                 $fileType = strtolower(pathinfo($originalName, PATHINFO_EXTENSION)) ?: 'html';
 
-                $storedPath = 'extractions/' . uniqid() . '_' . $originalName;
-                Storage::disk('local')->put($storedPath, $response->body());
-                $filePath = Storage::disk('local')->path($storedPath);
+                $allowedExtensions = ['html', 'htm', 'pdf', 'docx', 'xlsx', 'doc', 'xls', 'csv', 'xml', 'png', 'jpg', 'jpeg', 'tiff', 'bmp', 'webp', 'tif'];
+                if (!in_array($fileType, $allowedExtensions, true)) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'SSRF / File Handling Block: The file extension is not allowed.',
+                    ], 400);
+                }
+
+                // Download file securely with chunked streaming, SSRF redirect defense, and size limits (max 20MB)
+                Log::info("Universal Extraction Engine: Downloading remote file securely from {$url}");
+                
+                $storedPath = 'extractions/' . Str::uuid() . '.' . $fileType;
+                $tempPath = Storage::disk('local')->path($storedPath);
+
+                if (!\Illuminate\Support\Facades\File::isDirectory(dirname($tempPath))) {
+                    \Illuminate\Support\Facades\File::makeDirectory(dirname($tempPath), 0755, true, true);
+                }
+
+                try {
+                    $client = new \GuzzleHttp\Client();
+                    $response = $client->request('GET', $url, [
+                        'stream' => true,
+                        'timeout' => 30,
+                        'allow_redirects' => [
+                            'max' => 5,
+                            'protocols' => ['http', 'https'],
+                            'on_redirect' => function(\Psr\Http\Message\RequestInterface $req, \Psr\Http\Message\ResponseInterface $res, \Psr\Http\Message\UriInterface $uri) {
+                                $redirectUrl = (string)$uri;
+                                if (!UrlSecurity::isSafeUrl($redirectUrl)) {
+                                    throw new \Exception("SSRF Block: Redirected to unsafe domain: " . $redirectUrl);
+                                }
+                            }
+                        ]
+                    ]);
+
+                    if ($response->getStatusCode() !== 200) {
+                        throw new \Exception("HTTP request failed with status code " . $response->getStatusCode());
+                    }
+
+                    $body = $response->getBody();
+                    $outStream = fopen($tempPath, 'wb');
+                    if ($outStream === false) {
+                        throw new \Exception("Failed to open file for writing: " . $tempPath);
+                    }
+
+                    $totalBytes = 0;
+                    $maxBytes = 20 * 1024 * 1024; // 20MB
+
+                    while (!$body->eof()) {
+                        $chunk = $body->read(8192); // Read 8KB chunks
+                        $totalBytes += strlen($chunk);
+                        if ($totalBytes > $maxBytes) {
+                            fclose($outStream);
+                            if (file_exists($tempPath)) {
+                                unlink($tempPath);
+                            }
+                            throw new \Exception("File size limit of 20MB exceeded.");
+                        }
+                        fwrite($outStream, $chunk);
+                    }
+                    fclose($outStream);
+                    $filePath = $tempPath;
+                } catch (\Exception $e) {
+                    if (isset($tempPath) && file_exists($tempPath)) {
+                        @unlink($tempPath);
+                    }
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'Failed to download file securely: ' . $e->getMessage(),
+                    ], 400);
+                }
             }
 
             // Create ExtractedNotification record

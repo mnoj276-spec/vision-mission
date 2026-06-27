@@ -237,4 +237,117 @@ class SecurityHardeningTest extends TestCase
         $this->assertStringNotContainsString('onerror', $createdJob->description);
         $this->assertStringContainsString('Normal text', $createdJob->description);
     }
+
+    /**
+     * 8. Test UrlSecurity detects and rejects private IP addresses (SSRF prevention).
+     */
+    public function test_ssrf_detects_and_rejects_private_ips()
+    {
+        $this->assertTrue(UrlSecurity::isPrivateIp('127.0.0.1'));
+        $this->assertTrue(UrlSecurity::isPrivateIp('10.254.254.254'));
+        $this->assertTrue(UrlSecurity::isPrivateIp('172.16.50.4'));
+        $this->assertTrue(UrlSecurity::isPrivateIp('192.168.1.100'));
+        $this->assertTrue(UrlSecurity::isPrivateIp('169.254.169.254'));
+        $this->assertTrue(UrlSecurity::isPrivateIp('::1'));
+        $this->assertTrue(UrlSecurity::isPrivateIp('fe80::1'));
+        $this->assertFalse(UrlSecurity::isPrivateIp('8.8.8.8'));
+    }
+
+    /**
+     * 9. Test XML Parser blocks external entity injection (XXE prevention).
+     */
+    public function test_xml_parser_blocks_xxe()
+    {
+        $xmlPayload = '<?xml version="1.0" encoding="ISO-8859-1"?>' .
+            '<!DOCTYPE foo [ ' .
+            '<!ELEMENT foo ANY >' .
+            '<!ENTITY xxe SYSTEM "file:///etc/passwd" >]><foo>&xxe;</foo>';
+
+        $tempFile = tempnam(sys_get_temp_dir(), 'xxe_test');
+        file_put_contents($tempFile, $xmlPayload);
+
+        try {
+            $parser = new \App\Domains\Extraction\Services\Parsers\XmlParser();
+            $result = $parser->extractText($tempFile);
+            
+            // The entity resolution should return empty string or not contain file contents
+            $this->assertStringNotContainsString('root:', $result);
+        } finally {
+            if (file_exists($tempFile)) {
+                unlink($tempFile);
+            }
+        }
+    }
+
+    /**
+     * 10. Test DOM-based HTML Sanitizer.
+     */
+    public function test_dom_html_sanitizer_removes_xss()
+    {
+        $input = '<p>Hello <b>World</b><script>alert(1)</script><img src="x" onerror="evil()"><span onclick="evil()">Click</span></p>';
+        $output = HtmlSanitizer::sanitizeHtml($input);
+        
+        $this->assertStringContainsString('Hello', $output);
+        $this->assertStringContainsString('<b>World</b>', $output);
+        $this->assertStringNotContainsString('<script>', $output);
+        $this->assertStringNotContainsString('onerror', $output);
+        $this->assertStringNotContainsString('onclick', $output);
+        $this->assertStringNotContainsString('evil', $output);
+    }
+
+    /**
+     * 11. Test Open Redirect protection in email click tracker.
+     */
+    public function test_email_click_tracker_blocks_open_redirect()
+    {
+        // Mock EmailLog
+        $token = 'test_redirect_token';
+        \App\Models\EmailLog::create([
+            'tracking_token' => $token,
+            'campaign_type' => 'admit_card_alert',
+            'recipient' => 'test@test.gov.in',
+            'subject' => 'Test',
+        ]);
+
+        // Attempt redirect to evil external domain
+        $response = $this->get('/email/track/click/' . $token . '?url=https://attacker.com');
+        
+        // Assert it redirects to / instead of attacker.com
+        $response->assertRedirect(url('/'));
+
+        // Attempt redirect to safe local URL
+        $localUrl = url('/jobs/test-job');
+        $responseLocal = $this->get('/email/track/click/' . $token . '?url=' . urlencode($localUrl));
+        $responseLocal->assertRedirect($localUrl);
+    }
+
+    /**
+     * 12. Test Path Traversal rejection in backups download.
+     */
+    public function test_backups_prevent_path_traversal()
+    {
+        $this->actingAs($this->adminUser);
+
+        // Access via settings management backup download
+        $response = $this->get('/api/admin/settings/backups/download/' . urlencode('../../../.env'));
+        $response->assertStatus(404);
+        
+        $response2 = $this->get('/api/admin/settings/backups/download/' . urlencode('....//.env'));
+        $response2->assertStatus(404);
+    }
+
+    /**
+     * 13. Test Extraction Engine API endpoints require authentication and admin.
+     */
+    public function test_extraction_api_requires_auth_and_admin()
+    {
+        // Public/Anonymous request to status endpoint
+        $responsePublic = $this->getJson(route('api.v1.extraction.status', 1));
+        $responsePublic->assertStatus(401);
+
+        // Candidate request to status endpoint
+        $this->actingAs($this->candidateUser, 'api');
+        $responseCandidate = $this->getJson(route('api.v1.extraction.status', 1));
+        $responseCandidate->assertStatus(403);
+    }
 }

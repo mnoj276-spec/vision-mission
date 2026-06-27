@@ -58,9 +58,15 @@ class XmlParser
         $doc->preserveWhiteSpace = false;
         libxml_use_internal_errors(true);
 
-        if (!$doc->loadXML($content)) {
+        if (function_exists('libxml_set_external_entity_loader')) {
+            libxml_set_external_entity_loader(function ($public, $system, $context) {
+                return null;
+            });
+        }
+
+        if (!$doc->loadXML($content, LIBXML_NONET)) {
             // Try loading as HTML fallback for malformed XML
-            if (!$doc->loadHTML($content)) {
+            if (!$doc->loadHTML($content, LIBXML_NOERROR | LIBXML_NOWARNING | LIBXML_NONET)) {
                 $errors = libxml_get_errors();
                 libxml_clear_errors();
                 Log::warning("XML parsing failed with " . count($errors) . " errors. Falling back to strip_tags.");

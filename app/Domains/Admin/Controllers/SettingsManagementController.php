@@ -761,10 +761,14 @@ class SettingsManagementController extends Controller
      */
     public function downloadBackup(string $filename)
     {
-        $filePath = storage_path('app/backups/' . str_replace('..', '', $filename));
-        if (!File::exists($filePath)) {
+        $baseDir = storage_path('app/backups');
+        $filename = basename($filename);
+        $filePath = $baseDir . '/' . $filename;
+
+        if (!\Illuminate\Support\Facades\File::exists($filePath)) {
             abort(404);
         }
+
         return response()->download($filePath);
     }
 
@@ -773,10 +777,15 @@ class SettingsManagementController extends Controller
      */
     public function deleteBackup(Request $request, string $filename): JsonResponse
     {
-        $filePath = storage_path('app/backups/' . str_replace('..', '', $filename));
-        if (File::exists($filePath)) {
-            File::delete($filePath);
+        $baseDir = storage_path('app/backups');
+        $filename = basename($filename);
+        $filePath = $baseDir . '/' . $filename;
+
+        if (!\Illuminate\Support\Facades\File::exists($filePath)) {
+            abort(404);
         }
+
+        \Illuminate\Support\Facades\File::delete($filePath);
 
         $this->adminService->logAction(
             Auth::id(),

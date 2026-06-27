@@ -169,7 +169,21 @@ class HybridScrapingEngine
             $headers['If-None-Match'] = $source->etag;
         }
 
-        $request = Http::timeout(15)->withHeaders($headers);
+        $request = Http::timeout(15)->withHeaders($headers)->withOptions([
+            'allow_redirects' => [
+                'max'             => 5,
+                'strict'          => false,
+                'referer'         => false,
+                'protocols'       => ['http', 'https'],
+                'track_redirects' => true,
+                'on_redirect'     => function(\Psr\Http\Message\RequestInterface $req, \Psr\Http\Message\ResponseInterface $res, \Psr\Http\Message\UriInterface $uri) {
+                    $redirectUrl = (string)$uri;
+                    if (!\App\Services\UrlSecurity::isSafeUrl($redirectUrl)) {
+                        throw new \Exception("SSRF Block: Redirect target '{$redirectUrl}' is not permitted.");
+                    }
+                }
+            ]
+        ]);
 
         // Get rotated proxy
         $proxy = $this->proxyManager->getProxy();
@@ -248,7 +262,21 @@ class HybridScrapingEngine
             $headers['If-None-Match'] = $source->etag;
         }
 
-        $request = Http::timeout(20)->withHeaders($headers);
+        $request = Http::timeout(20)->withHeaders($headers)->withOptions([
+            'allow_redirects' => [
+                'max'             => 5,
+                'strict'          => false,
+                'referer'         => false,
+                'protocols'       => ['http', 'https'],
+                'track_redirects' => true,
+                'on_redirect'     => function(\Psr\Http\Message\RequestInterface $req, \Psr\Http\Message\ResponseInterface $res, \Psr\Http\Message\UriInterface $uri) {
+                    $redirectUrl = (string)$uri;
+                    if (!\App\Services\UrlSecurity::isSafeUrl($redirectUrl)) {
+                        throw new \Exception("SSRF Block: Redirect target '{$redirectUrl}' is not permitted.");
+                    }
+                }
+            ]
+        ]);
 
         $proxy = $this->proxyManager->getProxy();
         if ($proxy) {
