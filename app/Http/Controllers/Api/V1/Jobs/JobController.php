@@ -179,4 +179,50 @@ class JobController extends Controller
             201
         );
     }
+
+    /**
+     * Get the historical timeline of a recruitment.
+     */
+    public function timeline(int $id): JsonResponse
+    {
+        $job = JobPost::find($id);
+
+        if (!$job) {
+            return $this->errorResponse('Job posting not found.', 404);
+        }
+
+        // If this is a child post, resolve the root parent
+        $root = $job->parent_id ? JobPost::find($job->parent_id) : $job;
+        if (!$root) {
+            $root = $job;
+        }
+
+        // Fetch child updates/notices/results ordered by date to build the timeline
+        $timelineEvents = JobPost::where('id', $root->id)
+            ->orWhere('parent_id', $root->id)
+            ->orderBy('published_at', 'asc')
+            ->orderBy('created_at', 'asc')
+            ->get();
+
+        $formattedEvents = $timelineEvents->map(function ($event) {
+            return [
+                'id' => $event->id,
+                'title' => $event->title,
+                'slug' => $event->slug,
+                'post_type' => $event->post_type,
+                'status' => $event->status,
+                'published_at' => $event->published_at ? $event->published_at->toIso8601String() : null,
+                'last_date_to_apply' => $event->last_date_to_apply ? $event->last_date_to_apply->toIso8601String() : null,
+                'official_website_link' => $event->official_website_link,
+                'apply_link' => $event->apply_link,
+            ];
+        });
+
+        return $this->successResponse([
+            'recruitment_id' => $root->id,
+            'recruitment_title' => $root->title,
+            'current_status' => $root->status,
+            'timeline' => $formattedEvents,
+        ], 'Recruitment timeline retrieved successfully.');
+    }
 }

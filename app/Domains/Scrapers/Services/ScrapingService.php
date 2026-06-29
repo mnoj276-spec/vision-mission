@@ -22,7 +22,8 @@ class ScrapingService implements ScrapingServiceInterface
     public function __construct(
         protected JobRepositoryInterface $jobRepo,
         protected AIService $aiService,
-        protected FingerprintService $fingerprintService
+        protected FingerprintService $fingerprintService,
+        protected HybridScrapingEngine $hybridEngine
     ) {}
 
     public function scrapeSource(ScrapingSource $source, int $attempt = 1): array
@@ -40,11 +41,8 @@ class ScrapingService implements ScrapingServiceInterface
                 throw new \Exception("SSRF Block: The source URL '{$url}' is not a permitted domain.");
             }
 
-            $response = Http::timeout(30)->get($url);
-            if ($response->failed()) {
-                throw new \Exception("HTTP Request failed with status: " . $response->status());
-            }
-            $rawJobs = $this->extractJobPostNodes($response->body(), $source);
+            $html = $this->hybridEngine->fetch($source);
+            $rawJobs = $this->extractJobPostNodes($html, $source);
             $s = $d = $q = $f = 0;
             foreach ($rawJobs as $rawJobData) {
                 $result = $this->processScrapedItem($source, $rawJobData);
@@ -70,7 +68,27 @@ class ScrapingService implements ScrapingServiceInterface
                     'retried' => $attempt > 1,
                 ],
             ]);
+            
+            $this->updateAdaptiveFrequency($source, $s);
+
             return ['success' => true, 'summary' => ['success' => $s, 'duplicate' => $d, 'quarantined' => $q, 'failed' => $f]];
+        } catch (\App\Domains\Scrapers\Exceptions\UnchangedContentException $e) {
+            Log::info("Delta Crawl: Content unchanged for {$source->name} (304 Not Modified). Skipping.");
+            ScrapingLog::create([
+                'scraping_source_id' => $source->id,
+                'status'             => 'success',
+                'items_found'        => 0,
+                'error_message'      => '[Delta Crawl] 304 Not Modified. Content unchanged.',
+                'raw_payload'        => [
+                    'unchanged' => true,
+                    'attempt'   => $attempt,
+                    'retried'   => $attempt > 1,
+                ],
+            ]);
+
+            $this->updateAdaptiveFrequency($source, 0);
+
+            return ['success' => true, 'unchanged' => true, 'summary' => ['success' => 0, 'duplicate' => 0, 'quarantined' => 0, 'failed' => 0]];
         } catch (\Exception $e) {
             Log::error("Scraper crash for {$source->name}: " . $e->getMessage());
             ScrapingLog::create([
@@ -84,6 +102,11 @@ class ScrapingService implements ScrapingServiceInterface
                     'trace' => substr($e->getTraceAsString(), 0, 1000)
                 ],
             ]);
+
+            $source->update([
+                'next_run_at' => now()->addMinutes(10), // Short backoff retry for network/scraping errors
+            ]);
+
             return ['success' => false, 'error' => $e->getMessage()];
         }
     }
@@ -410,14 +433,29 @@ class ScrapingService implements ScrapingServiceInterface
 
     public function classifyPostType(string $title, string $rawText): string
     {
+        // 1. Run legacy overrides first to maintain compatibility
         $t = strtolower($title . ' ' . $rawText);
-        if (str_contains($t, 'admit card') || str_contains($t, 'hall ticket') || str_contains($t, 'call letter')) return 'admit_card';
-        if (str_contains($t, 'result') || str_contains($t, 'merit list') || str_contains($t, 'cutoff') || str_contains($t, 'scorecard')) return 'result';
-        if (str_contains($t, 'answer key') || str_contains($t, 'response sheet')) return 'answer_key';
-        if (str_contains($t, 'syllabus') || str_contains($t, 'exam pattern') || str_contains($t, 'scheme of examination')) return 'syllabus';
-        if (str_contains($t, 'admission') || str_contains($t, 'entrance exam') || str_contains($t, 'counseling')) return 'admission';
-        if (str_contains($t, 'scholarship') || str_contains($t, 'fellowship') || str_contains($t, 'stipend')) return 'scholarship';
-        if (str_contains($t, 'notice') || str_contains($t, 'circular') || str_contains($t, 'corrigendum') || str_contains($t, 'postponement')) return 'notice';
+        if (str_contains($t, 'notice') || str_contains($t, 'circular') || str_contains($t, 'corrigendum') || str_contains($t, 'postponement')) {
+            return 'notice';
+        }
+        if (str_contains($t, 'syllabus') || str_contains($t, 'exam pattern') || str_contains($t, 'scheme of examination')) {
+            return 'syllabus';
+        }
+        if (str_contains($t, 'admission') || str_contains($t, 'entrance exam') || str_contains($t, 'counseling')) {
+            return 'admission';
+        }
+        if (str_contains($t, 'scholarship') || str_contains($t, 'fellowship') || str_contains($t, 'stipend')) {
+            return 'scholarship';
+        }
+
+        // 2. Classify via the new master taxonomy classifier
+        $classified = app(\App\Domains\Scrapers\Services\NotificationClassifier::class)->classify($title, $rawText);
+        $enumType = \App\Domains\Scrapers\Enums\NotificationType::tryFrom($classified);
+
+        if ($enumType) {
+            return $enumType->getBaseType();
+        }
+
         return 'job';
     }
 
@@ -496,20 +534,6 @@ class ScrapingService implements ScrapingServiceInterface
         $finalJobData['parent_id']  = $masterPost->id;
         $finalJobData['source_id']  = $source->id;
         $finalJobData['expires_at'] = $finalJobData['last_date_to_apply'] ?? null;
-        
-        // Propagate Status / Dates to Parent
-        $t = strtolower($finalJobData['title']);
-        if (str_contains($t, 'cancellation') || str_contains($t, 'cancelled')) {
-            $masterPost->update(['status' => 'archived']);
-        }
-        if (str_contains($t, 'extension') || str_contains($t, 'extend')) {
-            if (!empty($finalJobData['last_date_to_apply'])) {
-                $masterPost->update([
-                    'last_date_to_apply' => $finalJobData['last_date_to_apply'],
-                    'expires_at'         => $finalJobData['last_date_to_apply'],
-                ]);
-            }
-        }
 
         $jobPost = DB::transaction(function () use ($finalJobData, $source, $rawLogPayload, $rawData) {
             $finalJobData['slug'] = str()->slug($finalJobData['title']) . '-' . rand(100, 999);
@@ -531,6 +555,9 @@ class ScrapingService implements ScrapingServiceInterface
             ]);
             return $jobPost;
         });
+
+        // Trigger State Machine Lifecycle Transitions on Parent
+        app(\App\Domains\Jobs\Services\RecruitmentLifecycleManager::class)->transition($masterPost, $jobPost);
 
         // Trigger content generation if needed
         if (!app()->environment('testing')) {
@@ -554,5 +581,26 @@ class ScrapingService implements ScrapingServiceInterface
             $current = $parent;
         }
         return $current;
+    }
+
+    protected function updateAdaptiveFrequency(ScrapingSource $source, int $newItemsCount): void
+    {
+        $currentInterval = $source->crawl_interval_minutes ?: 60;
+        
+        if ($newItemsCount > 0) {
+            // Reset back to base interval if new items found (active posting period)
+            $newInterval = 30; // 30 minutes base interval for active feeds
+        } else {
+            // Scale up interval by 1.5x if no new content found (idle feed)
+            $newInterval = (int) ($currentInterval * 1.5);
+        }
+        
+        // Cap interval between 15 minutes and 1440 minutes (24 hours)
+        $newInterval = max(15, min(1440, $newInterval));
+        
+        $source->update([
+            'crawl_interval_minutes' => $newInterval,
+            'next_run_at' => now()->addMinutes($newInterval),
+        ]);
     }
 }

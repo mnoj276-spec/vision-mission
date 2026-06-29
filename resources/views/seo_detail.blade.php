@@ -219,17 +219,23 @@
 
 <div style="max-width: 1000px; margin: 0 auto; padding: 0 5%;">
     <!-- Breadcrumbs -->
-    <div class="breadcrumb-trail">
-        <a href="/">Home</a>
+    <nav aria-label="Breadcrumb" class="breadcrumb-trail" itemscope itemtype="https://schema.org/BreadcrumbList">
+        <span itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+            <a itemprop="item" href="/"><span itemprop="name">Home</span></a>
+            <meta itemprop="position" content="1">
+        </span>
         @foreach($breadcrumbs as $label => $url)
             <span class="breadcrumb-separator">&raquo;</span>
-            @if($url)
-                <a href="{{ $url }}">{{ $label }}</a>
-            @else
-                <span>{{ $label }}</span>
-            @endif
+            <span itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+                @if($url)
+                    <a itemprop="item" href="{{ $url }}"><span itemprop="name">{{ $label }}</span></a>
+                @else
+                    <span itemprop="name">{{ $label }}</span>
+                @endif
+                <meta itemprop="position" content="{{ $loop->iteration + 1 }}">
+            </span>
         @endforeach
-    </div>
+    </nav>
 
     <!-- Main Detail Card -->
     <article class="detail-card">
@@ -365,12 +371,12 @@
             <h4>Verification Links & PDF Files</h4>
             <div style="display: flex; gap: 1rem; flex-wrap: wrap; margin-top: 0.75rem;">
                 @if($job->official_website_link)
-                    <a href="{{ $job->official_website_link }}" target="_blank" class="btn-view" style="display: flex; align-items: center; gap: 0.4rem;">
+                    <a href="{{ $job->official_website_link }}" target="_blank" rel="nofollow noopener" class="btn-view" style="display: flex; align-items: center; gap: 0.4rem;">
                         🌐 Official Website &raquo;
                     </a>
                 @endif
                 @if($job->apply_link)
-                    <a href="{{ $job->apply_link }}" target="_blank" class="btn-view" style="display: flex; align-items: center; gap: 0.4rem; background: var(--accent-color); color: #fff; border-color: var(--accent-color);">
+                    <a href="{{ $job->apply_link }}" target="_blank" rel="nofollow noopener" class="btn-view" style="display: flex; align-items: center; gap: 0.4rem; background: var(--accent-color); color: #fff; border-color: var(--accent-color);">
                         📝 Apply Online &raquo;
                     </a>
                 @endif
@@ -436,6 +442,16 @@
 {!! json_encode($seoService->getSchemaService()->getFAQPageSchema($aiContent->faqs), JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES) !!}
 </script>
 @endif
+
+<!-- Speakable Schema (Voice Search Optimization) -->
+<script type="application/ld+json">
+{!! json_encode($seoService->getSchemaService()->getSpeakableSchema($pageTitle, $metaDescription, request()->url()), JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES) !!}
+</script>
+
+<!-- GovernmentService Schema -->
+<script type="application/ld+json">
+{!! json_encode($seoService->getSchemaService()->getGovernmentServiceSchema($job), JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES) !!}
+</script>
 @endsection
 
 @section('scripts')

@@ -23,8 +23,17 @@ Route::get('/railway-jobs', [JobController::class, 'railwayJobs'])->name('seo.ra
 Route::get('/upsc-jobs',    [JobController::class, 'upscJobs'])->name('seo.upsc');
 Route::get('/state-jobs',   [JobController::class, 'stateJobs'])->name('seo.state');
 
-// Automated XML Sitemap
-Route::get('/sitemap.xml',  [JobController::class, 'sitemap'])->name('sitemap');
+// ─── Sitemap Index Architecture ──────────────────────────────────────────────
+use App\Domains\Jobs\Controllers\SitemapController;
+
+Route::get('/sitemap.xml', [SitemapController::class, 'index'])->name('sitemap');
+Route::prefix('sitemaps')->group(function () {
+    Route::get('/sitemap-pages.xml',  [SitemapController::class, 'pages'])->name('sitemap.pages');
+    Route::get('/sitemap-jobs.xml',   [SitemapController::class, 'jobs'])->name('sitemap.jobs');
+    Route::get('/sitemap-images.xml', [SitemapController::class, 'images'])->name('sitemap.images');
+    Route::get('/sitemap-videos.xml', [SitemapController::class, 'videos'])->name('sitemap.videos');
+    Route::get('/sitemap-faqs.xml',   [SitemapController::class, 'faqs'])->name('sitemap.faqs');
+});
 
 // PWA Offline Fallback View
 Route::get('/offline',      [JobController::class, 'offline'])->name('pwa.offline');
@@ -94,7 +103,10 @@ Route::middleware('internal_linking')->group(function () {
 });
 
 // Dynamic Google News Compliant News Sitemap
-Route::get('/news-sitemap.xml', [ProgrammaticSeoController::class, 'newsSitemap'])->name('seo.news_sitemap');
+Route::get('/news-sitemap.xml', [SitemapController::class, 'news'])->name('seo.news_sitemap');
+
+// IndexNow API Key Verification
+Route::get('/{key}.txt', [SitemapController::class, 'indexNowKey'])->where('key', '[a-f0-9]{32}')->name('indexnow.key');
 
 // ─── Developer Interactive OpenAPI Documentation ────────────────────────────
 Route::get('/docs', [\App\Http\Controllers\Api\DocsController::class, 'index'])->name('api.docs');

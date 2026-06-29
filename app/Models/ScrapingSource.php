@@ -18,12 +18,25 @@ class ScrapingSource extends Model
         'source_type',
         'selectors_config',
         'cron_expression',
-        'is_active'
+        'is_active',
+        'detected_features',
+        'preferred_engine',
+        'cookies',
+        'performance_stats',
+        'priority',
+        'last_modified',
+        'etag',
+        'crawl_interval_minutes',
+        'next_run_at',
     ];
 
     protected $casts = [
         'selectors_config' => 'array',
         'is_active' => 'boolean',
+        'detected_features' => 'array',
+        'cookies' => 'array',
+        'performance_stats' => 'array',
+        'next_run_at' => 'datetime',
     ];
 
     /**

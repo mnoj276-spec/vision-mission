@@ -46,6 +46,17 @@ class EmailTrackingController extends Controller
 
         $destinationUrl = $request->get('url', url('/'));
 
+        // Validate redirect target to prevent Open Redirect
+        $host = parse_url($destinationUrl, PHP_URL_HOST);
+        $localHost = parse_url(config('app.url'), PHP_URL_HOST);
+        
+        $isLocal = empty($host) || strcasecmp($host, $localHost) === 0;
+        $isApproved = \App\Services\UrlSecurity::isSafeUrl($destinationUrl);
+
+        if (!$isLocal && !$isApproved) {
+            $destinationUrl = url('/');
+        }
+
         // Perform clean redirection
         return redirect()->to($destinationUrl);
     }

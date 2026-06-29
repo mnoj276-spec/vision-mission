@@ -22,7 +22,9 @@ Route::middleware(['auth', 'admin'])->prefix('api/admin')->group(function () {
     Route::middleware('permission:view_dashboard')->group(function () {
         Route::get('/dashboard',       [AdminDashboardController::class, 'dashboardView'])->name('admin.dashboard.api');
         Route::get('/data',            [AdminDashboardController::class, 'getAdminData'])->name('admin.data');
-        Route::get('/analytics/metrics', [AdminDashboardController::class, 'getAnalyticsData'])->name('admin.analytics.metrics');
+        Route::get('/analytics/metrics', [AdminDashboardController::class, 'getAnalyticsData'])
+            ->middleware('feature:analytics')
+            ->name('admin.analytics.metrics');
     });
 
     // ─── Administrative Audit Logs ───────────────────────────────────────────
@@ -33,9 +35,12 @@ Route::middleware(['auth', 'admin'])->prefix('api/admin')->group(function () {
     // ─── Global SEO & Ad Settings & Unified Dynamic Settings Module ──────────
     Route::middleware('permission:manage_seo')->group(function () {
         Route::post('/seo/update', [AdminDashboardController::class, 'updateSeoSettings'])->name('admin.seo.update');
-        Route::get('/advertisements', [AdManagementController::class, 'index'])->name('admin.ads.index');
-        Route::post('/advertisements', [AdManagementController::class, 'storeOrUpdate'])->name('admin.ads.store_update');
-        Route::post('/advertisements/{id}/toggle', [AdManagementController::class, 'toggleActive'])->name('admin.ads.toggle');
+        
+        Route::middleware('feature:marketing')->group(function () {
+            Route::get('/advertisements', [AdManagementController::class, 'index'])->name('admin.ads.index');
+            Route::post('/advertisements', [AdManagementController::class, 'storeOrUpdate'])->name('admin.ads.store_update');
+            Route::post('/advertisements/{id}/toggle', [AdManagementController::class, 'toggleActive'])->name('admin.ads.toggle');
+        });
 
         // Dynamic Settings Module APIs
         Route::get('/settings', [SettingsManagementController::class, 'getSettings'])->name('admin.settings.index');
@@ -48,26 +53,32 @@ Route::middleware(['auth', 'admin'])->prefix('api/admin')->group(function () {
         Route::post('/settings/api', [SettingsManagementController::class, 'updateApiSettings'])->name('admin.settings.api');
         Route::post('/settings/social', [SettingsManagementController::class, 'updateSocialLinks'])->name('admin.settings.social');
         
-        Route::get('/settings/menus', [SettingsManagementController::class, 'getMenus'])->name('admin.settings.menus');
-        Route::post('/settings/menus', [SettingsManagementController::class, 'saveMenuItem'])->name('admin.settings.menus.save');
-        Route::post('/settings/menus/reorder', [SettingsManagementController::class, 'reorderMenuItems'])->name('admin.settings.menus.reorder');
-        Route::delete('/settings/menus/{id}', [SettingsManagementController::class, 'deleteMenuItem'])->name('admin.settings.menus.delete');
+        Route::middleware('feature:settings.operations')->group(function () {
+            Route::get('/settings/menus', [SettingsManagementController::class, 'getMenus'])->name('admin.settings.menus');
+            Route::post('/settings/menus', [SettingsManagementController::class, 'saveMenuItem'])->name('admin.settings.menus.save');
+            Route::post('/settings/menus/reorder', [SettingsManagementController::class, 'reorderMenuItems'])->name('admin.settings.menus.reorder');
+            Route::delete('/settings/menus/{id}', [SettingsManagementController::class, 'deleteMenuItem'])->name('admin.settings.menus.delete');
+            
+            Route::get('/settings/cms-pages', [SettingsManagementController::class, 'getCmsPages'])->name('admin.settings.cms.index');
+            Route::get('/settings/cms-pages/{id}', [SettingsManagementController::class, 'getCmsPageDetail'])->name('admin.settings.cms.detail');
+            Route::post('/settings/cms-pages', [SettingsManagementController::class, 'saveCmsPage'])->name('admin.settings.cms.save');
+            Route::delete('/settings/cms-pages/{id}', [SettingsManagementController::class, 'deleteCmsPage'])->name('admin.settings.cms.delete');
+        });
         
-        Route::get('/settings/cms-pages', [SettingsManagementController::class, 'getCmsPages'])->name('admin.settings.cms.index');
-        Route::get('/settings/cms-pages/{id}', [SettingsManagementController::class, 'getCmsPageDetail'])->name('admin.settings.cms.detail');
-        Route::post('/settings/cms-pages', [SettingsManagementController::class, 'saveCmsPage'])->name('admin.settings.cms.save');
-        Route::delete('/settings/cms-pages/{id}', [SettingsManagementController::class, 'deleteCmsPage'])->name('admin.settings.cms.delete');
+        Route::middleware('feature:settings.media')->group(function () {
+            Route::get('/settings/media', [SettingsManagementController::class, 'getMedia'])->name('admin.settings.media.index');
+            Route::post('/settings/media/upload', [SettingsManagementController::class, 'uploadMedia'])->name('admin.settings.media.upload');
+            Route::post('/settings/media/folder', [SettingsManagementController::class, 'createFolder'])->name('admin.settings.media.folder');
+            Route::delete('/settings/media', [SettingsManagementController::class, 'deleteMedia'])->name('admin.settings.media.delete');
+        });
         
-        Route::get('/settings/media', [SettingsManagementController::class, 'getMedia'])->name('admin.settings.media.index');
-        Route::post('/settings/media/upload', [SettingsManagementController::class, 'uploadMedia'])->name('admin.settings.media.upload');
-        Route::post('/settings/media/folder', [SettingsManagementController::class, 'createFolder'])->name('admin.settings.media.folder');
-        Route::delete('/settings/media', [SettingsManagementController::class, 'deleteMedia'])->name('admin.settings.media.delete');
-        
-        Route::get('/settings/backups', [SettingsManagementController::class, 'getBackups'])->name('admin.settings.backups.index');
-        Route::post('/settings/backups/generate', [SettingsManagementController::class, 'generateBackup'])->name('admin.settings.backups.generate');
-        Route::post('/settings/backups/restore', [SettingsManagementController::class, 'restoreBackup'])->name('admin.settings.backups.restore');
-        Route::delete('/settings/backups/{filename}', [SettingsManagementController::class, 'deleteBackup'])->name('admin.settings.backups.delete');
-        Route::get('/settings/backups/download/{filename}', [SettingsManagementController::class, 'downloadBackup'])->name('admin.settings.backups.download');
+        Route::middleware('feature:settings.security.backups')->group(function () {
+            Route::get('/settings/backups', [SettingsManagementController::class, 'getBackups'])->name('admin.settings.backups.index');
+            Route::post('/settings/backups/generate', [SettingsManagementController::class, 'generateBackup'])->name('admin.settings.backups.generate');
+            Route::post('/settings/backups/restore', [SettingsManagementController::class, 'restoreBackup'])->name('admin.settings.backups.restore');
+            Route::delete('/settings/backups/{filename}', [SettingsManagementController::class, 'deleteBackup'])->name('admin.settings.backups.delete');
+            Route::get('/settings/backups/download/{filename}', [SettingsManagementController::class, 'downloadBackup'])->name('admin.settings.backups.download');
+        });
     });
 
     // ─── Queue & DLQ Management ──────────────────────────────────────────────
@@ -80,9 +91,11 @@ Route::middleware(['auth', 'admin'])->prefix('api/admin')->group(function () {
         Route::delete('/queues/failed/{uuid}',  [\App\Domains\Admin\Controllers\QueueManagementController::class, 'deleteJob'])->name('admin.queues.delete');
 
         // ─── Marketing Automation & Email Tracking ───
-        Route::get('/marketing/stats',          [\App\Domains\Admin\Controllers\MarketingController::class, 'getStats'])->name('admin.marketing.stats');
-        Route::get('/marketing/logs',           [\App\Domains\Admin\Controllers\MarketingController::class, 'getLogs'])->name('admin.marketing.logs');
-        Route::post('/marketing/trigger-test',  [\App\Domains\Admin\Controllers\MarketingController::class, 'triggerTest'])->name('admin.marketing.trigger-test');
+        Route::middleware('feature:marketing')->group(function () {
+            Route::get('/marketing/stats',          [\App\Domains\Admin\Controllers\MarketingController::class, 'getStats'])->name('admin.marketing.stats');
+            Route::get('/marketing/logs',           [\App\Domains\Admin\Controllers\MarketingController::class, 'getLogs'])->name('admin.marketing.logs');
+            Route::post('/marketing/trigger-test',  [\App\Domains\Admin\Controllers\MarketingController::class, 'triggerTest'])->name('admin.marketing.trigger-test');
+        });
     });
 
     // ─── User Management ─────────────────────────────────────────────────────

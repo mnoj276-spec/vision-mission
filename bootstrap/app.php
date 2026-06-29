@@ -20,6 +20,8 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withCommands([
         \App\Domains\Scrapers\Commands\RunScraperCommand::class,
         \App\Domains\Scrapers\Commands\RunResultEngineCommand::class,
+        \App\Domains\Scrapers\Commands\RecoverDeadQueueCommand::class,
+        \App\Domains\Scrapers\Commands\GenerateScalingReportCommand::class,
         \App\Console\Commands\WarmInternalLinksCache::class,
         \App\Console\Commands\WelcomeSeriesScheduler::class,
         \App\Console\Commands\AlertsScheduler::class,
@@ -37,6 +39,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'spatie_role'        => \Spatie\Permission\Middleware\RoleMiddleware::class,
             'spatie_permission'  => \Spatie\Permission\Middleware\PermissionMiddleware::class,
             'internal_linking'   => \App\Http\Middleware\InternalLinkingHeaders::class,
+            'feature'            => \App\Http\Middleware\EnsureFeatureEnabled::class,
         ]);
 
         $middleware->prependToGroup('web', \App\Http\Middleware\DynamicMaintenanceMode::class);

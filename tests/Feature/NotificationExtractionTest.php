@@ -173,9 +173,18 @@ class NotificationExtractionTest extends TestCase
         Queue::fake();
         Storage::fake('local');
 
+        $adminUser = \App\Models\User::create([
+            'name' => 'Active Admin',
+            'email' => 'admin@test.gov.in',
+            'phone' => '9999999999',
+            'password' => bcrypt('password123'),
+            'role' => 'admin',
+            'is_active' => true,
+        ]);
+
         $uploadedFile = \Illuminate\Http\UploadedFile::fake()->create('notification.pdf', 100);
 
-        $response = $this->postJson(route('api.v1.extraction.upload'), [
+        $response = $this->actingAs($adminUser, 'api')->postJson(route('api.v1.extraction.upload'), [
             'file' => $uploadedFile,
         ]);
 
@@ -239,6 +248,15 @@ class NotificationExtractionTest extends TestCase
      */
     public function test_approval_api_saves_job_post(): void
     {
+        $adminUser = \App\Models\User::create([
+            'name' => 'Active Admin',
+            'email' => 'admin@test.gov.in',
+            'phone' => '9999999999',
+            'password' => bcrypt('password123'),
+            'role' => 'admin',
+            'is_active' => true,
+        ]);
+
         $notification = ExtractedNotification::create([
             'file_path'          => '/path/to/file.pdf',
             'original_filename'  => 'file.pdf',
@@ -262,7 +280,7 @@ class NotificationExtractionTest extends TestCase
             ],
         ]);
 
-        $response = $this->postJson(route('api.v1.extraction.approve', ['id' => $notification->id]));
+        $response = $this->actingAs($adminUser, 'api')->postJson(route('api.v1.extraction.approve', ['id' => $notification->id]));
 
         $response->assertStatus(200);
         $response->assertJsonStructure(['success', 'job_post', 'message']);
@@ -286,6 +304,15 @@ class NotificationExtractionTest extends TestCase
      */
     public function test_duplicate_fingerprint_blocks_approval(): void
     {
+        $adminUser = \App\Models\User::create([
+            'name' => 'Active Admin',
+            'email' => 'admin@test.gov.in',
+            'phone' => '9999999999',
+            'password' => bcrypt('password123'),
+            'role' => 'admin',
+            'is_active' => true,
+        ]);
+
         $notification1 = ExtractedNotification::create([
             'file_path'          => '/path/to/file.pdf',
             'original_filename'  => 'file.pdf',
@@ -306,7 +333,7 @@ class NotificationExtractionTest extends TestCase
         ]);
 
         // First approval: should succeed
-        $response1 = $this->postJson(route('api.v1.extraction.approve', ['id' => $notification1->id]));
+        $response1 = $this->actingAs($adminUser, 'api')->postJson(route('api.v1.extraction.approve', ['id' => $notification1->id]));
         $response1->assertStatus(200);
 
         // Second duplicate approval: should be rejected
@@ -329,7 +356,7 @@ class NotificationExtractionTest extends TestCase
             ],
         ]);
 
-        $response2 = $this->postJson(route('api.v1.extraction.approve', ['id' => $notification2->id]));
+        $response2 = $this->actingAs($adminUser, 'api')->postJson(route('api.v1.extraction.approve', ['id' => $notification2->id]));
         $response2->assertStatus(409);
         $response2->assertJsonFragment([
             'success' => false,

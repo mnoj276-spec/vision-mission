@@ -1,2 +1,49 @@
+# GovJobs Government Jobs Portal — robots.txt
+# https://www.robotstxt.org/robotstxt.html
+
 User-agent: *
-Disallow:
+Allow: /
+
+# Sitemaps
+Sitemap: https://govjobs.example.com/sitemap.xml
+Sitemap: https://govjobs.example.com/news-sitemap.xml
+
+# Crawl-delay (polite crawling)
+Crawl-delay: 1
+
+# Block admin & API paths
+Disallow: /api/
+Disallow: /admin/
+Disallow: /docs
+Disallow: /email/track/
+Disallow: /go/
+Disallow: /horizon
+
+# Block duplicate content (query parameters that create duplicates)
+Disallow: /*?_token=
+Disallow: /*?sort=
+
+# Allow Google specific bots full access
+User-agent: Googlebot
+Allow: /
+Crawl-delay: 0
+
+User-agent: Googlebot-News
+Allow: /
+
+User-agent: Googlebot-Image
+Allow: /
+
+# Bing bot
+User-agent: Bingbot
+Allow: /
+Crawl-delay: 1
+
+# IndexNow-aware bots (Yandex, Seznam)
+User-agent: YandexBot
+Allow: /
+Crawl-delay: 2
+
+User-agent: SeznamBot
+Allow: /
+Crawl-delay: 2

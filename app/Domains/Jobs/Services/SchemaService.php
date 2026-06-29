@@ -30,6 +30,7 @@ class SchemaService
         $settings = $this->getSeoSettings();
         $name = str_replace(' - GovJobs', '', $settings['meta_title'] ?? 'GovJobs');
         $url = request()->getSchemeAndHttpHost();
+        $logoUrl = $url . '/assets/images/icons/pwa-icon-512.png';
 
         return [
             '@context' => 'https://schema.org',
@@ -37,11 +38,24 @@ class SchemaService
             '@id' => $url . '/#organization',
             'name' => $name,
             'url' => $url,
+            'description' => $settings['meta_description'] ?? 'Premium automated government jobs portal with AI-verified recruitment alerts.',
             'logo' => [
                 '@type' => 'ImageObject',
                 '@id' => $url . '/#logo',
-                'url' => $url . '/assets/css/portal.css', // Reference actual theme assets
+                'url' => $logoUrl,
+                'width' => 512,
+                'height' => 512,
                 'caption' => $name
+            ],
+            'image' => $logoUrl,
+            'contactPoint' => [
+                '@type' => 'ContactPoint',
+                'contactType' => 'customer support',
+                'availableLanguage' => ['English', 'Hindi'],
+            ],
+            'address' => [
+                '@type' => 'PostalAddress',
+                'addressCountry' => 'IN',
             ],
             'sameAs' => [
                 'https://t.me/gov_job_alerts_mock',
@@ -170,6 +184,7 @@ class SchemaService
     {
         $baseUrl = request()->getSchemeAndHttpHost();
         $detailUrl = route('seo.job_detail', ['slug' => $job->slug]);
+        $logoUrl = $baseUrl . '/assets/images/icons/pwa-icon-512.png';
 
         $schema = [
             '@context' => 'https://schema.org',
@@ -184,7 +199,7 @@ class SchemaService
                 '@type' => 'Organization',
                 'name' => $job->department->name ?? 'Government Recruitment Board',
                 'sameAs' => $job->official_website_link ?? 'https://upsc.gov.in',
-                'logo' => $baseUrl . '/assets/css/portal.css'
+                'logo' => $logoUrl
             ],
             'jobLocation' => [
                 '@type' => 'Place',
@@ -194,7 +209,12 @@ class SchemaService
                     'addressCountry' => 'IN'
                 ]
             ],
+            'applicantLocationRequirements' => [
+                '@type' => 'Country',
+                'name' => 'India'
+            ],
             'industry' => 'Government',
+            'occupationalCategory' => $job->category->name ?? 'Government Services',
             'baseSalary' => [
                 '@type' => 'MonetaryAmount',
                 'currency' => 'INR',
@@ -211,6 +231,10 @@ class SchemaService
             ]
         ];
 
+        if ($job->vacancy_count > 0) {
+            $schema['totalJobOpenings'] = $job->vacancy_count;
+        }
+
         if ($job->apply_link) {
             $schema['directApply'] = true;
         }
@@ -225,6 +249,7 @@ class SchemaService
     {
         $baseUrl = request()->getSchemeAndHttpHost();
         $detailUrl = route('seo.job_detail', ['slug' => $job->slug]);
+        $logoUrl = $baseUrl . '/assets/images/icons/pwa-icon-512.png';
 
         return [
             '@context' => 'https://schema.org',
@@ -243,7 +268,63 @@ class SchemaService
             'publisher' => [
                 '@id' => $baseUrl . '/#organization'
             ],
-            'image' => $baseUrl . '/assets/css/portal.css'
+            'image' => $logoUrl
+        ];
+    }
+
+    /**
+     * Generate Speakable Schema for Google Assistant voice search.
+     * Targets the title and description sections for voice readability.
+     */
+    public function getSpeakableSchema(string $title, string $description, string $url): array
+    {
+        return [
+            '@context' => 'https://schema.org',
+            '@type' => 'WebPage',
+            '@id' => $url . '/#speakable',
+            'name' => $title,
+            'speakable' => [
+                '@type' => 'SpeakableSpecification',
+                'cssSelector' => [
+                    '.detail-header-block h1',
+                    '.details-section p',
+                    '.seo-hero h1',
+                    '.seo-hero p',
+                ]
+            ],
+            'url' => $url
+        ];
+    }
+
+    /**
+     * Generate GovernmentService Schema for government job portal compliance.
+     */
+    public function getGovernmentServiceSchema(JobPost $job): array
+    {
+        $baseUrl = request()->getSchemeAndHttpHost();
+        $detailUrl = route('seo.job_detail', ['slug' => $job->slug]);
+
+        return [
+            '@context' => 'https://schema.org',
+            '@type' => 'GovernmentService',
+            'name' => $job->title,
+            'serviceType' => 'Government Recruitment',
+            'serviceOperator' => [
+                '@type' => 'GovernmentOrganization',
+                'name' => $job->department->name ?? 'Government of India',
+            ],
+            'areaServed' => [
+                '@type' => 'Country',
+                'name' => 'India'
+            ],
+            'audience' => [
+                '@type' => 'Audience',
+                'audienceType' => 'Job Seekers'
+            ],
+            'provider' => [
+                '@id' => $baseUrl . '/#organization'
+            ],
+            'url' => $detailUrl
         ];
     }
 

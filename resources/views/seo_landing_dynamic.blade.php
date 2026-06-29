@@ -329,17 +329,23 @@
 
 <div style="max-width: 1400px; margin: 0 auto; padding: 0 5%;">
     <!-- Breadcrumbs -->
-    <div class="breadcrumb-trail">
-        <a href="/">Home</a>
+    <nav aria-label="Breadcrumb" class="breadcrumb-trail" itemscope itemtype="https://schema.org/BreadcrumbList">
+        <span itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+            <a itemprop="item" href="/"><span itemprop="name">Home</span></a>
+            <meta itemprop="position" content="1">
+        </span>
         @foreach($breadcrumbs as $label => $url)
             <span class="breadcrumb-separator">&raquo;</span>
-            @if($url)
-                <a href="{{ $url }}">{{ $label }}</a>
-            @else
-                <span>{{ $label }}</span>
-            @endif
+            <span itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+                @if($url)
+                    <a itemprop="item" href="{{ $url }}"><span itemprop="name">{{ $label }}</span></a>
+                @else
+                    <span itemprop="name">{{ $label }}</span>
+                @endif
+                <meta itemprop="position" content="{{ $loop->iteration + 1 }}">
+            </span>
         @endforeach
-    </div>
+    </nav>
 
     <!-- SEO Banner -->
     <section class="seo-hero">
@@ -378,7 +384,7 @@
             <div class="seo-table-panel">
                 <div class="seo-table-title" style="color: var(--accent-color);">
                     <svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
-                    Live Active Opportunities ({{ count($jobs) }})
+                    Live Active Opportunities ({{ $jobs->total() }})
                 </div>
 
                 @forelse($jobs as $job)
@@ -423,6 +429,33 @@
                 @endforelse
             </div>
 
+            {{-- Server-Side Crawlable Pagination Links --}}
+            @if($jobs->lastPage() > 1)
+            <nav aria-label="Pagination" style="display: flex; align-items: center; justify-content: center; gap: 0.4rem; margin: 2rem 0; flex-wrap: wrap;">
+                @if($jobs->onFirstPage())
+                    <span style="padding: 0.5rem 0.9rem; border-radius: 8px; background: var(--bg-secondary); color: var(--text-secondary); opacity: 0.5; font-size: 0.85rem;">&laquo; Prev</span>
+                @else
+                    <a href="{{ $jobs->previousPageUrl() }}" style="padding: 0.5rem 0.9rem; border-radius: 8px; background: var(--bg-secondary); border: 1px solid var(--border-color); color: var(--text-primary); text-decoration: none; font-size: 0.85rem; transition: background 0.2s;">&laquo; Prev</a>
+                @endif
+
+                @for($i = 1; $i <= $jobs->lastPage(); $i++)
+                    @if($i == $jobs->currentPage())
+                        <span style="padding: 0.5rem 0.9rem; border-radius: 8px; background: var(--accent-color); color: #fff; font-weight: 700; font-size: 0.85rem;">{{ $i }}</span>
+                    @elseif($i <= 3 || $i > $jobs->lastPage() - 3 || abs($i - $jobs->currentPage()) <= 2)
+                        <a href="{{ $jobs->url($i) }}" style="padding: 0.5rem 0.9rem; border-radius: 8px; background: var(--bg-secondary); border: 1px solid var(--border-color); color: var(--text-primary); text-decoration: none; font-size: 0.85rem; transition: background 0.2s;">{{ $i }}</a>
+                    @elseif($i == 4 || $i == $jobs->lastPage() - 3)
+                        <span style="color: var(--text-secondary); font-size: 0.85rem;">…</span>
+                    @endif
+                @endfor
+
+                @if($jobs->hasMorePages())
+                    <a href="{{ $jobs->nextPageUrl() }}" style="padding: 0.5rem 0.9rem; border-radius: 8px; background: var(--bg-secondary); border: 1px solid var(--border-color); color: var(--text-primary); text-decoration: none; font-size: 0.85rem; transition: background 0.2s;">Next &raquo;</a>
+                @else
+                    <span style="padding: 0.5rem 0.9rem; border-radius: 8px; background: var(--bg-secondary); color: var(--text-secondary); opacity: 0.5; font-size: 0.85rem;">Next &raquo;</span>
+                @endif
+            </nav>
+            @endif
+
             <!-- Telegram Channel Call-To-Action -->
             <div class="telegram-cta-banner">
                 <div class="telegram-content">
@@ -430,7 +463,7 @@
                     <p>Get real-time push feeds of government postings. Join 150K+ candidates now!</p>
                 </div>
                 <div>
-                    <a href="https://t.me/gov_job_alerts_mock" class="telegram-btn" id="telegramAlertJoinBtn" target="_blank">
+                    <a href="https://t.me/gov_job_alerts_mock" class="telegram-btn" id="telegramAlertJoinBtn" target="_blank" rel="nofollow noopener">
                         Join Channel &raquo;
                     </a>
                 </div>
@@ -480,6 +513,15 @@
 
 @endsection
 
+@section('pagination_meta')
+@if($jobs->currentPage() > 1)
+    <link rel="prev" href="{{ $jobs->previousPageUrl() }}">
+@endif
+@if($jobs->hasMorePages())
+    <link rel="next" href="{{ $jobs->nextPageUrl() }}">
+@endif
+@endsection
+
 @section('schema')
 <!-- BreadcrumbList Schema -->
 <script type="application/ld+json">
@@ -491,8 +533,8 @@
   $itemListSchema = [
       '@context' => 'https://schema.org',
       '@type' => 'ItemList',
-      'numberOfItems' => count($jobs),
-      'itemListElement' => collect($jobs)->map(fn($job, $index) => [
+      'numberOfItems' => $jobs->total(),
+      'itemListElement' => collect($jobs->items())->map(fn($job, $index) => [
           '@type' => 'ListItem',
           'position' => $index + 1,
           'url' => route('seo.job_detail', ['slug' => $job->slug]),
@@ -510,6 +552,11 @@
 {!! json_encode($seoService->getSchemaService()->getJobPostingSchema($job), JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES) !!}
 </script>
 @endforeach
+
+<!-- Speakable Schema (Voice Search Optimization) -->
+<script type="application/ld+json">
+{!! json_encode($seoService->getSchemaService()->getSpeakableSchema($pageTitle, $metaDescription, request()->url()), JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES) !!}
+</script>
 @endsection
 
 @section('scripts')

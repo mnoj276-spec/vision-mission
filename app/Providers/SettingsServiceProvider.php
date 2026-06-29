@@ -21,6 +21,7 @@ class SettingsServiceProvider extends ServiceProvider
     {
         // Load settings helper functions
         require_once app_path('Helpers/SettingsHelper.php');
+        require_once app_path('Helpers/FeatureToggle.php');
     }
 
     /**

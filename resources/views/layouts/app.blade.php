@@ -39,8 +39,16 @@
     <meta property="twitter:description" content="{{ $seo['twitter_description'] }}">
     <meta property="twitter:image" content="{{ $seo['twitter_image'] }}">
 
-    <!-- Canonical URL -->
-    <link rel="canonical" href="{{ request()->url() }}">
+    <!-- Canonical URL (pagination-aware, query-stripped) -->
+    @php
+        $canonicalUrl = request()->url();
+        // Preserve page param for paginated pages (page > 1)
+        if (request()->has('page') && (int) request()->input('page') > 1) {
+            $canonicalUrl .= '?page=' . (int) request()->input('page');
+        }
+    @endphp
+    <link rel="canonical" href="{{ $canonicalUrl }}">
+    @yield('pagination_meta')
     
     <!-- Speed Optimization: Resource Hint Preconnects -->
     <link rel="preconnect" href="https://fonts.googleapis.com">

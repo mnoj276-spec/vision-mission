@@ -225,6 +225,7 @@ class AnalyticsTelemetryTest extends TestCase
 
         // 2. Fetch admin telemetry as admin user
         $this->actingAs($this->adminUser);
+        config(['features.version' => 3]);
 
         $response = $this->getJson(route('admin.analytics.metrics', ['days' => 7]));
 
