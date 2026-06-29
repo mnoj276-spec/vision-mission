@@ -2,9 +2,15 @@
 
 namespace App\Providers;
 
+use App\Domains\Admin\Repositories\Contracts\AuditLogRepositoryInterface;
+use App\Domains\Admin\Repositories\Eloquent\EloquentAuditLogRepository;
 use App\Domains\Admin\Services\AdminService;
 use App\Domains\Admin\Services\Contracts\AdminServiceInterface;
+use App\Domains\Admin\Services\Contracts\SettingsServiceInterface;
+use App\Domains\Admin\Services\SettingsService;
 use App\Domains\Jobs\Repositories\Contracts\JobRepositoryInterface;
+use App\Domains\Jobs\Repositories\Contracts\MetadataRepositoryInterface;
+use App\Domains\Jobs\Repositories\Eloquent\EloquentMetadataRepository;
 use App\Domains\Jobs\Repositories\Eloquent\JobRepository;
 use App\Domains\Jobs\Services\Contracts\JobServiceInterface;
 use App\Domains\Jobs\Services\JobService;
@@ -37,6 +43,7 @@ class AppServiceProvider extends ServiceProvider
     {
         // ─── Jobs Domain ──────────────────────────────────────────────────────
         $this->app->bind(JobRepositoryInterface::class, JobRepository::class);
+        $this->app->bind(MetadataRepositoryInterface::class, EloquentMetadataRepository::class);
         $this->app->bind(JobServiceInterface::class,    JobService::class);
         $this->app->bind(
             \App\Domains\Jobs\Services\Contracts\SearchServiceInterface::class,
@@ -55,7 +62,8 @@ class AppServiceProvider extends ServiceProvider
 
         // ─── Admin Domain ─────────────────────────────────────────────────────
         $this->app->bind(AdminServiceInterface::class, AdminService::class);
-        $this->app->singleton(\App\Domains\Admin\Services\SettingsService::class);
+        $this->app->bind(AuditLogRepositoryInterface::class, EloquentAuditLogRepository::class);
+        $this->app->bind(SettingsServiceInterface::class, SettingsService::class);
 
         // ─── JWT Service ──────────────────────────────────────────────────────
         $this->app->singleton(JwtService::class, function ($app) {

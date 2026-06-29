@@ -83,9 +83,19 @@ class GrowthSeoTest extends TestCase
         $response->assertHeader('Content-Type', 'text/xml; charset=UTF-8');
 
         // Confirm XML structure and link indexing
-        $this->assertStringContainsString('<urlset', $response->getContent());
-        $this->assertStringContainsString('/ssc-jobs', $response->getContent());
-        $this->assertStringContainsString('ssc-cgl-grade-a-active-recruitment-2026', $response->getContent());
+        $this->assertStringContainsString('<sitemapindex', $response->getContent());
+
+        // Check pages sitemap
+        $responsePages = $this->get('/sitemaps/sitemap-pages.xml');
+        $responsePages->assertStatus(200);
+        $this->assertStringContainsString('<urlset', $responsePages->getContent());
+        $this->assertStringContainsString('/ssc-jobs', $responsePages->getContent());
+
+        // Check jobs sitemap
+        $responseJobs = $this->get('/sitemaps/sitemap-jobs.xml');
+        $responseJobs->assertStatus(200);
+        $this->assertStringContainsString('<urlset', $responseJobs->getContent());
+        $this->assertStringContainsString('ssc-cgl-grade-a-active-recruitment-2026', $responseJobs->getContent());
     }
 
     /**

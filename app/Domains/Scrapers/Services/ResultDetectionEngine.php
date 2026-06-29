@@ -29,7 +29,10 @@ class ResultDetectionEngine
     public function run(?int $sourceId = null): array
     {
         $startTime = Carbon::now();
-        Log::info("Result Detection Engine: Started at {$startTime}");
+        Log::info("Result Detection Engine: Started", [
+            'start_time' => $startTime->toIso8601String(),
+            'source_id' => $sourceId,
+        ]);
 
         // 1. Monitor Official Sources
         $sources = ScrapingSource::where('is_active', true)
@@ -38,11 +41,16 @@ class ResultDetectionEngine
             })
             ->get();
 
-        Log::info("Result Detection Engine: Monitoring " . $sources->count() . " active sources.");
+        Log::info("Result Detection Engine: Monitoring active sources", [
+            'active_sources_count' => $sources->count()
+        ]);
 
         $scrapeSummary = [];
         foreach ($sources as $source) {
-            Log::info("Result Detection Engine: Scraping source '{$source->name}'");
+            Log::info("Result Detection Engine: Scraping source", [
+                'source_id' => $source->id,
+                'source_name' => $source->name
+            ]);
             $result = $this->scrapingService->scrapeSource($source);
             $scrapeSummary[$source->id] = $result;
         }
@@ -55,7 +63,9 @@ class ResultDetectionEngine
             ->get();
 
         $newResultCount = $newResults->count();
-        Log::info("Result Detection Engine: Detected {$newResultCount} new results.");
+        Log::info("Result Detection Engine: Detected new results", [
+            'new_results_count' => $newResultCount
+        ]);
 
         if ($newResultCount > 0) {
             $resultIds = $newResults->pluck('id')->toArray();
@@ -64,14 +74,18 @@ class ResultDetectionEngine
             // The ScrapingService + AIService already parsed and extracted detailed info.
             // Ensure AI content generation is triggered/handled for each result.
             foreach ($newResults as $resultPost) {
-                Log::info("Result Detection Engine: Generating AI Content for Result ID: {$resultPost->id}");
+                Log::info("Result Detection Engine: Generating AI Content for Result", [
+                    'job_post_id' => $resultPost->id
+                ]);
                 if (!app()->environment('testing')) {
                     GenerateJobContentJob::dispatch($resultPost->id);
                 }
             }
 
             // 5. Trigger Notifications
-            Log::info("Result Detection Engine: Sending notifications for detected results: " . implode(', ', $resultIds));
+            Log::info("Result Detection Engine: Sending notifications for detected results", [
+                'result_ids' => $resultIds
+            ]);
             
             $candidates = User::where('role', 'candidate')->where('is_active', true)->get();
             $subscribers = JobAlert::all();
@@ -103,7 +117,10 @@ class ResultDetectionEngine
                 ]);
                 Log::info("Result Detection Engine: Sitemap cache and internal links warmed successfully.");
             } catch (\Exception $e) {
-                Log::error("Result Detection Engine: Failed to warm sitemap cache: " . $e->getMessage());
+                Log::error("Result Detection Engine: Failed to warm sitemap cache", [
+                    'error' => $e->getMessage(),
+                    'trace' => $e->getTraceAsString(),
+                ]);
             }
         }
 

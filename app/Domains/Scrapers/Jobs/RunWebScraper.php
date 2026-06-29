@@ -32,8 +32,8 @@ class RunWebScraper implements ShouldQueue
 
     public function __construct(protected ScrapingSource $source)
     {
-        $priority = $source->priority ?: 'default';
-        $this->queue = 'scrapers-' . $priority;
+        $priority = $source->priority;
+        $this->queue = $priority ? 'scrapers-' . $priority : 'scrapers';
     }
 
     public function handle(ScrapingService $scrapingService): void

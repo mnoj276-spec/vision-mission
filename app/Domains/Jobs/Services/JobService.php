@@ -3,12 +3,9 @@
 namespace App\Domains\Jobs\Services;
 
 use App\Domains\Jobs\Repositories\Contracts\JobRepositoryInterface;
+use App\Domains\Jobs\Repositories\Contracts\MetadataRepositoryInterface;
 use App\Domains\Jobs\Services\Contracts\JobServiceInterface;
-use App\Models\Category;
-use App\Models\Department;
 use App\Models\JobPost;
-use App\Models\Qualification;
-use App\Models\State;
 use Carbon\Carbon;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
@@ -25,7 +22,8 @@ use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 class JobService implements JobServiceInterface
 {
     public function __construct(
-        protected JobRepositoryInterface $jobRepo
+        protected JobRepositoryInterface $jobRepo,
+        protected MetadataRepositoryInterface $metadataRepo
     ) {}
 
     public function getHomePageData(): array
@@ -34,10 +32,10 @@ class JobService implements JobServiceInterface
             $relations = ['category', 'department', 'state', 'qualification', 'source'];
 
             return [
-                'states'        => State::all(),
-                'categories'    => Category::where('is_active', true)->get(),
-                'qualifications' => Qualification::all(),
-                'departments'   => Department::all(),
+                'states'        => $this->metadataRepo->getAllStates(),
+                'categories'    => $this->metadataRepo->getActiveCategories(),
+                'qualifications' => $this->metadataRepo->getAllQualifications(),
+                'departments'   => $this->metadataRepo->getAllDepartments(),
                 'featuredJobs'  => JobPost::published()->rootPosts()->with($relations)->featured()->latest('published_at')->take(6)->get(),
                 'recentJobs'    => JobPost::published()->rootPosts()->with($relations)->jobs()->latest('published_at')->take(12)->get(),
                 'admitCards'    => JobPost::published()->with($relations)->admitCards()->latest('published_at')->take(12)->get(),

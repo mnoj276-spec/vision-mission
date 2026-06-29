@@ -17,7 +17,9 @@ use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\File;
 
-class SettingsService
+use App\Domains\Admin\Services\Contracts\SettingsServiceInterface;
+
+class SettingsService implements SettingsServiceInterface
 {
     /**
      * Update bulk general settings.

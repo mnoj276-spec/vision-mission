@@ -2,9 +2,9 @@
 
 namespace App\Domains\Admin\Services;
 
+use App\Domains\Admin\Repositories\Contracts\AuditLogRepositoryInterface;
 use App\Domains\Admin\Services\Contracts\AdminServiceInterface;
 use App\Domains\Scrapers\Repositories\Contracts\ScrapingSourceRepositoryInterface;
-use App\Models\AuditLog;
 use Illuminate\Support\Facades\Log;
 
 /**
@@ -17,7 +17,8 @@ use Illuminate\Support\Facades\Log;
 class AdminService implements AdminServiceInterface
 {
     public function __construct(
-        protected ScrapingSourceRepositoryInterface $scraperRepo
+        protected ScrapingSourceRepositoryInterface $scraperRepo,
+        protected AuditLogRepositoryInterface $auditLogRepo
     ) {}
 
     /**
@@ -88,9 +89,7 @@ class AdminService implements AdminServiceInterface
      */
     public function getActivityLogs(int $perPage = 10): array
     {
-        $logs = AuditLog::with('user')
-            ->orderBy('id', 'desc')
-            ->paginate($perPage);
+        $logs = $this->auditLogRepo->getPaginated($perPage);
 
         return [
             'logs'         => $logs->items(),
@@ -106,7 +105,7 @@ class AdminService implements AdminServiceInterface
      */
     public function logAction(int $userId, string $ip, string $userAgent, string $action, string $details): void
     {
-        AuditLog::create([
+        $this->auditLogRepo->create([
             'user_id'    => $userId,
             'ip_address' => $ip,
             'user_agent' => $userAgent,
