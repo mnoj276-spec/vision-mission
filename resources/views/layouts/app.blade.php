@@ -1237,6 +1237,155 @@
     <!-- Custom Google Translate Script Integration -->
     <script src="{{ asset('assets/js/translator.js') }}"></script>
 
+    <!-- Global Table Pagination Script -->
+    <script>
+        $(document).ready(function() {
+            function initTablePagination(table, perPage = 10) {
+                const $table = $(table);
+                const $tbody = $table.find('tbody');
+                if (!$tbody.length) return;
+
+                function applyPagination() {
+                    const $rows = $tbody.children('tr').not('.no-paginate, .loading-row');
+                    
+                    // Filter out loading rows and message rows (usually 1 cell with colspan)
+                    const filteredRows = $rows.filter(function() {
+                        const $tds = $(this).children('td');
+                        if ($tds.length === 1 && ($tds.attr('colspan') || '').length > 0) {
+                            return false;
+                        }
+                        return true;
+                    });
+
+                    const totalRows = filteredRows.length;
+
+                    // Remove existing pagination controls for this table
+                    $table.closest('.responsive-table-container').next('.table-pagination-wrapper').remove();
+                    $table.next('.table-pagination-wrapper').remove();
+
+                    if (totalRows <= perPage) {
+                        filteredRows.show();
+                        return;
+                    }
+
+                    const totalPages = Math.ceil(totalRows / perPage);
+                    let currentPage = 1;
+
+                    function showPage(page) {
+                        currentPage = page;
+                        const start = (page - 1) * perPage;
+                        const end = start + perPage;
+
+                        filteredRows.hide();
+                        filteredRows.slice(start, end).show();
+
+                        const showingStart = start + 1;
+                        const showingEnd = Math.min(end, totalRows);
+                        $wrapper.find('.table-pagination-info').text(
+                            `Showing ${showingStart} to ${showingEnd} of ${totalRows} entries`
+                        );
+
+                        // Update buttons active status
+                        $wrapper.find('.table-pagination-btn.page-num').removeClass('active');
+                        $wrapper.find(`.table-pagination-btn.page-num[data-page="${page}"]`).addClass('active');
+
+                        $wrapper.find('.table-pagination-prev').prop('disabled', page === 1);
+                        $wrapper.find('.table-pagination-next').prop('disabled', page === totalPages);
+                    }
+
+                    const $wrapper = $('<div class="table-pagination-wrapper"></div>');
+                    const $info = $('<div class="table-pagination-info"></div>');
+                    const $controls = $('<div class="table-pagination-controls"></div>');
+
+                    const $prevBtn = $('<button class="table-pagination-btn table-pagination-prev" type="button">&laquo; Prev</button>');
+                    $prevBtn.on('click', function() {
+                        if (currentPage > 1) showPage(currentPage - 1);
+                    });
+                    $controls.append($prevBtn);
+
+                    // Add page numbers
+                    for (let i = 1; i <= totalPages; i++) {
+                        // Limit number of page buttons if there are too many (e.g. > 5)
+                        if (totalPages > 5) {
+                            // Show first, last, current, and adjacent pages
+                            if (i !== 1 && i !== totalPages && Math.abs(i - currentPage) > 1) {
+                                // Add ellipsis once
+                                if (i === 2 && currentPage > 3) {
+                                    $controls.append('<span style="color:var(--text-secondary); padding:0 0.25rem;">...</span>');
+                                } else if (i === totalPages - 1 && currentPage < totalPages - 2) {
+                                    $controls.append('<span style="color:var(--text-secondary); padding:0 0.25rem;">...</span>');
+                                }
+                                continue;
+                            }
+                        }
+
+                        const $pageBtn = $(`<button class="table-pagination-btn page-num" type="button" data-page="${i}">${i}</button>`);
+                        $pageBtn.on('click', function() {
+                            showPage(i);
+                        });
+                        $controls.append($pageBtn);
+                    }
+
+                    const $nextBtn = $('<button class="table-pagination-btn table-pagination-next" type="button">Next &raquo;</button>');
+                    $nextBtn.on('click', function() {
+                        if (currentPage < totalPages) showPage(currentPage + 1);
+                    });
+                    $controls.append($nextBtn);
+
+                    $wrapper.append($info).append($controls);
+
+                    const $container = $table.closest('.responsive-table-container');
+                    if ($container.length) {
+                        $container.after($wrapper);
+                    } else {
+                        $table.after($wrapper);
+                    }
+
+                    showPage(1);
+                }
+
+                applyPagination();
+
+                if (window.MutationObserver) {
+                    if (table._paginationObserver) {
+                        table._paginationObserver.disconnect();
+                    }
+                    const observer = new MutationObserver(function(mutations) {
+                        let relevantChange = false;
+                        mutations.forEach(function(m) {
+                            if (m.type === 'childList') {
+                                relevantChange = true;
+                            }
+                        });
+                        if (relevantChange) {
+                            observer.disconnect();
+                            applyPagination();
+                            observer.observe($tbody[0], { childList: true });
+                        }
+                    });
+                    observer.observe($tbody[0], { childList: true });
+                    table._paginationObserver = observer;
+                }
+            }
+
+            // Initialize on all portal-table and salary-table elements
+            function initAllTables() {
+                $('.portal-table, .salary-table').each(function() {
+                    if (!this._paginationObserver) {
+                        initTablePagination(this, 10);
+                    }
+                });
+            }
+
+            initAllTables();
+
+            // Also check for dynamically added tables or tab switches
+            $(document).on('shown.bs.tab click', '[data-toggle="tab"], .salary-tab-btn, .admin-nav-links button', function() {
+                setTimeout(initAllTables, 100);
+            });
+        });
+    </script>
+
     <!-- PWA Smart Install App Banner -->
     <div id="pwaInstallBanner" style="position: fixed; bottom: 2rem; left: 2rem; right: 2rem; max-width: 500px; background: rgba(17, 24, 39, 0.95); border: 1px solid var(--border-color); box-shadow: var(--card-shadow); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border-radius: 16px; padding: 1.25rem; display: none; align-items: center; justify-content: space-between; gap: 1rem; z-index: 1050; margin: 0 auto; animation: slide-up-pwa 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);">
         <style>

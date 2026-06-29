@@ -81,8 +81,7 @@ a:focus,
 }
 
 .sarkari-item-link:hover,
-.ticker-item:hover,
-.dropdown-item:hover {
+.ticker-item:hover {
     color: var(--accent-color) !important;
 }
 
@@ -2678,5 +2677,494 @@ a.btn-view,
         grid-template-columns: 1fr !important;
         gap: 1rem;
     }
+}
+
+
+/* Custom Table Pagination Styles */
+.table-pagination-wrapper {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 1rem;
+    padding: 0.75rem 0.5rem;
+    font-family: 'Outfit', sans-serif;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+}
+
+.table-pagination-info {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    font-weight: 500;
+}
+
+.table-pagination-controls {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+}
+
+.table-pagination-btn {
+    background: var(--bg-primary);
+    border: 1px solid var(--border-color);
+    color: var(--text-primary);
+    padding: 0.4rem 0.8rem;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 2.25rem;
+    height: 2.25rem;
+}
+
+.table-pagination-btn:hover:not(:disabled) {
+    background: var(--accent-color);
+    color: #ffffff !important;
+    border-color: var(--accent-color);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
+}
+
+.table-pagination-btn.active {
+    background: var(--accent-color);
+    color: #ffffff !important;
+    border-color: var(--accent-color);
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25);
+    cursor: default;
+}
+
+.table-pagination-btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+    background: var(--bg-primary);
+    border-color: var(--border-color);
+    color: var(--text-secondary);
+}
+
+.table-pagination-prev,
+.table-pagination-next {
+    padding: 0.4rem 0.9rem;
+}
+
+
+/* ==========================================================================
+   ENTERPRISE DATA TABLE STYLES (GITHUB / STRIPE / HORIZON AESTHETICS)
+   ========================================================================== */
+
+/* Unified toolbar at top of table */
+.enterprise-toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 0.5rem;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: 12px 12px 0 0;
+    padding: 0.4rem 0.6rem;
+    flex-wrap: wrap;
+    margin-bottom: -1px; /* overlapping borders */
+    font-family: 'Outfit', sans-serif;
+}
+
+.enterprise-toolbar-left,
+.enterprise-toolbar-right {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    flex-wrap: wrap;
+}
+
+.enterprise-toolbar-left {
+    flex: 1;
+    min-width: 200px;
+}
+
+.enterprise-search-wrapper {
+    position: relative;
+    flex: 1;
+    max-width: 320px;
+    min-width: 150px;
+}
+
+.enterprise-search-input {
+    width: 100%;
+    padding: 0.3rem 0.5rem 0.3rem 1.8rem !important;
+    font-size: 0.8rem !important;
+    border-radius: 6px !important;
+    background: var(--bg-primary) !important;
+    border: 1px solid var(--border-color) !important;
+    color: var(--text-primary) !important;
+    height: 30px;
+}
+
+.enterprise-search-icon {
+    position: absolute;
+    left: 0.5rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-secondary);
+    font-size: 0.75rem;
+    pointer-events: none;
+}
+
+/* Small Select and Button inside toolbar */
+.enterprise-select {
+    padding: 0 1.25rem 0 0.4rem !important;
+    font-size: 0.8rem !important;
+    height: 30px;
+    border-radius: 6px !important;
+    border: 1px solid var(--border-color) !important;
+    background: var(--bg-primary) !important;
+    color: var(--text-primary) !important;
+    cursor: pointer;
+    width: auto !important;
+    line-height: 1 !important;
+}
+
+.enterprise-btn {
+    height: 30px;
+    padding: 0 0.6rem;
+    font-size: 0.8rem;
+    font-weight: 500;
+    border-radius: 6px;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    cursor: pointer;
+    border: 1px solid var(--border-color);
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    transition: all 0.2s ease;
+}
+
+.enterprise-btn:hover {
+    background: var(--border-color);
+}
+
+.enterprise-btn-primary {
+    background: var(--accent-color);
+    border-color: var(--accent-color);
+    color: #ffffff;
+}
+
+.enterprise-btn-primary:hover {
+    background: var(--accent-hover);
+    border-color: var(--accent-hover);
+}
+
+/* Table container styling */
+.enterprise-table-container {
+    width: 100%;
+    overflow-x: auto;
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    background: var(--bg-secondary);
+    position: relative;
+}
+
+.enterprise-table-container.has-toolbar {
+    border-top: none;
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+}
+
+/* Base Enterprise Table layout */
+.enterprise-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    text-align: left;
+    font-family: 'Inter', sans-serif;
+}
+
+/* Sticky headers */
+.enterprise-table th {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background: var(--bg-primary) !important;
+    color: var(--text-secondary) !important;
+    font-family: 'Outfit', sans-serif !important;
+    font-weight: 700 !important;
+    font-size: 0.725rem !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.08em !important;
+    padding: 8px 10px !important;
+    border-bottom: 2px solid var(--border-color) !important;
+    white-space: nowrap;
+    transition: all 0.2s ease;
+}
+
+/* Header sort indicators */
+.enterprise-table th.sortable {
+    cursor: pointer;
+    user-select: none;
+}
+
+.enterprise-table th.sortable:hover {
+    background: rgba(255,255,255,0.05);
+}
+
+.enterprise-sort-icon {
+    margin-left: 0.2rem;
+    font-size: 0.65rem;
+    opacity: 0.5;
+}
+
+.enterprise-table th.sorted-asc .enterprise-sort-icon,
+.enterprise-table th.sorted-desc .enterprise-sort-icon {
+    opacity: 1;
+    color: var(--accent-color);
+}
+
+/* Alignments */
+.text-left { text-align: left !important; }
+.text-center { text-align: center !important; }
+.text-right { text-align: right !important; }
+
+/* Density Modifiers */
+/* 1. Compact (default) */
+.density-compact td {
+    padding: 6px 8px !important;
+    font-size: 0.8rem !important;
+    line-height: 1.25rem !important;
+}
+.density-compact th {
+    padding: 6px 8px !important;
+    font-size: 0.725rem !important;
+}
+
+/* 2. Comfortable */
+.density-comfortable td {
+    padding: 10px 12px !important;
+    font-size: 0.85rem !important;
+    line-height: 1.35rem !important;
+}
+.density-comfortable th {
+    padding: 10px 12px !important;
+    font-size: 0.75rem !important;
+}
+
+/* 3. Spacious */
+.density-spacious td {
+    padding: 14px 16px !important;
+    font-size: 0.9rem !important;
+    line-height: 1.5rem !important;
+}
+.density-spacious th {
+    padding: 14px 16px !important;
+    font-size: 0.8rem !important;
+}
+
+/* Table body rows and columns */
+.enterprise-table td {
+    border-bottom: 1px solid var(--border-color);
+    color: var(--text-primary);
+    vertical-align: middle;
+    transition: background-color 0.15s ease;
+}
+
+.enterprise-table tr:hover td {
+    background: rgba(37, 99, 235, 0.04) !important;
+}
+
+.enterprise-table tr:last-child td {
+    border-bottom: none;
+}
+
+/* Primary/Secondary Info Typography Stack */
+.enterprise-primary-stack {
+    display: flex;
+    flex-direction: column;
+    gap: 0.05rem;
+}
+
+.enterprise-primary-value {
+    font-weight: 500;
+}
+
+.enterprise-secondary-metadata {
+    font-size: 0.725rem !important;
+    color: var(--text-secondary);
+}
+
+/* Right-aligned number cell specific overrides */
+.enterprise-table td.text-right {
+    font-variant-numeric: tabular-nums;
+}
+
+/* Sticky column for actions */
+.enterprise-table td.action-column {
+    white-space: nowrap;
+    width: 1%;
+}
+
+/* Compact pill badges */
+.badge-pill-compact {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.1rem 0.35rem;
+    font-size: 0.7rem !important;
+    font-weight: 600;
+    line-height: 1;
+    border-radius: 9999px;
+    text-transform: uppercase;
+    letter-spacing: 0.025em;
+    white-space: nowrap;
+}
+
+/* Denser cards/panels overrides inside admin console */
+.admin-content-canvas .glass-panel {
+    padding: 0.85rem 1rem !important; /* reduced from 1.5rem/2rem */
+    border-radius: 12px !important;
+}
+
+.admin-content-canvas {
+    gap: 1rem !important; /* reduce gap between canvas panels */
+}
+
+.admin-container {
+    gap: 1rem !important;
+    padding: 0 2% !important; /* widen content grid */
+}
+
+/* Hover tooltips and ellipsis styles */
+.text-ellipsis-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;  
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Custom mini icon buttons to replace oversized action buttons */
+.enterprise-action-icon-btn {
+    width: 24px;
+    height: 24px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 6px;
+    border: 1px solid var(--border-color);
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-size: 0.75rem;
+    padding: 0;
+    margin: 0;
+}
+
+.enterprise-action-icon-btn:hover {
+    transform: translateY(-1px);
+}
+
+.enterprise-action-icon-btn-view:hover {
+    background: rgba(37, 99, 235, 0.1);
+    color: var(--accent-color);
+    border-color: rgba(37, 99, 235, 0.2);
+}
+
+.enterprise-action-icon-btn-danger:hover {
+    background: rgba(239, 68, 68, 0.1);
+    color: #ef4444;
+    border-color: rgba(239, 68, 68, 0.2);
+}
+
+.enterprise-action-icon-btn-success:hover {
+    background: rgba(16, 185, 129, 0.1);
+    color: #10b981;
+    border-color: rgba(16, 185, 129, 0.2);
+}
+
+.enterprise-action-icon-btn-ai:hover {
+    background: rgba(139, 92, 246, 0.1);
+    color: #8b5cf6;
+    border-color: rgba(139, 92, 246, 0.2);
+}
+
+/* Loading overlays */
+.enterprise-loading-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.15);
+    z-index: 5;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(1px);
+    border-radius: inherit;
+}
+
+/* Empty states */
+.enterprise-empty-state {
+    text-align: center;
+    color: var(--text-secondary);
+    padding: 2rem 1rem !important;
+}
+
+.enterprise-empty-state svg {
+    margin-bottom: 0.5rem;
+    color: var(--text-secondary);
+    opacity: 0.6;
+}
+
+/* Quick styles for table tooltip overlay */
+.enterprise-tooltip {
+    position: relative;
+}
+.enterprise-tooltip::after {
+    content: attr(data-tooltip);
+    position: absolute;
+    bottom: 125%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0, 0, 0, 0.9) !important;
+    color: #ffffff;
+    padding: 4px 8px;
+    font-size: 0.725rem;
+    border-radius: 4px;
+    white-space: nowrap;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.2s ease, visibility 0.2s ease;
+    z-index: 100;
+    pointer-events: none;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.25);
+}
+.enterprise-tooltip:hover::after {
+    opacity: 1;
+    visibility: visible;
+}
+
+/* First row tooltip overflow fix: render below the button instead of above/under the sticky header */
+.enterprise-table tbody tr:first-child .enterprise-tooltip::after {
+    bottom: auto !important;
+    top: 125% !important;
+}
+
+/* Premium record separator: Shaded lines and alternate row backgrounds */
+.enterprise-table tbody tr:nth-child(even) td {
+    background: rgba(37, 99, 235, 0.012) !important;
+}
+.dark-theme .enterprise-table tbody tr:nth-child(even) td {
+    background: rgba(255, 255, 255, 0.012) !important;
+}
+
+/* Hover row highlight overlay */
+.enterprise-table tbody tr:hover td {
+    background: rgba(37, 99, 235, 0.05) !important;
+}
+.dark-theme .enterprise-table tbody tr:hover td {
+    background: rgba(37, 99, 235, 0.08) !important;
 }
 
