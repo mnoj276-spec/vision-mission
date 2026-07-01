@@ -3175,9 +3175,12 @@
                             let statusClass = 'background:rgba(156,163,175,0.1); color:var(--text-primary);';
                             if (row.status === 'approved') statusClass = 'background:rgba(16,185,129,0.12); color:#10b981;';
                             if (row.status === 'rejected') statusClass = 'background:rgba(239,68,68,0.12); color:#ef4444;';
-                            
-                            const errorIndicator = row.error_message 
-                                ? `<span style="color:#ef4444; font-size:0.75rem; margin-left:0.35rem; cursor:help;" class="enterprise-tooltip" data-tooltip="${aiContentTable.escape(row.error_message)}">⚠️ Error</span>` 
+                            let errMsg = row.error_message;
+                            if (errMsg && errMsg.toLowerCase().includes('api key')) {
+                                errMsg += ' (Configure in Settings Management > SMTP & APIs)';
+                            }
+                            const errorIndicator = errMsg 
+                                ? `<span style="color:#ef4444; font-size:0.75rem; margin-left:0.35rem; cursor:help;" class="enterprise-tooltip" data-tooltip="${aiContentTable.escape(errMsg)}">⚠️ Error</span>` 
                                 : '';
                             return `<span class="badge-pill-compact" style="${statusClass}">${aiContentTable.escape(row.status)}</span>${errorIndicator}`;
                         }},
@@ -3206,7 +3209,7 @@
         $(document).on('click', '.btn-review-ai', function(e) {
             e.preventDefault();
             const id = $(this).data('id');
-            const item = aiContentsCache.find(x => x.id === id);
+            const item = aiContentsCache.find(x => String(x.id) === String(id));
             
             if (!item) return;
 

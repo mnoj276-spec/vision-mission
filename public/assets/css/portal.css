@@ -2820,7 +2820,7 @@ a.btn-view,
     height: 30px;
     border-radius: 6px !important;
     border: 1px solid var(--border-color) !important;
-    background: var(--bg-primary) !important;
+    background-color: var(--bg-primary) !important;
     color: var(--text-primary) !important;
     cursor: pointer;
     width: auto !important;

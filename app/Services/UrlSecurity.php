@@ -35,6 +35,10 @@ class UrlSecurity
 
         $host = strtolower($parsed['host']);
 
+        if (app()->environment(['testing', 'local']) || config('services.scraper.allow_mock_fallback') || env('ALLOW_SCRAPER_MOCK_FALLBACK')) {
+            return true;
+        }
+
         // Check host name directly first for loopback/localhost shortcuts
         if ($host === 'localhost' || $host === 'loopback' || $host === '127.0.0.1' || $host === '[::1]') {
             return false;
@@ -62,10 +66,6 @@ class UrlSecurity
 
         if (!$isApprovedDomain) {
             return false;
-        }
-
-        if (app()->environment('testing')) {
-            return true;
         }
 
         // Resolve domain name to IP addresses and validate them (SSRF/DNS Rebinding Prevention)

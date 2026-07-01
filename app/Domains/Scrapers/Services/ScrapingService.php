@@ -152,7 +152,7 @@ class ScrapingService implements ScrapingServiceInterface
             $defaultQual  = $source->selectors_config['default_qualification_id'] ?? 1;
 
             $finalJobData['category_id'] = !empty($rawData['category_name'])
-                ? Category::firstOrCreate(['slug' => str()->slug($rawData['category_name'])], ['name' => trim($rawData['category_name'])])->id
+                ? Category::firstOrCreate(['name' => trim($rawData['category_name'])], ['slug' => str()->slug($rawData['category_name'])])->id
                 : $this->mapCategorySemantically($textForMapping, $defaultCat);
 
             $finalJobData['state_id'] = !empty($rawData['state_name'])
@@ -160,7 +160,7 @@ class ScrapingService implements ScrapingServiceInterface
                 : $this->mapStateSemantically($textForMapping, $defaultState);
 
             $finalJobData['qualification_id'] = !empty($rawData['qualification_name'])
-                ? Qualification::firstOrCreate(['slug' => str()->slug($rawData['qualification_name'])], ['name' => trim($rawData['qualification_name'])])->id
+                ? Qualification::firstOrCreate(['name' => trim($rawData['qualification_name'])], ['slug' => str()->slug($rawData['qualification_name'])])->id
                 : $this->mapQualificationSemantically($textForMapping, $defaultQual);
 
             $finalJobData['department_id'] = !empty($rawData['department_name'])
