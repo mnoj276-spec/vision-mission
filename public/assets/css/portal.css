@@ -1,31 +1,51 @@
 /* Speed Optimization: Font family import moved to HTML head preconnect link tags */
 
 :root {
+    /* Core Colors */
     --bg-primary: #f8fafc;
     --bg-secondary: #ffffff;
     --text-primary: #0f172a;
     --text-secondary: #475569;
     --accent-color: #2563eb;
     --accent-hover: #1d4ed8;
-    --border-color: rgba(226, 232, 240, 0.8);
-    --glass-bg: rgba(255, 255, 255, 0.45);
-    --glass-border: rgba(255, 255, 255, 0.25);
-    --card-shadow: 0 10px 30px -10px rgba(15, 23, 42, 0.05);
+    --border-color: #e2e8f0;
+    
+    /* Semantic Colors */
+    --color-success: #10b981;
+    --color-danger: #ef4444;
+    --color-warning: #f59e0b;
+    --color-info: #06b6d4;
+
+    /* Premium Glassmorphism */
+    --glass-bg: rgba(255, 255, 255, 0.85);
+    --glass-border: rgba(226, 232, 240, 0.8);
+    --card-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
     --pulse-bg: #e2e8f0;
+
+    /* Spacing Tokens */
+    --space-xs: 0.25rem;
+    --space-sm: 0.5rem;
+    --space-md: 1rem;
+    --space-lg: 1.5rem;
+    --space-xl: 2rem;
+
+    /* A11y Focus */
+    --focus-ring: 0 0 0 3px rgba(37, 99, 235, 0.4);
 }
 
 .dark-theme {
     --bg-primary: #090d16;
     --bg-secondary: #111827;
-    --text-primary: #f3f4f6;
-    --text-secondary: #9ca3af;
+    --text-primary: #f8fafc;
+    --text-secondary: #94a3b8;
     --accent-color: #3b82f6;
     --accent-hover: #60a5fa;
-    --border-color: rgba(37, 99, 235, 0.15);
-    --glass-bg: rgba(17, 24, 39, 0.65);
-    --glass-border: rgba(255, 255, 255, 0.08);
-    --card-shadow: 0 15px 35px -12px rgba(0, 0, 0, 0.5);
+    --border-color: #1e293b;
+    --glass-bg: rgba(17, 24, 39, 0.85);
+    --glass-border: rgba(255, 255, 255, 0.05);
+    --card-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.5);
     --pulse-bg: #1f2937;
+    --focus-ring: 0 0 0 3px rgba(96, 165, 250, 0.5);
 }
 
 * {
@@ -93,10 +113,10 @@ h1, h2, h3, h4, .logo {
 /* Glassmorphism Styles */
 .glass-panel {
     background: var(--glass-bg);
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
+    backdrop-filter: blur(24px); /* Increased blur for premium feel */
+    -webkit-backdrop-filter: blur(24px);
     border: 1px solid var(--glass-border);
-    border-radius: 16px;
+    border-radius: 12px; /* Slightly tighter radius typical for SaaS */
     box-shadow: var(--card-shadow);
 }
 
@@ -574,9 +594,11 @@ a:focus-visible,
 button:focus-visible,
 input:focus-visible,
 select:focus-visible,
-textarea:focus-visible {
-    outline: 3px solid var(--accent-color) !important;
-    outline-offset: 2px !important;
+textarea:focus-visible,
+.btn:focus-visible {
+    outline: none !important;
+    box-shadow: var(--focus-ring) !important;
+    border-color: var(--accent-color) !important;
 }
 
 /* Unified Button Design System */
@@ -3168,3 +3190,111 @@ a.btn-view,
     background: rgba(37, 99, 235, 0.08) !important;
 }
 
+
+/* =========================================================================
+   SaaS DASHBOARD STANDARDIZATION (PHASE 3 & 4 overrides)
+   ========================================================================= */
+
+/* Premium SaaS Tables */
+.enterprise-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: transparent;
+}
+.enterprise-table th {
+    text-align: left;
+    padding: 1rem;
+    font-weight: 600;
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    border-bottom: 2px solid var(--border-color);
+}
+.enterprise-table td {
+    padding: 1rem;
+    font-size: 0.95rem;
+    color: var(--text-primary);
+    border-bottom: 1px solid var(--border-color);
+    vertical-align: middle;
+}
+.enterprise-table tbody tr {
+    transition: background-color 0.2s ease;
+}
+.enterprise-table tbody tr:hover {
+    background-color: rgba(37, 99, 235, 0.03);
+}
+.enterprise-table tbody tr:last-child td {
+    border-bottom: none;
+}
+.density-compact th, .density-compact td {
+    padding: 0.75rem 1rem;
+}
+
+/* Unified Form Controls */
+.form-control {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    background-color: var(--bg-secondary);
+    color: var(--text-primary);
+    font-size: 0.95rem;
+    transition: all 0.2s ease;
+}
+.form-control:focus {
+    outline: none;
+    border-color: var(--accent-color);
+    box-shadow: var(--focus-ring);
+}
+.dark-theme .form-control {
+    background-color: rgba(17, 24, 39, 0.5);
+}
+
+/* Empty States */
+.empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 3rem 1.5rem;
+    text-align: center;
+    color: var(--text-secondary);
+}
+.empty-state svg {
+    margin-bottom: 1rem;
+    opacity: 0.5;
+}
+.empty-state p {
+    font-size: 0.95rem;
+    max-width: 400px;
+}
+
+/* Notifications (Toasts) */
+#toastContainer {
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+.portal-toast {
+    background: var(--glass-bg);
+    backdrop-filter: blur(16px);
+    border: 1px solid var(--glass-border);
+    border-radius: 12px;
+    padding: 1rem 1.25rem;
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.15);
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    min-width: 300px;
+    max-width: 400px;
+    animation: slideInRight 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+@keyframes slideInRight {
+    from { transform: translateX(100%); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+}

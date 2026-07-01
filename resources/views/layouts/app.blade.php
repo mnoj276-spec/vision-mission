@@ -168,8 +168,8 @@
             <ul class="nav-links">
                 @forelse($headerMenu as $mItem)
                     @if($mItem->children->count() > 0)
-                        <li class="nav-item-dropdown" style="position: relative;">
-                            <a href="{{ $mItem->url }}" target="{{ $mItem->target }}" class="dropdown-trigger" style="font-weight: 700; display: flex; align-items: center; gap: 0.25rem;">
+                        <li class="nav-item-dropdown relative group">
+                            <a href="{{ $mItem->url }}" target="{{ $mItem->target }}" class="dropdown-trigger flex items-center gap-1 font-bold">
                                 @if($mItem->icon)
                                     <span class="menu-icon">
                                         @if(str_starts_with(trim($mItem->icon), '<'))
@@ -182,10 +182,10 @@
                                 <span data-translate-lookup="{{ $mItem->title }}">{{ $mItem->title }}</span>
                                 <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
                             </a>
-                            <ul class="dropdown-menu-list glass-panel" style="display: none; position: absolute; top: 100%; left: 0; min-width: 200px; list-style: none; padding: 0.5rem; border-radius: 8px; box-shadow: var(--card-shadow); z-index: 100;">
+                            <ul class="dropdown-menu-list glass-panel hidden group-hover:block absolute top-full left-0 min-w-[200px] p-2 rounded-lg shadow-lg z-50">
                                 @foreach($mItem->children as $childItem)
                                     <li>
-                                        <a href="{{ $childItem->url }}" target="{{ $childItem->target }}" class="dropdown-item" style="padding: 0.5rem 1rem; display: block; border-radius: 6px; font-weight: 500; font-size: 0.85rem;">
+                                        <a href="{{ $childItem->url }}" target="{{ $childItem->target }}" class="dropdown-item block px-4 py-2 rounded-md font-medium text-sm hover:bg-blue-50 hover:text-blue-600 transition-colors">
                                             @if($childItem->icon)
                                                 <span class="menu-icon">
                                                     @if(str_starts_with(trim($childItem->icon), '<'))
@@ -203,7 +203,7 @@
                         </li>
                     @else
                         <li>
-                            <a href="{{ $mItem->url }}" target="{{ $mItem->target }}" style="font-weight: 700;">
+                            <a href="{{ $mItem->url }}" target="{{ $mItem->target }}" class="font-bold flex items-center gap-1">
                                 @if($mItem->icon)
                                     <span class="menu-icon">
                                         @if(str_starts_with(trim($mItem->icon), '<'))
@@ -218,16 +218,16 @@
                         </li>
                     @endif
                 @empty
-                    <li><a href="/#jobs-search-section" class="nav-tab-trigger" data-target="jobs" data-i18n="nav_home">Home</a></li>
-                    <li><a href="/ssc-jobs" style="font-weight: 700;" data-i18n="nav_ssc">SSC Board</a></li>
-                    <li><a href="/railway-jobs" style="font-weight: 700;" data-i18n="nav_railway">Railways</a></li>
-                    <li><a href="/upsc-jobs" style="font-weight: 700;" data-i18n="nav_upsc">UPSC</a></li>
-                    <li><a href="/state-jobs" style="font-weight: 700;" data-i18n="nav_state">State Jobs</a></li>
-                    <li><a href="/#info-hub-section" class="nav-tab-trigger" data-target="info-hub" data-i18n="nav_info">Info Hub</a></li>
+                    <li><a href="/#jobs-search-section" class="nav-tab-trigger font-bold" data-target="jobs" data-i18n="nav_home">Home</a></li>
+                    <li><a href="/ssc-jobs" class="font-bold" data-i18n="nav_ssc">SSC Board</a></li>
+                    <li><a href="/railway-jobs" class="font-bold" data-i18n="nav_railway">Railways</a></li>
+                    <li><a href="/upsc-jobs" class="font-bold" data-i18n="nav_upsc">UPSC</a></li>
+                    <li><a href="/state-jobs" class="font-bold" data-i18n="nav_state">State Jobs</a></li>
+                    <li><a href="/#info-hub-section" class="nav-tab-trigger font-bold" data-target="info-hub" data-i18n="nav_info">Info Hub</a></li>
                 @endforelse
             </ul>
 
-            <div class="header-actions" style="display: flex; gap: 0.75rem; align-items: center;">
+            <div class="header-actions flex items-center gap-3">
                 <!-- Language Switcher Badge -->
                 <div class="lang-switcher" aria-label="Language Selector" role="navigation">
                     <button type="button" class="lang-btn active" data-lang="en" aria-label="Switch to English" aria-current="true">EN</button>
@@ -242,17 +242,17 @@
 
                 @auth
                     <div class="user-menu-dropdown">
-                        <button class="theme-toggle-btn">
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="color: var(--accent-color);"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
-                            <span style="max-width: 100px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">{{ auth()->user()->name }}</span>
+                        <button class="theme-toggle-btn flex items-center gap-2">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="text-blue-600"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                            <span class="max-w-[100px] overflow-hidden text-ellipsis whitespace-nowrap">{{ auth()->user()->name }}</span>
                         </button>
                         <div class="dropdown-menu">
                             <a href="/#dashboard-section" class="dropdown-item nav-tab-trigger" data-target="dashboard" data-i18n="dropdown_dashboard">Dashboard</a>
                             @can('admin-access')
                                 <a href="{{ route('admin.dashboard') }}" class="dropdown-item" data-i18n="dropdown_admin">Admin Panel</a>
                             @endcan
-                            <div class="dropdown-divider"></div>
-                            <button class="dropdown-item" id="logoutBtn" style="border:none; background:none; width:100%; cursor:pointer;" data-i18n="dropdown_logout">Logout</button>
+                            <div class="dropdown-divider border-t border-gray-200 my-1"></div>
+                            <button class="dropdown-item w-full text-left bg-transparent border-none cursor-pointer px-4 py-2 hover:bg-gray-50" id="logoutBtn" data-i18n="dropdown_logout">Logout</button>
                         </div>
                     </div>
                 @else

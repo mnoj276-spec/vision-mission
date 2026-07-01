@@ -33,16 +33,16 @@
 @endphp
 
 @section('content')
-<div class="admin-container" style="display: grid; grid-template-columns: 260px 1fr; min-height: 100vh; gap: 2rem; padding: 0 5%; max-width: 1600px; margin: 2rem auto 0 auto;">
+<div class="admin-container grid grid-cols-[260px_1fr] min-h-screen gap-8 px-[5%] max-w-[1600px] mx-auto mt-8">
     
     <!-- 1. Enterprise Sidebar Navigation -->
-    <aside class="glass-panel admin-sidebar" style="padding: 1.5rem; height: fit-content; position: sticky; top: 100px; border-radius: 16px;">
-        <div style="text-align: center; margin-bottom: 2rem; border-bottom: 1px solid var(--border-color); padding-bottom: 1.5rem;">
-            <h2 style="font-family: 'Outfit'; font-size: 1.25rem; color: var(--accent-color); margin-bottom: 0.25rem;">Admin Workspace</h2>
-            <span style="font-size: 0.75rem; color: var(--text-secondary); background: rgba(37,99,235,0.08); padding: 0.25rem 0.5rem; border-radius: 99px; text-transform: uppercase;">Clearance: Level 3</span>
+    <aside class="glass-panel admin-sidebar p-6 h-fit sticky top-[100px] rounded-2xl">
+        <div class="text-center mb-8 border-b border-gray-200 pb-6">
+            <h2 class="font-['Outfit'] text-xl text-blue-600 mb-1 font-semibold">Admin Workspace</h2>
+            <span class="text-xs text-gray-500 bg-blue-50 px-2 py-1 rounded-full uppercase tracking-wide font-medium">Clearance: Level 3</span>
         </div>
         
-        <div class="admin-nav-links" style="display: flex; flex-direction: column; gap: 0.5rem;">
+        <div class="admin-nav-links flex flex-col gap-2">
             @foreach ($sidebarMenu as $item)
                 @can($item['permission'])
                     <button class="admin-nav-btn {{ $activeBlock === $item['block'] ? 'active' : '' }}" data-block="{{ $item['block'] }}">
@@ -53,47 +53,47 @@
             @endforeach
         </div>
         
-        <div style="margin-top: 3rem; text-align: center;">
-            <a href="/" class="form-btn" style="text-decoration: none; padding: 0.6rem; display: block; background: var(--text-secondary); text-align: center; border-radius: 8px;">&larr; Exit Console</a>
+        <div class="mt-12 text-center">
+            <a href="/" class="btn-secondary w-full">&larr; Exit Console</a>
         </div>
     </aside>
 
     <!-- 2. Main Administration Canvas -->
-    <main class="admin-content-canvas" style="display: flex; flex-direction: column; gap: 2rem; min-width: 0;">
+    <main class="admin-content-canvas flex flex-col gap-8 min-w-0">
         
         <!-- ================= PANEL 1: DASHBOARD OVERVIEW ================= -->
         <section class="admin-panel-block active" id="admin-overview">
-            <h2 style="font-family: 'Outfit'; font-size: 1.75rem; margin-bottom: 1.5rem;">SaaS Control Panel Overview</h2>
+            <h2 class="font-['Outfit'] text-3xl mb-6">SaaS Control Panel Overview</h2>
             
             <!-- Statistics Metric Cards -->
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1.5rem; margin-bottom: 2.5rem;">
-                <div class="glass-panel stat-card-premium" style="border-left: 5px solid var(--accent-color);">
-                    <div class="label">Total Published Posts</div>
-                    <div class="number" id="overview-jobs-posted">0</div>
-                    <div class="subtext">Active direct announcements</div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
+                <div class="glass-panel stat-card-premium border-l-4 border-blue-600 p-5 rounded-xl shadow-sm hover:shadow-md transition-shadow">
+                    <div class="text-sm text-gray-500 font-semibold mb-1 uppercase tracking-wide">Total Published Posts</div>
+                    <div class="text-3xl font-bold text-gray-900" id="overview-jobs-posted">0</div>
+                    <div class="text-xs text-gray-400 mt-2">Active direct announcements</div>
                 </div>
-                <div class="glass-panel stat-card-premium" style="border-left: 5px solid #10b981;">
-                    <div class="label">Crawl Target Feeds</div>
-                    <div class="number" id="overview-sources">0</div>
-                    <div class="subtext" id="overview-active-sources">0 active crawlers</div>
+                <div class="glass-panel stat-card-premium border-l-4 border-emerald-500 p-5 rounded-xl shadow-sm hover:shadow-md transition-shadow">
+                    <div class="text-sm text-gray-500 font-semibold mb-1 uppercase tracking-wide">Crawl Target Feeds</div>
+                    <div class="text-3xl font-bold text-gray-900" id="overview-sources">0</div>
+                    <div class="text-xs text-emerald-600 font-medium mt-2" id="overview-active-sources">0 active crawlers</div>
                 </div>
-                <div class="glass-panel stat-card-premium" style="border-left: 5px solid #f59e0b;">
-                    <div class="label">Logs Quarantined</div>
-                    <div class="number" id="overview-quarantines" style="color: #f59e0b;">0</div>
-                    <div class="subtext">Pending manual corrections</div>
+                <div class="glass-panel stat-card-premium border-l-4 border-amber-500 p-5 rounded-xl shadow-sm hover:shadow-md transition-shadow">
+                    <div class="text-sm text-gray-500 font-semibold mb-1 uppercase tracking-wide">Logs Quarantined</div>
+                    <div class="text-3xl font-bold text-amber-500" id="overview-quarantines">0</div>
+                    <div class="text-xs text-amber-600 font-medium mt-2">Pending manual corrections</div>
                 </div>
-                <div class="glass-panel stat-card-premium" style="border-left: 5px solid #ef4444;">
-                    <div class="label">Automation Success Rate</div>
-                    <div class="number" id="overview-success-runs" style="color: #10b981;">100%</div>
-                    <div class="subtext" id="overview-failed-runs">0 critical errors</div>
+                <div class="glass-panel stat-card-premium border-l-4 border-red-500 p-5 rounded-xl shadow-sm hover:shadow-md transition-shadow">
+                    <div class="text-sm text-gray-500 font-semibold mb-1 uppercase tracking-wide">Automation Success Rate</div>
+                    <div class="text-3xl font-bold text-emerald-500" id="overview-success-runs">100%</div>
+                    <div class="text-xs text-red-500 font-medium mt-2" id="overview-failed-runs">0 critical errors</div>
                 </div>
             </div>
 
             <!-- Visualization Row -->
-            <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 2rem; align-items: start;">
+            <div class="grid grid-cols-1 lg:grid-cols-[2fr_1fr] gap-8 items-start">
                 <!-- Crawler status and health -->
-                <div class="glass-panel" style="padding: 1.5rem; border-radius: 16px;">
-                    <h3 style="font-family: 'Outfit'; font-size: 1.2rem; color: var(--accent-color); margin-bottom: 1rem;">System Health & Crawl Metrics</h3>
+                <div class="glass-panel p-6 rounded-2xl">
+                    <h3 class="font-['Outfit'] text-xl text-blue-600 mb-4 font-semibold">System Health & Crawl Metrics</h3>
                     <div class="responsive-table-container">
                         <table class="enterprise-table density-compact">
                             <thead>
@@ -271,8 +271,15 @@
         <!-- ================= PANEL 4: MASTER DATA MANAGER ================= -->
         <section class="admin-panel-block" id="admin-master" style="display: none;">
             <div id="react-master-data-root"></div>
-            @viteReactRefresh
-            @vite('resources/js/master-data.jsx')
+            @if (file_exists(public_path('build/manifest.json')) || file_exists(public_path('hot')))
+                @viteReactRefresh
+                @vite('resources/js/master-data.jsx')
+            @else
+                <div class="glass-panel p-6 m-4 text-center text-red-600 rounded-lg">
+                    <p class="font-bold mb-2">Build Assets Missing</p>
+                    <p class="text-sm">Please run <code>npm install && npm run build</code> to compile the React assets for the Master Data module.</p>
+                </div>
+            @endif
         </section>
 
         <!-- ================= PANEL 5: USER ACCESS PANEL ================= -->
