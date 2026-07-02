@@ -456,75 +456,87 @@
 
 @section('scripts')
 <script>
-    $(document).ready(function() {
+    document.addEventListener('DOMContentLoaded', function() {
         // standalone recruitment submission handler
-        $('#standaloneRecruitmentApplyForm').on('submit', function(e) {
-            e.preventDefault();
-            const btn = $('#standaloneApplySubmitBtn');
-            const fileInput = $('#standaloneAppResume')[0];
-            const errorDiv = $('#standaloneResumeError');
-            
-            errorDiv.hide().text('');
-            
-            if (fileInput.files.length === 0) {
-                showToast('Please select a resume file.', 'error');
-                return;
-            }
+        const applyForm = document.getElementById('standaloneRecruitmentApplyForm');
+        if (applyForm) {
+            applyForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                const btn = document.getElementById('standaloneApplySubmitBtn');
+                const fileInput = document.getElementById('standaloneAppResume');
+                const errorDiv = document.getElementById('standaloneResumeError');
+                
+                errorDiv.style.display = 'none';
+                errorDiv.textContent = '';
+                
+                if (fileInput.files.length === 0) {
+                    if (typeof showToast === 'function') showToast('Please select a resume file.', 'error');
+                    return;
+                }
 
-            btn.prop('disabled', true).text('Uploading...');
-            
-            // Build FormData to send file correctly
-            const formData = new FormData(this);
+                btn.disabled = true;
+                btn.textContent = 'Uploading...';
+                
+                const formData = new FormData(this);
+                const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 
-            $.ajax({
-                url: '/api/jobs/{{ $job->id }}/apply',
-                method: 'POST',
-                data: formData,
-                processData: false,
-                contentType: false,
-                success: function(res) {
-                    showToast(res.message, 'success');
-                    
-                    // Transition form to checkmark success card
-                    $('#standaloneRecruitmentApplyForm').html(`
-                        <div style="text-align: center; padding: 1.5rem 0; color: #10b981;">
-                            <svg width="40" height="40" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" style="margin-bottom: 0.5rem;"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                            <div style="font-weight: 700; font-size: 1.05rem;">Application Submitted Successfully!</div>
-                            <p style="font-size: 0.85rem; color: var(--text-secondary); margin-top: 0.25rem;">You can track the recruitment stage inside your candidate dashboard.</p>
-                        </div>
-                    `);
-                },
-                error: function(err) {
-                    btn.prop('disabled', false).text('Submit Application Now');
-                    if (err.status === 422) {
-                        const res = err.responseJSON;
-                        showToast(res.message || 'File upload validation failed.', 'error');
-                        if (res.errors && res.errors.resume) {
-                            errorDiv.text(res.errors.resume[0]).show();
+                fetch(`/api/jobs/{{ $job->id }}/apply`, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': csrfToken,
+                        'Accept': 'application/json'
+                    },
+                    body: formData
+                })
+                .then(response => response.json().then(data => ({ status: response.status, body: data })))
+                .then(res => {
+                    if (res.status >= 200 && res.status < 300) {
+                        if (typeof showToast === 'function') showToast(res.body.message || 'Success', 'success');
+                        
+                        applyForm.innerHTML = `
+                            <div style="text-align: center; padding: 1.5rem 0; color: #10b981;">
+                                <svg width="40" height="40" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" style="margin-bottom: 0.5rem;"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                <div style="font-weight: 700; font-size: 1.05rem;">Application Submitted Successfully!</div>
+                                <p style="font-size: 0.85rem; color: var(--text-secondary); margin-top: 0.25rem;">You can track the recruitment stage inside your candidate dashboard.</p>
+                            </div>
+                        `;
+                    } else if (res.status === 422) {
+                        btn.disabled = false;
+                        btn.textContent = 'Submit Application Now';
+                        if (typeof showToast === 'function') showToast(res.body.message || 'File upload validation failed.', 'error');
+                        if (res.body.errors && res.body.errors.resume) {
+                            errorDiv.textContent = res.body.errors.resume[0];
+                            errorDiv.style.display = 'block';
                         }
                     } else {
-                        showToast('Submission failed. Connection error.', 'error');
+                        throw new Error('Server error');
                     }
-                }
+                })
+                .catch(err => {
+                    btn.disabled = false;
+                    btn.textContent = 'Submit Application Now';
+                    if (typeof showToast === 'function') showToast('Submission failed. Connection error.', 'error');
+                });
             });
-        });
+        }
 
         // FAQ Accordion click transition handler
-        $(document).on('click', '.faq-header', function() {
-            const item = $(this).closest('.faq-item');
-            const body = item.find('.faq-body');
-            
-            if (item.hasClass('active')) {
-                item.removeClass('active');
-                body.css('max-height', '0');
-            } else {
-                // Close all other open items
-                $('.faq-item').removeClass('active');
-                $('.faq-body').css('max-height', '0');
+        document.querySelectorAll('.faq-header').forEach(header => {
+            header.addEventListener('click', function() {
+                const item = this.closest('.faq-item');
+                const body = item.querySelector('.faq-body');
                 
-                item.addClass('active');
-                body.css('max-height', body[0].scrollHeight + 'px');
-            }
+                if (item.classList.contains('active')) {
+                    item.classList.remove('active');
+                    body.style.maxHeight = '0';
+                } else {
+                    document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('active'));
+                    document.querySelectorAll('.faq-body').forEach(b => b.style.maxHeight = '0');
+                    
+                    item.classList.add('active');
+                    body.style.maxHeight = body.scrollHeight + 'px';
+                }
+            });
         });
     });
 </script>

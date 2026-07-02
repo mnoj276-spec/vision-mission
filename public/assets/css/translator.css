@@ -165,7 +165,7 @@
 .lang-reset-pill {
     position: fixed;
     bottom: 2rem;
-    left: 2rem;
+    right: 2rem;
     background: var(--accent-color);
     color: white;
     border: none;
@@ -187,12 +187,7 @@
     box-shadow: 0 6px 20px rgba(37, 99, 235, 0.4);
 }
 
-/* Shift the pill when admin sidebar is present to avoid overlapping on desktop */
-@media (min-width: 901px) {
-    body:has(.admin-sidebar) .lang-reset-pill {
-        left: calc(260px + 5% + 2rem);
-    }
-}
+
 
 
 /* Responsive Overrides & Guards for Translated Content */

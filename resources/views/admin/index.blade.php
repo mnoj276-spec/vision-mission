@@ -33,7 +33,7 @@
 @endphp
 
 @section('content')
-<div class="admin-container grid grid-cols-[260px_1fr] min-h-screen gap-8 px-[5%] max-w-[1600px] mx-auto mt-8">
+<div class="admin-container min-h-screen gap-8 px-[5%] max-w-[1600px] mx-auto mt-8" style="display: grid; grid-template-columns: 260px 1fr;">
     
     <!-- 1. Enterprise Sidebar Navigation -->
     <aside class="glass-panel admin-sidebar p-6 h-fit sticky top-[100px] rounded-2xl">
@@ -1757,17 +1757,23 @@
                             let errs = '';
                             if (q.errors) {
                                 Object.keys(q.errors).forEach(k => {
-                                    errs += `&bull; ${k}: ${q.errors[k].join(', ')}<br>`;
+                                    let errMsgs = Array.isArray(q.errors[k]) ? q.errors[k].join(', ') : q.errors[k];
+                                    errs += `&bull; ${k}: ${errMsgs}<br>`;
                                 });
                             }
+                            
+                            let safeTitle = (q.raw_payload.title || 'Quarantined Announcement').replace(/"/g, '&quot;');
+                            let safeUrl = (q.raw_payload.official_link || '').replace(/"/g, '&quot;');
+                            let safeErrs = errs.replace(/"/g, '&quot;');
+
                             qHtml += `
                                 <div class="glass-panel" style="padding: 1.25rem; margin-bottom: 1rem; border-left: 4px solid #f59e0b; display: flex; justify-content: space-between; align-items: center; gap: 1rem; background: var(--bg-primary);">
-                                    <div style="flex:1;">
-                                        <h4 style="font-size: 1.05rem; margin-bottom: 0.25rem;">${q.raw_payload.title || 'Quarantined Announcement'}</h4>
-                                        <p style="font-size:0.8rem; color:var(--text-secondary); margin-bottom:0.5rem;">Source Feed: <strong>${q.source_name}</strong> &bull; Crawled: ${q.time}</p>
-                                        <div style="font-size:0.75rem; color:#ef4444; font-family:monospace;">${errs || 'Validation limits check failed.'}</div>
+                                    <div style="flex:1; min-width:0;">
+                                        <h4 style="font-size: 1.05rem; margin-bottom: 0.25rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${safeTitle}</h4>
+                                        <p style="font-size:0.8rem; color:var(--text-secondary); margin-bottom:0.5rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Source Feed: <strong>${q.source_name}</strong> &bull; Crawled: ${q.time}</p>
+                                        <div style="font-size:0.75rem; color:#ef4444; font-family:monospace; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">${errs || 'Validation limits check failed.'}</div>
                                     </div>
-                                    <button class="form-btn btn-rescue-trigger" data-id="${q.id}" data-title="${q.raw_payload.title || ''}" data-url="${q.raw_payload.official_link || ''}" data-errors="${errs}" style="margin:0; padding:0.5rem 1rem; background:#f59e0b;">Rescue</button>
+                                    <button class="form-btn btn-rescue-trigger" data-id="${q.id}" data-title="${safeTitle}" data-url="${safeUrl}" data-errors="${safeErrs}" style="margin:0; padding:0.5rem 1rem; background:#f59e0b; flex-shrink:0;">Rescue</button>
                                 </div>
                             `;
                         });
