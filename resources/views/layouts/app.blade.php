@@ -252,7 +252,7 @@
                                 <a href="{{ route('admin.dashboard') }}" class="dropdown-item" data-i18n="dropdown_admin">Admin Panel</a>
                             @endcan
                             <div class="dropdown-divider border-t border-gray-200 my-1"></div>
-                            <button class="dropdown-item w-full text-left bg-transparent border-none cursor-pointer px-4 py-2 hover:bg-gray-50" id="logoutBtn" data-i18n="dropdown_logout">Logout</button>
+                            <a href="javascript:void(0)" class="dropdown-item" id="logoutBtn" data-i18n="dropdown_logout">Logout</a>
                         </div>
                     </div>
                 @else
@@ -318,7 +318,7 @@
                     <li><a href="{{ route('admin.dashboard') }}" class="mobile-drawer-link" data-i18n="dropdown_admin">Admin Panel</a></li>
                 @endcan
                 <li>
-                    <button class="mobile-drawer-link" id="mobileLogoutBtn" style="background: none; border: none; color: inherit; cursor: pointer; width: 100%; text-align: left; font: inherit; padding: 0.6rem 0;" data-i18n="dropdown_logout">Logout</button>
+                    <a href="javascript:void(0)" class="mobile-drawer-link" id="mobileLogoutBtn" data-i18n="dropdown_logout">Logout</a>
                 </li>
             @endauth
             
