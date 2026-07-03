@@ -71,46 +71,47 @@ export default function DepartmentManager() {
     ];
 
     return (
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 items-start">
-            <div className="glass-panel p-6 rounded-2xl">
-                <h3 className="font-['Outfit'] text-[1.15rem] mb-4 text-[var(--accent-color)]">
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 2fr', gap: '2rem', alignItems: 'start' }}>
+            <div className="glass-panel" style={{ padding: '1.5rem', borderRadius: '16px' }}>
+                <h3 style={{ fontFamily: 'Outfit', fontSize: '1.25rem', marginBottom: '1.5rem', color: 'var(--accent-color)' }}>
                     {formState.id ? 'Edit Department' : 'Add Department'}
                 </h3>
                 
-                {error && <div className="mb-4 p-3 bg-red-50 text-red-700 rounded-lg text-sm">{error}</div>}
-                {success && <div className="mb-4 p-3 bg-green-50 text-green-700 rounded-lg text-sm">{success}</div>}
+                {error && <div style={{ marginBottom: '1rem', padding: '0.75rem 1rem', background: 'rgba(239, 68, 68, 0.1)', border: '1px solid rgba(239, 68, 68, 0.2)', color: '#ef4444', borderRadius: '8px', fontSize: '0.85rem' }}>{error}</div>}
+                {success && <div style={{ marginBottom: '1rem', padding: '0.75rem 1rem', background: 'rgba(16, 185, 129, 0.1)', border: '1px solid rgba(16, 185, 129, 0.2)', color: '#10b981', borderRadius: '8px', fontSize: '0.85rem' }}>{success}</div>}
 
                 <form onSubmit={handleSubmit}>
-                    <div className="form-group mb-4">
-                        <label className="block text-sm font-medium text-gray-700 mb-1">Department Name</label>
+                    <div style={{ marginBottom: '1.25rem' }}>
+                        <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: '600', color: 'var(--text-secondary)', marginBottom: '0.5rem' }}>Department Name</label>
                         <input 
                             type="text" 
-                            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[var(--accent-color)] focus:border-transparent outline-none"
+                            className="form-control"
                             placeholder="e.g. Staff Selection Board" 
                             value={formState.name}
                             onChange={(e) => setFormState({ ...formState, name: e.target.value })}
                             required
                         />
                     </div>
-                    <div className="form-group mb-4">
-                        <label className="block text-sm font-medium text-gray-700 mb-1">Unique Code</label>
+                    <div style={{ marginBottom: '1.25rem' }}>
+                        <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: '600', color: 'var(--text-secondary)', marginBottom: '0.5rem' }}>Unique Code</label>
                         <input 
                             type="text" 
-                            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[var(--accent-color)] focus:border-transparent outline-none"
+                            className="form-control"
                             placeholder="e.g. SSC" 
                             value={formState.code}
                             onChange={(e) => setFormState({ ...formState, code: e.target.value })}
                             required
                         />
                     </div>
-                    <button type="submit" className="w-full bg-[var(--accent-color)] text-white py-2 px-4 rounded-lg font-medium hover:bg-blue-700 transition-colors">
+                    <button type="submit" className="btn-primary" style={{ width: '100%' }}>
                         {formState.id ? 'Update Department' : 'Save Department'}
                     </button>
                     {formState.id && (
                         <button 
                             type="button" 
                             onClick={() => setFormState({ id: null, name: '', code: '' })}
-                            className="w-full mt-2 bg-gray-100 text-gray-700 py-2 px-4 rounded-lg font-medium hover:bg-gray-200 transition-colors"
+                            className="btn-secondary"
+                            style={{ width: '100%', marginTop: '0.5rem' }}
                         >
                             Cancel Edit
                         </button>
@@ -118,9 +119,9 @@ export default function DepartmentManager() {
                 </form>
             </div>
 
-            <div className="md:col-span-2">
+            <div>
                 {loading ? (
-                    <div className="text-center p-8 text-gray-500">Loading departments...</div>
+                    <div className="text-center" style={{ padding: '2rem', color: 'var(--text-secondary)' }}>Loading departments...</div>
                 ) : (
                     <DataTable 
                         columns={columns} 

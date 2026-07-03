@@ -19,31 +19,31 @@ export default function MasterDataApp() {
 
     return (
         <div className="react-master-data-container">
-            <h2 className="text-[1.75rem] font-['Outfit'] mb-6">Master Data Management Center</h2>
+            <h2 style={{ fontFamily: 'Outfit', fontSize: '1.75rem', marginBottom: '1.5rem' }}>Master Data Management Center</h2>
 
             {/* Segment Master Tabs */}
-            <div className="sub-tab-headers flex gap-2 mb-6 border-b border-gray-200 pb-2">
+            <div className="sub-tab-headers">
                 <button 
                     onClick={() => setActiveTab('categories')}
-                    className={`sub-tab-btn px-4 py-2 font-semibold transition-colors duration-200 border-b-2 ${activeTab === 'categories' ? 'border-[var(--accent-color)] text-[var(--accent-color)]' : 'border-transparent text-gray-500 hover:text-gray-700'}`}
+                    className={`sub-tab-btn ${activeTab === 'categories' ? 'active' : ''}`}
                 >
                     Job Categories
                 </button>
                 <button 
                     onClick={() => setActiveTab('departments')}
-                    className={`sub-tab-btn px-4 py-2 font-semibold transition-colors duration-200 border-b-2 ${activeTab === 'departments' ? 'border-[var(--accent-color)] text-[var(--accent-color)]' : 'border-transparent text-gray-500 hover:text-gray-700'}`}
+                    className={`sub-tab-btn ${activeTab === 'departments' ? 'active' : ''}`}
                 >
                     Departments
                 </button>
                 <button 
                     onClick={() => setActiveTab('qualifications')}
-                    className={`sub-tab-btn px-4 py-2 font-semibold transition-colors duration-200 border-b-2 ${activeTab === 'qualifications' ? 'border-[var(--accent-color)] text-[var(--accent-color)]' : 'border-transparent text-gray-500 hover:text-gray-700'}`}
+                    className={`sub-tab-btn ${activeTab === 'qualifications' ? 'active' : ''}`}
                 >
                     Qualifications
                 </button>
                 <button 
                     onClick={() => setActiveTab('states')}
-                    className={`sub-tab-btn px-4 py-2 font-semibold transition-colors duration-200 border-b-2 ${activeTab === 'states' ? 'border-[var(--accent-color)] text-[var(--accent-color)]' : 'border-transparent text-gray-500 hover:text-gray-700'}`}
+                    className={`sub-tab-btn ${activeTab === 'states' ? 'active' : ''}`}
                 >
                     States/Regions
                 </button>
