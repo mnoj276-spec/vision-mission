@@ -112,7 +112,6 @@ class DatabasePerformanceTest extends TestCase
         $method->setAccessible(true);
 
         $result = $method->invokeArgs($this->scrapingService, [$this->source, $rawItem]);
-
         $this->assertEquals('success', $result['status']);
 
         // Assert job has source_id and expires_at properly populated and indexed

@@ -35,6 +35,7 @@ class UrlSecurity
 
         $host = strtolower($parsed['host']);
 
+
         // Check host name directly first for loopback/localhost shortcuts
         if ($host === 'localhost' || $host === 'loopback' || $host === '127.0.0.1' || $host === '[::1]') {
             return false;
@@ -54,6 +55,14 @@ class UrlSecurity
             'upsc.gov.in',
             'upsconline.nic.in',
             'github.com',
+            'sbi.co.in',
+            'ntpccareers.net',
+            'punesmartcity.in',
+            'ongcindia.com',
+            'du.ac.in',
+            'aiims.edu',
+            'icar.org.in',
+            'coalindia.in',
         ];
 
         if (in_array($host, $approvedDomains, true)) {
@@ -64,7 +73,7 @@ class UrlSecurity
             return false;
         }
 
-        if (app()->environment('testing')) {
+        if (app()->environment('testing') || config('services.scraper.allow_mock_fallback') || env('ALLOW_SCRAPER_MOCK_FALLBACK')) {
             return true;
         }
 

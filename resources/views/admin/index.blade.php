@@ -33,75 +33,82 @@
 @endphp
 
 @section('content')
-<div class="admin-container" style="display: grid; grid-template-columns: 260px 1fr; min-height: 100vh; gap: 2rem; padding: 0 5%; max-width: 1600px; margin: 2rem auto 0 auto;">
+<div class="admin-container min-h-screen gap-8 px-[5%] max-w-[1600px] mx-auto mt-8 grid grid-cols-1 md:grid-cols-[200px_1fr] lg:grid-cols-[260px_1fr]">
     
     <!-- 1. Enterprise Sidebar Navigation -->
-    <aside class="glass-panel admin-sidebar" style="padding: 1.5rem; height: fit-content; position: sticky; top: 100px; border-radius: 16px;">
-        <div style="text-align: center; margin-bottom: 2rem; border-bottom: 1px solid var(--border-color); padding-bottom: 1.5rem;">
-            <h2 style="font-family: 'Outfit'; font-size: 1.25rem; color: var(--accent-color); margin-bottom: 0.25rem;">Admin Workspace</h2>
-            <span style="font-size: 0.75rem; color: var(--text-secondary); background: rgba(37,99,235,0.08); padding: 0.25rem 0.5rem; border-radius: 99px; text-transform: uppercase;">Clearance: Level 3</span>
+    <aside class="glass-panel admin-sidebar p-6 h-fit sticky top-[100px] rounded-2xl">
+        <div class="text-center mb-8 border-b border-gray-200 pb-6">
+            <h2 class="font-['Outfit'] text-xl text-blue-600 mb-1 font-semibold">Admin Workspace</h2>
+            <span class="text-xs text-gray-500 bg-blue-50 px-2 py-1 rounded-full uppercase tracking-wide font-medium">Clearance: Level 3</span>
+            
+            <button type="button" id="adminSidebarToggleBtn" class="admin-sidebar-toggle-btn btn-secondary w-full mt-4 flex items-center justify-center gap-2">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+                <span>Toggle Console Menu</span>
+            </button>
         </div>
         
-        <div class="admin-nav-links" style="display: flex; flex-direction: column; gap: 0.5rem;">
-            @foreach ($sidebarMenu as $item)
-                @can($item['permission'])
-                    <button class="admin-nav-btn {{ $activeBlock === $item['block'] ? 'active' : '' }}" data-block="{{ $item['block'] }}">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">{!! $item['icon'] !!}</svg>
-                        {{ $item['label'] }}
-                    </button>
-                @endcan
-            @endforeach
-        </div>
-        
-        <div style="margin-top: 3rem; text-align: center;">
-            <a href="/" class="form-btn" style="text-decoration: none; padding: 0.6rem; display: block; background: var(--text-secondary); text-align: center; border-radius: 8px;">&larr; Exit Console</a>
+        <div id="adminSidebarLinks" class="admin-sidebar-links flex flex-col gap-2">
+            <div class="admin-nav-links flex flex-col gap-2">
+                @foreach ($sidebarMenu as $item)
+                    @can($item['permission'])
+                        <button class="admin-nav-btn {{ $activeBlock === $item['block'] ? 'active' : '' }}" data-block="{{ $item['block'] }}">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">{!! $item['icon'] !!}</svg>
+                            {{ $item['label'] }}
+                        </button>
+                    @endcan
+                @endforeach
+            </div>
+            
+            <div class="mt-12 text-center">
+                <a href="/" class="btn-secondary w-full">&larr; Exit Console</a>
+            </div>
         </div>
     </aside>
 
     <!-- 2. Main Administration Canvas -->
-    <main class="admin-content-canvas" style="display: flex; flex-direction: column; gap: 2rem; min-width: 0;">
+    <main class="admin-content-canvas flex flex-col gap-8 min-w-0">
         
         <!-- ================= PANEL 1: DASHBOARD OVERVIEW ================= -->
         <section class="admin-panel-block active" id="admin-overview">
-            <h2 style="font-family: 'Outfit'; font-size: 1.75rem; margin-bottom: 1.5rem;">SaaS Control Panel Overview</h2>
+            <h2 class="font-['Outfit'] text-3xl mb-6">SaaS Control Panel Overview</h2>
             
             <!-- Statistics Metric Cards -->
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1.5rem; margin-bottom: 2.5rem;">
-                <div class="glass-panel stat-card-premium" style="border-left: 5px solid var(--accent-color);">
-                    <div class="label">Total Published Posts</div>
-                    <div class="number" id="overview-jobs-posted">0</div>
-                    <div class="subtext">Active direct announcements</div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
+                <div class="glass-panel stat-card-premium border-l-4 border-blue-600 p-5 rounded-xl shadow-sm hover:shadow-md transition-shadow">
+                    <div class="text-sm text-gray-500 font-semibold mb-1 uppercase tracking-wide">Total Published Posts</div>
+                    <div class="text-3xl font-bold text-gray-900 dark:text-white" id="overview-jobs-posted">0</div>
+                    <div class="text-xs text-gray-400 mt-2">Active direct announcements</div>
                 </div>
-                <div class="glass-panel stat-card-premium" style="border-left: 5px solid #10b981;">
-                    <div class="label">Crawl Target Feeds</div>
-                    <div class="number" id="overview-sources">0</div>
-                    <div class="subtext" id="overview-active-sources">0 active crawlers</div>
+                <div class="glass-panel stat-card-premium border-l-4 border-emerald-500 p-5 rounded-xl shadow-sm hover:shadow-md transition-shadow">
+                    <div class="text-sm text-gray-500 font-semibold mb-1 uppercase tracking-wide">Crawl Target Feeds</div>
+                    <div class="text-3xl font-bold text-gray-900 dark:text-white" id="overview-sources">0</div>
+                    <div class="text-xs text-emerald-600 font-medium mt-2" id="overview-active-sources">0 active crawlers</div>
                 </div>
-                <div class="glass-panel stat-card-premium" style="border-left: 5px solid #f59e0b;">
-                    <div class="label">Logs Quarantined</div>
-                    <div class="number" id="overview-quarantines" style="color: #f59e0b;">0</div>
-                    <div class="subtext">Pending manual corrections</div>
+                <div class="glass-panel stat-card-premium border-l-4 border-amber-500 p-5 rounded-xl shadow-sm hover:shadow-md transition-shadow">
+                    <div class="text-sm text-gray-500 font-semibold mb-1 uppercase tracking-wide">Logs Quarantined</div>
+                    <div class="text-3xl font-bold text-amber-500" id="overview-quarantines">0</div>
+                    <div class="text-xs text-amber-600 font-medium mt-2">Pending manual corrections</div>
                 </div>
-                <div class="glass-panel stat-card-premium" style="border-left: 5px solid #ef4444;">
-                    <div class="label">Automation Success Rate</div>
-                    <div class="number" id="overview-success-runs" style="color: #10b981;">100%</div>
-                    <div class="subtext" id="overview-failed-runs">0 critical errors</div>
+                <div class="glass-panel stat-card-premium border-l-4 border-red-500 p-5 rounded-xl shadow-sm hover:shadow-md transition-shadow">
+                    <div class="text-sm text-gray-500 font-semibold mb-1 uppercase tracking-wide">Automation Success Rate</div>
+                    <div class="text-3xl font-bold text-emerald-500" id="overview-success-runs">100%</div>
+                    <div class="text-xs text-red-500 font-medium mt-2" id="overview-failed-runs">0 critical errors</div>
                 </div>
             </div>
 
             <!-- Visualization Row -->
-            <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 2rem; align-items: start;">
+            <div class="grid grid-cols-1 lg:grid-cols-[2fr_1fr] gap-8 items-start">
                 <!-- Crawler status and health -->
-                <div class="glass-panel" style="padding: 1.5rem; border-radius: 16px;">
-                    <h3 style="font-family: 'Outfit'; font-size: 1.2rem; color: var(--accent-color); margin-bottom: 1rem;">System Health & Crawl Metrics</h3>
+                <div class="glass-panel p-6 rounded-2xl">
+                    <h3 class="font-['Outfit'] text-xl text-blue-600 mb-4 font-semibold">System Health & Crawl Metrics</h3>
                     <div class="responsive-table-container">
-                        <table class="portal-table">
+                        <table class="enterprise-table density-compact">
                             <thead>
                                 <tr>
                                     <th>Target Crawl Feed</th>
                                     <th>Last Execution Log</th>
-                                    <th>Harvests</th>
-                                    <th>Health</th>
+                                    <th class="text-right">Harvests</th>
+                                    <th class="text-center">Health</th>
                                 </tr>
                             </thead>
                             <tbody id="overview-crawlers-table">
@@ -172,7 +179,7 @@
             </div>
 
             <!-- Chart Row 1: Traffic and Revenue -->
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-bottom: 2.5rem;">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-10">
                 <div class="glass-panel" style="padding: 1.5rem; border-radius: 16px; min-height: 380px;">
                     <h3 style="font-family: 'Outfit'; font-size: 1.15rem; color: var(--accent-color); margin-bottom: 1.5rem;">Daily Traffic Breakdown (Bots vs Organic vs Direct)</h3>
                     <div style="position: relative; height: 280px; width: 100%;">
@@ -189,7 +196,7 @@
             </div>
 
             <!-- Chart Row 2: Funnel and Top User Journeys -->
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-bottom: 2.5rem;">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-10">
                 <div class="glass-panel" style="padding: 1.5rem; border-radius: 16px; min-height: 380px;">
                     <h3 style="font-family: 'Outfit'; font-size: 1.15rem; color: #10b981; margin-bottom: 1.5rem;">Conversions & Engagement Funnel</h3>
                     <div style="position: relative; height: 280px; width: 100%;">
@@ -207,16 +214,16 @@
             </div>
 
             <!-- Tables Row: Top Search Queries and Job CTR Performance -->
-            <div style="display: grid; grid-template-columns: 1fr 1.2fr; gap: 2rem;">
+            <div class="grid grid-cols-1 lg:grid-cols-[1fr_1.2fr] gap-8">
                 <div class="glass-panel" style="padding: 1.5rem; border-radius: 16px;">
                     <h3 style="font-family: 'Outfit'; font-size: 1.15rem; margin-bottom: 1rem; color: var(--accent-color);">Top 10 Search Queries</h3>
                     <div class="responsive-table-container">
-                        <table class="portal-table">
+                        <table class="enterprise-table density-compact">
                             <thead>
                                 <tr>
                                     <th>Keyword Query</th>
-                                    <th>Hits</th>
-                                    <th>Avg Results</th>
+                                    <th class="text-right">Hits</th>
+                                    <th class="text-right">Avg Results</th>
                                 </tr>
                             </thead>
                             <tbody id="analytics-queries-table">
@@ -229,14 +236,14 @@
                 <div class="glass-panel" style="padding: 1.5rem; border-radius: 16px;">
                     <h3 style="font-family: 'Outfit'; font-size: 1.15rem; margin-bottom: 1rem; color: #10b981;">Job Post CTR Performance Leaderboard</h3>
                     <div class="responsive-table-container">
-                        <table class="portal-table">
+                        <table class="enterprise-table density-compact">
                             <thead>
                                 <tr>
                                     <th>Job Title</th>
-                                    <th>Views</th>
-                                    <th>Bookmarks</th>
-                                    <th>Applies</th>
-                                    <th>CTR</th>
+                                    <th class="text-right">Views</th>
+                                    <th class="text-right">Bookmarks</th>
+                                    <th class="text-right">Applies</th>
+                                    <th class="text-right">CTR</th>
                                 </tr>
                             </thead>
                             <tbody id="analytics-ctr-table">
@@ -255,36 +262,7 @@
                 <button class="btn-primary" id="btn-create-job-drawer" style="margin: 0; padding: 0.6rem 1.2rem; display: flex; align-items: center; gap: 0.5rem;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg> Publish Recruitment</button>
             </div>
 
-            <div class="glass-panel" style="padding: 1.5rem; border-radius: 16px; margin-bottom: 1.5rem; display: flex; gap: 1rem; flex-wrap: wrap; align-items: center;">
-                <input type="text" id="jobs-search-input" placeholder="Live search announcements title..." style="flex: 1; padding: 0.6rem 1rem; border-radius: 8px; background: var(--bg-primary); border: 1px solid var(--border-color); color: var(--text-primary);" autocomplete="off">
-                <select id="jobs-per-page" style="width: auto; font-size: 0.85rem; padding-top: 0.4rem !important; padding-bottom: 0.4rem !important;">
-                    <option value="10">10 Per Page</option>
-                    <option value="25">25 Per Page</option>
-                    <option value="50">50 Per Page</option>
-                </select>
-            </div>
-
-            <div class="glass-panel" style="padding: 1.5rem; border-radius: 16px;">
-                <div class="responsive-table-container">
-                    <table class="portal-table">
-                        <thead>
-                            <tr>
-                                <th>ID</th>
-                                <th>Recruitment Announcement Title</th>
-                                <th>Category</th>
-                                <th>Region</th>
-                                <th>Salary Max</th>
-                                <th>Deadline</th>
-                                <th style="text-align: center;">Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody id="jobs-management-table-body">
-                            <!-- Populated dynamically via AJAX -->
-                        </tbody>
-                    </table>
-                </div>
-                <div class="pagination-container" id="jobs-management-pagination" style="margin-top: 1.5rem;"></div>
-            </div>
+            <div id="jobs-datatable"></div>
         </section>
 
         <!-- ================= PANEL 3: CRAWLER TARGET CONFIGS ================= -->
@@ -294,206 +272,27 @@
                 <button class="btn-primary" id="btn-create-crawler-drawer" style="margin: 0; padding: 0.6rem 1.2rem; display: flex; align-items: center; gap: 0.5rem;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg> Add Scraper Target</button>
             </div>
 
-            <div class="glass-panel" style="padding: 1.5rem; border-radius: 16px;">
-                <div class="responsive-table-container">
-                    <table class="portal-table">
-                        <thead>
-                            <tr>
-                                <th>Crawl Target Name</th>
-                                <th>Source URL</th>
-                                <th>Cron Schedule</th>
-                                <th style="text-align: center;">Active State</th>
-                                <th style="text-align: center;">Crawl Override</th>
-                                <th style="text-align: center;">Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody id="crawlers-management-table-body">
-                            <!-- Populated dynamically -->
-                        </tbody>
-                    </table>
-                </div>
-            </div>
+            <div id="crawlers-management-datatable"></div>
         </section>
 
         <!-- ================= PANEL 4: MASTER DATA MANAGER ================= -->
         <section class="admin-panel-block" id="admin-master" style="display: none;">
-            <h2 style="font-family: 'Outfit'; font-size: 1.75rem; margin-bottom: 1.5rem;">Master Data Management Center</h2>
-
-            <!-- Segment Master Tabs -->
-            <div class="sub-tab-headers" style="margin-bottom: 1.5rem; display: flex; gap: 0.5rem;">
-                <button class="sub-tab-btn active master-sub-trigger" data-target="master-categories">Job Categories</button>
-                <button class="sub-tab-btn master-sub-trigger" data-target="master-departments">Departments</button>
-                <button class="sub-tab-btn master-sub-trigger" data-target="master-qualifications">Qualifications</button>
-                <button class="sub-tab-btn master-sub-trigger" data-target="master-states">States/Regions</button>
-            </div>
-
-            <!-- Categories sub-tab -->
-            <div class="master-sub-panel active" id="master-categories">
-                <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 2rem; align-items: start;">
-                    <div class="glass-panel" style="padding: 1.5rem; border-radius: 16px;">
-                        <h3 id="category-form-title" style="font-family:'Outfit'; font-size:1.15rem; margin-bottom:1rem; color:var(--accent-color);">Add Category</h3>
-                        <form id="ajax-category-form">
-                            <input type="hidden" id="category-edit-id">
-                            <div class="form-group">
-                                <label for="category-name-input">Category Name</label>
-                                <input type="text" id="category-name-input" class="form-control" placeholder="e.g. Banking & Finance" required>
-                            </div>
-                            <button type="submit" class="form-btn" id="category-submit-btn">Save Category</button>
-                            <button type="button" class="btn-view" id="category-cancel-btn" style="display:none; width:100%; margin-top:0.5rem;">Cancel Edit</button>
-                        </form>
-                    </div>
-
-                    <div class="glass-panel" style="padding: 1.5rem; border-radius: 16px;">
-                        <div class="responsive-table-container">
-                            <table class="portal-table">
-                                <thead>
-                                    <tr>
-                                        <th>ID</th>
-                                        <th>Category Name</th>
-                                        <th>Slug Reference</th>
-                                        <th style="text-align: center;">Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="categories-table-body"></tbody>
-                            </table>
-                        </div>
-                    </div>
+            <div id="react-master-data-root"></div>
+            @if (file_exists(public_path('build/manifest.json')) || file_exists(public_path('hot')))
+                @viteReactRefresh
+                @vite('resources/js/master-data.jsx')
+            @else
+                <div class="glass-panel p-6 m-4 text-center text-red-600 rounded-lg">
+                    <p class="font-bold mb-2">Build Assets Missing</p>
+                    <p class="text-sm">Please run <code>npm install && npm run build</code> to compile the React assets for the Master Data module.</p>
                 </div>
-            </div>
-
-            <!-- Departments sub-tab -->
-            <div class="master-sub-panel" id="master-departments" style="display: none;">
-                <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 2rem; align-items: start;">
-                    <div class="glass-panel" style="padding: 1.5rem; border-radius: 16px;">
-                        <h3 id="dept-form-title" style="font-family:'Outfit'; font-size:1.15rem; margin-bottom:1rem; color:var(--accent-color);">Add Department</h3>
-                        <form id="ajax-department-form">
-                            <input type="hidden" id="dept-edit-id">
-                            <div class="form-group">
-                                <label for="dept-name-input">Department Name</label>
-                                <input type="text" id="dept-name-input" class="form-control" placeholder="e.g. Staff Selection Board" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="dept-code-input">Unique Code</label>
-                                <input type="text" id="dept-code-input" class="form-control" placeholder="e.g. SSC" required>
-                            </div>
-                            <button type="submit" class="form-btn" id="dept-submit-btn">Save Department</button>
-                            <button type="button" class="btn-view" id="dept-cancel-btn" style="display:none; width:100%; margin-top:0.5rem;">Cancel Edit</button>
-                        </form>
-                    </div>
-
-                    <div class="glass-panel" style="padding: 1.5rem; border-radius: 16px;">
-                        <div class="responsive-table-container">
-                            <table class="portal-table">
-                                <thead>
-                                    <tr>
-                                        <th>ID</th>
-                                        <th>Department Name</th>
-                                        <th>Code</th>
-                                        <th style="text-align: center;">Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="departments-table-body"></tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Qualifications sub-tab -->
-            <div class="master-sub-panel" id="master-qualifications" style="display: none;">
-                <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 2rem; align-items: start;">
-                    <div class="glass-panel" style="padding: 1.5rem; border-radius: 16px;">
-                        <h3 id="qual-form-title" style="font-family:'Outfit'; font-size:1.15rem; margin-bottom:1rem; color:var(--accent-color);">Add Qualification</h3>
-                        <form id="ajax-qualification-form">
-                            <input type="hidden" id="qual-edit-id">
-                            <div class="form-group">
-                                <label for="qual-name-input">Qualification Name</label>
-                                <input type="text" id="qual-name-input" class="form-control" placeholder="e.g. Graduate Degree" required>
-                            </div>
-                            <button type="submit" class="form-btn" id="qual-submit-btn">Save Qualification</button>
-                            <button type="button" class="btn-view" id="qual-cancel-btn" style="display:none; width:100%; margin-top:0.5rem;">Cancel Edit</button>
-                        </form>
-                    </div>
-
-                    <div class="glass-panel" style="padding: 1.5rem; border-radius: 16px;">
-                        <div class="responsive-table-container">
-                            <table class="portal-table">
-                                <thead>
-                                    <tr>
-                                        <th>ID</th>
-                                        <th>Qualification</th>
-                                        <th>Slug Reference</th>
-                                        <th style="text-align: center;">Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="qualifications-table-body"></tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- States sub-tab -->
-            <div class="master-sub-panel" id="master-states" style="display: none;">
-                <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 2rem; align-items: start;">
-                    <div class="glass-panel" style="padding: 1.5rem; border-radius: 16px;">
-                        <h3 id="state-form-title" style="font-family:'Outfit'; font-size:1.15rem; margin-bottom:1rem; color:var(--accent-color);">Add State/Region</h3>
-                        <form id="ajax-state-form">
-                            <input type="hidden" id="state-edit-id">
-                            <div class="form-group">
-                                <label for="state-name-input">State Name</label>
-                                <input type="text" id="state-name-input" class="form-control" placeholder="e.g. Maharashtra" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="state-code-input">State ISO Code</label>
-                                <input type="text" id="state-code-input" class="form-control" placeholder="e.g. MH" required>
-                            </div>
-                            <button type="submit" class="form-btn" id="state-submit-btn">Save State</button>
-                            <button type="button" class="btn-view" id="state-cancel-btn" style="display:none; width:100%; margin-top:0.5rem;">Cancel Edit</button>
-                        </form>
-                    </div>
-
-                    <div class="glass-panel" style="padding: 1.5rem; border-radius: 16px;">
-                        <div class="responsive-table-container">
-                            <table class="portal-table">
-                                <thead>
-                                    <tr>
-                                        <th>ID</th>
-                                        <th>State Name</th>
-                                        <th>Code</th>
-                                        <th style="text-align: center;">Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="states-table-body"></tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            @endif
         </section>
 
         <!-- ================= PANEL 5: USER ACCESS PANEL ================= -->
         <section class="admin-panel-block" id="admin-users" style="display: none;">
             <h2 style="font-family: 'Outfit'; font-size: 1.75rem; margin-bottom: 1.5rem;">User Access Registry</h2>
-            <div class="glass-panel" style="padding: 1.5rem; border-radius: 16px;">
-                <div class="responsive-table-container">
-                    <table class="portal-table" id="admin-users-table">
-                        <thead>
-                            <tr>
-                                <th>User ID</th>
-                                <th>Name</th>
-                                <th>Email</th>
-                                <th>Role</th>
-                                <th style="text-align: center;">Account State</th>
-                                <th style="text-align: center;">Elevations / Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody id="users-table-body">
-                            <!-- Populated dynamically -->
-                        </tbody>
-                    </table>
-                </div>
-            </div>
+            <div id="users-datatable"></div>
         </section>
 
         <!-- ================= PANEL 6: SETTINGS MANAGEMENT MODULE ================= -->
@@ -847,21 +646,7 @@
                             <button class="btn-primary" id="btn-create-cms-page" style="font-size:0.8rem; margin:0; padding:0.4rem 0.8rem;">+ Create Page</button>
                         </div>
                         
-                        <div class="responsive-table-container">
-                            <table class="portal-table">
-                                <thead>
-                                    <tr>
-                                        <th>Title</th>
-                                        <th>Slug Link</th>
-                                        <th>Status</th>
-                                        <th style="text-align:center;">Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="cms-pages-table-body">
-                                    <!-- Loaded via AJAX -->
-                                </tbody>
-                            </table>
-                        </div>
+                        <div id="cms-pages-datatable"></div>
                     </div>
 
                     <!-- Advertisements Scheduler -->
@@ -1047,21 +832,7 @@
                             <h3 style="font-family:'Outfit'; font-size:1.25rem; margin:0; color:var(--accent-color);">System SQL Backups</h3>
                             <button class="btn-primary" id="btn-trigger-backup" style="font-size:0.8rem; margin:0; padding:0.4rem 0.8rem;">Generate Backup</button>
                         </div>
-                        
-                        <div class="responsive-table-container" style="max-height: 250px; overflow-y: auto;">
-                            <table class="portal-table">
-                                <thead>
-                                    <tr>
-                                        <th>Date</th>
-                                        <th>File Size</th>
-                                        <th style="text-align:center;">Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="backups-table-body">
-                                    <!-- Loaded via AJAX -->
-                                </tbody>
-                            </table>
-                        </div>
+                        <div id="backups-datatable"></div>
                     </div>
                     @endif
 
@@ -1104,25 +875,7 @@
         <!-- ================= PANEL 7: AUDIT ACTIVITY LOGS ================= -->
         <section class="admin-panel-block" id="admin-audit" style="display: none;">
             <h2 style="font-family: 'Outfit'; font-size: 1.75rem; margin-bottom: 1.5rem;">System & Administrative Audit Logs</h2>
-            <div class="glass-panel" style="padding: 1.5rem; border-radius: 16px;">
-                <div class="responsive-table-container">
-                    <table class="portal-table">
-                        <thead>
-                            <tr>
-                                <th>Timestamp</th>
-                                <th>Actor User</th>
-                                <th>IP Address</th>
-                                <th>Action Event</th>
-                                <th>Details / Payload Trace</th>
-                            </tr>
-                        </thead>
-                        <tbody id="audit-logs-table-body">
-                            <!-- Populated dynamically via AJAX -->
-                        </tbody>
-                    </table>
-                </div>
-                <div class="pagination-container" id="audit-logs-pagination" style="margin-top: 1.5rem;"></div>
-            </div>
+            <div id="audit-logs-datatable"></div>
         </section>
 
         <!-- ================= PANEL 8: QUEUE ENGINE & DLQ MANAGEMENT ================= -->
@@ -1161,27 +914,7 @@
             </div>
 
             <!-- DLQ failed jobs browser table -->
-            <div class="glass-panel" style="padding: 1.5rem; border-radius: 16px;">
-                <h3 style="font-family: 'Outfit'; font-size: 1.2rem; color: var(--accent-color); margin-bottom: 1rem;">Dead-Letter Queue (DLQ) Browser</h3>
-                <div class="responsive-table-container">
-                    <table class="portal-table">
-                        <thead>
-                            <tr>
-                                <th>UUID</th>
-                                <th>Job Class</th>
-                                <th>Origin Queue</th>
-                                <th>Diagnostic Error</th>
-                                <th>Failed Time</th>
-                                <th style="text-align: center;">Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody id="queues-failed-table-body">
-                            <!-- Populated dynamically via AJAX -->
-                        </tbody>
-                    </table>
-                </div>
-                <div class="pagination-container" id="queues-failed-pagination" style="margin-top: 1.5rem;"></div>
-            </div>
+            <div id="queues-failed-datatable"></div>
         </section>
 
         <!-- ================= PANEL 8B: EMAIL MARKETING AUTOMATION ================= -->
@@ -1260,29 +993,7 @@
             </div>
 
             <!-- Dynamic logs audit trail -->
-            <div class="glass-panel" style="padding: 1.5rem; border-radius: 16px;">
-                <h3 style="font-family: 'Outfit'; font-size: 1.25rem; color: var(--text-primary); margin-bottom: 1.2rem; display: flex; align-items: center; gap: 0.5rem;"><span style="display:inline-block; width:4px; height:18px; background:var(--text-primary); border-radius:2px;"></span> Real-time Automation Dispatch Logs</h3>
-                <div class="responsive-table-container">
-                    <table class="portal-table" id="mkt-logs-table">
-                        <thead>
-                            <tr>
-                                <th>Log ID</th>
-                                <th>Recipient Address</th>
-                                <th>Campaign Type</th>
-                                <th>Status</th>
-                                <th>Telemetry Tracker</th>
-                                <th>Sent Time</th>
-                            </tr>
-                        </thead>
-                        <tbody id="mkt-logs-table-body">
-                            <tr>
-                                <td colspan="6" style="text-align: center; color: var(--text-secondary); padding: 2rem 0;">No logs retrieved. Click the dashboard tab to load logs.</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-                <div class="pagination-container" id="mkt-logs-pagination" style="margin-top: 1.5rem;"></div>
-            </div>
+            <div id="mkt-logs-datatable"></div>
         </section>
 
         <!-- ================= PANEL 9: CONTENT VERIFICATION HUB ================= -->
@@ -1320,39 +1031,7 @@
                 </div>
             </div>
 
-            <!-- Filter Console -->
-            <div class="glass-panel" style="padding: 1.5rem; border-radius: 16px; margin-bottom: 1.5rem; display: flex; gap: 1rem; flex-wrap: wrap; align-items: center;">
-                <input type="text" id="ai-search-input" placeholder="Search job title for enriched drafts..." style="flex: 1; padding: 0.6rem 1rem; border-radius: 8px; background: var(--bg-primary); border: 1px solid var(--border-color); color: var(--text-primary);" autocomplete="off">
-                <select id="ai-status-filter" style="width: auto; font-size: 0.85rem; padding-top: 0.4rem !important; padding-bottom: 0.4rem !important;">
-                    <option value="all">All States</option>
-                    <option value="pending" selected>Pending Review</option>
-                    <option value="approved">Approved & Live</option>
-                    <option value="rejected">Rejected Drafts</option>
-                </select>
-                <button class="btn-primary" id="btn-ai-filter-trigger" style="margin: 0; padding: 0.6rem 1.2rem;">Apply Filter</button>
-            </div>
-
-            <!-- Main Data Table -->
-            <div class="glass-panel" style="padding: 1.5rem; border-radius: 16px;">
-                <div class="responsive-table-container">
-                    <table class="portal-table">
-                        <thead>
-                            <tr>
-                                <th>Post ID</th>
-                                <th>Recruitment Title</th>
-                                <th>AI Engine</th>
-                                <th>Draft Status</th>
-                                <th>Creation Date</th>
-                                <th style="text-align: center;">Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody id="ai-management-table-body">
-                            <!-- Populated dynamically via AJAX -->
-                        </tbody>
-                    </table>
-                </div>
-                <div class="pagination-container" id="ai-management-pagination" style="margin-top: 1.5rem;"></div>
-            </div>
+            <div id="ai-management-datatable"></div>
         </section>
 
         <!-- ================= PANEL 10: RBAC MATRIX ================= -->
@@ -1368,7 +1047,7 @@
                     The following matrix defines the granular access levels and permissions granted to each administrative role in the system. Security settings are dynamically enforced by Spatie Permission Package.
                 </p>
                 <div class="responsive-table-container">
-                    <table class="portal-table" style="width: 100%;">
+                    <table class="enterprise-table density-compact" style="width: 100%;">
                         <thead>
                             <tr>
                                 <th style="text-align: left; width: 35%;">Administrative Permission</th>
@@ -1917,12 +1596,23 @@
 <script src="https://cdn.jsdelivr.net/npm/quill@2.0.2/dist/quill.js"></script>
 <!-- Load local offline Chart.js to prevent Service Worker network fetch errors on localhost -->
 <script src="{{ asset('assets/js/chart.js') }}"></script>
+<script src="{{ asset('assets/js/enterprise-datatable.js') }}"></script>
 <script>
     $(document).ready(function() {
+        // Toggle Admin Sidebar Navigation links on mobile/tablet
+        $('#adminSidebarToggleBtn').on('click', function() {
+            $('#adminSidebarLinks').toggleClass('active');
+        });
+
         // Toggle Sidebar Dashboard Tabs/Panels
         $(document).on('click', '.admin-nav-btn', function() {
             $('.admin-nav-btn').removeClass('active');
             $(this).addClass('active');
+
+            // Close navigation links on click of a nav button on mobile
+            if ($(window).width() <= 900) {
+                $('#adminSidebarLinks').removeClass('active');
+            }
 
             const targetBlock = $(this).data('block');
             $('.admin-panel-block').hide();
@@ -2062,7 +1752,8 @@
                             if (healthStatus === 'success') {
                                 healthBadge = '<span class="badge" style="background:rgba(16,185,129,0.08); color:#10b981;">Healthy</span>';
                             } else if (healthStatus === 'failed') {
-                                healthBadge = '<span class="badge" style="background:rgba(239,68,68,0.08); color:#ef4444;">Error</span>';
+                                const errMsg = log ? (log.error_message || 'Unknown error during scraping run').replace(/"/g, '&quot;').replace(/'/g, '&#39;') : 'Unknown Error';
+                                healthBadge = `<span class="badge enterprise-tooltip" data-tooltip="${errMsg}" style="background:rgba(239,68,68,0.08); color:#ef4444; cursor:help;">Error ⚠️</span>`;
                             } else if (healthStatus === 'quarantined') {
                                 healthBadge = '<span class="badge" style="background:rgba(245,158,11,0.08); color:#f59e0b;">Quarantine</span>';
                             }
@@ -2084,17 +1775,23 @@
                             let errs = '';
                             if (q.errors) {
                                 Object.keys(q.errors).forEach(k => {
-                                    errs += `&bull; ${k}: ${q.errors[k].join(', ')}<br>`;
+                                    let errMsgs = Array.isArray(q.errors[k]) ? q.errors[k].join(', ') : q.errors[k];
+                                    errs += `&bull; ${k}: ${errMsgs}<br>`;
                                 });
                             }
+                            
+                            let safeTitle = (q.raw_payload.title || 'Quarantined Announcement').replace(/"/g, '&quot;');
+                            let safeUrl = (q.raw_payload.official_link || '').replace(/"/g, '&quot;');
+                            let safeErrs = errs.replace(/"/g, '&quot;');
+
                             qHtml += `
                                 <div class="glass-panel" style="padding: 1.25rem; margin-bottom: 1rem; border-left: 4px solid #f59e0b; display: flex; justify-content: space-between; align-items: center; gap: 1rem; background: var(--bg-primary);">
-                                    <div style="flex:1;">
-                                        <h4 style="font-size: 1.05rem; margin-bottom: 0.25rem;">${q.raw_payload.title || 'Quarantined Announcement'}</h4>
-                                        <p style="font-size:0.8rem; color:var(--text-secondary); margin-bottom:0.5rem;">Source Feed: <strong>${q.source_name}</strong> &bull; Crawled: ${q.time}</p>
-                                        <div style="font-size:0.75rem; color:#ef4444; font-family:monospace;">${errs || 'Validation limits check failed.'}</div>
+                                    <div style="flex:1; min-width:0;">
+                                        <h4 style="font-size: 1.05rem; margin-bottom: 0.25rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${safeTitle}</h4>
+                                        <p style="font-size:0.8rem; color:var(--text-secondary); margin-bottom:0.5rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Source Feed: <strong>${q.source_name}</strong> &bull; Crawled: ${q.time}</p>
+                                        <div style="font-size:0.75rem; color:#ef4444; font-family:monospace; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">${errs || 'Validation limits check failed.'}</div>
                                     </div>
-                                    <button class="form-btn btn-rescue-trigger" data-id="${q.id}" data-title="${q.raw_payload.title || ''}" data-url="${q.raw_payload.official_link || ''}" data-errors="${errs}" style="margin:0; padding:0.5rem 1rem; background:#f59e0b;">Rescue</button>
+                                    <button class="form-btn btn-rescue-trigger" data-id="${q.id}" data-title="${safeTitle}" data-url="${safeUrl}" data-errors="${safeErrs}" style="margin:0; padding:0.5rem 1rem; background:#f59e0b; flex-shrink:0;">Rescue</button>
                                 </div>
                             `;
                         });
@@ -2349,64 +2046,51 @@
         // ===================================================================
         // 2. RECRUITMENT POSTINGS CRUD
         // ===================================================================
-        let currentJobsPage = 1;
-        function loadJobsData(page) {
-            currentJobsPage = page;
-            const search = $('#jobs-search-input').val();
-            const perPage = $('#jobs-per-page').val();
-
-            $.ajax({
-                url: '/api/admin/jobs',
-                method: 'GET',
-                data: { page: page, search: search, per_page: perPage },
-                success: function(res) {
-                    if (res.status === 'success') {
-                        let trs = '';
-                        res.data.jobs.forEach(job => {
-                            trs += `
-                                <tr>
-                                    <td class="text-nowrap">${job.id}</td>
-                                    <td style="min-width: 240px; max-width: 320px; word-break: break-word;"><strong>${job.title}</strong><br><span style="font-size:0.75rem; color:var(--text-secondary);">${job.department ? job.department.name : 'Unknown Department'}</span></td>
-                                    <td class="text-nowrap"><span class="badge" style="margin-bottom:0;">${job.category ? job.category.name : 'Unassigned'}</span></td>
-                                    <td class="text-nowrap"><span class="badge badge-dept" style="margin-bottom:0;">${job.state ? job.state.name : 'Pan India'}</span></td>
-                                    <td class="text-nowrap" style="font-weight:bold;">₹ ${Math.round(job.salary_max)}</td>
-                                    <td class="text-nowrap"><span class="badge badge-deadline" style="margin-bottom:0;">${job.last_date_to_apply ? job.last_date_to_apply.substring(0, 10) : 'N/A'}</span></td>
-                                    <td class="text-nowrap" style="text-align:center; width: 1%;">
-                                        <div style="display:flex; gap:0.5rem; justify-content:center; align-items:center; flex-wrap:nowrap; flex-shrink:0;">
-                                            <button class="btn-sm-ai btn-trigger-ai-gen" data-id="${job.id}">
-                                                <i class="fas fa-check-circle" style="margin-right: 4px; font-size: 0.75rem;"></i> Verify Listing
-                                            </button>
-                                            <button class="btn-sm-view btn-edit-job" data-id="${job.id}" data-title="${job.title}" data-category="${job.category_id}" data-dept="${job.department_id}" data-state="${job.state_id}" data-qual="${job.qualification_id}" data-desc="${job.description}" data-min="${job.salary_min}" data-max="${job.salary_max}" data-vac="${job.vacancy_count}" data-fee="${job.application_fee}" data-deadline="${job.last_date_to_apply ? job.last_date_to_apply.substring(0, 10) : ''}" data-url="${job.official_website_link}"><i class="fas fa-edit" style="margin-right: 4px; font-size: 0.75rem;"></i> Edit</button>
-                                            <button class="btn-sm-danger btn-delete-job" data-id="${job.id}"><i class="fas fa-trash-alt" style="margin-right: 4px; font-size: 0.75rem;"></i> Delete</button>
-                                        </div>
-                                    </td>
-                                </tr>
+        let jobsTable;
+        function loadJobsData() {
+            if (!jobsTable) {
+                jobsTable = new EnterpriseDataTable('#jobs-datatable', {
+                    url: '/api/admin/jobs',
+                    searchPlaceholder: 'Search announcements...',
+                    pageSize: 20,
+                    dataKey: 'jobs',
+                    columns: [
+                        { key: 'id', title: 'ID', sortable: true, priority: 'high' },
+                        { key: 'title', title: 'Recruitment Announcement Title', sortable: true, priority: 'high', render: function(row) {
+                            return `
+                                <div class="enterprise-primary-stack">
+                                    <span class="enterprise-primary-value">${jobsTable.escape(row.title)}</span>
+                                    <span class="enterprise-secondary-metadata">${row.department ? jobsTable.escape(row.department.name) : 'Unknown Department'}</span>
+                                </div>
                             `;
-                        });
-                        $('#jobs-management-table-body').html(trs || '<tr><td colspan="7" style="text-align:center; color:var(--text-secondary);">No announcements found matching credentials.</td></tr>');
-
-                        // Setup pagination
-                        buildPagination('#jobs-management-pagination', res.data.current_page, res.data.last_page, loadJobsData);
-                    }
-                },
-                error: function(err) {
-                    showToast(err.responseJSON?.message || 'Access Denied: Unable to load recruitment postings.', 'error');
-                }
-            });
+                        }},
+                        { key: 'category', title: 'Category', sortable: false, priority: 'medium', align: 'center', render: function(row) {
+                            return `<span class="badge-pill-compact" style="background:rgba(37,99,235,0.08); color:var(--accent-color);">${row.category ? jobsTable.escape(row.category.name) : 'Unassigned'}</span>`;
+                        }},
+                        { key: 'region', title: 'Region', sortable: false, priority: 'medium', align: 'center', render: function(row) {
+                            return `<span class="badge-pill-compact" style="background:rgba(156,163,175,0.1); color:var(--text-primary);">${row.state ? jobsTable.escape(row.state.name) : 'Pan India'}</span>`;
+                        }},
+                        { key: 'salary_max', title: 'Salary Max', sortable: true, priority: 'medium', align: 'right', render: function(row) {
+                            return `₹${Math.round(row.salary_max).toLocaleString('en-IN')}`;
+                        }},
+                        { key: 'last_date_to_apply', title: 'Deadline', sortable: true, priority: 'high', align: 'center', render: function(row) {
+                            return `<span class="badge-pill-compact" style="background:rgba(239,68,68,0.08); color:#ef4444;">${row.last_date_to_apply ? row.last_date_to_apply.substring(0, 10) : 'N/A'}</span>`;
+                        }},
+                        { key: 'actions', title: 'Actions', sortable: false, priority: 'high', align: 'center', render: function(row) {
+                            return `
+                                <div style="display:flex; gap:0.35rem; justify-content:center; align-items:center;">
+                                    <button class="enterprise-action-icon-btn enterprise-action-icon-btn-ai btn-trigger-ai-gen enterprise-tooltip" data-tooltip="Verify Listing" data-id="${row.id}"><i class="fas fa-check-circle"></i></button>
+                                    <button class="enterprise-action-icon-btn enterprise-action-icon-btn-view btn-edit-job enterprise-tooltip" data-tooltip="Edit" data-id="${row.id}" data-title="${jobsTable.escape(row.title)}" data-category="${row.category_id}" data-dept="${row.department_id}" data-state="${row.state_id}" data-qual="${row.qualification_id}" data-desc="${jobsTable.escape(row.description)}" data-min="${row.salary_min}" data-max="${row.salary_max}" data-vac="${row.vacancy_count}" data-fee="${row.application_fee}" data-deadline="${row.last_date_to_apply ? row.last_date_to_apply.substring(0, 10) : ''}" data-url="${jobsTable.escape(row.official_website_link)}"><i class="fas fa-edit"></i></button>
+                                    <button class="enterprise-action-icon-btn enterprise-action-icon-btn-danger btn-delete-job enterprise-tooltip" data-tooltip="Delete" data-id="${row.id}"><i class="fas fa-trash-alt"></i></button>
+                                </div>
+                            `;
+                        }}
+                    ]
+                });
+            } else {
+                jobsTable.refresh();
+            }
         }
-
-        // Live Search Input debounce
-        let searchTimeout;
-        $('#jobs-search-input').on('keyup', function() {
-            clearTimeout(searchTimeout);
-            searchTimeout = setTimeout(() => {
-                loadJobsData(1);
-            }, 300);
-        });
-
-        $('#jobs-per-page').on('change', function() {
-            loadJobsData(1);
-        });
 
         // Trigger Edit Job
         $(document).on('click', '.btn-edit-job', function() {
@@ -2479,47 +2163,49 @@
         // ===================================================================
         // 3. CRAWLER MONITOR CONFIGS CRUD
         // ===================================================================
+        let crawlersTable;
         function loadCrawlersData() {
-            $.ajax({
-                url: '/api/admin/scrapers',
-                method: 'GET',
-                success: function(res) {
-                    if (res.status === 'success') {
-                        let trs = '';
-                        res.data.forEach(src => {
-                            const isActChecked = src.is_active ? 'checked' : '';
-                            const selectors = src.selectors_config || {};
-                            
-                            trs += `
-                                <tr>
-                                    <td style="min-width: 150px; max-width: 250px; word-break: break-word;"><strong>${src.name}</strong></td>
-                                    <td><span style="font-size:0.75rem; color:var(--text-secondary); word-break:break-all;">${src.source_url}</span></td>
-                                    <td class="text-nowrap" style="font-family:monospace; font-size:0.8rem;">${src.cron_expression}</td>
-                                    <td class="text-nowrap" style="text-align:center;">
-                                        <label class="toggle-switch" style="vertical-align:middle;">
-                                            <input type="checkbox" class="toggle-scraper-active-switch" data-id="${src.id}" ${isActChecked}>
-                                            <span class="toggle-slider slider-success"></span>
-                                        </label>
-                                    </td>
-                                    <td class="text-nowrap" style="text-align:center;">
-                                        <button class="btn-sm-success btn-run-scraper" data-id="${src.id}">Crawl Now</button>
-                                    </td>
-                                    <td class="text-nowrap">
-                                        <div style="display:flex; gap:0.5rem; justify-content:center; flex-wrap:nowrap; flex-shrink:0;">
-                                            <button class="btn-sm-view btn-edit-crawler" data-id="${src.id}" data-name="${src.name}" data-url="${src.source_url}" data-cron="${src.cron_expression}" data-active="${src.is_active}" data-row="${selectors.row_selector || ''}" data-title="${selectors.title_selector || ''}" data-link="${selectors.link_selector || ''}" data-cat="${selectors.default_category_id || 1}" data-dept="${selectors.default_department_id || 1}" data-state="${selectors.default_state_id || 1}" data-qual="${selectors.default_qualification_id || 1}">Edit</button>
-                                            <button class="btn-sm-danger btn-delete-crawler" data-id="${src.id}">Delete</button>
-                                        </div>
-                                    </td>
-                                </tr>
+            if (!crawlersTable) {
+                crawlersTable = new EnterpriseDataTable('#crawlers-management-datatable', {
+                    url: '/api/admin/scrapers',
+                    serverSide: false,
+                    searchPlaceholder: 'Search scrapers...',
+                    columns: [
+                        { key: 'name', title: 'Crawl Target Name', sortable: true, priority: 'high', render: function(row) {
+                            return `<strong>${crawlersTable.escape(row.name)}</strong>`;
+                        }},
+                        { key: 'source_url', title: 'Source URL', sortable: true, priority: 'medium', render: function(row) {
+                            return `<span style="font-size:0.75rem; color:var(--text-secondary); word-break:break-all;">${crawlersTable.escape(row.source_url)}</span>`;
+                        }},
+                        { key: 'cron_expression', title: 'Cron Schedule', sortable: true, priority: 'medium', align: 'center', render: function(row) {
+                            return `<span style="font-family:monospace; font-size:0.8rem;">${crawlersTable.escape(row.cron_expression)}</span>`;
+                        }},
+                        { key: 'is_active', title: 'Active State', sortable: true, priority: 'high', align: 'center', render: function(row) {
+                            const isActChecked = row.is_active ? 'checked' : '';
+                            return `
+                                <label class="toggle-switch" style="vertical-align:middle; display:inline-block;">
+                                    <input type="checkbox" class="toggle-scraper-active-switch" data-id="${row.id}" ${isActChecked}>
+                                    <span class="toggle-slider slider-success"></span>
+                                </label>
                             `;
-                        });
-                        $('#crawlers-management-table-body').html(trs || '<tr><td colspan="6" style="text-align:center; color:var(--text-secondary);">No crawling configurations mapped.</td></tr>');
-                    }
-                },
-                error: function(err) {
-                    showToast(err.responseJSON?.message || 'Access Denied: Unable to load crawler configurations.', 'error');
-                }
-            });
+                        }},
+                        { key: 'crawl_now', title: 'Crawl Override', sortable: false, priority: 'high', align: 'center', render: function(row) {
+                            return `<button class="enterprise-btn enterprise-btn-primary btn-run-scraper" style="padding:0.2rem 0.5rem; height:24px; font-size:0.75rem;" data-id="${row.id}"><i class="fas fa-play" style="font-size:0.65rem;"></i> Run</button>`;
+                        }},
+                        { key: 'actions', title: 'Actions', sortable: false, priority: 'high', align: 'center', render: function(row) {
+                            const selectors = row.selectors_config || {};
+                            return `
+                                <div style="display:flex; gap:0.35rem; justify-content:center; align-items:center;">
+                                    <button class="enterprise-action-icon-btn enterprise-action-icon-btn-view btn-edit-crawler enterprise-tooltip" data-tooltip="Edit" data-id="${row.id}" data-name="${crawlersTable.escape(row.name)}" data-url="${crawlersTable.escape(row.source_url)}" data-cron="${crawlersTable.escape(row.cron_expression)}" data-active="${row.is_active}" data-row="${crawlersTable.escape(selectors.row_selector || '')}" data-title="${crawlersTable.escape(selectors.title_selector || '')}" data-link="${crawlersTable.escape(selectors.link_selector || '')}" data-cat="${selectors.default_category_id || 1}" data-dept="${selectors.default_department_id || 1}" data-state="${selectors.default_state_id || 1}" data-qual="${selectors.default_qualification_id || 1}"><i class="fas fa-edit"></i></button>
+                                    <button class="enterprise-action-icon-btn enterprise-action-icon-btn-danger btn-delete-crawler enterprise-tooltip" data-tooltip="Delete" data-id="${row.id}"><i class="fas fa-trash-alt"></i></button>
+                                </div>
+                            `;
+                        }}
+                    ]
+                });
+            } else {
+                crawlersTable.refresh();
+            }
         }
 
         // Toggle Switch Active Crawl Targets
@@ -2657,33 +2343,34 @@
         }
 
         // Categories Actions
+        let categoriesTable;
         function loadCategoriesList() {
-            $.ajax({
-                url: '/api/admin/categories',
-                method: 'GET',
-                success: function(res) {
-                    let trs = '';
-                    res.data.forEach(c => {
-                        trs += `
-                            <tr>
-                                <td class="text-nowrap">${c.id}</td>
-                                <td style="min-width: 150px; max-width: 250px; word-break: break-word;"><strong>${c.name}</strong></td>
-                                <td class="text-nowrap"><span style="font-size:0.8rem; color:var(--text-secondary);">${c.slug}</span></td>
-                                <td class="text-nowrap" style="text-align:center; width: 1%;">
-                                    <div style="display:flex; gap:0.5rem; justify-content:center; align-items:center; flex-wrap:nowrap; flex-shrink:0;">
-                                        <button class="btn-sm-view btn-edit-category" data-id="${c.id}" data-name="${c.name}">Edit</button>
-                                        <button class="btn-sm-danger btn-delete-category" data-id="${c.id}">Delete</button>
-                                    </div>
-                                </td>
-                            </tr>
-                        `;
-                    });
-                    $('#categories-table-body').html(trs || '<tr><td colspan="4" style="text-align:center;">No categories indexed.</td></tr>');
-                },
-                error: function(err) {
-                    showToast(err.responseJSON?.message || 'Access Denied: Unable to load categories list.', 'error');
-                }
-            });
+            if (!categoriesTable) {
+                categoriesTable = new EnterpriseDataTable('#categories-datatable', {
+                    url: '/api/admin/categories',
+                    serverSide: false,
+                    searchPlaceholder: 'Search categories...',
+                    columns: [
+                        { key: 'id', title: 'ID', sortable: true, priority: 'high' },
+                        { key: 'name', title: 'Category Name', sortable: true, priority: 'high', render: function(row) {
+                            return `<strong>${categoriesTable.escape(row.name)}</strong>`;
+                        }},
+                        { key: 'slug', title: 'Slug Reference', sortable: true, priority: 'medium', render: function(row) {
+                            return `<span style="font-size:0.8rem; color:var(--text-secondary);">${categoriesTable.escape(row.slug)}</span>`;
+                        }},
+                        { key: 'actions', title: 'Actions', sortable: false, priority: 'high', align: 'center', render: function(row) {
+                            return `
+                                <div style="display:flex; gap:0.35rem; justify-content:center; align-items:center;">
+                                    <button class="enterprise-action-icon-btn enterprise-action-icon-btn-view btn-edit-category enterprise-tooltip" data-tooltip="Edit" data-id="${row.id}" data-name="${categoriesTable.escape(row.name)}"><i class="fas fa-edit"></i></button>
+                                    <button class="enterprise-action-icon-btn enterprise-action-icon-btn-danger btn-delete-category enterprise-tooltip" data-tooltip="Delete" data-id="${row.id}"><i class="fas fa-trash-alt"></i></button>
+                                </div>
+                            `;
+                        }}
+                    ]
+                });
+            } else {
+                categoriesTable.refresh();
+            }
         }
 
         $('#ajax-category-form').on('submit', function(e) {
@@ -2748,33 +2435,34 @@
         });
 
         // Departments Actions
+        let departmentsTable;
         function loadDepartmentsList() {
-            $.ajax({
-                url: '/api/admin/departments',
-                method: 'GET',
-                success: function(res) {
-                    let trs = '';
-                    res.data.forEach(d => {
-                        trs += `
-                            <tr>
-                                <td class="text-nowrap">${d.id}</td>
-                                <td style="min-width: 150px; max-width: 250px; word-break: break-word;"><strong>${d.name}</strong></td>
-                                <td class="text-nowrap" style="font-weight:bold;">${d.code}</td>
-                                <td class="text-nowrap" style="text-align:center; width: 1%;">
-                                    <div style="display:flex; gap:0.5rem; justify-content:center; align-items:center; flex-wrap:nowrap; flex-shrink:0;">
-                                        <button class="btn-sm-view btn-edit-dept" data-id="${d.id}" data-name="${d.name}" data-code="${d.code}">Edit</button>
-                                        <button class="btn-sm-danger btn-delete-dept" data-id="${d.id}">Delete</button>
-                                    </div>
-                                </td>
-                            </tr>
-                        `;
-                    });
-                    $('#departments-table-body').html(trs || '<tr><td colspan="4" style="text-align:center;">No departments indexed.</td></tr>');
-                },
-                error: function(err) {
-                    showToast(err.responseJSON?.message || 'Access Denied: Unable to load departments list.', 'error');
-                }
-            });
+            if (!departmentsTable) {
+                departmentsTable = new EnterpriseDataTable('#departments-datatable', {
+                    url: '/api/admin/departments',
+                    serverSide: false,
+                    searchPlaceholder: 'Search departments...',
+                    columns: [
+                        { key: 'id', title: 'ID', sortable: true, priority: 'high' },
+                        { key: 'name', title: 'Department Name', sortable: true, priority: 'high', render: function(row) {
+                            return `<strong>${departmentsTable.escape(row.name)}</strong>`;
+                        }},
+                        { key: 'code', title: 'Code', sortable: true, priority: 'medium', render: function(row) {
+                            return `<span style="font-weight:bold;">${departmentsTable.escape(row.code)}</span>`;
+                        }},
+                        { key: 'actions', title: 'Actions', sortable: false, priority: 'high', align: 'center', render: function(row) {
+                            return `
+                                <div style="display:flex; gap:0.35rem; justify-content:center; align-items:center;">
+                                    <button class="enterprise-action-icon-btn enterprise-action-icon-btn-view btn-edit-dept enterprise-tooltip" data-tooltip="Edit" data-id="${row.id}" data-name="${departmentsTable.escape(row.name)}" data-code="${departmentsTable.escape(row.code)}"><i class="fas fa-edit"></i></button>
+                                    <button class="enterprise-action-icon-btn enterprise-action-icon-btn-danger btn-delete-dept enterprise-tooltip" data-tooltip="Delete" data-id="${row.id}"><i class="fas fa-trash-alt"></i></button>
+                                </div>
+                            `;
+                        }}
+                    ]
+                });
+            } else {
+                departmentsTable.refresh();
+            }
         }
 
         $('#ajax-department-form').on('submit', function(e) {
@@ -2840,33 +2528,34 @@
         });
 
         // Qualifications Actions
+        let qualificationsTable;
         function loadQualificationsList() {
-            $.ajax({
-                url: '/api/admin/qualifications',
-                method: 'GET',
-                success: function(res) {
-                    let trs = '';
-                    res.data.forEach(q => {
-                        trs += `
-                            <tr>
-                                <td class="text-nowrap">${q.id}</td>
-                                <td style="min-width: 150px; max-width: 250px; word-break: break-word;"><strong>${q.name}</strong></td>
-                                <td class="text-nowrap"><span style="font-size:0.8rem; color:var(--text-secondary);">${q.slug}</span></td>
-                                <td class="text-nowrap" style="text-align:center; width: 1%;">
-                                    <div style="display:flex; gap:0.5rem; justify-content:center; align-items:center; flex-wrap:nowrap; flex-shrink:0;">
-                                        <button class="btn-sm-view btn-edit-qual" data-id="${q.id}" data-name="${q.name}">Edit</button>
-                                        <button class="btn-sm-danger btn-delete-qual" data-id="${q.id}">Delete</button>
-                                    </div>
-                                </td>
-                            </tr>
-                        `;
-                    });
-                    $('#qualifications-table-body').html(trs || '<tr><td colspan="4" style="text-align:center;">No qualifications indexed.</td></tr>');
-                },
-                error: function(err) {
-                    showToast(err.responseJSON?.message || 'Access Denied: Unable to load qualifications list.', 'error');
-                }
-            });
+            if (!qualificationsTable) {
+                qualificationsTable = new EnterpriseDataTable('#qualifications-datatable', {
+                    url: '/api/admin/qualifications',
+                    serverSide: false,
+                    searchPlaceholder: 'Search qualifications...',
+                    columns: [
+                        { key: 'id', title: 'ID', sortable: true, priority: 'high' },
+                        { key: 'name', title: 'Qualification', sortable: true, priority: 'high', render: function(row) {
+                            return `<strong>${qualificationsTable.escape(row.name)}</strong>`;
+                        }},
+                        { key: 'slug', title: 'Slug Reference', sortable: true, priority: 'medium', render: function(row) {
+                            return `<span style="font-size:0.8rem; color:var(--text-secondary);">${qualificationsTable.escape(row.slug)}</span>`;
+                        }},
+                        { key: 'actions', title: 'Actions', sortable: false, priority: 'high', align: 'center', render: function(row) {
+                            return `
+                                <div style="display:flex; gap:0.35rem; justify-content:center; align-items:center;">
+                                    <button class="enterprise-action-icon-btn enterprise-action-icon-btn-view btn-edit-qual enterprise-tooltip" data-tooltip="Edit" data-id="${row.id}" data-name="${qualificationsTable.escape(row.name)}"><i class="fas fa-edit"></i></button>
+                                    <button class="enterprise-action-icon-btn enterprise-action-icon-btn-danger btn-delete-qual enterprise-tooltip" data-tooltip="Delete" data-id="${row.id}"><i class="fas fa-trash-alt"></i></button>
+                                </div>
+                            `;
+                        }}
+                    ]
+                });
+            } else {
+                qualificationsTable.refresh();
+            }
         }
 
         $('#ajax-qualification-form').on('submit', function(e) {
@@ -2929,33 +2618,34 @@
         });
 
         // States Actions
+        let statesTable;
         function loadStatesList() {
-            $.ajax({
-                url: '/api/admin/states',
-                method: 'GET',
-                success: function(res) {
-                    let trs = '';
-                    res.data.forEach(s => {
-                        trs += `
-                            <tr>
-                                <td class="text-nowrap">${s.id}</td>
-                                <td style="min-width: 150px; max-width: 250px; word-break: break-word;"><strong>${s.name}</strong></td>
-                                <td class="text-nowrap" style="font-weight:bold;">${s.code}</td>
-                                <td class="text-nowrap" style="text-align:center; width: 1%;">
-                                    <div style="display:flex; gap:0.5rem; justify-content:center; align-items:center; flex-wrap:nowrap; flex-shrink:0;">
-                                        <button class="btn-sm-view btn-edit-state" data-id="${s.id}" data-name="${s.name}" data-code="${s.code}">Edit</button>
-                                        <button class="btn-sm-danger btn-delete-state" data-id="${s.id}">Delete</button>
-                                    </div>
-                                </td>
-                            </tr>
-                        `;
-                    });
-                    $('#states-table-body').html(trs || '<tr><td colspan="4" style="text-align:center;">No states indexed.</td></tr>');
-                },
-                error: function(err) {
-                    showToast(err.responseJSON?.message || 'Access Denied: Unable to load states list.', 'error');
-                }
-            });
+            if (!statesTable) {
+                statesTable = new EnterpriseDataTable('#states-datatable', {
+                    url: '/api/admin/states',
+                    serverSide: false,
+                    searchPlaceholder: 'Search states...',
+                    columns: [
+                        { key: 'id', title: 'ID', sortable: true, priority: 'high' },
+                        { key: 'name', title: 'State Name', sortable: true, priority: 'high', render: function(row) {
+                            return `<strong>${statesTable.escape(row.name)}</strong>`;
+                        }},
+                        { key: 'code', title: 'Code', sortable: true, priority: 'medium', render: function(row) {
+                            return `<span style="font-weight:bold;">${statesTable.escape(row.code)}</span>`;
+                        }},
+                        { key: 'actions', title: 'Actions', sortable: false, priority: 'high', align: 'center', render: function(row) {
+                            return `
+                                <div style="display:flex; gap:0.35rem; justify-content:center; align-items:center;">
+                                    <button class="enterprise-action-icon-btn enterprise-action-icon-btn-view btn-edit-state enterprise-tooltip" data-tooltip="Edit" data-id="${row.id}" data-name="${statesTable.escape(row.name)}" data-code="${statesTable.escape(row.code)}"><i class="fas fa-edit"></i></button>
+                                    <button class="enterprise-action-icon-btn enterprise-action-icon-btn-danger btn-delete-state enterprise-tooltip" data-tooltip="Delete" data-id="${row.id}"><i class="fas fa-trash-alt"></i></button>
+                                </div>
+                            `;
+                        }}
+                    ]
+                });
+            } else {
+                statesTable.refresh();
+            }
         }
 
         $('#ajax-state-form').on('submit', function(e) {
@@ -3023,31 +2713,45 @@
         // ===================================================================
         // 5. USER ACCESS MANAGER (ROLE & STATUS TOGGLES)
         // ===================================================================
+        let usersTable;
         function loadUsersData() {
-            $.ajax({
-                url: '/api/admin/users',
-                method: 'GET',
-                success: function(res) {
-                    if (res.status === 'success') {
-                        let trs = '';
-                        res.data.users.forEach(u => {
+            if (!usersTable) {
+                usersTable = new EnterpriseDataTable('#users-datatable', {
+                    url: '/api/admin/users',
+                    serverSide: false,
+                    searchPlaceholder: 'Search users...',
+                    dataKey: 'users',
+                    columns: [
+                        { key: 'id', title: 'User ID', sortable: true, priority: 'low' },
+                        { key: 'name', title: 'Name', sortable: true, priority: 'high', render: function(row) {
+                            return `<strong>${usersTable.escape(row.name)}</strong>`;
+                        }},
+                        { key: 'email', title: 'Email', sortable: true, priority: 'high', render: function(row) {
+                            return `<span style="font-size:0.8rem; color:var(--text-secondary);">${usersTable.escape(row.email)}</span>`;
+                        }},
+                        { key: 'role', title: 'Role', sortable: true, priority: 'high', align: 'center', render: function(row) {
                             let badgeRole = '';
-                            if (u.role === 'super_admin') {
-                                badgeRole = '<span class="badge" style="background:rgba(239,68,68,0.08); color:#ef4444; font-weight:700;">Super Admin</span>';
-                            } else if (u.role === 'admin') {
-                                badgeRole = '<span class="badge" style="background:rgba(139,92,246,0.08); color:#8b5cf6; font-weight:700;">Admin</span>';
-                            } else if (u.role === 'editor') {
-                                badgeRole = '<span class="badge" style="background:rgba(59,130,246,0.08); color:#3b82f6;">Editor</span>';
-                            } else if (u.role === 'reviewer') {
-                                badgeRole = '<span class="badge" style="background:rgba(20,184,166,0.08); color:#14b8a6;">Reviewer</span>';
-                            } else if (u.role === 'moderator') {
-                                badgeRole = '<span class="badge" style="background:rgba(245,158,11,0.08); color:#f59e0b;">Moderator</span>';
+                            if (row.role === 'super_admin') {
+                                badgeRole = '<span class="badge-pill-compact" style="background:rgba(239,68,68,0.08); color:#ef4444; font-weight:700;">Super Admin</span>';
+                            } else if (row.role === 'admin') {
+                                badgeRole = '<span class="badge-pill-compact" style="background:rgba(139,92,246,0.08); color:#8b5cf6; font-weight:700;">Admin</span>';
+                            } else if (row.role === 'editor') {
+                                badgeRole = '<span class="badge-pill-compact" style="background:rgba(59,130,246,0.08); color:#3b82f6;">Editor</span>';
+                            } else if (row.role === 'reviewer') {
+                                badgeRole = '<span class="badge-pill-compact" style="background:rgba(20,184,166,0.08); color:#14b8a6;">Reviewer</span>';
+                            } else if (row.role === 'moderator') {
+                                badgeRole = '<span class="badge-pill-compact" style="background:rgba(245,158,11,0.08); color:#f59e0b;">Moderator</span>';
                             } else {
-                                badgeRole = '<span class="badge badge-dept">Candidate</span>';
+                                badgeRole = '<span class="badge-pill-compact" style="background:rgba(156,163,175,0.1); color:var(--text-primary);">Candidate</span>';
                             }
-
-                            const badgeState = u.is_active ? '<span class="badge" style="background:rgba(16,185,129,0.08); color:#10b981;">Active Session</span>' : '<span class="badge" style="background:rgba(239,68,68,0.08); color:#ef4444;">Suspended</span>';
-                            
+                            return badgeRole;
+                        }},
+                        { key: 'is_active', title: 'Account State', sortable: true, priority: 'medium', align: 'center', render: function(row) {
+                            return row.is_active 
+                                ? '<span class="badge-pill-compact" style="background:rgba(16,185,129,0.08); color:#10b981;">Active</span>' 
+                                : '<span class="badge-pill-compact" style="background:rgba(239,68,68,0.08); color:#ef4444;">Suspended</span>';
+                        }},
+                        { key: 'actions', title: 'Elevations / Actions', sortable: false, priority: 'high', align: 'center', render: function(row) {
                             const rolesList = [
                                 { value: 'super_admin', label: 'Super Admin' },
                                 { value: 'admin', label: 'Admin' },
@@ -3057,36 +2761,27 @@
                                 { value: 'candidate', label: 'Candidate' }
                             ];
 
-                            let roleSelect = `<select class="select-user-role" data-id="${u.id}">`;
+                            let roleSelect = `<select class="select-user-role enterprise-select" style="height:24px; padding: 0 1.25rem 0 0.25rem !important; font-size:0.75rem !important; margin:0;" data-id="${row.id}">`;
                             rolesList.forEach(r => {
-                                const selected = u.role === r.value ? 'selected' : '';
+                                const selected = row.role === r.value ? 'selected' : '';
                                 roleSelect += `<option value="${r.value}" ${selected}>${r.label}</option>`;
                             });
                             roleSelect += `</select>`;
 
-                            trs += `
-                                <tr>
-                                    <td class="text-nowrap">${u.id}</td>
-                                    <td class="text-nowrap"><strong>${u.name}</strong></td>
-                                    <td class="text-nowrap"><span style="font-size:0.8rem; color:var(--text-secondary);">${u.email}</span></td>
-                                    <td class="text-nowrap">${badgeRole}</td>
-                                    <td class="text-nowrap" style="text-align:center;">${badgeState}</td>
-                                    <td class="text-nowrap" style="text-align:center; width: 1%;">
-                                        <div style="display:flex; gap:0.5rem; justify-content:center; align-items:center; flex-wrap:nowrap; flex-shrink:0;">
-                                            ${roleSelect}
-                                            <button class="${u.is_active ? 'btn-sm-danger' : 'btn-sm-success'} btn-toggle-status" data-id="${u.id}" data-active="${u.is_active}">${u.is_active ? 'Suspend' : 'Activate'}</button>
-                                        </div>
-                                    </td>
-                                </tr>
+                            return `
+                                <div style="display:flex; gap:0.35rem; justify-content:center; align-items:center;">
+                                    ${roleSelect}
+                                    <button class="enterprise-action-icon-btn ${row.is_active ? 'enterprise-action-icon-btn-danger' : 'enterprise-action-icon-btn-success'} btn-toggle-status enterprise-tooltip" data-tooltip="${row.is_active ? 'Suspend Account' : 'Activate Account'}" data-id="${row.id}" data-active="${row.is_active}">
+                                        <i class="fas ${row.is_active ? 'fa-ban' : 'fa-user-check'}"></i>
+                                    </button>
+                                </div>
                             `;
-                        });
-                        $('#users-table-body').html(trs || '<tr><td colspan="6" style="text-align:center;">No users registered.</td></tr>');
-                    }
-                },
-                error: function(err) {
-                    showToast(err.responseJSON?.message || 'Access Denied: Unable to load users registry.', 'error');
-                }
-            });
+                        }}
+                    ]
+                });
+            } else {
+                usersTable.refresh();
+            }
         }
 
         // Change user access role via dropdown selector
@@ -3155,10 +2850,8 @@
         // ===================================================================
         // 7. QUEUE DASHBOARD & DLQ OPERATIONS
         // ===================================================================
-        let currentQueuePage = 1;
+        let queuesTable;
         function loadQueueDashboard(page) {
-            currentQueuePage = page || 1;
-            
             // 1. Fetch metrics
             $.ajax({
                 url: '/api/admin/queues/metrics',
@@ -3176,39 +2869,44 @@
             });
 
             // 2. Fetch failed jobs list
-            $.ajax({
-                url: '/api/admin/queues/failed',
-                method: 'GET',
-                data: { page: currentQueuePage },
-                success: function(res) {
-                    if (res.status === 'success') {
-                        let trs = '';
-                        res.data.items.forEach(job => {
-                            trs += `
-                                <tr id="dlq-row-${job.uuid}">
-                                    <td class="text-nowrap" style="font-family:monospace; font-size:0.8rem; font-weight:bold; color:var(--text-secondary);">${job.uuid}</td>
-                                    <td class="text-nowrap"><strong style="color:var(--accent-color);">${job.job_name}</strong></td>
-                                    <td class="text-nowrap"><span class="badge" style="background:rgba(37,99,235,0.08); color:var(--accent-color);">${job.queue}</span></td>
-                                    <td style="min-width: 250px; max-width: 400px; word-break: break-all;"><span style="font-size:0.8rem; color:#ef4444; font-family:monospace;">${job.exception}</span></td>
-                                    <td class="text-nowrap"><span style="font-size:0.8rem; color:var(--text-secondary);">${job.failed_at}</span></td>
-                                    <td class="text-nowrap" style="text-align:center; width: 1%;">
-                                        <div style="display:flex; gap:0.5rem; justify-content:center; align-items:center; flex-wrap:nowrap; flex-shrink:0;">
-                                            <button class="btn-sm-success btn-queue-retry" data-uuid="${job.uuid}">Retry</button>
-                                            <button class="btn-sm-danger btn-queue-delete" data-uuid="${job.uuid}">Forget</button>
-                                        </div>
-                                    </td>
-                                </tr>
+            if (!queuesTable) {
+                queuesTable = new EnterpriseDataTable('#queues-failed-datatable', {
+                    url: '/api/admin/queues/failed',
+                    searchable: false,
+                    emptyMessage: 'Excellent! Dead-Letter Queue is empty. 0 failures.',
+                    columns: [
+                        { key: 'uuid', title: 'UUID', sortable: true, priority: 'medium', render: function(row) {
+                            return `<span style="font-family:monospace; font-size:0.8rem; font-weight:bold; color:var(--text-secondary);">${row.uuid}</span>`;
+                        }},
+                        { key: 'job_name', title: 'Job Class', sortable: true, priority: 'high', render: function(row) {
+                            return `<strong style="color:var(--accent-color);">${queuesTable.escape(row.job_name)}</strong>`;
+                        }},
+                        { key: 'queue', title: 'Origin Queue', sortable: true, priority: 'medium', align: 'center', render: function(row) {
+                            return `<span class="badge-pill-compact" style="background:rgba(37,99,235,0.08); color:var(--accent-color);">${row.queue}</span>`;
+                        }},
+                        { key: 'exception', title: 'Diagnostic Error', sortable: false, priority: 'high', render: function(row) {
+                            return `
+                                <div class="text-ellipsis-2 enterprise-tooltip" data-tooltip="${queuesTable.escape(row.exception)}" style="font-size:0.75rem; color:#ef4444; font-family:monospace; cursor:help;">
+                                    ${queuesTable.escape(row.exception)}
+                                </div>
                             `;
-                        });
-                        $('#queues-failed-table-body').html(trs || '<tr><td colspan="6" style="text-align:center; color:var(--text-secondary); padding: 1.5rem 0;">Excellent! Dead-Letter Queue is empty. 0 failures.</td></tr>');
-                        
-                        buildPagination('#queues-failed-pagination', res.data.current_page, res.data.last_page, loadQueueDashboard);
-                    }
-                },
-                error: function(err) {
-                    showToast(err.responseJSON?.message || 'Access Denied: Unable to load failed jobs registry.', 'error');
-                }
-            });
+                        }},
+                        { key: 'failed_at', title: 'Failed Time', sortable: true, priority: 'medium', render: function(row) {
+                            return `<span style="font-size:0.8rem; color:var(--text-secondary);">${row.failed_at}</span>`;
+                        }},
+                        { key: 'actions', title: 'Actions', sortable: false, priority: 'high', align: 'center', render: function(row) {
+                            return `
+                                <div style="display:flex; gap:0.35rem; justify-content:center; align-items:center;">
+                                    <button class="enterprise-action-icon-btn enterprise-action-icon-btn-success btn-queue-retry enterprise-tooltip" data-tooltip="Retry Task" data-uuid="${row.uuid}"><i class="fas fa-redo"></i></button>
+                                    <button class="enterprise-action-icon-btn enterprise-action-icon-btn-danger btn-queue-delete enterprise-tooltip" data-tooltip="Forget Failure" data-uuid="${row.uuid}"><i class="fas fa-trash-alt"></i></button>
+                                </div>
+                            `;
+                        }}
+                    ]
+                });
+            } else {
+                queuesTable.refresh();
+            }
         }
 
         // Retry single job
@@ -3298,36 +2996,38 @@
         // ===================================================================
         // 8. AUDIT LOGS DISPLAY
         // ===================================================================
-        let currentAuditPage = 1;
+        let auditLogsTable;
         function loadAuditLogs(page) {
-            currentAuditPage = page;
-            $.ajax({
-                url: '/api/admin/activity-logs',
-                method: 'GET',
-                data: { page: page },
-                success: function(res) {
-                    if (res.status === 'success') {
-                        let trs = '';
-                        res.data.logs.forEach(log => {
-                            trs += `
-                                <tr>
-                                    <td><span style="font-size:0.8rem; color:var(--text-secondary);">${log.created_at ? log.created_at.substring(0, 19).replace('T', ' ') : 'N/A'}</span></td>
-                                    <td><strong>${log.user ? log.user.name : 'System / Guest'}</strong></td>
-                                    <td style="font-family:monospace; font-size:0.8rem;">${log.ip_address}</td>
-                                    <td><span class="badge" style="margin:0; background:rgba(37,99,235,0.08); color:var(--accent-color);">${log.action}</span></td>
-                                    <td><span style="font-size:0.85rem; color:var(--text-secondary);">${log.details || 'N/A'}</span></td>
-                                </tr>
+            if (!auditLogsTable) {
+                auditLogsTable = new EnterpriseDataTable('#audit-logs-datatable', {
+                    url: '/api/admin/activity-logs',
+                    searchable: false,
+                    dataKey: 'logs',
+                    columns: [
+                        { key: 'created_at', title: 'Timestamp', sortable: true, priority: 'high', render: function(row) {
+                            return `<span style="font-size:0.8rem; color:var(--text-secondary);">${row.created_at ? row.created_at.substring(0, 19).replace('T', ' ') : 'N/A'}</span>`;
+                        }},
+                        { key: 'user', title: 'Actor User', sortable: false, priority: 'high', render: function(row) {
+                            return `<strong>${row.user ? auditLogsTable.escape(row.user.name) : 'System / Guest'}</strong>`;
+                        }},
+                        { key: 'ip_address', title: 'IP Address', sortable: false, priority: 'medium', render: function(row) {
+                            return `<span style="font-family:monospace; font-size:0.8rem;">${auditLogsTable.escape(row.ip_address)}</span>`;
+                        }},
+                        { key: 'action', title: 'Action Event', sortable: true, priority: 'high', align: 'center', render: function(row) {
+                            return `<span class="badge-pill-compact" style="background:rgba(37,99,235,0.08); color:var(--accent-color);">${auditLogsTable.escape(row.action)}</span>`;
+                        }},
+                        { key: 'details', title: 'Details / Payload Trace', sortable: false, priority: 'medium', render: function(row) {
+                            return `
+                                <div class="text-ellipsis-2 enterprise-tooltip" data-tooltip="${auditLogsTable.escape(row.details)}" style="font-size:0.85rem; color:var(--text-secondary); cursor:help;">
+                                    ${auditLogsTable.escape(row.details || 'N/A')}
+                                </div>
                             `;
-                        });
-                        $('#audit-logs-table-body').html(trs || '<tr><td colspan="5" style="text-align:center;">No activity audit trails logged.</td></tr>');
-
-                        buildPagination('#audit-logs-pagination', res.data.current_page, res.data.last_page, loadAuditLogs);
-                    }
-                },
-                error: function(err) {
-                    showToast(err.responseJSON?.message || 'Access Denied: Unable to load activity logs.', 'error');
-                }
-            });
+                        }}
+                    ]
+                });
+            } else {
+                auditLogsTable.refresh();
+            }
         }
 
         // ===================================================================
@@ -3370,109 +3070,70 @@
         // ─── AI CONTENT MANAGER ACTIONS & LOADER ─────────────────────────────
 
         let aiContentsCache = [];
-
-        function escapeHtml(text) {
-            if (!text) return '';
-            return String(text)
-                .replace(/&/g, "&amp;")
-                .replace(/</g, "&lt;")
-                .replace(/>/g, "&gt;")
-                .replace(/"/g, "&quot;")
-                .replace(/'/g, "&#039;");
-        }
-
-        // Main AJAX draft loader
+        let aiContentTable;
         window.loadAiContentData = function(page = 1) {
-            const status = $('#ai-status-filter').val();
-            const search = $('#ai-search-input').val();
-            const tableBody = $('#ai-management-table-body');
-            const paginationContainer = $('#ai-management-pagination');
-
-            tableBody.html('<tr><td colspan="6" style="text-align: center; padding: 3rem;"><div class="loading-spinner" style="margin: 0 auto 1rem auto;"></div>Retrieving AI draft copies...</td></tr>');
-
-            $.ajax({
-                url: '/api/admin/ai-contents',
-                method: 'GET',
-                data: {
-                    status: status,
-                    search: search,
-                    per_page: 10,
-                    page: page
-                },
-                success: function(res) {
-                    if (res.status === 'success') {
-                        const data = res.data;
-                        aiContentsCache = data.items;
-
+            if (!aiContentTable) {
+                aiContentTable = new EnterpriseDataTable('#ai-management-datatable', {
+                    url: '/api/admin/ai-contents',
+                    searchPlaceholder: 'Search job title...',
+                    pageSize: 20,
+                    filters: [
+                        { name: 'status', label: 'Status', value: 'pending', options: [
+                            { value: 'pending', label: 'Pending Review' },
+                            { value: 'approved', label: 'Approved & Live' },
+                            { value: 'rejected', label: 'Rejected Drafts' }
+                        ]}
+                    ],
+                    onLoad: function(res, rows) {
+                        aiContentsCache = rows;
                         // Telemetry Stats Update
+                        const data = res.data;
                         const tel = data.telemetry;
                         $('#ai-telemetry-engine').text(tel.active_provider.toUpperCase());
                         $('#ai-stat-total').text(tel.total_generated);
                         $('#ai-stat-pending').text(tel.pending_count);
                         $('#ai-stat-approved').text(tel.approved_count);
                         $('#ai-stat-rejected').text(tel.rejected_count);
-
-                        if (data.items.length === 0) {
-                            tableBody.html('<tr><td colspan="6" style="text-align: center; padding: 3rem; color: var(--text-secondary);">No AI content drafts matched your filters.</td></tr>');
-                            paginationContainer.empty();
-                            return;
-                        }
-
-                        let html = '';
-                        data.items.forEach(function(item) {
-                            let statusClass = 'status-badge-draft';
-                            if (item.status === 'approved') statusClass = 'status-badge-success';
-                            if (item.status === 'rejected') statusClass = 'status-badge-failed';
-
-                            const errorIndicator = item.error_message 
-                                ? `<span style="color: #ef4444; font-size: 0.75rem; margin-left: 0.5rem; cursor: help;" title="${escapeHtml(item.error_message)}">⚠ Error</span>` 
-                                : '';
-
-                            html += `
-                                <tr>
-                                    <td class="text-nowrap">#${item.job_post_id}</td>
-                                    <td style="font-weight: 700; color: var(--text-primary); min-width: 200px; max-width: 280px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
-                                        ${escapeHtml(item.job_post ? item.job_post.title : 'Deleted Post')}
-                                    </td>
-                                    <td class="text-nowrap">
-                                        <span class="badge" style="background: rgba(139, 92, 246, 0.1); color: #8b5cf6; text-transform: uppercase; font-size: 0.75rem;">
-                                            ${escapeHtml(item.provider)}
-                                        </span>
-                                    </td>
-                                    <td class="text-nowrap">
-                                        <span class="status-badge ${statusClass}">
-                                            ${escapeHtml(item.status)}
-                                        </span>
-                                        ${errorIndicator}
-                                    </td>
-                                    <td class="text-nowrap" style="font-size: 0.8rem; color: var(--text-secondary);">
-                                        ${new Date(item.created_at).toLocaleDateString('en-IN', {day: '2-digit', month: 'short', year: 'numeric'})}
-                                    </td>
-                                    <td class="text-nowrap" style="text-align: center;">
-                                        <button class="btn-sm-primary btn-review-ai" data-id="${item.id}">
-                                            Review & Edit
-                                        </button>
-                                    </td>
-                                </tr>
+                    },
+                    columns: [
+                        { key: 'job_post_id', title: 'Post ID', sortable: true, priority: 'low' },
+                        { key: 'title', title: 'Recruitment Title', sortable: true, priority: 'high', render: function(row) {
+                            return `
+                                <div class="enterprise-primary-stack">
+                                    <span class="enterprise-primary-value">${aiContentTable.escape(row.job_post ? row.job_post.title : 'Deleted Post')}</span>
+                                    <span class="enterprise-secondary-metadata">Provider: ${aiContentTable.escape(row.provider)}</span>
+                                </div>
                             `;
-                        });
-
-                        tableBody.html(html);
-
-                        // Render Pagination
-                        renderCustomPagination(
-                            paginationContainer,
-                            data.pagination.current_page,
-                            data.pagination.last_page,
-                            loadAiContentData
-                        );
-                    }
-                },
-                error: function(err) {
-                    tableBody.html('<tr><td colspan="6" style="text-align: center; padding: 3rem; color: #ef4444;">Failed to load AI Content Registry. Please check connections.</td></tr>');
-                    showToast(err.responseJSON?.message || 'Access Denied: Unable to load AI Content Registry.', 'error');
-                }
-            });
+                        }},
+                        { key: 'provider', title: 'AI Engine', sortable: true, priority: 'medium', align: 'center', render: function(row) {
+                            return `<span class="badge-pill-compact" style="background:rgba(139,92,246,0.1); color:#8b5cf6;">${aiContentTable.escape(row.provider)}</span>`;
+                        }},
+                        { key: 'status', title: 'Draft Status', sortable: true, priority: 'high', align: 'center', render: function(row) {
+                            let statusClass = 'background:rgba(156,163,175,0.1); color:var(--text-primary);';
+                            if (row.status === 'approved') statusClass = 'background:rgba(16,185,129,0.12); color:#10b981;';
+                            if (row.status === 'rejected') statusClass = 'background:rgba(239,68,68,0.12); color:#ef4444;';
+                            let errMsg = row.error_message;
+                            if (errMsg && errMsg.toLowerCase().includes('api key')) {
+                                errMsg += ' (Configure in Settings Management > SMTP & APIs)';
+                            }
+                            const errorIndicator = errMsg 
+                                ? `<span style="color:#ef4444; font-size:0.75rem; margin-left:0.35rem; cursor:help;" class="enterprise-tooltip" data-tooltip="${aiContentTable.escape(errMsg)}">⚠️ Error</span>` 
+                                : '';
+                            return `<span class="badge-pill-compact" style="${statusClass}">${aiContentTable.escape(row.status)}</span>${errorIndicator}`;
+                        }},
+                        { key: 'created_at', title: 'Creation Date', sortable: true, priority: 'medium', render: function(row) {
+                            return new Date(row.created_at).toLocaleDateString('en-IN', {day: '2-digit', month: 'short', year: 'numeric'});
+                        }},
+                        { key: 'actions', title: 'Actions', sortable: false, priority: 'high', align: 'center', render: function(row) {
+                            return `
+                                <button class="enterprise-action-icon-btn enterprise-action-icon-btn-view btn-review-ai enterprise-tooltip" data-tooltip="Review & Edit Draft" data-id="${row.id}"><i class="fas fa-eye"></i></button>
+                            `;
+                        }}
+                    ]
+                });
+            } else {
+                aiContentTable.refresh();
+            }
         };
 
         // Filter button trigger
@@ -3485,7 +3146,7 @@
         $(document).on('click', '.btn-review-ai', function(e) {
             e.preventDefault();
             const id = $(this).data('id');
-            const item = aiContentsCache.find(x => x.id === id);
+            const item = aiContentsCache.find(x => String(x.id) === String(id));
             
             if (!item) return;
 
@@ -3527,6 +3188,16 @@
             $('#admin-drawer-backdrop').fadeIn(200);
             $('#ai-review-drawer').css('right', '0px');
         });
+
+        function escapeHtml(text) {
+            if (!text) return '';
+            return String(text)
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
+        }
 
         // FAQ input builder helper
         function appendFaqInputs(question = '', answer = '') {
@@ -3586,7 +3257,7 @@
                     showToast(res.message, 'success');
                     $('#ai-review-drawer').css('right', '-650px');
                     $('#admin-drawer-backdrop').fadeOut(200);
-                    loadAiContentData($('#ai-management-pagination .pagination-btn.active').data('page') || 1);
+                    loadAiContentData(aiContentTable ? aiContentTable.currentPage : 1);
                 },
                 error: function(err) {
                     showToast('Failed to publish verification.', 'error');
@@ -3613,7 +3284,7 @@
                     showToast(res.message, 'success');
                     $('#ai-review-drawer').css('right', '-650px');
                     $('#admin-drawer-backdrop').fadeOut(200);
-                    loadAiContentData($('#ai-management-pagination .pagination-btn.active').data('page') || 1);
+                    loadAiContentData(aiContentTable ? aiContentTable.currentPage : 1);
                 },
                 error: function() {
                     showToast('Failed to reject announcement.', 'error');
@@ -3691,7 +3362,7 @@
                     showToast(res.message, 'success');
                     $('#ai-review-drawer').css('right', '-650px');
                     $('#admin-drawer-backdrop').fadeOut(200);
-                    loadAiContentData($('#ai-management-pagination .pagination-btn.active').data('page') || 1);
+                    loadAiContentData(aiContentTable ? aiContentTable.currentPage : 1);
                 },
                 error: function(err) {
                     if (err.status === 422) {
@@ -3733,6 +3404,7 @@
         // ─── END AI CONTENT MANAGER ──────────────────────────────────────────
 
         // ─── EMAIL AUTOMATION WORKSPACE ───
+        let marketingTable;
         window.loadMarketingDashboard = function(page = 1) {
             // 1. Fetch Stats
             $.ajax({
@@ -3755,7 +3427,6 @@
                         } else {
                             res.data.campaigns.forEach(c => {
                                 let label = c.campaign_type;
-                                // Clean label for human viewing
                                 if (label.startsWith('welcome_')) label = 'Welcome Series ' + label.replace('welcome_', 'Part ');
                                 else label = label.split('_').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
 
@@ -3775,87 +3446,50 @@
                         }
                         $('#mkt-campaigns-list').html(html);
                     }
-                },
-                error: function() {
-                    showToast('Failed to load email automation stats.', 'error');
                 }
             });
 
             // 2. Fetch Logs
-            $.ajax({
-                url: `/api/admin/marketing/logs?page=${page}`,
-                method: 'GET',
-                success: function(res) {
-                    if (res.status === 'success') {
-                        const logs = res.data.data;
-                        let tbodyHtml = '';
-
-                        if (logs.length === 0) {
-                            tbodyHtml = `<tr><td colspan="6" style="text-align: center; color: var(--text-secondary); padding: 2rem 0;">No dispatches logged in DB.</td></tr>`;
-                        } else {
-                            logs.forEach(log => {
-                                // Resolve email
-                                const email = log.user ? `${log.user.name} &lt;${log.user.email}&gt;` : log.subscriber_email;
-                                
-                                // Clean campaign label
-                                let typeLabel = log.campaign_type;
-                                if (typeLabel.startsWith('welcome_')) typeLabel = 'Welcome Series ' + typeLabel.replace('welcome_', 'Part ');
-                                else typeLabel = typeLabel.split('_').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
-
-                                // Resolve Status Badge
-                                let statusBadge = '';
-                                if (log.status === 'sent') statusBadge = '<span class="badge" style="background:rgba(16,185,129,0.12); color:#10b981; font-weight:700;">Delivered</span>';
-                                else if (log.status === 'failed') statusBadge = `<span class="badge" style="background:rgba(239,68,68,0.12); color:#ef4444; font-weight:700; cursor:pointer;" title="${log.error_message || 'SMTP Crash'}">Failed ⚠️</span>`;
-                                else statusBadge = '<span class="badge" style="background:rgba(37,99,235,0.12); color:#2563eb; font-weight:700;">Queued</span>';
-
-                                // Telemetry icons
-                                const opened = log.opened_at ? '<span style="color:#10b981; font-weight:bold; margin-right:8px;" title="Opened at ' + log.opened_at + '">👁️ Opened</span>' : '<span style="color:var(--text-secondary); margin-right:8px;">👁️ -</span>';
-                                const clicked = log.clicked_at ? '<span style="color:#f59e0b; font-weight:bold;" title="Clicked at ' + log.clicked_at + '">🖱️ Clicked</span>' : '<span style="color:var(--text-secondary);">🖱️ -</span>';
-
-                                tbodyHtml += `
-                                    <tr>
-                                        <td class="text-nowrap">#${log.id}</td>
-                                        <td style="min-width: 200px; max-width: 320px; word-break: break-all;"><strong>${email}</strong></td>
-                                        <td class="text-nowrap"><span class="badge" style="background:rgba(100,116,139,0.08); color:var(--text-primary);">${typeLabel}</span></td>
-                                        <td class="text-nowrap">${statusBadge}</td>
-                                        <td class="text-nowrap"><div style="display:flex; align-items:center;">${opened} ${clicked}</div></td>
-                                        <td class="text-nowrap">${new Date(log.created_at).toLocaleString()}</td>
-                                    </tr>
-                                `;
-                            });
-                        }
-                        $('#mkt-logs-table-body').html(tbodyHtml);
-
-                        // Draw Pagination
-                        renderMktLogsPagination(res.data);
-                    }
-                },
-                error: function(err) {
-                    $('#mkt-logs-table-body').html(`<tr><td colspan="6" style="text-align: center; color: #ef4444; padding: 2rem 0;">Failed to load audit logs.</td></tr>`);
-                    showToast(err.responseJSON?.message || 'Access Denied: Unable to load marketing logs.', 'error');
-                }
-            });
-        };
-
-        function renderMktLogsPagination(data) {
-            let pagHtml = '';
-            if (data.last_page > 1) {
-                pagHtml += `<div style="display:flex; gap:0.5rem; justify-content:center; align-items:center; flex-wrap:wrap; margin-top:1.5rem;">`;
-                for (let i = 1; i <= data.last_page; i++) {
-                    const activeClass = i === data.current_page ? 'active' : '';
-                    pagHtml += `<button class="pagination-btn ${activeClass} mkt-pag-btn" data-page="${i}" style="padding:0.4rem 0.8rem; border-radius:6px; background:var(--bg-primary); border:1px solid var(--border-color); color:var(--text-primary); cursor:pointer;">${i}</button>`;
-                }
-                pagHtml += `</div>`;
+            if (!marketingTable) {
+                marketingTable = new EnterpriseDataTable('#mkt-logs-datatable', {
+                    url: '/api/admin/marketing/logs',
+                    searchPlaceholder: 'Search recipients...',
+                    pageSize: 20,
+                    columns: [
+                        { key: 'id', title: 'Log ID', sortable: true, priority: 'low' },
+                        { key: 'recipient', title: 'Recipient Address', sortable: false, priority: 'high', render: function(row) {
+                            const email = row.user ? `${row.user.name} <${row.user.email}>` : row.subscriber_email;
+                            return `<strong>${marketingTable.escape(email)}</strong>`;
+                        }},
+                        { key: 'campaign_type', title: 'Campaign Type', sortable: true, priority: 'high', render: function(row) {
+                            let typeLabel = row.campaign_type;
+                            if (typeLabel.startsWith('welcome_')) typeLabel = 'Welcome Series ' + typeLabel.replace('welcome_', 'Part ');
+                            else typeLabel = typeLabel.split('_').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+                            return `<span class="badge-pill-compact" style="background:rgba(100,116,139,0.08); color:var(--text-primary);">${marketingTable.escape(typeLabel)}</span>`;
+                        }},
+                        { key: 'status', title: 'Status', sortable: true, priority: 'high', align: 'center', render: function(row) {
+                            if (row.status === 'sent') {
+                                return '<span class="badge-pill-compact" style="background:rgba(16,185,129,0.12); color:#10b981;">Delivered</span>';
+                            } else if (row.status === 'failed') {
+                                return `<span class="badge-pill-compact enterprise-tooltip" style="background:rgba(239,68,68,0.12); color:#ef4444; cursor:help;" data-tooltip="${marketingTable.escape(row.error_message || 'SMTP Crash')}">Failed ⚠️</span>`;
+                            } else {
+                                return '<span class="badge-pill-compact" style="background:rgba(37,99,235,0.12); color:#2563eb;">Queued</span>';
+                            }
+                        }},
+                        { key: 'telemetry', title: 'Telemetry Tracker', sortable: false, priority: 'medium', render: function(row) {
+                            const opened = row.opened_at ? '<span style="color:#10b981; font-weight:bold; margin-right:8px;" class="enterprise-tooltip" data-tooltip="Opened at ' + row.opened_at + '">👁️ Opened</span>' : '<span style="color:var(--text-secondary); margin-right:8px;">👁️ -</span>';
+                            const clicked = row.clicked_at ? '<span style="color:#f59e0b; font-weight:bold;" class="enterprise-tooltip" data-tooltip="Clicked at ' + row.clicked_at + '">🖱️ Clicked</span>' : '<span style="color:var(--text-secondary);">🖱️ -</span>';
+                            return `<div style="display:flex; align-items:center;">${opened} ${clicked}</div>`;
+                        }},
+                        { key: 'created_at', title: 'Sent Time', sortable: true, priority: 'medium', render: function(row) {
+                            return new Date(row.created_at).toLocaleString();
+                        }}
+                    ]
+                });
+            } else {
+                marketingTable.refresh();
             }
-            $('#mkt-logs-pagination').html(pagHtml);
-        }
-
-        // Delegate pagination button clicks
-        $(document).on('click', '.mkt-pag-btn', function(e) {
-            e.preventDefault();
-            const page = $(this).data('page');
-            loadMarketingDashboard(page);
-        });
+        };
 
         // Trigger manual test form submission
         $('#mkt-test-form').on('submit', function(e) {
@@ -4569,43 +4203,38 @@
             }
         }
 
+        let cmsPagesTable;
         window.loadCmsPagesList = function() {
-            $.ajax({
-                url: '/api/admin/settings/cms-pages',
-                method: 'GET',
-                success: function(res) {
-                    if (res.status === 'success') {
-                        let tbodyHtml = '';
-                        const pages = res.data;
-
-                        if (pages.length === 0) {
-                            tbodyHtml = `<tr><td colspan="4" style="text-align: center; color: var(--text-secondary); padding: 2rem 0;">No CMS static pages created.</td></tr>`;
-                        } else {
-                            pages.forEach(page => {
-                                const statusBadge = page.is_active 
-                                    ? `<span class="badge" style="background:rgba(16,185,129,0.1); color:#10b981;">Published</span>`
-                                    : `<span class="badge" style="background:rgba(100,116,139,0.1); color:var(--text-secondary);">Draft</span>`;
-
-                                tbodyHtml += `
-                                    <tr>
-                                        <td><strong>${page.title}</strong></td>
-                                        <td><a href="/p/${page.slug}" target="_blank" style="color:var(--accent-color); font-family:monospace; font-size:0.85rem;">/p/${page.slug}</a></td>
-                                        <td>${statusBadge}</td>
-                                        <td style="text-align:center;">
-                                            <button type="button" class="btn-primary btn-cms-page-edit" data-id="${page.id}" style="font-size:0.75rem; padding:0.25rem 0.6rem; margin:0;">Edit</button>
-                                            <button type="button" class="btn-danger btn-cms-page-delete" data-id="${page.id}" style="font-size:0.75rem; padding:0.25rem 0.6rem; margin:0;">Delete</button>
-                                        </td>
-                                    </tr>
-                                `;
-                            });
-                        }
-                        $('#cms-pages-table-body').html(tbodyHtml);
-                    }
-                },
-                error: function() {
-                    showToast('Failed to retrieve static pages.', 'error');
-                }
-            });
+            if (!cmsPagesTable) {
+                cmsPagesTable = new EnterpriseDataTable('#cms-pages-datatable', {
+                    url: '/api/admin/settings/cms-pages',
+                    serverSide: false,
+                    searchPlaceholder: 'Search CMS pages...',
+                    columns: [
+                        { key: 'title', title: 'Title', sortable: true, priority: 'high', render: function(row) {
+                            return `<strong>${cmsPagesTable.escape(row.title)}</strong>`;
+                        }},
+                        { key: 'slug', title: 'Slug Link', sortable: true, priority: 'medium', render: function(row) {
+                            return `<a href="/p/${row.slug}" target="_blank" style="color:var(--accent-color); font-family:monospace; font-size:0.85rem;">/p/${row.slug}</a>`;
+                        }},
+                        { key: 'is_active', title: 'Status', sortable: true, priority: 'high', align: 'center', render: function(row) {
+                            return row.is_active 
+                                ? `<span class="badge-pill-compact" style="background:rgba(16,185,129,0.1); color:#10b981;">Published</span>`
+                                : `<span class="badge-pill-compact" style="background:rgba(100,116,139,0.1); color:var(--text-secondary);">Draft</span>`;
+                        }},
+                        { key: 'actions', title: 'Actions', sortable: false, priority: 'high', align: 'center', render: function(row) {
+                            return `
+                                <div style="display:flex; gap:0.35rem; justify-content:center; align-items:center;">
+                                    <button type="button" class="enterprise-action-icon-btn enterprise-action-icon-btn-view btn-cms-page-edit enterprise-tooltip" data-tooltip="Edit" data-id="${row.id}"><i class="fas fa-edit"></i></button>
+                                    <button type="button" class="enterprise-action-icon-btn enterprise-action-icon-btn-danger btn-cms-page-delete enterprise-tooltip" data-tooltip="Delete" data-id="${row.id}"><i class="fas fa-trash-alt"></i></button>
+                                </div>
+                            `;
+                        }}
+                    ]
+                });
+            } else {
+                cmsPagesTable.refresh();
+            }
         };
 
         // Create CMS page opens modal
@@ -4801,40 +4430,41 @@
             });
         });
 
-        // 5. Security: SQL Backup Console
+        let backupsTable;
         window.loadBackupsList = function() {
-            $.ajax({
-                url: '/api/admin/settings/backups',
-                method: 'GET',
-                success: function(res) {
-                    if (res.status === 'success') {
-                        let tbodyHtml = '';
-                        res.data.forEach(backup => {
-                            const fileSizeMb = (backup.size / (1024 * 1024)).toFixed(2);
-                            tbodyHtml += `
-                                <tr>
-                                    <td><strong>${backup.filename}</strong><br><span style="font-size:0.75rem; color:var(--text-secondary);">${backup.created_at}</span></td>
-                                    <td class="text-nowrap">${fileSizeMb} MB</td>
-                                    <td class="text-nowrap" style="text-align:center;">
-                                        <a href="/api/admin/settings/backups/download/${backup.filename}" class="btn-success" style="font-size:0.7rem; padding:0.25rem 0.5rem; text-decoration:none; display:inline-block; border-radius:4px; margin-right:0.2rem;">Get SQL</a>
-                                        <button type="button" class="btn-primary btn-backup-restore" data-file="${backup.filename}" style="font-size:0.7rem; padding:0.25rem 0.5rem; margin:0 0.2rem 0 0;">Restore</button>
-                                        <button type="button" class="btn-danger btn-backup-delete" data-file="${backup.filename}" style="font-size:0.7rem; padding:0.25rem 0.5rem; margin:0;">Del</button>
-                                    </td>
-                                </tr>
+            if (!backupsTable) {
+                backupsTable = new EnterpriseDataTable('#backups-datatable', {
+                    url: '/api/admin/settings/backups',
+                    serverSide: false,
+                    searchPlaceholder: 'Search backups...',
+                    emptyMessage: 'No backups generated in storage path.',
+                    columns: [
+                        { key: 'filename', title: 'Filename / Date', sortable: true, priority: 'high', render: function(row) {
+                            return `
+                                <div class="enterprise-primary-stack">
+                                    <span class="enterprise-primary-value">${backupsTable.escape(row.filename)}</span>
+                                    <span class="enterprise-secondary-metadata">${row.created_at}</span>
+                                </div>
                             `;
-                        });
-
-                        if (res.data.length === 0) {
-                            tbodyHtml = `<tr><td colspan="3" style="text-align: center; color: var(--text-secondary); padding: 1.5rem 0;">No backups generated in storage path.</td></tr>`;
-                        }
-
-                        $('#backups-table-body').html(tbodyHtml);
-                    }
-                },
-                error: function() {
-                    showToast('Failed to load backup files list.', 'error');
-                }
-            });
+                        }},
+                        { key: 'size', title: 'File Size', sortable: true, priority: 'high', render: function(row) {
+                            const fileSizeMb = (row.size / (1024 * 1024)).toFixed(2);
+                            return `${fileSizeMb} MB`;
+                        }},
+                        { key: 'actions', title: 'Actions', sortable: false, priority: 'high', align: 'center', render: function(row) {
+                            return `
+                                <div style="display:flex; gap:0.35rem; justify-content:center; align-items:center;">
+                                    <a href="/api/admin/settings/backups/download/${row.filename}" class="enterprise-action-icon-btn enterprise-action-icon-btn-success enterprise-tooltip" data-tooltip="Download SQL Backup"><i class="fas fa-download"></i></a>
+                                    <button type="button" class="enterprise-action-icon-btn enterprise-action-icon-btn-view btn-backup-restore enterprise-tooltip" data-tooltip="Restore Database" data-file="${row.filename}"><i class="fas fa-history"></i></button>
+                                    <button type="button" class="enterprise-action-icon-btn enterprise-action-icon-btn-danger btn-backup-delete enterprise-tooltip" data-tooltip="Delete Backup" data-file="${row.filename}"><i class="fas fa-trash-alt"></i></button>
+                                </div>
+                            `;
+                        }}
+                    ]
+                });
+            } else {
+                backupsTable.refresh();
+            }
         };
 
         // Generate Backup

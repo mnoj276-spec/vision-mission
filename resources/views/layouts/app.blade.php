@@ -62,6 +62,7 @@
 
     <!-- Custom Design Stylesheet -->
     <link rel="stylesheet" href="{{ asset('assets/css/portal.css') }}">
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
 
     <!-- Google Translate Custom Translator Stylesheet -->
     <link rel="stylesheet" href="{{ asset('assets/css/translator.css') }}">
@@ -135,7 +136,8 @@
         }
         
         /* Dropdown styling */
-        .nav-links li:hover .dropdown-menu-list {
+        .nav-links li:hover .dropdown-menu-list,
+        .nav-links li.show .dropdown-menu-list {
             display: block !important;
         }
         .dropdown-menu-list {
@@ -168,8 +170,8 @@
             <ul class="nav-links">
                 @forelse($headerMenu as $mItem)
                     @if($mItem->children->count() > 0)
-                        <li class="nav-item-dropdown" style="position: relative;">
-                            <a href="{{ $mItem->url }}" target="{{ $mItem->target }}" class="dropdown-trigger" style="font-weight: 700; display: flex; align-items: center; gap: 0.25rem;">
+                        <li class="nav-item-dropdown relative group">
+                            <a href="{{ $mItem->url }}" target="{{ $mItem->target }}" class="dropdown-trigger flex items-center gap-1 font-bold">
                                 @if($mItem->icon)
                                     <span class="menu-icon">
                                         @if(str_starts_with(trim($mItem->icon), '<'))
@@ -182,10 +184,10 @@
                                 <span data-translate-lookup="{{ $mItem->title }}">{{ $mItem->title }}</span>
                                 <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
                             </a>
-                            <ul class="dropdown-menu-list glass-panel" style="display: none; position: absolute; top: 100%; left: 0; min-width: 200px; list-style: none; padding: 0.5rem; border-radius: 8px; box-shadow: var(--card-shadow); z-index: 100;">
+                            <ul class="dropdown-menu-list glass-panel hidden group-hover:block absolute top-full left-0 min-w-[200px] p-2 rounded-lg shadow-lg z-50">
                                 @foreach($mItem->children as $childItem)
                                     <li>
-                                        <a href="{{ $childItem->url }}" target="{{ $childItem->target }}" class="dropdown-item" style="padding: 0.5rem 1rem; display: block; border-radius: 6px; font-weight: 500; font-size: 0.85rem;">
+                                        <a href="{{ $childItem->url }}" target="{{ $childItem->target }}" class="dropdown-item block px-4 py-2 rounded-md font-medium text-sm hover:bg-blue-50 hover:text-blue-600 transition-colors">
                                             @if($childItem->icon)
                                                 <span class="menu-icon">
                                                     @if(str_starts_with(trim($childItem->icon), '<'))
@@ -203,7 +205,7 @@
                         </li>
                     @else
                         <li>
-                            <a href="{{ $mItem->url }}" target="{{ $mItem->target }}" style="font-weight: 700;">
+                            <a href="{{ $mItem->url }}" target="{{ $mItem->target }}" class="font-bold flex items-center gap-1">
                                 @if($mItem->icon)
                                     <span class="menu-icon">
                                         @if(str_starts_with(trim($mItem->icon), '<'))
@@ -218,16 +220,16 @@
                         </li>
                     @endif
                 @empty
-                    <li><a href="/#jobs-search-section" class="nav-tab-trigger" data-target="jobs" data-i18n="nav_home">Home</a></li>
-                    <li><a href="/ssc-jobs" style="font-weight: 700;" data-i18n="nav_ssc">SSC Board</a></li>
-                    <li><a href="/railway-jobs" style="font-weight: 700;" data-i18n="nav_railway">Railways</a></li>
-                    <li><a href="/upsc-jobs" style="font-weight: 700;" data-i18n="nav_upsc">UPSC</a></li>
-                    <li><a href="/state-jobs" style="font-weight: 700;" data-i18n="nav_state">State Jobs</a></li>
-                    <li><a href="/#info-hub-section" class="nav-tab-trigger" data-target="info-hub" data-i18n="nav_info">Info Hub</a></li>
+                    <li><a href="/#jobs-search-section" class="nav-tab-trigger font-bold" data-target="jobs" data-i18n="nav_home">Home</a></li>
+                    <li><a href="/ssc-jobs" class="font-bold" data-i18n="nav_ssc">SSC Board</a></li>
+                    <li><a href="/railway-jobs" class="font-bold" data-i18n="nav_railway">Railways</a></li>
+                    <li><a href="/upsc-jobs" class="font-bold" data-i18n="nav_upsc">UPSC</a></li>
+                    <li><a href="/state-jobs" class="font-bold" data-i18n="nav_state">State Jobs</a></li>
+                    <li><a href="/#info-hub-section" class="nav-tab-trigger font-bold" data-target="info-hub" data-i18n="nav_info">Info Hub</a></li>
                 @endforelse
             </ul>
 
-            <div class="header-actions" style="display: flex; gap: 0.75rem; align-items: center;">
+            <div class="header-actions flex items-center gap-3">
                 <!-- Language Switcher Badge -->
                 <div class="lang-switcher" aria-label="Language Selector" role="navigation">
                     <button type="button" class="lang-btn active" data-lang="en" aria-label="Switch to English" aria-current="true">EN</button>
@@ -242,17 +244,17 @@
 
                 @auth
                     <div class="user-menu-dropdown">
-                        <button class="theme-toggle-btn">
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="color: var(--accent-color);"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
-                            <span style="max-width: 100px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">{{ auth()->user()->name }}</span>
+                        <button class="theme-toggle-btn flex items-center gap-2">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="text-blue-600"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                            <span class="max-w-[100px] overflow-hidden text-ellipsis whitespace-nowrap">{{ auth()->user()->name }}</span>
                         </button>
                         <div class="dropdown-menu">
                             <a href="/#dashboard-section" class="dropdown-item nav-tab-trigger" data-target="dashboard" data-i18n="dropdown_dashboard">Dashboard</a>
                             @can('admin-access')
                                 <a href="{{ route('admin.dashboard') }}" class="dropdown-item" data-i18n="dropdown_admin">Admin Panel</a>
                             @endcan
-                            <div class="dropdown-divider"></div>
-                            <button class="dropdown-item" id="logoutBtn" style="border:none; background:none; width:100%; cursor:pointer;" data-i18n="dropdown_logout">Logout</button>
+                            <div class="dropdown-divider border-t border-gray-200 my-1"></div>
+                            <a href="javascript:void(0)" class="dropdown-item" id="logoutBtn" data-i18n="dropdown_logout">Logout</a>
                         </div>
                     </div>
                 @else
@@ -318,7 +320,7 @@
                     <li><a href="{{ route('admin.dashboard') }}" class="mobile-drawer-link" data-i18n="dropdown_admin">Admin Panel</a></li>
                 @endcan
                 <li>
-                    <button class="mobile-drawer-link" id="mobileLogoutBtn" style="background: none; border: none; color: inherit; cursor: pointer; width: 100%; text-align: left; font: inherit; padding: 0.6rem 0;" data-i18n="dropdown_logout">Logout</button>
+                    <a href="javascript:void(0)" class="mobile-drawer-link" id="mobileLogoutBtn" data-i18n="dropdown_logout">Logout</a>
                 </li>
             @endauth
             
@@ -408,7 +410,7 @@
     <!-- ================= DYNAMIC MODALS OVERLAYS ================= -->
 
     <!-- A. Authenticatable Login/Register Modal -->
-    <div class="modal-overlay" id="authModal" style="z-index: 1200;">
+    <div class="modal-overlay" id="authModal" style="z-index: 9999;">
         <div class="modal-box glass-panel">
             <button class="modal-close-btn" id="closeAuthModal" aria-label="Close Authentication Dialog">&times;</button>
             <div class="auth-tabs">
@@ -515,7 +517,7 @@
             <div id="modalSkeletonLoader" class="skeleton-modal">
                 <div class="skeleton-modal-line" style="height: 40px; width: 60%;"></div>
                 <div class="skeleton-modal-line" style="height: 20px; width: 40%; margin-bottom: 2rem;"></div>
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 2rem;">
+                <div class="details-grid">
                     <div class="skeleton-modal-line" style="height: 80px;"></div>
                     <div class="skeleton-modal-line" style="height: 80px;"></div>
                 </div>
@@ -596,7 +598,7 @@
                         <input type="file" name="resume" id="appResume" class="form-control" required>
                         <div class="invalid-feedback" id="appResumeError"></div>
                     </div>
-                    <div style="display:flex; gap:0.75rem; margin-top:1.5rem;">
+                    <div class="form-actions-flex" style="display:flex; gap:0.75rem; margin-top:1.5rem;">
                         <button type="button" class="btn-view" id="cancelApplicationBtn" style="flex:1; text-align:center;">Cancel</button>
                         <button type="submit" class="form-btn" id="submitApplicationBtn" style="flex:2; margin-top:0;">Submit Application</button>
                     </div>
@@ -711,12 +713,34 @@
                     $('.user-menu-dropdown').removeClass('show');
                     $('.user-menu-dropdown .dropdown-menu').css('display', '');
                 }
+                if (!$(e.target).closest('.nav-item-dropdown').length) {
+                    $('.nav-item-dropdown').removeClass('show');
+                }
             });
 
             // Close dropdown when clicking any dropdown item inside it
             $(document).on('click', '.user-menu-dropdown .dropdown-item', function() {
                 $('.user-menu-dropdown').removeClass('show');
                 $('.user-menu-dropdown .dropdown-menu').css('display', '');
+            });
+
+            // ================== HEADER MENU DROPDOWN TOGGLE (TOUCH-READY) ==================
+            // Prevents immediate link navigation on first tap for touch screen devices
+            const headerDropdowns = $('.nav-item-dropdown');
+            headerDropdowns.find('> .dropdown-trigger').on('click', function(e) {
+                if ('ontouchstart' in window || navigator.maxTouchPoints > 0) {
+                    const parent = $(this).parent();
+                    if (!parent.hasClass('show')) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        headerDropdowns.not(parent).removeClass('show'); // Close other open menus
+                        parent.addClass('show');
+                    }
+                }
+            });
+
+            headerDropdowns.find('.dropdown-item').on('click', function() {
+                headerDropdowns.removeClass('show');
             });
 
             // ================== GLOBAL NAV-TAB-TRIGGER HANDLER ==================
@@ -1236,6 +1260,155 @@
 
     <!-- Custom Google Translate Script Integration -->
     <script src="{{ asset('assets/js/translator.js') }}"></script>
+
+    <!-- Global Table Pagination Script -->
+    <script>
+        $(document).ready(function() {
+            function initTablePagination(table, perPage = 10) {
+                const $table = $(table);
+                const $tbody = $table.find('tbody');
+                if (!$tbody.length) return;
+
+                function applyPagination() {
+                    const $rows = $tbody.children('tr').not('.no-paginate, .loading-row');
+                    
+                    // Filter out loading rows and message rows (usually 1 cell with colspan)
+                    const filteredRows = $rows.filter(function() {
+                        const $tds = $(this).children('td');
+                        if ($tds.length === 1 && ($tds.attr('colspan') || '').length > 0) {
+                            return false;
+                        }
+                        return true;
+                    });
+
+                    const totalRows = filteredRows.length;
+
+                    // Remove existing pagination controls for this table
+                    $table.closest('.responsive-table-container').next('.table-pagination-wrapper').remove();
+                    $table.next('.table-pagination-wrapper').remove();
+
+                    if (totalRows <= perPage) {
+                        filteredRows.show();
+                        return;
+                    }
+
+                    const totalPages = Math.ceil(totalRows / perPage);
+                    let currentPage = 1;
+
+                    function showPage(page) {
+                        currentPage = page;
+                        const start = (page - 1) * perPage;
+                        const end = start + perPage;
+
+                        filteredRows.hide();
+                        filteredRows.slice(start, end).show();
+
+                        const showingStart = start + 1;
+                        const showingEnd = Math.min(end, totalRows);
+                        $wrapper.find('.table-pagination-info').text(
+                            `Showing ${showingStart} to ${showingEnd} of ${totalRows} entries`
+                        );
+
+                        // Update buttons active status
+                        $wrapper.find('.table-pagination-btn.page-num').removeClass('active');
+                        $wrapper.find(`.table-pagination-btn.page-num[data-page="${page}"]`).addClass('active');
+
+                        $wrapper.find('.table-pagination-prev').prop('disabled', page === 1);
+                        $wrapper.find('.table-pagination-next').prop('disabled', page === totalPages);
+                    }
+
+                    const $wrapper = $('<div class="table-pagination-wrapper"></div>');
+                    const $info = $('<div class="table-pagination-info"></div>');
+                    const $controls = $('<div class="table-pagination-controls"></div>');
+
+                    const $prevBtn = $('<button class="table-pagination-btn table-pagination-prev" type="button">&laquo; Prev</button>');
+                    $prevBtn.on('click', function() {
+                        if (currentPage > 1) showPage(currentPage - 1);
+                    });
+                    $controls.append($prevBtn);
+
+                    // Add page numbers
+                    for (let i = 1; i <= totalPages; i++) {
+                        // Limit number of page buttons if there are too many (e.g. > 5)
+                        if (totalPages > 5) {
+                            // Show first, last, current, and adjacent pages
+                            if (i !== 1 && i !== totalPages && Math.abs(i - currentPage) > 1) {
+                                // Add ellipsis once
+                                if (i === 2 && currentPage > 3) {
+                                    $controls.append('<span style="color:var(--text-secondary); padding:0 0.25rem;">...</span>');
+                                } else if (i === totalPages - 1 && currentPage < totalPages - 2) {
+                                    $controls.append('<span style="color:var(--text-secondary); padding:0 0.25rem;">...</span>');
+                                }
+                                continue;
+                            }
+                        }
+
+                        const $pageBtn = $(`<button class="table-pagination-btn page-num" type="button" data-page="${i}">${i}</button>`);
+                        $pageBtn.on('click', function() {
+                            showPage(i);
+                        });
+                        $controls.append($pageBtn);
+                    }
+
+                    const $nextBtn = $('<button class="table-pagination-btn table-pagination-next" type="button">Next &raquo;</button>');
+                    $nextBtn.on('click', function() {
+                        if (currentPage < totalPages) showPage(currentPage + 1);
+                    });
+                    $controls.append($nextBtn);
+
+                    $wrapper.append($info).append($controls);
+
+                    const $container = $table.closest('.responsive-table-container');
+                    if ($container.length) {
+                        $container.after($wrapper);
+                    } else {
+                        $table.after($wrapper);
+                    }
+
+                    showPage(1);
+                }
+
+                applyPagination();
+
+                if (window.MutationObserver) {
+                    if (table._paginationObserver) {
+                        table._paginationObserver.disconnect();
+                    }
+                    const observer = new MutationObserver(function(mutations) {
+                        let relevantChange = false;
+                        mutations.forEach(function(m) {
+                            if (m.type === 'childList') {
+                                relevantChange = true;
+                            }
+                        });
+                        if (relevantChange) {
+                            observer.disconnect();
+                            applyPagination();
+                            observer.observe($tbody[0], { childList: true });
+                        }
+                    });
+                    observer.observe($tbody[0], { childList: true });
+                    table._paginationObserver = observer;
+                }
+            }
+
+            // Initialize on all portal-table and salary-table elements
+            function initAllTables() {
+                $('.portal-table, .salary-table').each(function() {
+                    if (!this._paginationObserver) {
+                        initTablePagination(this, 10);
+                    }
+                });
+            }
+
+            initAllTables();
+
+            // Also check for dynamically added tables or tab switches
+            $(document).on('shown.bs.tab click', '[data-toggle="tab"], .salary-tab-btn, .admin-nav-links button', function() {
+                setTimeout(initAllTables, 100);
+            });
+        });
+    </script>
 
     <!-- PWA Smart Install App Banner -->
     <div id="pwaInstallBanner" style="position: fixed; bottom: 2rem; left: 2rem; right: 2rem; max-width: 500px; background: rgba(17, 24, 39, 0.95); border: 1px solid var(--border-color); box-shadow: var(--card-shadow); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border-radius: 16px; padding: 1.25rem; display: none; align-items: center; justify-content: space-between; gap: 1rem; z-index: 1050; margin: 0 auto; animation: slide-up-pwa 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);">

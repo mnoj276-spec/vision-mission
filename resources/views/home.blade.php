@@ -1799,7 +1799,7 @@
 
     <!-- Dash Block 1: Overview (Bookmarks and apps table) -->
     <div id="dash-overview-block" class="dash-block-panel">
-        <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 2rem; align-items: start;">
+        <div class="grid grid-cols-1 lg:grid-cols-[2fr_1fr]" style="gap: 2rem; align-items: start;">
             <div>
                 <!-- Bookmarked items box -->
                 <div class="glass-panel" style="padding: 1.5rem; margin-bottom: 2rem;">
@@ -3136,9 +3136,27 @@
                                     </div>
                                     
                                     <div class="details-summary-grid">
-                                        <div class="details-summary-item">
-                                            <div style="font-size:0.75rem; text-transform:uppercase; color:var(--text-secondary);">${window.t('modal_salary_lbl_index', 'Monthly Salary Index')}</div>
-                                            <div style="font-size:1.15rem; font-weight:700; color:var(--text-primary); margin-top:0.25rem;">₹ ${job.salary_min} - ₹ ${job.salary_max}</div>
+                                        <div class="details-summary-item" style="grid-column: span 1; height: auto;">
+                                            <div style="font-size:0.75rem; text-transform:uppercase; color:var(--text-secondary);">${window.t('modal_salary_lbl_index', 'Salary Details')}</div>
+                                            <div style="font-size:1.15rem; font-weight:700; color:var(--text-primary); margin-top:0.25rem;">
+                                                ${
+                                                    job.stipend ? `${job.stipend}` :
+                                                    (job.salary_min && job.salary_min !== '0' && job.salary_max && job.salary_max !== '0') ? `₹ ${job.salary_min} - ₹ ${job.salary_max}` :
+                                                    (job.salary_min && job.salary_min !== '0') ? `₹ ${job.salary_min} onwards` :
+                                                    (job.pay_scale) ? job.pay_scale : 'Govt Scale'
+                                                }
+                                            </div>
+                                            ${
+                                                (job.pay_level || job.salary_grade || job.pay_matrix) ? `
+                                                    <div style="font-size:0.7rem; color:var(--text-secondary); margin-top:0.35rem; display:flex; flex-wrap:wrap; gap:0.25rem; justify-content:center; opacity: 0.85;">
+                                                        ${[
+                                                            job.pay_level ? `📈 ${job.pay_level}` : '',
+                                                            job.salary_grade ? `🎖️ ${job.salary_grade}` : '',
+                                                            job.pay_matrix ? `📊 ${job.pay_matrix}` : ''
+                                                        ].filter(Boolean).join(' | ')}
+                                                    </div>
+                                                ` : ''
+                                            }
                                         </div>
                                         <div class="details-summary-item">
                                             <div style="font-size:0.75rem; text-transform:uppercase; color:var(--text-secondary);">${window.t('modal_vacancies_lbl', 'Total Vacancies')}</div>
@@ -3275,37 +3293,39 @@
 
                                     <div class="details-full-section" style="margin-top:1.5rem;">
                                         <h4 style="color: #8b5cf6; font-weight:700; font-family:'Outfit';">${window.t('modal_cutoff_marks', 'Category-Wise Cutoff Marks')}</h4>
-                                        <table class="details-cutoff-table">
-                                            <thead>
-                                                <tr>
-                                                    <th>${window.t('modal_category_segment', 'Category Segment')}</th>
-                                                    <th>${window.t('modal_cutoff_percent', 'Cutoff Marks (%)')}</th>
-                                                    <th>${window.t('modal_status_index', 'Status Index')}</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                <tr>
-                                                    <td><strong>${window.t('modal_cat_gen', 'General (UR)')}</strong></td>
-                                                    <td>78.50%</td>
-                                                    <td>${window.t('modal_status_active_cleared', 'Active / Cleared')}</td>
-                                                </tr>
-                                                <tr>
-                                                    <td><strong>OBC</strong></td>
-                                                    <td>72.40%</td>
-                                                    <td>${window.t('modal_status_active_cleared', 'Active / Cleared')}</td>
-                                                </tr>
-                                                <tr>
-                                                    <td><strong>SC / ST</strong></td>
-                                                    <td>65.00%</td>
-                                                    <td>${window.t('modal_status_active_cleared', 'Active / Cleared')}</td>
-                                                </tr>
-                                                <tr>
-                                                    <td><strong>EWS</strong></td>
-                                                    <td>70.15%</td>
-                                                    <td>${window.t('modal_status_active_cleared', 'Active / Cleared')}</td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
+                                        <div class="details-table-wrapper">
+                                            <table class="details-cutoff-table">
+                                                <thead>
+                                                    <tr>
+                                                        <th>${window.t('modal_category_segment', 'Category Segment')}</th>
+                                                        <th>${window.t('modal_cutoff_percent', 'Cutoff Marks (%)')}</th>
+                                                        <th>${window.t('modal_status_index', 'Status Index')}</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr>
+                                                        <td><strong>${window.t('modal_cat_gen', 'General (UR)')}</strong></td>
+                                                        <td>78.50%</td>
+                                                        <td>${window.t('modal_status_active_cleared', 'Active / Cleared')}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td><strong>OBC</strong></td>
+                                                        <td>72.40%</td>
+                                                        <td>${window.t('modal_status_active_cleared', 'Active / Cleared')}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td><strong>SC / ST</strong></td>
+                                                        <td>65.00%</td>
+                                                        <td>${window.t('modal_status_active_cleared', 'Active / Cleared')}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td><strong>EWS</strong></td>
+                                                        <td>70.15%</td>
+                                                        <td>${window.t('modal_status_active_cleared', 'Active / Cleared')}</td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
                                     </div>
 
                                     <div class="details-full-section" style="margin-top:1.5rem;">
@@ -3399,23 +3419,21 @@
                                     </div>
 
                                     <div class="details-summary-grid">
-                                        <div class="details-summary-grid">
-                                            <div class="details-summary-item">
-                                                <div style="font-size:0.75rem; text-transform:uppercase; color:var(--text-secondary);">${window.t('modal_answer_key_state', 'Answer Key State')}</div>
-                                                <div style="font-size:1.15rem; font-weight:700; color: #d97706; margin-top:0.25rem;">${window.t('modal_answer_key_active_objection_open', '📝 ACTIVE / OBJECTION OPEN')}</div>
-                                            </div>
-                                            <div class="details-summary-item">
-                                                <div style="font-size:0.75rem; text-transform:uppercase; color:var(--text-secondary);">${window.t('modal_release_date', 'Release Date')}</div>
-                                                <div style="font-size:1.15rem; font-weight:700; color: var(--text-primary); margin-top:0.25rem;">${job.exam_date}</div>
-                                            </div>
-                                            <div class="details-summary-item">
-                                                <div style="font-size:0.75rem; text-transform:uppercase; color:var(--text-secondary);">${window.t('modal_objection_fee', 'Objection Filing Fee')}</div>
-                                                <div style="font-size:1.15rem; font-weight:700; color: var(--text-primary); margin-top:0.25rem;">₹ 100 / Question</div>
-                                            </div>
-                                            <div class="details-summary-item">
-                                                <div style="font-size:0.75rem; text-transform:uppercase; color:var(--text-secondary);">${window.t('modal_closing_date', 'Closing Date')}</div>
-                                                <div style="font-size:1.15rem; font-weight:700; color: #ef4444; margin-top:0.25rem;">${job.last_date}</div>
-                                            </div>
+                                        <div class="details-summary-item">
+                                            <div style="font-size:0.75rem; text-transform:uppercase; color:var(--text-secondary);">${window.t('modal_answer_key_state', 'Answer Key State')}</div>
+                                            <div style="font-size:1.15rem; font-weight:700; color: #d97706; margin-top:0.25rem;">${window.t('modal_answer_key_active_objection_open', '📝 ACTIVE / OBJECTION OPEN')}</div>
+                                        </div>
+                                        <div class="details-summary-item">
+                                            <div style="font-size:0.75rem; text-transform:uppercase; color:var(--text-secondary);">${window.t('modal_release_date', 'Release Date')}</div>
+                                            <div style="font-size:1.15rem; font-weight:700; color: var(--text-primary); margin-top:0.25rem;">${job.exam_date}</div>
+                                        </div>
+                                        <div class="details-summary-item">
+                                            <div style="font-size:0.75rem; text-transform:uppercase; color:var(--text-secondary);">${window.t('modal_objection_fee', 'Objection Filing Fee')}</div>
+                                            <div style="font-size:1.15rem; font-weight:700; color: var(--text-primary); margin-top:0.25rem;">₹ 100 / Question</div>
+                                        </div>
+                                        <div class="details-summary-item">
+                                            <div style="font-size:0.75rem; text-transform:uppercase; color:var(--text-secondary);">${window.t('modal_closing_date', 'Closing Date')}</div>
+                                            <div style="font-size:1.15rem; font-weight:700; color: #ef4444; margin-top:0.25rem;">${job.last_date}</div>
                                         </div>
                                     </div>
 

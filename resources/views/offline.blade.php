@@ -166,7 +166,9 @@
         </button>
     </div>
 </div>
+@endsection
 
+@section('scripts')
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         const retryBtn = document.getElementById('pwaRetryBtn');

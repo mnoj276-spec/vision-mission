@@ -899,7 +899,7 @@
             <h3>⚙ Advanced Filters</h3>
             <button type="button" class="close-drawer-btn" id="closeDrawerBtn">&times;</button>
         </div>
-        <div class="drawer-body">
+        <div class="drawer-body" style="overflow-y: auto;">
             <!-- Stream Filter -->
             <div class="filter-group">
                 <label class="filter-label">💼 Stream / Sector</label>
@@ -1183,8 +1183,8 @@
                                             <span data-translate-lookup="${job.department}">${window.t(job.department, job.department)}</span> &bull; <span data-translate-lookup="${job.state}">${window.t(job.state, job.state)}</span>
                                         </p>
                                         <div class="job-tags">
-                                            <span class="badge badge-dept" data-translate-lookup="${job.qualification}">🎓 ${window.t(job.qualification, job.qualification)}</span>
-                                            <span class="badge" style="background: rgba(16, 185, 129, 0.08); color: #10b981; font-weight:700;" data-translate-key="vacancies_count" data-translate-prefix="👥 " data-translate-suffix=": ${Number(job.vacancy_count).toLocaleString('en-IN')}">👥 ${window.t('vacancies_count', 'Vacancies')}: ${Number(job.vacancy_count).toLocaleString('en-IN')}</span>
+                                            <span class="badge badge-dept" data-translate-lookup="${job.qualification || 'Eligibility Required'}">🎓 ${window.t(job.qualification || 'Eligibility Required', job.qualification || 'Eligibility Required')}</span>
+                                            <span class="badge" style="background: rgba(16, 185, 129, 0.08); color: #10b981; font-weight:700;" data-translate-key="vacancies_count" data-translate-prefix="👥 " data-translate-suffix=": ${job.vacancy_count > 0 ? Number(job.vacancy_count).toLocaleString('en-IN') : 'Announced'}">👥 ${window.t('vacancies_count', 'Vacancies')}: ${job.vacancy_count > 0 ? Number(job.vacancy_count).toLocaleString('en-IN') : 'Announced'}</span>
                                             <span class="badge" style="background: rgba(139, 92, 246, 0.08); color: #8b5cf6; font-weight:700;">
                                                 💸 ${parseFloat(String(job.salary_min).replace(/,/g, '')) > 0 ? `₹ ${job.salary_min} - ₹ ${job.salary_max}` : `<span data-i18n="govt_scale">${window.t('govt_scale', 'Govt Scale')}</span>`}
                                             </span>
@@ -1223,6 +1223,12 @@
                 }
             });
         }
+
+        // Quick Search Tags handler
+        $('.suggestion-chip-item').on('click', function() {
+            $('#searchKeywords').val($(this).data('query'));
+            fetchSearchResults(1);
+        });
 
         // Helper to construct pagination buttons
         function buildPaginationButtons(current, last) {

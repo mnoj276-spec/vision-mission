@@ -42,7 +42,7 @@ return [
         'settings.integrations'       => 1,
         'settings.security'           => 1,
         'settings.security.backups'   => 7,
-        'settings.operations'         => 2,
+        'settings.operations'         => 1,
         'settings.media'              => 2,
     ],
 ];

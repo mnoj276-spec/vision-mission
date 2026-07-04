@@ -17,7 +17,7 @@ class ScrapingSourceRepository implements ScrapingSourceRepositoryInterface
 {
     public function getAll(): Collection
     {
-        return ScrapingSource::orderBy('id', 'desc')->get();
+        return ScrapingSource::with('latestLog')->orderBy('id', 'desc')->get();
     }
 
     public function findOrFail(int $id): ScrapingSource

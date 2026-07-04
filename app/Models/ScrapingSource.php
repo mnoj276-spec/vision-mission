@@ -46,4 +46,12 @@ class ScrapingSource extends Model
     {
         return $this->hasMany(ScrapingLog::class);
     }
+
+    /**
+     * Get the latest automation log associated with this scraper source.
+     */
+    public function latestLog()
+    {
+        return $this->hasOne(ScrapingLog::class)->latestOfMany();
+    }
 }
