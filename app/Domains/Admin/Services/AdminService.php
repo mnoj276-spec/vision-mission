@@ -26,7 +26,9 @@ class AdminService implements AdminServiceInterface
      */
     public function getDashboardData(): array
     {
-        $sources = $this->scraperRepo->getAll()->map(fn ($src) => [
+        $allSources = $this->scraperRepo->getAll();
+
+        $sources = $allSources->map(fn ($src) => [
             'id'        => $src->id,
             'name'      => $src->name,
             'url'       => $src->source_url,
@@ -34,14 +36,20 @@ class AdminService implements AdminServiceInterface
             'is_active' => $src->is_active,
         ]);
 
-        $logs = $this->scraperRepo->getRecentLogs(10)->map(fn ($log) => [
-            'id'            => $log->id,
-            'source_name'   => $log->source->name ?? 'Unknown Feed',
-            'status'        => $log->status,
-            'items_found'   => $log->items_found,
-            'error_message' => $log->error_message ?? 'N/A',
-            'time'          => $log->created_at->format('d M Y H:i:s'),
-        ]);
+        $logs = $allSources->map(function ($src) {
+            $log = $src->latestLog;
+            if (!$log) {
+                return null;
+            }
+            return [
+                'id'            => $log->id,
+                'source_name'   => $src->name,
+                'status'        => $log->status,
+                'items_found'   => $log->items_found,
+                'error_message' => $log->error_message ?? 'N/A',
+                'time'          => $log->created_at->format('d M Y H:i:s'),
+            ];
+        })->filter()->values();
 
         $quarantines = $this->scraperRepo->getQuarantinedLogs()->map(fn ($q) => [
             'id'          => $q->id,

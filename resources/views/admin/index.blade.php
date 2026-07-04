@@ -1752,7 +1752,8 @@
                             if (healthStatus === 'success') {
                                 healthBadge = '<span class="badge" style="background:rgba(16,185,129,0.08); color:#10b981;">Healthy</span>';
                             } else if (healthStatus === 'failed') {
-                                healthBadge = '<span class="badge" style="background:rgba(239,68,68,0.08); color:#ef4444;">Error</span>';
+                                const errMsg = log ? (log.error_message || 'Unknown error during scraping run').replace(/"/g, '&quot;').replace(/'/g, '&#39;') : 'Unknown Error';
+                                healthBadge = `<span class="badge enterprise-tooltip" data-tooltip="${errMsg}" style="background:rgba(239,68,68,0.08); color:#ef4444; cursor:help;">Error ⚠️</span>`;
                             } else if (healthStatus === 'quarantined') {
                                 healthBadge = '<span class="badge" style="background:rgba(245,158,11,0.08); color:#f59e0b;">Quarantine</span>';
                             }
