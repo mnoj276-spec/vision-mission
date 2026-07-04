@@ -182,7 +182,7 @@ class AiStructuringService
         }
 
         // 6. Salary
-        if (preg_match('/(?:Salary|Pay\s+Scale|Salary\s+Range)\s*:\s*([^\n\r]+)/i', $text, $m)) {
+        if (preg_match('/(?:Salary|Pay\s+Scale|Salary\s+Range|Pay\s+Matrix|Pay\s+Level|Stipend)\s*(?::|-|\b)\s*([^\n\r.]+)/i', $text, $m)) {
             $data['salary'] = trim($m[1]);
         }
 

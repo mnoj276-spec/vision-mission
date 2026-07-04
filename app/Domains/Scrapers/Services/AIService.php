@@ -87,6 +87,12 @@ class AIService
             'age_limit' => null,
             'salary_min' => null,
             'salary_max' => null,
+            'salary_grade' => null,
+            'pay_level' => null,
+            'pay_matrix' => null,
+            'pay_scale' => null,
+            'stipend' => null,
+            'salary' => null,
             'vacancy_count' => 0,
             'application_fee' => 0.00,
             'last_date_to_apply' => null,
@@ -121,10 +127,14 @@ class AIService
             $data['exam_pattern'] = trim($m[1]) . '.';
         }
 
-        // Extract Salary strictly, no default values
-        if (preg_match('/(?:Salary|Pay\s+Scale|Rs\.?)\s*([\d,]+)\s*(?:-|to)\s*([\d,]+)/i', $text, $m)) {
-            $data['salary_min'] = (float) str_replace(',', '', $m[1]);
-            $data['salary_max'] = (float) str_replace(',', '', $m[2]);
+        // Extract Salary strictly, using SalaryParser
+        if (preg_match('/(?:Salary|Pay\s+Scale|Salary\s+Range|Pay\s+Matrix|Pay\s+Level|Stipend|Rs\.?|INR|₹)\s*(?::|-|\b)\s*([^\n\r.]+)/i', $text, $m)) {
+            $rawSalary = trim($m[0]);
+            $data['salary'] = $rawSalary;
+            $parsedSalary = \App\Helpers\SalaryParser::parse($rawSalary);
+            foreach ($parsedSalary as $k => $v) {
+                $data[$k] = $v;
+            }
         }
 
         // Extract application fee

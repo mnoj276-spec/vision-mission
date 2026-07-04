@@ -256,14 +256,31 @@
         <!-- Dynamic parameters grid -->
         <div class="details-grid">
             <div class="details-box">
-                <div class="details-box-label">Salary Range</div>
+                <div class="details-box-label">Salary Details</div>
                 <div class="details-box-val">
-                    @if($job->salary_min > 0)
+                    @if($job->stipend)
+                        {{ $job->stipend }}
+                    @elseif($job->salary_min > 0 && $job->salary_max > 0)
                         ₹ {{ number_format($job->salary_min, 0) }} - {{ number_format($job->salary_max, 0) }}
+                    @elseif($job->salary_min > 0)
+                        ₹ {{ number_format($job->salary_min, 0) }} onwards
+                    @elseif($job->pay_scale)
+                        {{ $job->pay_scale }}
                     @else
                         Govt Scale
                     @endif
                 </div>
+                @php
+                    $extra = [];
+                    if ($job->pay_level) $extra[] = "📈 " . $job->pay_level;
+                    if ($job->salary_grade) $extra[] = "🎖️ " . $job->salary_grade;
+                    if ($job->pay_matrix) $extra[] = "📊 " . $job->pay_matrix;
+                @endphp
+                @if(count($extra) > 0)
+                    <div style="font-size: 0.7rem; color: var(--text-secondary); margin-top: 0.4rem; display: flex; gap: 0.3rem; justify-content: center; flex-wrap: wrap; opacity: 0.85;">
+                        {!! implode(' | ', $extra) !!}
+                    </div>
+                @endif
             </div>
             <div class="details-box">
                 <div class="details-box-label">Age Requirements</div>

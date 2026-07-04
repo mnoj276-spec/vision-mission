@@ -3136,9 +3136,27 @@
                                     </div>
                                     
                                     <div class="details-summary-grid">
-                                        <div class="details-summary-item">
-                                            <div style="font-size:0.75rem; text-transform:uppercase; color:var(--text-secondary);">${window.t('modal_salary_lbl_index', 'Monthly Salary Index')}</div>
-                                            <div style="font-size:1.15rem; font-weight:700; color:var(--text-primary); margin-top:0.25rem;">₹ ${job.salary_min} - ₹ ${job.salary_max}</div>
+                                        <div class="details-summary-item" style="grid-column: span 1; height: auto;">
+                                            <div style="font-size:0.75rem; text-transform:uppercase; color:var(--text-secondary);">${window.t('modal_salary_lbl_index', 'Salary Details')}</div>
+                                            <div style="font-size:1.15rem; font-weight:700; color:var(--text-primary); margin-top:0.25rem;">
+                                                ${
+                                                    job.stipend ? `${job.stipend}` :
+                                                    (job.salary_min && job.salary_min !== '0' && job.salary_max && job.salary_max !== '0') ? `₹ ${job.salary_min} - ₹ ${job.salary_max}` :
+                                                    (job.salary_min && job.salary_min !== '0') ? `₹ ${job.salary_min} onwards` :
+                                                    (job.pay_scale) ? job.pay_scale : 'Govt Scale'
+                                                }
+                                            </div>
+                                            ${
+                                                (job.pay_level || job.salary_grade || job.pay_matrix) ? `
+                                                    <div style="font-size:0.7rem; color:var(--text-secondary); margin-top:0.35rem; display:flex; flex-wrap:wrap; gap:0.25rem; justify-content:center; opacity: 0.85;">
+                                                        ${[
+                                                            job.pay_level ? `📈 ${job.pay_level}` : '',
+                                                            job.salary_grade ? `🎖️ ${job.salary_grade}` : '',
+                                                            job.pay_matrix ? `📊 ${job.pay_matrix}` : ''
+                                                        ].filter(Boolean).join(' | ')}
+                                                    </div>
+                                                ` : ''
+                                            }
                                         </div>
                                         <div class="details-summary-item">
                                             <div style="font-size:0.75rem; text-transform:uppercase; color:var(--text-secondary);">${window.t('modal_vacancies_lbl', 'Total Vacancies')}</div>

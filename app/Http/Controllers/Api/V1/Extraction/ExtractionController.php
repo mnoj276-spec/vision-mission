@@ -264,16 +264,6 @@ class ExtractionController extends Controller
 
                 // 5. Parse Salary details
                 $salaryText = $extractedData['salary'] ?? '';
-                $salaryMin = null;
-                $salaryMax = null;
-                if (!empty($salaryText)) {
-                    if (preg_match('/(?:Rs\.?|INR|₹)?\s*([\d,]+)\s*(?:-|to)\s*(?:Rs\.?|INR|₹)?\s*([\d,]+)/i', $salaryText, $m)) {
-                        $salaryMin = (float) str_replace(',', '', $m[1]);
-                        $salaryMax = (float) str_replace(',', '', $m[2]);
-                    } elseif (preg_match('/(?:Rs\.?|INR|₹)?\s*([\d,]+)/i', $salaryText, $m)) {
-                        $salaryMin = (float) str_replace(',', '', $m[1]);
-                    }
-                }
 
                 // 6. Gather Important dates
                 $dates = $extractedData['important_dates'] ?? [];
@@ -321,8 +311,7 @@ class ExtractionController extends Controller
                     'official_website_link' => $officialLink,
                     'apply_link'            => $officialLink,
                     'age_limit'             => $extractedData['age_limit'] ?? null,
-                    'salary_min'            => $salaryMin,
-                    'salary_max'            => $salaryMax,
+                    'salary'                => $salaryText,
                     'last_date_to_apply'    => $lastDate,
                     'start_date'            => $startDate,
                     'exam_date'             => $examDate,

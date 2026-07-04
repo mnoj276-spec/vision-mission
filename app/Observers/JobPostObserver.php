@@ -9,6 +9,23 @@ use Illuminate\Support\Facades\Cache;
 class JobPostObserver
 {
     /**
+     * Handle the JobPost "saving" event.
+     */
+    public function saving(JobPost $jobPost): void
+    {
+        if (array_key_exists('salary', $jobPost->getAttributes())) {
+            $salaryText = $jobPost->getAttribute('salary');
+            if (!is_null($salaryText)) {
+                $parsed = \App\Helpers\SalaryParser::parse($salaryText);
+                foreach ($parsed as $key => $value) {
+                    $jobPost->setAttribute($key, $value);
+                }
+            }
+            $jobPost->offsetUnset('salary');
+        }
+    }
+
+    /**
      * Handle the JobPost "created" event.
      */
     public function created(JobPost $jobPost): void
