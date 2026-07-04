@@ -127,6 +127,14 @@ class ScrapingService implements ScrapingServiceInterface
                 'age_max'               => $parsedData['age_max']               ?? $aiData['age_max']               ?? null,
             ]);
 
+            if (empty($finalJobData['description'])) {
+                $finalJobData['description'] = $parsedData['raw_text'] ?? $rawData['raw_text'] ?? $finalJobData['title'] ?? 'No description available.';
+            }
+            if (!isset($finalJobData['vacancy_count']) || $finalJobData['vacancy_count'] === null || $finalJobData['vacancy_count'] === '') {
+                $finalJobData['vacancy_count'] = 0;
+            }
+
+
             // Prevent Stored XSS from scraped rich-text or title strings
             if (isset($finalJobData['title'])) {
                 $finalJobData['title'] = \App\Services\HtmlSanitizer::sanitizeString($finalJobData['title']);
