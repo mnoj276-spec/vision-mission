@@ -17,8 +17,8 @@ class AiContentManagementController extends Controller
      */
     public function index(Request $request): JsonResponse
     {
-        $status = $request->string('status', 'all');
-        $search = $request->string('search', '');
+        $status = $request->input('status', 'all');
+        $search = $request->input('search', '');
         $perPage = $request->integer('per_page', 10);
 
         $query = JobPostAiContent::with(['jobPost.department', 'jobPost.category'])
