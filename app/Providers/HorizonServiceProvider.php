@@ -9,6 +9,19 @@ use Laravel\Horizon\HorizonApplicationServiceProvider;
 class HorizonServiceProvider extends HorizonApplicationServiceProvider
 {
     /**
+     * Register any application services.
+     */
+    public function register(): void
+    {
+        parent::register();
+
+        // Register custom middleware to check Redis dependencies dynamically in local/testing
+        $middleware = config('horizon.middleware', ['web']);
+        $middleware[] = \App\Http\Middleware\CheckHorizonDependencies::class;
+        config(['horizon.middleware' => $middleware]);
+    }
+
+    /**
      * Bootstrap any application services.
      */
     public function boot(): void
