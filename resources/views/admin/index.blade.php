@@ -3171,6 +3171,16 @@
             $('#ai-review-drawer').css('right', '0px');
         });
 
+        function escapeHtml(text) {
+            if (!text) return '';
+            return String(text)
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
+        }
+
         // FAQ input builder helper
         function appendFaqInputs(question = '', answer = '') {
             const faqContainer = $('#ai-edit-faqs-container');
@@ -3229,7 +3239,7 @@
                     showToast(res.message, 'success');
                     $('#ai-review-drawer').css('right', '-650px');
                     $('#admin-drawer-backdrop').fadeOut(200);
-                    loadAiContentData($('#ai-management-pagination .pagination-btn.active').data('page') || 1);
+                    loadAiContentData(aiContentTable ? aiContentTable.currentPage : 1);
                 },
                 error: function(err) {
                     showToast('Failed to publish verification.', 'error');
@@ -3256,7 +3266,7 @@
                     showToast(res.message, 'success');
                     $('#ai-review-drawer').css('right', '-650px');
                     $('#admin-drawer-backdrop').fadeOut(200);
-                    loadAiContentData($('#ai-management-pagination .pagination-btn.active').data('page') || 1);
+                    loadAiContentData(aiContentTable ? aiContentTable.currentPage : 1);
                 },
                 error: function() {
                     showToast('Failed to reject announcement.', 'error');
@@ -3334,7 +3344,7 @@
                     showToast(res.message, 'success');
                     $('#ai-review-drawer').css('right', '-650px');
                     $('#admin-drawer-backdrop').fadeOut(200);
-                    loadAiContentData($('#ai-management-pagination .pagination-btn.active').data('page') || 1);
+                    loadAiContentData(aiContentTable ? aiContentTable.currentPage : 1);
                 },
                 error: function(err) {
                     if (err.status === 422) {
