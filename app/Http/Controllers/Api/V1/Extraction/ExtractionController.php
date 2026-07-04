@@ -297,6 +297,34 @@ class ExtractionController extends Controller
                     $notification->raw_text ?? ''
                 );
 
+                // Recalculate vacancy_count if breakdown is present
+                $vacanciesBreakdown = $extractedData['vacancies_breakdown'] ?? [];
+                $totalVacancies = 0;
+                if (!empty($vacanciesBreakdown)) {
+                    $hasPostBreakdown = false;
+                    $hasCasteBreakdown = false;
+                    $postSum = 0;
+                    $casteSum = 0;
+                    foreach ($vacanciesBreakdown as $item) {
+                        if (($item['type'] ?? '') === 'post') {
+                            $hasPostBreakdown = true;
+                            $postSum += (int)($item['count'] ?? 0);
+                        } elseif (($item['type'] ?? '') === 'caste_category') {
+                            $hasCasteBreakdown = true;
+                            $casteSum += (int)($item['count'] ?? 0);
+                        }
+                    }
+                    if ($hasPostBreakdown) {
+                        $totalVacancies = $postSum;
+                    } elseif ($hasCasteBreakdown) {
+                        $totalVacancies = $casteSum;
+                    } else {
+                        $totalVacancies = (int)($extractedData['vacancy_count'] ?? 0);
+                    }
+                } else {
+                    $totalVacancies = (int)($extractedData['vacancy_count'] ?? 0);
+                }
+
                 $jobPost = JobPost::create([
                     'title'                 => $extractedData['title'],
                     'slug'                  => $slug,
@@ -306,7 +334,7 @@ class ExtractionController extends Controller
                     'qualification_id'      => $qualification->id,
                     'category_id'           => $categoryId,
                     'post_type'             => $postType,
-                    'vacancy_count'         => $extractedData['vacancy_count'] ?? 0,
+                    'vacancy_count'         => $totalVacancies,
                     'application_fee'       => $extractedData['application_fee'] ?? 0.00,
                     'official_website_link' => $officialLink,
                     'apply_link'            => $officialLink,
@@ -320,6 +348,16 @@ class ExtractionController extends Controller
                     'published_at'          => now(),
                     'fingerprint'           => $fingerprint,
                 ]);
+
+                // Save vacancies breakdown
+                foreach ($vacanciesBreakdown as $item) {
+                    \App\Models\CategoryVacancy::create([
+                        'job_post_id'   => $jobPost->id,
+                        'category_name' => $item['name'] ?? '',
+                        'vacancy_count' => $item['count'] ?? 0,
+                        'type'          => $item['type'] ?? 'caste_category',
+                    ]);
+                }
 
                 // Save relationship to extraction log
                 $notification->update([

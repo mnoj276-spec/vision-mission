@@ -45,14 +45,14 @@ class JobRepository implements JobRepositoryInterface
     public function findBySlug(string $slug): ?JobPost
     {
         return JobPost::query()->published()
-            ->with(['category', 'department', 'state', 'qualification', 'tags', 'source', 'parent', 'children'])
+            ->with(['category', 'department', 'state', 'qualification', 'tags', 'source', 'parent', 'children', 'categoryVacancies'])
             ->where('slug', $slug)->first();
     }
 
     public function findById(int $id): ?JobPost
     {
         return JobPost::query()
-            ->with(['category', 'department', 'state', 'qualification', 'tags', 'source'])
+            ->with(['category', 'department', 'state', 'qualification', 'tags', 'source', 'categoryVacancies'])
             ->find($id);
     }
 

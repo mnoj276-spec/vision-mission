@@ -327,6 +327,47 @@
             </div>
         @endif
 
+        <!-- Vacancy Distribution Breakdown -->
+        @if($job->categoryVacancies && $job->categoryVacancies->count() > 0)
+            <section class="details-section">
+                <h4 style="font-family:'Outfit'; color:var(--accent-color); margin-bottom:1rem; display:flex; align-items:center; gap:0.5rem;">
+                    Vacancy Distribution Breakdown
+                </h4>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1.5rem;">
+                    @foreach(['post', 'caste_category', 'department', 'trade', 'discipline'] as $type)
+                        @php
+                            $items = $job->categoryVacancies->where('type', $type);
+                        @endphp
+                        @if($items->count() > 0)
+                            @php
+                                $groupTitle = '';
+                                if ($type === 'post') $groupTitle = 'Trade-wise / Post-wise Posts';
+                                elseif ($type === 'caste_category') $groupTitle = 'Category-wise Posts';
+                                elseif ($type === 'department') $groupTitle = 'Department-wise Posts';
+                                elseif ($type === 'trade') $groupTitle = 'Trade-wise Posts';
+                                elseif ($type === 'discipline') $groupTitle = 'Discipline-wise Posts';
+                            @endphp
+                            <div style="background: rgba(255,255,255,0.02); border: 1px solid var(--border-color); border-radius: 8px; padding: 1rem;">
+                                <h5 style="font-size:0.85rem; text-transform:uppercase; color:var(--text-secondary); font-weight:700; margin-bottom:0.75rem; border-bottom: 1px solid var(--border-color); padding-bottom:0.4rem; font-family:'Outfit';">
+                                    {{ $groupTitle }}
+                                </h5>
+                                <ul style="list-style:none; padding:0; margin:0; display:flex; flex-direction:column; gap:0.5rem;">
+                                    @foreach($items as $cv)
+                                        <li style="display:flex; justify-content:space-between; align-items:center; font-size:0.9rem; color:var(--text-primary);">
+                                            <span>{{ $cv->category_name }}</span>
+                                            <span class="badge" style="background:var(--border-color); color:var(--text-primary); font-weight:bold; padding: 2px 8px; font-size:0.75rem;">
+                                                {{ $cv->vacancy_count }}
+                                            </span>
+                                        </li>
+                                    @endforeach
+                                </ul>
+                            </div>
+                        @endif
+                    @endforeach
+                </div>
+            </section>
+        @endif
+
         <!-- Description -->
         <section class="details-section">
             <h4>Recruitment Overview & Requirements</h4>

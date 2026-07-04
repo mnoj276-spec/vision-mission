@@ -109,6 +109,11 @@ class JobController extends Controller
             'description'           => $job->description,
             'exam_pattern'          => $job->exam_pattern     ?? 'Objective MCQs.',
             'selection_process'     => $job->selection_process ?? 'Written Exam.',
+            'category_vacancies'    => $job->categoryVacancies->map(fn($cv) => [
+                'category_name' => $cv->category_name,
+                'vacancy_count' => $cv->vacancy_count,
+                'type'          => $cv->type,
+            ])->toArray(),
         ]]);
     }
 

@@ -3172,6 +3172,45 @@
                                         </div>
                                     </div>
 
+                                    ${(job.category_vacancies && job.category_vacancies.length > 0) ? `
+                                    <div class="details-full-section" style="margin-top:1.5rem; border-top: 1px solid var(--border-color); padding-top:1.25rem;">
+                                        <h4 style="color: var(--accent-color); font-weight:700; font-family:'Outfit'; margin-bottom:1rem; display:flex; align-items:center; gap:0.5rem;">
+                                            Vacancy Distribution Breakdown
+                                        </h4>
+                                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1.5rem;">
+                                            ${['post', 'caste_category', 'department', 'trade', 'discipline'].map(type => {
+                                                const items = job.category_vacancies.filter(cv => cv.type === type);
+                                                if (items.length === 0) return '';
+                                                
+                                                let groupTitle = '';
+                                                if (type === 'post') groupTitle = 'Trade-wise / Post-wise Posts';
+                                                else if (type === 'caste_category') groupTitle = 'Category-wise Posts';
+                                                else if (type === 'department') groupTitle = 'Department-wise Posts';
+                                                else if (type === 'trade') groupTitle = 'Trade-wise Posts';
+                                                else if (type === 'discipline') groupTitle = 'Discipline-wise Posts';
+                                                
+                                                return `
+                                                    <div style="background: rgba(255,255,255,0.02); border: 1px solid var(--border-color); border-radius: 8px; padding: 1rem;">
+                                                        <h5 style="font-size:0.85rem; text-transform:uppercase; color:var(--text-secondary); font-weight:700; margin-bottom:0.75rem; border-bottom: 1px solid var(--border-color); padding-bottom:0.4rem; font-family:'Outfit';">
+                                                            ${groupTitle}
+                                                        </h5>
+                                                        <ul style="list-style:none; padding:0; margin:0; display:flex; flex-direction:column; gap:0.5rem;">
+                                                            ${items.map(cv => `
+                                                                <li style="display:flex; justify-content:space-between; align-items:center; font-size:0.9rem; color:var(--text-primary);">
+                                                                    <span>${cv.category_name}</span>
+                                                                    <span class="badge" style="background:var(--border-color); color:var(--text-primary); font-weight:bold; padding: 2px 8px; font-size:0.75rem;">
+                                                                        ${cv.vacancy_count}
+                                                                    </span>
+                                                                </li>
+                                                            `).join('')}
+                                                        </ul>
+                                                    </div>
+                                                `;
+                                            }).join('')}
+                                        </div>
+                                    </div>
+                                    ` : ''}
+
                                     <div class="details-full-section" style="margin-top:1.5rem;">
                                         <h4 style="color: var(--accent-color); font-weight:700; font-family:'Outfit';">${window.t('modal_overview', 'Recruitment Overview & Eligibility')}</h4>
                                         <p style="color: var(--text-secondary); line-height:1.75; font-size:0.95rem; margin-top:0.5rem;">${job.description}</p>

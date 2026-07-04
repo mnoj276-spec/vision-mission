@@ -15,6 +15,7 @@ class CategoryVacancy extends Model
     protected $fillable = [
         'job_post_id',
         'category_name',
+        'type',
         'vacancy_count',
     ];
 

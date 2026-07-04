@@ -35,7 +35,7 @@ class RailwayScraperDriver extends AbstractScraperDriver
                         'apply_link'    => 'https://rrbapply.gov.in',
                         'category_name' => 'Railways (RRB)',
                         'department_name'=> 'Railway Recruitment Board',
-                        'raw_text'      => 'Railway Recruitment Board (RRB) Assistant Loco Pilot (ALP) Vacancies 2026. Age: 18-30. Required 10th pass or ITI. Apply online by 28-09-2026. Application Fee Rs 500.',
+                        'raw_text'      => 'Railway Recruitment Board (RRB) Assistant Loco Pilot (ALP) Ingestion 2026. Vacancy Details: Assistant Loco Pilot - 120, Junior Engineer - 80, Clerk - 45. Caste Breakdown: UR - 100, OBC - 80, SC - 40, ST - 25. Age: 18-30. Required 10th pass or ITI. Apply online by 28-09-2026. Application Fee Rs 500.',
                     ],
                     [
                         'title'         => 'Railway RRB NTPC Non-Technical Popular Categories 2026',
@@ -45,7 +45,7 @@ class RailwayScraperDriver extends AbstractScraperDriver
                         'apply_link'    => 'https://rrbapply.gov.in',
                         'category_name' => 'Railways (RRB)',
                         'department_name'=> 'Railway Recruitment Board',
-                        'raw_text'      => 'Railway RRB NTPC recruitment for Under Graduate & Graduate posts. Junior Clerk, Goods Guard, Station Master. Apply before 15-10-2026. Fee Rs 500.',
+                        'raw_text'      => 'Railway RRB NTPC recruitment for Under Graduate & Graduate posts. Vacancy Details: Station Master - 150, Goods Guard - 95. Caste Breakdown: UR - 120, OBC - 80, SC - 30, ST - 15. Apply before 15-10-2026. Fee Rs 500.',
                     ]
                 ];
             }

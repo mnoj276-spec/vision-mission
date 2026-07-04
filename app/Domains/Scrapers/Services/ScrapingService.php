@@ -314,7 +314,46 @@ class ScrapingService implements ScrapingServiceInterface
             try {
                 $jobPost = DB::transaction(function () use ($finalJobData, $source, $rawLogPayload, $rawData) {
                     $finalJobData['slug'] = str()->slug($finalJobData['title']) . '-' . rand(100, 999);
+                    
+                    // Recalculate vacancy_count if breakdown is present
+                    $vacanciesBreakdown = $finalJobData['vacancies_breakdown'] ?? [];
+                    if (!empty($vacanciesBreakdown)) {
+                        $totalVacancies = 0;
+                        $hasPostBreakdown = false;
+                        $hasCasteBreakdown = false;
+                        $postSum = 0;
+                        $casteSum = 0;
+                        foreach ($vacanciesBreakdown as $item) {
+                            if (($item['type'] ?? '') === 'post') {
+                                $hasPostBreakdown = true;
+                                $postSum += (int)($item['count'] ?? 0);
+                            } elseif (($item['type'] ?? '') === 'caste_category') {
+                                $hasCasteBreakdown = true;
+                                $casteSum += (int)($item['count'] ?? 0);
+                            }
+                        }
+                        if ($hasPostBreakdown) {
+                            $totalVacancies = $postSum;
+                        } elseif ($hasCasteBreakdown) {
+                            $totalVacancies = $casteSum;
+                        } else {
+                            $totalVacancies = (int)($finalJobData['vacancy_count'] ?? 0);
+                        }
+                        $finalJobData['vacancy_count'] = $totalVacancies;
+                    }
+
                     $jobPost = $this->jobRepo->create($finalJobData);
+
+                    // Save vacancies breakdown
+                    foreach ($vacanciesBreakdown as $item) {
+                        \App\Models\CategoryVacancy::create([
+                            'job_post_id' => $jobPost->id,
+                            'category_name' => $item['name'] ?? '',
+                            'vacancy_count' => $item['count'] ?? 0,
+                            'type' => $item['type'] ?? 'caste_category',
+                        ]);
+                    }
+
                     if (!empty($rawData['tags'])) {
                         $tagsArray = is_array($rawData['tags']) ? $rawData['tags'] : array_map('trim', explode(',', $rawData['tags']));
                         $tagIds = [];

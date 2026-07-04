@@ -35,7 +35,7 @@ class SscScraperDriver extends AbstractScraperDriver
                         'apply_link'    => 'https://ssc.gov.in/apply',
                         'category_name' => 'UPSC & SSC Jobs',
                         'department_name'=> 'Staff Selection Commission',
-                        'raw_text'      => 'Staff Selection Commission (SSC) Combined Graduate Level (CGL) Examination 2026. Age: 18-30. Qualification: Bachelor degree. Apply online before 30-07-2026. Application Fee Rs 100.',
+                        'raw_text'      => 'Staff Selection Commission (SSC) Combined Graduate Level (CGL) Examination 2026. Vacancy Details: Inspector - 120, Assistant Section Officer - 80, Auditor - 45. Caste Breakdown: UR - 100, OBC - 80, SC - 40, ST - 25. Age: 18-30. Qualification: Bachelor degree. Apply online before 30-07-2026. Application Fee Rs 100.',
                     ],
                     [
                         'title'         => 'SSC CHSL (10+2) Vacancy 2026 Registration Open',
@@ -45,7 +45,7 @@ class SscScraperDriver extends AbstractScraperDriver
                         'apply_link'    => 'https://ssc.gov.in/apply',
                         'category_name' => 'UPSC & SSC Jobs',
                         'department_name'=> 'Staff Selection Commission',
-                        'raw_text'      => 'SSC CHSL 10+2 Examination 2026. Qualification: 12th pass. Apply before 12-08-2026. Fee Rs 100.',
+                        'raw_text'      => 'SSC CHSL 10+2 Examination 2026. Vacancy Details: Lower Division Clerk - 90, Data Entry Operator - 40. Caste Breakdown: UR - 60, OBC - 40, SC - 20, ST - 10. Qualification: 12th pass. Apply before 12-08-2026. Fee Rs 100.',
                     ]
                 ];
             }
