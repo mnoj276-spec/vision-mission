@@ -40,21 +40,28 @@
         <div class="text-center mb-8 border-b border-gray-200 pb-6">
             <h2 class="font-['Outfit'] text-xl text-blue-600 mb-1 font-semibold">Admin Workspace</h2>
             <span class="text-xs text-gray-500 bg-blue-50 px-2 py-1 rounded-full uppercase tracking-wide font-medium">Clearance: Level 3</span>
+            
+            <button type="button" id="adminSidebarToggleBtn" class="admin-sidebar-toggle-btn btn-secondary w-full mt-4 flex items-center justify-center gap-2">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+                <span>Toggle Console Menu</span>
+            </button>
         </div>
         
-        <div class="admin-nav-links flex flex-col gap-2">
-            @foreach ($sidebarMenu as $item)
-                @can($item['permission'])
-                    <button class="admin-nav-btn {{ $activeBlock === $item['block'] ? 'active' : '' }}" data-block="{{ $item['block'] }}">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">{!! $item['icon'] !!}</svg>
-                        {{ $item['label'] }}
-                    </button>
-                @endcan
-            @endforeach
-        </div>
-        
-        <div class="mt-12 text-center">
-            <a href="/" class="btn-secondary w-full">&larr; Exit Console</a>
+        <div id="adminSidebarLinks" class="admin-sidebar-links flex flex-col gap-2">
+            <div class="admin-nav-links flex flex-col gap-2">
+                @foreach ($sidebarMenu as $item)
+                    @can($item['permission'])
+                        <button class="admin-nav-btn {{ $activeBlock === $item['block'] ? 'active' : '' }}" data-block="{{ $item['block'] }}">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">{!! $item['icon'] !!}</svg>
+                            {{ $item['label'] }}
+                        </button>
+                    @endcan
+                @endforeach
+            </div>
+            
+            <div class="mt-12 text-center">
+                <a href="/" class="btn-secondary w-full">&larr; Exit Console</a>
+            </div>
         </div>
     </aside>
 
@@ -1592,10 +1599,20 @@
 <script src="{{ asset('assets/js/enterprise-datatable.js') }}"></script>
 <script>
     $(document).ready(function() {
+        // Toggle Admin Sidebar Navigation links on mobile/tablet
+        $('#adminSidebarToggleBtn').on('click', function() {
+            $('#adminSidebarLinks').toggleClass('active');
+        });
+
         // Toggle Sidebar Dashboard Tabs/Panels
         $(document).on('click', '.admin-nav-btn', function() {
             $('.admin-nav-btn').removeClass('active');
             $(this).addClass('active');
+
+            // Close navigation links on click of a nav button on mobile
+            if ($(window).width() <= 900) {
+                $('#adminSidebarLinks').removeClass('active');
+            }
 
             const targetBlock = $(this).data('block');
             $('.admin-panel-block').hide();

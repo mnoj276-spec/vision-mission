@@ -62,6 +62,7 @@
 
     <!-- Custom Design Stylesheet -->
     <link rel="stylesheet" href="{{ asset('assets/css/portal.css') }}">
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
 
     <!-- Google Translate Custom Translator Stylesheet -->
     <link rel="stylesheet" href="{{ asset('assets/css/translator.css') }}">
@@ -516,7 +517,7 @@
             <div id="modalSkeletonLoader" class="skeleton-modal">
                 <div class="skeleton-modal-line" style="height: 40px; width: 60%;"></div>
                 <div class="skeleton-modal-line" style="height: 20px; width: 40%; margin-bottom: 2rem;"></div>
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 2rem;">
+                <div class="details-grid">
                     <div class="skeleton-modal-line" style="height: 80px;"></div>
                     <div class="skeleton-modal-line" style="height: 80px;"></div>
                 </div>
@@ -597,7 +598,7 @@
                         <input type="file" name="resume" id="appResume" class="form-control" required>
                         <div class="invalid-feedback" id="appResumeError"></div>
                     </div>
-                    <div style="display:flex; gap:0.75rem; margin-top:1.5rem;">
+                    <div class="form-actions-flex" style="display:flex; gap:0.75rem; margin-top:1.5rem;">
                         <button type="button" class="btn-view" id="cancelApplicationBtn" style="flex:1; text-align:center;">Cancel</button>
                         <button type="submit" class="form-btn" id="submitApplicationBtn" style="flex:2; margin-top:0;">Submit Application</button>
                     </div>

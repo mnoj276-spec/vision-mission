@@ -235,6 +235,16 @@ header {
     transform: rotate(30deg);
 }
 
+@media (max-width: 768px) {
+    .theme-toggle-btn span {
+        display: none !important;
+    }
+    .theme-toggle-btn {
+        padding: 0.55rem !important;
+        gap: 0 !important;
+    }
+}
+
 /* Hamburger Toggler Button */
 .hamburger-btn {
     display: none;
@@ -1456,7 +1466,7 @@ select.select-user-role {
 
 .details-grid {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
     gap: 1.5rem;
     margin-bottom: 2rem;
 }
@@ -1502,6 +1512,60 @@ select.select-user-role {
     border: 1px solid var(--border-color);
     max-height: 180px;
     overflow-y: auto;
+}
+
+/* Responsive Scroll Container for Modal Tables */
+.details-table-wrapper {
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    margin-top: 1rem;
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+}
+.details-table-wrapper .details-cutoff-table {
+    margin-top: 0;
+}
+
+/* Modal badge word-wrapping and safety rules */
+.modal-box .badge {
+    white-space: normal !important;
+    word-wrap: break-word;
+    word-break: break-word;
+    max-width: 100%;
+    display: inline-block;
+}
+
+/* Mobile Modal Dialog padding reduction and actions stacking */
+@media (max-width: 600px) {
+    .modal-box {
+        padding: 1.5rem 1.25rem !important;
+    }
+    .modal-close-btn {
+        top: 0.8rem !important;
+        right: 0.8rem !important;
+    }
+}
+
+@media (max-width: 480px) {
+    .download-callout-panel > div {
+        flex-direction: column !important;
+        align-items: stretch !important;
+    }
+    .download-button-premium {
+        width: 100% !important;
+        justify-content: center;
+    }
+    .form-actions-flex {
+        flex-direction: column !important;
+    }
+    .form-actions-flex button,
+    .form-actions-flex a {
+        width: 100% !important;
+        margin-top: 0 !important;
+        text-align: center;
+        justify-content: center;
+    }
 }
 
 /* Pulsing Loader Modal Placeholder */
@@ -1797,6 +1861,10 @@ a:focus, button:focus, input:focus, select:focus, textarea:focus {
     background: var(--glass-bg);
 }
 
+.admin-sidebar-toggle-btn {
+    display: none !important;
+}
+
 .admin-nav-btn {
     width: 100%;
     display: flex;
@@ -1934,6 +2002,16 @@ a:focus, button:focus, input:focus, select:focus, textarea:focus {
         top: 0 !important;
         width: 100% !important;
         margin-bottom: 2rem;
+    }
+    .admin-sidebar-toggle-btn {
+        display: flex !important;
+    }
+    .admin-sidebar-links {
+        display: none !important;
+    }
+    .admin-sidebar-links.active {
+        display: flex !important;
+        margin-top: 1rem;
     }
 }
 
