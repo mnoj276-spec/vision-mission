@@ -36,7 +36,7 @@ Route::middleware(['auth', 'admin'])->prefix('api/admin')->group(function () {
     Route::middleware('permission:manage_seo')->group(function () {
         Route::post('/seo/update', [AdminDashboardController::class, 'updateSeoSettings'])->name('admin.seo.update');
         
-        Route::middleware('feature:marketing')->group(function () {
+        Route::middleware('feature:settings.operations')->group(function () {
             Route::get('/advertisements', [AdManagementController::class, 'index'])->name('admin.ads.index');
             Route::post('/advertisements', [AdManagementController::class, 'storeOrUpdate'])->name('admin.ads.store_update');
             Route::post('/advertisements/{id}/toggle', [AdManagementController::class, 'toggleActive'])->name('admin.ads.toggle');
