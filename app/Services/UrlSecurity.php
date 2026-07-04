@@ -55,6 +55,14 @@ class UrlSecurity
             'upsc.gov.in',
             'upsconline.nic.in',
             'github.com',
+            'sbi.co.in',
+            'ntpccareers.net',
+            'punesmartcity.in',
+            'ongcindia.com',
+            'du.ac.in',
+            'aiims.edu',
+            'icar.org.in',
+            'coalindia.in',
         ];
 
         if (in_array($host, $approvedDomains, true)) {

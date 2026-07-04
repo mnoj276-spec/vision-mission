@@ -22,6 +22,8 @@ return Application::configure(basePath: dirname(__DIR__))
         \App\Domains\Scrapers\Commands\RunResultEngineCommand::class,
         \App\Domains\Scrapers\Commands\RecoverDeadQueueCommand::class,
         \App\Domains\Scrapers\Commands\GenerateScalingReportCommand::class,
+        \App\Domains\Scrapers\Commands\TestScrapersCommand::class,
+        \App\Domains\Scrapers\Commands\TestPipelineCommand::class,
         \App\Console\Commands\WarmInternalLinksCache::class,
         \App\Console\Commands\WelcomeSeriesScheduler::class,
         \App\Console\Commands\AlertsScheduler::class,
