@@ -29,7 +29,7 @@
 
     /* SEO Hero styled header */
     .seo-hero {
-        background: linear-gradient(135deg, rgba(139, 92, 246, 0.12) 0%, rgba(37, 99, 235, 0.08) 100%);
+        background: linear-gradient(135deg, color-mix(in srgb, var(--accent-hover) 12%, transparent) 0%, color-mix(in srgb, var(--accent-color) 8%, transparent) 100%);
         border: 1px solid var(--border-color);
         border-radius: 16px;
         padding: 2.5rem 2rem;
@@ -46,7 +46,7 @@
         right: -10%;
         width: 350px;
         height: 350px;
-        background: radial-gradient(circle, rgba(139, 92, 246, 0.1) 0%, transparent 70%);
+        background: radial-gradient(circle, color-mix(in srgb, var(--accent-color) 10%, transparent) 0%, transparent 70%);
         pointer-events: none;
     }
     .seo-hero h1 {
@@ -55,7 +55,7 @@
         font-weight: 800;
         margin-bottom: 0.75rem;
         line-height: 1.25;
-        background: linear-gradient(135deg, var(--text-primary) 30%, #8b5cf6 100%);
+        background: linear-gradient(135deg, var(--text-primary) 30%, var(--accent-color) 100%);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
     }
@@ -89,13 +89,13 @@
         backdrop-filter: blur(8px);
     }
     .salary-tab-btn.active {
-        background: #8b5cf6;
+        background: var(--accent-color);
         color: #ffffff;
-        border-color: #8b5cf6;
-        box-shadow: 0 4px 15px rgba(139, 92, 246, 0.25);
+        border-color: var(--accent-color);
+        box-shadow: 0 4px 15px color-mix(in srgb, var(--accent-color) 25%, transparent);
     }
     .salary-tab-btn:hover:not(.active) {
-        border-color: #8b5cf6;
+        border-color: var(--accent-hover);
         transform: translateY(-2px);
     }
 
@@ -156,7 +156,7 @@
     .salary-scale-fill {
         height: 100%;
         border-radius: 4px;
-        background: linear-gradient(90deg, #8b5cf6 0%, var(--accent-color) 100%);
+        background: linear-gradient(90deg, var(--accent-hover) 0%, var(--accent-color) 100%);
     }
     .salary-scale-labels {
         display: flex;
@@ -207,8 +207,8 @@
 
     <!-- SECTION 1: Category salaries -->
     <div class="salary-panel salary-section-block" id="category-panel">
-        <h2 style="font-family:'Outfit'; font-size:1.3rem; margin-bottom:1.5rem; color:#8b5cf6; display:flex; align-items:center; gap:0.5rem;">
-            <span style="width:8px; height:18px; background:#8b5cf6; border-radius:3px; display:inline-block;"></span>
+        <h2 style="font-family:'Outfit'; font-size:1.3rem; margin-bottom:1.5rem; color:var(--accent-color); display:flex; align-items:center; gap:0.5rem;">
+            <span style="width:8px; height:18px; background:var(--accent-color); border-radius:3px; display:inline-block;"></span>
             Pay Ranges Across Recruitment Sectors
         </h2>
         <table class="salary-table">
@@ -241,7 +241,7 @@
                         <td><span style="font-weight:500;">₹ {{ number_format($cat->min_salary, 0) }}</span> - <span style="font-weight:500;">₹ {{ number_format($cat->max_salary, 0) }}</span></td>
                         <td><span class="badge badge-dept">{{ $cat->count }} Active</span></td>
                         <td style="text-align:right;">
-                            <a href="/search/category/{{ $cat->slug }}" class="btn-view" style="padding:0.4rem 0.8rem; font-size:0.8rem; border-color:rgba(139, 92, 246, 0.3);">
+                            <a href="/search/category/{{ $cat->slug }}" class="btn-view" style="padding:0.4rem 0.8rem; font-size:0.8rem; border-color:color-mix(in srgb, var(--accent-color) 30%, transparent);">
                                 Explore &raquo;
                             </a>
                         </td>
@@ -257,8 +257,8 @@
 
     <!-- SECTION 2: Department salaries -->
     <div class="salary-panel salary-section-block" id="department-panel" style="display:none;">
-        <h2 style="font-family:'Outfit'; font-size:1.3rem; margin-bottom:1.5rem; color:#8b5cf6; display:flex; align-items:center; gap:0.5rem;">
-            <span style="width:8px; height:18px; background:#8b5cf6; border-radius:3px; display:inline-block;"></span>
+        <h2 style="font-family:'Outfit'; font-size:1.3rem; margin-bottom:1.5rem; color:var(--accent-color); display:flex; align-items:center; gap:0.5rem;">
+            <span style="width:8px; height:18px; background:var(--accent-color); border-radius:3px; display:inline-block;"></span>
             Highest Paying Government Departments (Top 15)
         </h2>
         <table class="salary-table">
@@ -300,8 +300,8 @@
 
     <!-- SECTION 3: State salaries -->
     <div class="salary-panel salary-section-block" id="state-panel" style="display:none;">
-        <h2 style="font-family:'Outfit'; font-size:1.3rem; margin-bottom:1.5rem; color:#8b5cf6; display:flex; align-items:center; gap:0.5rem;">
-            <span style="width:8px; height:18px; background:#8b5cf6; border-radius:3px; display:inline-block;"></span>
+        <h2 style="font-family:'Outfit'; font-size:1.3rem; margin-bottom:1.5rem; color:var(--accent-color); display:flex; align-items:center; gap:0.5rem;">
+            <span style="width:8px; height:18px; background:var(--accent-color); border-radius:3px; display:inline-block;"></span>
             Pay Ranges Grouped by State / Region
         </h2>
         <table class="salary-table">

@@ -891,7 +891,7 @@ textarea:focus-visible,
     display: none;
     justify-content: center;
     align-items: center;
-    z-index: 1000;
+    z-index: 9999;
     opacity: 0;
     transition: opacity 0.3s ease;
 }
@@ -933,12 +933,20 @@ textarea:focus-visible,
     color: var(--text-primary);
 }
 
+/* Prevent heading collision with absolute close button on mobile */
+.modal-box h2,
+.modal-box h3,
+.modal-box h4 {
+    padding-right: 2.5rem;
+}
+
 /* Authentication Tab Headers inside Modal */
 .auth-tabs {
     display: flex;
     gap: 1.5rem;
     border-bottom: 2px solid var(--border-color);
     margin-bottom: 2rem;
+    padding-right: 2.5rem;
 }
 
 .auth-tab-btn {

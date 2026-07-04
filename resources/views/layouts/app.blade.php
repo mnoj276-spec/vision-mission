@@ -409,7 +409,7 @@
     <!-- ================= DYNAMIC MODALS OVERLAYS ================= -->
 
     <!-- A. Authenticatable Login/Register Modal -->
-    <div class="modal-overlay" id="authModal" style="z-index: 1200;">
+    <div class="modal-overlay" id="authModal" style="z-index: 9999;">
         <div class="modal-box glass-panel">
             <button class="modal-close-btn" id="closeAuthModal" aria-label="Close Authentication Dialog">&times;</button>
             <div class="auth-tabs">

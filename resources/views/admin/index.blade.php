@@ -33,7 +33,7 @@
 @endphp
 
 @section('content')
-<div class="admin-container min-h-screen gap-8 px-[5%] max-w-[1600px] mx-auto mt-8" style="display: grid; grid-template-columns: 260px 1fr;">
+<div class="admin-container min-h-screen gap-8 px-[5%] max-w-[1600px] mx-auto mt-8 grid grid-cols-1 md:grid-cols-[200px_1fr] lg:grid-cols-[260px_1fr]">
     
     <!-- 1. Enterprise Sidebar Navigation -->
     <aside class="glass-panel admin-sidebar p-6 h-fit sticky top-[100px] rounded-2xl">
@@ -69,12 +69,12 @@
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
                 <div class="glass-panel stat-card-premium border-l-4 border-blue-600 p-5 rounded-xl shadow-sm hover:shadow-md transition-shadow">
                     <div class="text-sm text-gray-500 font-semibold mb-1 uppercase tracking-wide">Total Published Posts</div>
-                    <div class="text-3xl font-bold text-gray-900" id="overview-jobs-posted">0</div>
+                    <div class="text-3xl font-bold text-gray-900 dark:text-white" id="overview-jobs-posted">0</div>
                     <div class="text-xs text-gray-400 mt-2">Active direct announcements</div>
                 </div>
                 <div class="glass-panel stat-card-premium border-l-4 border-emerald-500 p-5 rounded-xl shadow-sm hover:shadow-md transition-shadow">
                     <div class="text-sm text-gray-500 font-semibold mb-1 uppercase tracking-wide">Crawl Target Feeds</div>
-                    <div class="text-3xl font-bold text-gray-900" id="overview-sources">0</div>
+                    <div class="text-3xl font-bold text-gray-900 dark:text-white" id="overview-sources">0</div>
                     <div class="text-xs text-emerald-600 font-medium mt-2" id="overview-active-sources">0 active crawlers</div>
                 </div>
                 <div class="glass-panel stat-card-premium border-l-4 border-amber-500 p-5 rounded-xl shadow-sm hover:shadow-md transition-shadow">
@@ -172,7 +172,7 @@
             </div>
 
             <!-- Chart Row 1: Traffic and Revenue -->
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-bottom: 2.5rem;">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-10">
                 <div class="glass-panel" style="padding: 1.5rem; border-radius: 16px; min-height: 380px;">
                     <h3 style="font-family: 'Outfit'; font-size: 1.15rem; color: var(--accent-color); margin-bottom: 1.5rem;">Daily Traffic Breakdown (Bots vs Organic vs Direct)</h3>
                     <div style="position: relative; height: 280px; width: 100%;">
@@ -189,7 +189,7 @@
             </div>
 
             <!-- Chart Row 2: Funnel and Top User Journeys -->
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-bottom: 2.5rem;">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-10">
                 <div class="glass-panel" style="padding: 1.5rem; border-radius: 16px; min-height: 380px;">
                     <h3 style="font-family: 'Outfit'; font-size: 1.15rem; color: #10b981; margin-bottom: 1.5rem;">Conversions & Engagement Funnel</h3>
                     <div style="position: relative; height: 280px; width: 100%;">
@@ -207,7 +207,7 @@
             </div>
 
             <!-- Tables Row: Top Search Queries and Job CTR Performance -->
-            <div style="display: grid; grid-template-columns: 1fr 1.2fr; gap: 2rem;">
+            <div class="grid grid-cols-1 lg:grid-cols-[1fr_1.2fr] gap-8">
                 <div class="glass-panel" style="padding: 1.5rem; border-radius: 16px;">
                     <h3 style="font-family: 'Outfit'; font-size: 1.15rem; margin-bottom: 1rem; color: var(--accent-color);">Top 10 Search Queries</h3>
                     <div class="responsive-table-container">

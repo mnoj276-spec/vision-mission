@@ -1799,7 +1799,7 @@
 
     <!-- Dash Block 1: Overview (Bookmarks and apps table) -->
     <div id="dash-overview-block" class="dash-block-panel">
-        <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 2rem; align-items: start;">
+        <div class="grid grid-cols-1 lg:grid-cols-[2fr_1fr]" style="gap: 2rem; align-items: start;">
             <div>
                 <!-- Bookmarked items box -->
                 <div class="glass-panel" style="padding: 1.5rem; margin-bottom: 2rem;">

@@ -70,7 +70,7 @@ export default function CategoryManager() {
     ];
 
     return (
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 2fr', gap: '2rem', alignItems: 'start' }}>
+        <div className="grid grid-cols-1 md:grid-cols-[1fr_2fr] gap-8 items-start">
             <div className="glass-panel" style={{ padding: '1.5rem', borderRadius: '16px' }}>
                 <h3 style={{ fontFamily: 'Outfit', fontSize: '1.25rem', marginBottom: '1.5rem', color: 'var(--accent-color)' }}>
                     {formState.id ? 'Edit Category' : 'Add Category'}
