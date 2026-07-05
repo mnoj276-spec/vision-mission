@@ -188,7 +188,7 @@ class SchemaService
 
         // Load approved AI content summary for a cleaner meta description if available
         $cleanDesc = null;
-        if ($job->aiContent && $job->aiContent->status === 'approved' && !empty($job->aiContent->summary)) {
+        if ($job->relationLoaded('aiContent') && $job->aiContent && $job->aiContent->status === 'approved' && !empty($job->aiContent->summary)) {
             $cleanDesc = strip_tags($job->aiContent->summary);
         }
         if (empty($cleanDesc)) {
