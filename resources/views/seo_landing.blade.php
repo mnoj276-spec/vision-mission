@@ -333,6 +333,15 @@
                 </div>
 
                 @forelse($jobs as $job)
+                    @php
+                        $detailRoute = match($job->post_type) {
+                            'result' => route('seo.result_detail', ['slug' => $job->slug]),
+                            'admit_card' => route('seo.admit_card_detail', ['slug' => $job->slug]),
+                            'answer_key' => route('seo.answer_key_detail', ['slug' => $job->slug]),
+                            'syllabus' => route('seo.syllabus_detail', ['slug' => $job->slug]),
+                            default => route('seo.job_detail', ['slug' => $job->slug]),
+                        };
+                    @endphp
                     <div class="job-row-item">
                         <div class="job-title-col">
                             <h3>{{ $job->title }}</h3>
@@ -345,7 +354,7 @@
                             Till {{ $job->last_date_to_apply ? $job->last_date_to_apply->format('d M Y') : 'N/A' }}
                         </div>
                         <div style="text-align: right;">
-                            <a href="/#jobs/{{ $job->slug }}" class="growth-btn seo-apply-trigger" data-slug="{{ $job->slug }}" style="padding: 0.4rem 0.8rem; font-size: 0.8rem; text-decoration: none; display: inline-block;">
+                            <a href="{{ $detailRoute }}" class="growth-btn seo-apply-trigger" data-slug="{{ $job->slug }}" style="padding: 0.4rem 0.8rem; font-size: 0.8rem; text-decoration: none; display: inline-block;">
                                 Details &raquo;
                             </a>
                         </div>
