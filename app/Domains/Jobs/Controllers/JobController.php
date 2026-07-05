@@ -83,6 +83,20 @@ class JobController extends Controller
             app(\App\Services\AnalyticsService::class)->trackPageView('/job/' . $slug, request()->header('referer'));
         } catch (\Exception $e) {}
 
+        $rootId = $job->parent_id ?? $job->id;
+        $timeline = \App\Models\JobPost::where('id', $rootId)
+            ->orWhere('parent_id', $rootId)
+            ->orderBy('published_at', 'asc')
+            ->orderBy('created_at', 'asc')
+            ->get()
+            ->map(fn($t) => [
+                'id' => $t->id,
+                'title' => $t->title,
+                'slug' => $t->slug,
+                'post_type' => $t->post_type,
+                'published_at' => $t->published_at?->format('d M Y') ?? $t->created_at->format('d M Y'),
+            ])->toArray();
+
         return response()->json(['status' => 'success', 'data' => [
             'id'                    => $job->id,
             'title'                 => $job->title,
@@ -99,10 +113,15 @@ class JobController extends Controller
             'pay_matrix'            => $job->pay_matrix,
             'pay_scale'             => $job->pay_scale,
             'stipend'               => $job->stipend,
-            'application_fee'       => number_format($job->application_fee, 2),
+            'application_fee'       => (float) $job->application_fee,
             'age_limit'             => $job->age_limit ?? '18-32 Years',
+            'age_min'               => $job->age_min,
+            'age_max'               => $job->age_max,
+            'start_date'            => $job->start_date?->format('d M Y') ?? $job->published_at?->format('d M Y') ?? 'N/A',
             'last_date'             => $job->last_date_to_apply?->format('d M Y') ?? 'N/A',
             'exam_date'             => $job->exam_date?->format('d M Y') ?? 'Announced Soon',
+            'result_date'           => $job->result_date?->format('d M Y'),
+            'notification_pdf_path' => $job->notification_pdf_path,
             'official_website_link' => $job->official_website_link,
             'apply_link'            => $job->apply_link,
             'affiliate_link'        => $job->affiliate_link,
@@ -114,6 +133,7 @@ class JobController extends Controller
                 'vacancy_count' => $cv->vacancy_count,
                 'type'          => $cv->type,
             ])->toArray(),
+            'timeline'              => $timeline,
         ]]);
     }
 

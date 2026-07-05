@@ -3128,50 +3128,199 @@
                         const type = job.post_type;
                         let html = '';
                         if (type === 'job') {
+                            // Determine status badge values
+                            let statusText = 'Active';
+                            let statusClass = 'status-open';
+                            
+                            const now = new Date();
+                            const lastDate = job.last_date ? new Date(job.last_date) : null;
+                            const startDate = job.start_date ? new Date(job.start_date) : null;
+                            
+                            if (lastDate && lastDate < now) {
+                                statusText = 'Apply Closed';
+                                statusClass = 'status-closed';
+                            } else if (startDate && startDate > now) {
+                                statusText = 'Upcoming';
+                                statusClass = 'status-upcoming';
+                            } else {
+                                statusText = 'Apply Open';
+                                statusClass = 'status-open';
+                            }
+
+                            // Build Application Fee HTML
+                            let feeHtml = '';
+                            if (job.application_fee > 0) {
+                                feeHtml = `
+                                    <li>
+                                        <span class="info-label">General / OBC / EWS:</span>
+                                        <span class="info-val">₹ ${parseFloat(job.application_fee).toFixed(2)}</span>
+                                    </li>
+                                    <li>
+                                        <span class="info-label">SC / ST / PH:</span>
+                                        <span class="info-val">₹ 0.00 (Exempted)</span>
+                                    </li>
+                                    <li>
+                                        <span class="info-label">Females (All Category):</span>
+                                        <span class="info-val">₹ 0.00 (Exempted)</span>
+                                    </li>
+                                `;
+                            } else {
+                                feeHtml = `
+                                    <li>
+                                        <span class="info-label">All Category Candidates:</span>
+                                        <span class="info-val text-success">Free (No Fee)</span>
+                                    </li>
+                                `;
+                            }
+
+                            // Build Timeline Nodes HTML
+                            let timelineHtml = '';
+                            if (job.timeline && job.timeline.length > 1) {
+                                timelineHtml = `
+                                    <div class="details-full-section" style="margin-top:1.5rem; border-top:1px solid var(--border-color); padding-top:1.25rem;">
+                                        <h4 style="color:var(--accent-color); font-weight:700; font-family:'Outfit'; margin-bottom:0.75rem;"><i class="fa-solid fa-code-fork"></i> Recruitment Lifecycle & Update Timeline</h4>
+                                        <div class="timeline-container">
+                                            ${job.timeline.map(item => {
+                                                const isCurrent = (item.id === job.id);
+                                                let itemType = item.post_type;
+                                                if (itemType === 'job') itemType = 'Original Announcement';
+                                                else if (itemType === 'admit_card') itemType = 'Admit Card Available';
+                                                else if (itemType === 'result') itemType = 'Final Exam Results';
+                                                else if (itemType === 'answer_key') itemType = 'Answer Key Objections';
+                                                else if (itemType === 'syllabus') itemType = 'Exam Syllabus Published';
+                                                else if (itemType === 'cutoff') itemType = 'Declared Cutoffs';
+                                                else if (itemType === 'notice') itemType = 'Official Notice';
+                                                else itemType = itemType.charAt(0).toUpperCase() + itemType.slice(1);
+
+                                                let iconHtml = '<i class="fa-solid fa-circle-info"></i>';
+                                                if (item.post_type === 'job') iconHtml = '<i class="fa-solid fa-bullhorn"></i>';
+                                                else if (item.post_type === 'admit_card') iconHtml = '<i class="fa-solid fa-id-card"></i>';
+                                                else if (item.post_type === 'result') iconHtml = '<i class="fa-solid fa-trophy"></i>';
+                                                else if (item.post_type === 'answer_key') iconHtml = '<i class="fa-solid fa-key"></i>';
+                                                else if (item.post_type === 'syllabus') iconHtml = '<i class="fa-solid fa-book-open"></i>';
+
+                                                return `
+                                                    <div class="timeline-node ${isCurrent ? 'current-node' : ''}">
+                                                        <div class="node-icon">${iconHtml}</div>
+                                                        <div class="node-content">
+                                                            <span class="node-date">${item.published_at}</span>
+                                                            <h5 class="node-title">
+                                                                ${isCurrent ? `<strong>${itemType}: ${item.title} (This Popup)</strong>` : `<a href="#" class="btn-view" data-slug="${item.slug}">${itemType}: ${item.title}</a>`}
+                                                            </h5>
+                                                        </div>
+                                                    </div>
+                                                `;
+                                            }).join('')}
+                                        </div>
+                                    </div>
+                                `;
+                            }
+
+                            // Build Guidelines Photo Rule conditional list
+                            let sscPhotoGuideline = '';
+                            if (job.title.toLowerCase().includes('ssc') || job.description.toLowerCase().includes('webcam') || job.description.toLowerCase().includes('live photo')) {
+                                sscPhotoGuideline = `
+                                    <li style="display: flex; gap: 0.75rem; font-size: 0.95rem; color: var(--text-secondary); line-height: 1.6;">
+                                        <span style="color:var(--accent-color); font-weight:bold;">2.</span>
+                                        <span><strong>Webcam Live Photograph:</strong> SSC and other major commissions require taking a live photo of yourself via webcam or through the official mobile app. Stand in front of a light/white background and look straight. Do not wear caps, spectacles, or masks.</span>
+                                    </li>
+                                `;
+                            }
+
+                            // PDF Link logic
+                            let pdfRow = '';
+                            if (job.notification_pdf_path) {
+                                const pdfUrl = job.notification_pdf_path.startsWith('http')
+                                    ? job.notification_pdf_path
+                                    : `/storage/${job.notification_pdf_path}`;
+                                pdfRow = `
+                                    <tr>
+                                        <td><strong>Download Official Notification PDF</strong></td>
+                                        <td style="text-align: right;">
+                                            <a href="${pdfUrl}" target="_blank" class="btn-link-action" style="background:#dc2626;">
+                                                <i class="fa-solid fa-file-pdf"></i> Download PDF
+                                            </a>
+                                        </td>
+                                    </tr>
+                                `;
+                            }
+
                             html = `
                                 <div class="theme-accent-job">
                                     <div class="category-visual-header">
                                         <h2>💼 <span class="notranslate" translate="no" data-translate-title="${job.title}">${window.translateJobTitle(job.title)}</span></h2>
                                         <p>${window.t(job.department, job.department)} &bull; ${window.t(job.state, job.state)} &bull; ${window.t(job.category, job.category)}</p>
                                     </div>
-                                    
-                                    <div class="details-summary-grid">
-                                        <div class="details-summary-item" style="grid-column: span 1; height: auto;">
-                                            <div style="font-size:0.75rem; text-transform:uppercase; color:var(--text-secondary);">${window.t('modal_salary_lbl_index', 'Salary Details')}</div>
-                                            <div style="font-size:1.15rem; font-weight:700; color:var(--text-primary); margin-top:0.25rem;">
-                                                ${
-                                                    job.stipend ? `${job.stipend}` :
-                                                    (job.salary_min && job.salary_min !== '0' && job.salary_max && job.salary_max !== '0') ? `₹ ${job.salary_min} - ₹ ${job.salary_max}` :
-                                                    (job.salary_min && job.salary_min !== '0') ? `₹ ${job.salary_min} onwards` :
-                                                    (job.pay_scale) ? job.pay_scale : 'Govt Scale'
-                                                }
-                                            </div>
-                                            ${
-                                                (job.pay_level || job.salary_grade || job.pay_matrix) ? `
-                                                    <div style="font-size:0.7rem; color:var(--text-secondary); margin-top:0.35rem; display:flex; flex-wrap:wrap; gap:0.25rem; justify-content:center; opacity: 0.85;">
-                                                        ${[
-                                                            job.pay_level ? `📈 ${job.pay_level}` : '',
-                                                            job.salary_grade ? `🎖️ ${job.salary_grade}` : '',
-                                                            job.pay_matrix ? `📊 ${job.pay_matrix}` : ''
-                                                        ].filter(Boolean).join(' | ')}
-                                                    </div>
-                                                ` : ''
-                                            }
+
+                                    <div class="detail-badges" style="margin-top: 1rem; margin-bottom: 1.5rem; display: flex; justify-content: center; flex-wrap: wrap; gap: 0.5rem;">
+                                        <span class="status-badge ${statusClass}">${statusText}</span>
+                                        <span class="badge badge-dept" style="background: rgba(37,99,235,0.06); color: var(--accent-color); border: 1px solid rgba(37,99,235,0.15); padding: 3px 10px; border-radius: 99px; font-size: 0.75rem;">Vacancy Count: ${job.vacancy_count}</span>
+                                        <span class="badge badge-dept" style="background: rgba(37,99,235,0.06); color: var(--accent-color); border: 1px solid rgba(37,99,235,0.15); padding: 3px 10px; border-radius: 99px; font-size: 0.75rem;">Qualification: ${job.qualification}</span>
+                                    </div>
+
+                                    <!-- Split Dates & Fees Card -->
+                                    <div class="split-info-card" style="margin-top: 1rem;">
+                                        <div class="split-info-column">
+                                            <h5 class="column-title" style="margin-top:0;"><i class="fa-regular fa-calendar-days"></i> Important Dates</h5>
+                                            <ul class="info-list">
+                                                <li>
+                                                    <span class="info-label">Application Begin:</span>
+                                                    <span class="info-val">${job.start_date}</span>
+                                                </li>
+                                                <li>
+                                                    <span class="info-label">Last Date to Apply:</span>
+                                                    <span class="info-val deadline-text">${job.last_date}</span>
+                                                </li>
+                                                <li>
+                                                    <span class="info-label">Online Fee Last Date:</span>
+                                                    <span class="info-val">${job.last_date}</span>
+                                                </li>
+                                                <li>
+                                                    <span class="info-label">Exam Date:</span>
+                                                    <span class="info-val exam-text">${job.exam_date}</span>
+                                                </li>
+                                                ${job.result_date ? `
+                                                <li>
+                                                    <span class="info-label">Expected Result Date:</span>
+                                                    <span class="info-val result-text">${job.result_date}</span>
+                                                </li>
+                                                ` : ''}
+                                            </ul>
                                         </div>
-                                        <div class="details-summary-item">
-                                            <div style="font-size:0.75rem; text-transform:uppercase; color:var(--text-secondary);">${window.t('modal_vacancies_lbl', 'Total Vacancies')}</div>
-                                            <div style="font-size:1.15rem; font-weight:700; color:var(--accent-color); margin-top:0.25rem;">${job.vacancy_count} ${window.t('active_posts_lbl', 'Active Posts')}</div>
-                                        </div>
-                                        <div class="details-summary-item">
-                                            <div style="font-size:0.75rem; text-transform:uppercase; color:var(--text-secondary);">${window.t('modal_fees_lbl', 'Application Fees')}</div>
-                                            <div style="font-size:1.15rem; font-weight:700; color:var(--text-primary); margin-top:0.25rem;">₹ ${job.application_fee}</div>
-                                        </div>
-                                        <div class="details-summary-item">
-                                            <div style="font-size:0.75rem; text-transform:uppercase; color:var(--text-secondary);">${window.t('modal_age_lbl', 'Age Requirements')}</div>
-                                            <div style="font-size:1.15rem; font-weight:700; color:var(--text-primary); margin-top:0.25rem;">${job.age_limit}</div>
+                                        <div class="split-info-column">
+                                            <h5 class="column-title" style="margin-top:0;"><i class="fa-solid fa-indian-rupee-sign"></i> Application Fee</h5>
+                                            <ul class="info-list">
+                                                ${feeHtml}
+                                                <li class="fee-note">
+                                                    <span class="info-label">Payment Mode:</span>
+                                                    <span class="info-val">Pay the examination fee through Debit Card, Credit Card, Net Banking, or UPI mode only.</span>
+                                                </li>
+                                            </ul>
                                         </div>
                                     </div>
 
+                                    <!-- Age Limit Card -->
+                                    <div class="age-limit-card" style="margin-top: 1rem;">
+                                        <h5 class="column-title" style="border-bottom:none; margin-bottom:0; padding-bottom:0; margin-top:0;"><i class="fa-regular fa-clock"></i> Age Limit Details</h5>
+                                        <div class="age-grid">
+                                            <div class="age-box">
+                                                <span class="age-label">Minimum Age</span>
+                                                <span class="age-val">${job.age_min ? job.age_min + ' Years' : '18 Years'}</span>
+                                            </div>
+                                            <div class="age-box">
+                                                <span class="age-label">Maximum Age</span>
+                                                <span class="age-val">${job.age_max ? job.age_max + ' Years' : (job.age_limit ? job.age_limit : '32 Years')}</span>
+                                            </div>
+                                        </div>
+                                        <div class="age-cutoff-info">
+                                            <strong>Age Limit Reference:</strong> Calculated based on the board's recruitment guidelines. Age relaxation is applicable extra as per government reservation rules.
+                                        </div>
+                                    </div>
+
+                                    <!-- Recruitment timeline -->
+                                    ${timelineHtml}
+                                    
+                                    <!-- Vacancy Breakdown -->
                                     ${(job.category_vacancies && job.category_vacancies.length > 0) ? `
                                     <div class="details-full-section" style="margin-top:1.5rem; border-top: 1px solid var(--border-color); padding-top:1.25rem;">
                                         <h4 style="color: var(--accent-color); font-weight:700; font-family:'Outfit'; margin-bottom:1rem; display:flex; align-items:center; gap:0.5rem;">

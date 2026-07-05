@@ -116,6 +116,14 @@
                             </tbody>
                         </table>
                     </div>
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 1rem; flex-wrap: wrap; gap: 0.5rem;">
+                        <div id="overview-crawlers-count" style="font-size: 0.85rem; color: var(--text-secondary);">
+                            Showing 0-0 of 0 entries
+                        </div>
+                        <div id="overview-crawlers-pagination" class="flex gap-1">
+                            <!-- Populated dynamically -->
+                        </div>
+                    </div>
                 </div>
 
                 <!-- SVG Graph circular gauge -->
@@ -1719,6 +1727,55 @@
         // ===================================================================
         // 1. DASHBOARD OVERVIEW LOAD DATA & RECOVERY PANELS
         // ===================================================================
+        let overviewSources = [];
+        let overviewLogs = [];
+        let currentOverviewPage = 1;
+        const itemsPerOverviewPage = 10;
+
+        function renderOverviewCrawlersTable() {
+            const start = (currentOverviewPage - 1) * itemsPerOverviewPage;
+            const end = start + itemsPerOverviewPage;
+            const pageItems = overviewSources.slice(start, end);
+
+            let trs = '';
+            pageItems.forEach(src => {
+                const isAct = src.is_active ? '<span class="badge" style="background:rgba(16,185,129,0.08); color:#10b981;">Active</span>' : '<span class="badge" style="background:rgba(239,68,68,0.08); color:#ef4444;">Suspended</span>';
+                // Find last audit status
+                const log = overviewLogs.find(l => l.source_name === src.name);
+                const healthStatus = log ? log.status : 'pending';
+                let healthBadge = '<span class="badge" style="background:rgba(156,163,175,0.08); color:#9ca3af;">Pending</span>';
+                if (healthStatus === 'success') {
+                    healthBadge = '<span class="badge" style="background:rgba(16,185,129,0.08); color:#10b981;">Healthy</span>';
+                } else if (healthStatus === 'failed') {
+                    const errMsg = log ? (log.error_message || 'Unknown error during scraping run').replace(/"/g, '&quot;').replace(/'/g, '&#39;') : 'Unknown Error';
+                    healthBadge = `<span class="badge enterprise-tooltip" data-tooltip="${errMsg}" style="background:rgba(239,68,68,0.08); color:#ef4444; cursor:help;">Error ⚠️</span>`;
+                } else if (healthStatus === 'quarantined') {
+                    healthBadge = '<span class="badge" style="background:rgba(245,158,11,0.08); color:#f59e0b;">Quarantine</span>';
+                }
+
+                trs += `
+                    <tr>
+                        <td><strong>${src.name}</strong></td>
+                        <td><span style="font-size:0.8rem; color:var(--text-secondary);">${log ? log.time : 'Never run'}</span></td>
+                        <td style="font-weight:bold;">${log ? log.items_found : 0}</td>
+                        <td>${healthBadge}</td>
+                    </tr>
+                `;
+            });
+            $('#overview-crawlers-table').html(trs || '<tr><td colspan="4" style="text-align:center; color:var(--text-secondary);">No crawlers active.</td></tr>');
+
+            const totalCount = overviewSources.length;
+            const fromEntry = totalCount > 0 ? start + 1 : 0;
+            const toEntry = Math.min(end, totalCount);
+            $('#overview-crawlers-count').text(`Showing ${fromEntry}-${toEntry} of ${totalCount} entries`);
+
+            const lastPage = Math.ceil(totalCount / itemsPerOverviewPage);
+            buildPagination('#overview-crawlers-pagination', currentOverviewPage, lastPage, function(page) {
+                currentOverviewPage = page;
+                renderOverviewCrawlersTable();
+            });
+        }
+
         function loadOverviewData() {
             $.ajax({
                 url: '/api/admin/data',
@@ -1741,33 +1798,11 @@
                         const strokeDash = ratio + ' 100';
                         $('#success-svg-gauge').attr('stroke-dasharray', strokeDash);
 
-                        // Populate Overview active crawlers table
-                        let trs = '';
-                        res.data.sources.forEach(src => {
-                            const isAct = src.is_active ? '<span class="badge" style="background:rgba(16,185,129,0.08); color:#10b981;">Active</span>' : '<span class="badge" style="background:rgba(239,68,68,0.08); color:#ef4444;">Suspended</span>';
-                            // Find last audit status
-                            const log = res.data.logs.find(l => l.source_name === src.name);
-                            const healthStatus = log ? log.status : 'pending';
-                            let healthBadge = '<span class="badge" style="background:rgba(156,163,175,0.08); color:#9ca3af;">Pending</span>';
-                            if (healthStatus === 'success') {
-                                healthBadge = '<span class="badge" style="background:rgba(16,185,129,0.08); color:#10b981;">Healthy</span>';
-                            } else if (healthStatus === 'failed') {
-                                const errMsg = log ? (log.error_message || 'Unknown error during scraping run').replace(/"/g, '&quot;').replace(/'/g, '&#39;') : 'Unknown Error';
-                                healthBadge = `<span class="badge enterprise-tooltip" data-tooltip="${errMsg}" style="background:rgba(239,68,68,0.08); color:#ef4444; cursor:help;">Error ⚠️</span>`;
-                            } else if (healthStatus === 'quarantined') {
-                                healthBadge = '<span class="badge" style="background:rgba(245,158,11,0.08); color:#f59e0b;">Quarantine</span>';
-                            }
-
-                            trs += `
-                                <tr>
-                                    <td><strong>${src.name}</strong></td>
-                                    <td><span style="font-size:0.8rem; color:var(--text-secondary);">${log ? log.time : 'Never run'}</span></td>
-                                    <td style="font-weight:bold;">${log ? log.items_found : 0}</td>
-                                    <td>${healthBadge}</td>
-                                </tr>
-                            `;
-                        });
-                        $('#overview-crawlers-table').html(trs || '<tr><td colspan="4" style="text-align:center; color:var(--text-secondary);">No crawlers active.</td></tr>');
+                        // Populate Overview active crawlers table via paginated function
+                        overviewSources = res.data.sources || [];
+                        overviewLogs = res.data.logs || [];
+                        currentOverviewPage = 1;
+                        renderOverviewCrawlersTable();
 
                         // Populate quarantine listings overriding
                         let qHtml = '';

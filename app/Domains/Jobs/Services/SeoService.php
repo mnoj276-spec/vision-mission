@@ -147,7 +147,26 @@ class SeoService
                 $job = $params['job'] ?? null;
                 if ($job) {
                     $postTypeName = $this->getPostTypeName($job->post_type);
-                    $title = "{$job->title} - Syllabus, Pattern & Salary - GovJobs";
+                    $suffix = match($job->post_type) {
+                        'job' => 'Online Form',
+                        'result' => 'Exam Result',
+                        'admit_card' => 'Admit Card',
+                        'answer_key' => 'Answer Key',
+                        'syllabus' => 'Syllabus & Pattern',
+                        'cutoff' => 'Cutoff Marks',
+                        'exam_calendar' => 'Exam Calendar',
+                        'prev_paper' => 'Previous Year Paper',
+                        default => $postTypeName
+                    };
+                    
+                    $title = $job->title;
+                    if ($job->post_type === 'job' && $job->vacancy_count > 0) {
+                        $title .= " ({$job->vacancy_count} Posts)";
+                    }
+                    if (!str_contains($title, $year)) {
+                        $title .= " {$year}";
+                    }
+                    $title .= " {$suffix} - GovJobs";
                     $h1 = $job->title;
                     $description = "Get full details for {$job->title}. Salary range: ₹" . number_format($job->salary_min, 0) . " - " . number_format($job->salary_max, 0) . ". Apply before: " . ($job->last_date_to_apply ? $job->last_date_to_apply->format('d M Y') : 'N/A') . ".";
                     
