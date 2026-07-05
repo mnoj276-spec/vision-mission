@@ -181,44 +181,44 @@
 <div style="max-width: 1400px; margin: 0 auto; padding: 0 5%;">
     <!-- Breadcrumbs -->
     <div class="breadcrumb-trail">
-        <a href="/">Home</a>
+        <a href="/" data-translate-lookup="Home">Home</a>
         @foreach($breadcrumbs as $label => $url)
             <span class="breadcrumb-separator">&raquo;</span>
             @if($url)
-                <a href="{{ $url }}">{{ $label }}</a>
+                <a href="{{ $url }}" data-translate-lookup="{{ $label }}">{{ $label }}</a>
             @else
-                <span>{{ $label }}</span>
+                <span data-translate-lookup="{{ $label }}">{{ $label }}</span>
             @endif
         @endforeach
     </div>
 
     <!-- Hero Header -->
     <section class="seo-hero">
-        <h1>Sarkari Job Salary Matrix 2026</h1>
+        <h1 data-i18n="salary_hero_title">Sarkari Job Salary Matrix 2026</h1>
         <p>{{ $metaDescription }}</p>
     </section>
 
     <!-- Tab Selection Bar -->
     <div class="salary-tabs">
-        <button class="salary-tab-btn active" data-target="category-panel">💼 Salaries by Stream / Sector</button>
-        <button class="salary-tab-btn" data-target="department-panel">🏛️ Salaries by Department</button>
-        <button class="salary-tab-btn" data-target="state-panel">📍 Salaries by State / Region</button>
+        <button class="salary-tab-btn active" data-target="category-panel" data-i18n="salary_tab_stream">💼 Salaries by Stream / Sector</button>
+        <button class="salary-tab-btn" data-target="department-panel" data-i18n="salary_tab_dept">🏛️ Salaries by Department</button>
+        <button class="salary-tab-btn" data-target="state-panel" data-i18n="salary_tab_state">📍 Salaries by State / Region</button>
     </div>
 
     <!-- SECTION 1: Category salaries -->
     <div class="salary-panel salary-section-block" id="category-panel">
         <h2 style="font-family:'Outfit'; font-size:1.3rem; margin-bottom:1.5rem; color:var(--accent-color); display:flex; align-items:center; gap:0.5rem;">
             <span style="width:8px; height:18px; background:var(--accent-color); border-radius:3px; display:inline-block;"></span>
-            Pay Ranges Across Recruitment Sectors
+            <span data-i18n="salary_sector_heading">Pay Ranges Across Recruitment Sectors</span>
         </h2>
         <table class="salary-table">
             <thead>
                 <tr>
-                    <th>Recruitment Sector</th>
-                    <th>Average Monthly Salary</th>
-                    <th>Salary Range (Min - Max)</th>
-                    <th>Active Posts</th>
-                    <th style="text-align:right;">Actions</th>
+                    <th data-i18n="salary_th_sector">Recruitment Sector</th>
+                    <th data-i18n="salary_th_avg">Average Monthly Salary</th>
+                    <th data-i18n="salary_th_range">Salary Range (Min - Max)</th>
+                    <th data-i18n="salary_th_active">Active Posts</th>
+                    <th style="text-align:right;" data-i18n="salary_th_actions">Actions</th>
                 </tr>
             </thead>
             <tbody>
@@ -229,7 +229,7 @@
                         $fillPercent = min(100, max(15, ($cat->avg_salary / $maxRef) * 100));
                     @endphp
                     <tr>
-                        <td><strong>{{ $cat->name }}</strong></td>
+                        <td><strong data-translate-lookup="{{ $cat->name }}">{{ $cat->name }}</strong></td>
                         <td>
                             <div class="salary-scale-container">
                                 <div style="font-weight:700; color:var(--text-primary);">₹ {{ number_format($cat->avg_salary, 0) }}</div>
@@ -239,16 +239,16 @@
                             </div>
                         </td>
                         <td><span style="font-weight:500;">₹ {{ number_format($cat->min_salary, 0) }}</span> - <span style="font-weight:500;">₹ {{ number_format($cat->max_salary, 0) }}</span></td>
-                        <td><span class="badge badge-dept">{{ $cat->count }} Active</span></td>
+                        <td><span class="badge badge-dept">{{ $cat->count }} <span data-translate-lookup="Active">Active</span></span></td>
                         <td style="text-align:right;">
                             <a href="/search/category/{{ $cat->slug }}" class="btn-view" style="padding:0.4rem 0.8rem; font-size:0.8rem; border-color:color-mix(in srgb, var(--accent-color) 30%, transparent);">
-                                Explore &raquo;
+                                <span data-i18n="salary_explore_btn">Explore &raquo;</span>
                             </a>
                         </td>
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="5" style="text-align:center; padding:3rem; color:var(--text-secondary);">No salary aggregation metrics are currently available.</td>
+                        <td colspan="5" style="text-align:center; padding:3rem; color:var(--text-secondary);" data-i18n="salary_no_data">No salary aggregation metrics are currently available.</td>
                     </tr>
                 @endforelse
             </tbody>
@@ -259,15 +259,15 @@
     <div class="salary-panel salary-section-block" id="department-panel" style="display:none;">
         <h2 style="font-family:'Outfit'; font-size:1.3rem; margin-bottom:1.5rem; color:var(--accent-color); display:flex; align-items:center; gap:0.5rem;">
             <span style="width:8px; height:18px; background:var(--accent-color); border-radius:3px; display:inline-block;"></span>
-            Highest Paying Government Departments (Top 15)
+            <span data-i18n="salary_dept_heading">Highest Paying Government Departments (Top 15)</span>
         </h2>
         <table class="salary-table">
             <thead>
                 <tr>
-                    <th>Department / Organization</th>
-                    <th>Average Monthly Salary</th>
-                    <th>Salary Range (Min - Max)</th>
-                    <th>Active Posts</th>
+                    <th data-i18n="salary_th_department">Department / Organization</th>
+                    <th data-i18n="salary_th_avg">Average Monthly Salary</th>
+                    <th data-i18n="salary_th_range">Salary Range (Min - Max)</th>
+                    <th data-i18n="salary_th_active">Active Posts</th>
                 </tr>
             </thead>
             <tbody>
@@ -277,7 +277,7 @@
                         $fillPercent = min(100, max(15, ($dept->avg_salary / $maxRef) * 100));
                     @endphp
                     <tr>
-                        <td><strong>{{ $dept->name }}</strong></td>
+                        <td><strong data-translate-lookup="{{ $dept->name }}">{{ $dept->name }}</strong></td>
                         <td>
                             <div class="salary-scale-container">
                                 <div style="font-weight:700; color:var(--text-primary);">₹ {{ number_format($dept->avg_salary, 0) }}</div>
@@ -287,11 +287,11 @@
                             </div>
                         </td>
                         <td><span style="font-weight:500;">₹ {{ number_format($dept->min_salary, 0) }}</span> - <span style="font-weight:500;">₹ {{ number_format($dept->max_salary, 0) }}</span></td>
-                        <td><span class="badge badge-dept" style="background:rgba(16,185,129,0.08); color:#10b981;">{{ $dept->count }} Posts</span></td>
+                        <td><span class="badge badge-dept" style="background:rgba(16,185,129,0.08); color:#10b981;">{{ $dept->count }} <span data-translate-lookup="Posts">Posts</span></span></td>
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="4" style="text-align:center; padding:3rem; color:var(--text-secondary);">No salary aggregation metrics are currently available.</td>
+                        <td colspan="4" style="text-align:center; padding:3rem; color:var(--text-secondary);" data-i18n="salary_no_data">No salary aggregation metrics are currently available.</td>
                     </tr>
                 @endforelse
             </tbody>
@@ -302,16 +302,16 @@
     <div class="salary-panel salary-section-block" id="state-panel" style="display:none;">
         <h2 style="font-family:'Outfit'; font-size:1.3rem; margin-bottom:1.5rem; color:var(--accent-color); display:flex; align-items:center; gap:0.5rem;">
             <span style="width:8px; height:18px; background:var(--accent-color); border-radius:3px; display:inline-block;"></span>
-            Pay Ranges Grouped by State / Region
+            <span data-i18n="salary_state_heading">Pay Ranges Grouped by State / Region</span>
         </h2>
         <table class="salary-table">
             <thead>
                 <tr>
-                    <th>State / Territory</th>
-                    <th>Average Monthly Salary</th>
-                    <th>Salary Range (Min - Max)</th>
-                    <th>Active Posts</th>
-                    <th style="text-align:right;">Actions</th>
+                    <th data-i18n="salary_th_state">State / Territory</th>
+                    <th data-i18n="salary_th_avg">Average Monthly Salary</th>
+                    <th data-i18n="salary_th_range">Salary Range (Min - Max)</th>
+                    <th data-i18n="salary_th_active">Active Posts</th>
+                    <th style="text-align:right;" data-i18n="salary_th_actions">Actions</th>
                 </tr>
             </thead>
             <tbody>
@@ -321,7 +321,7 @@
                         $fillPercent = min(100, max(15, ($st->avg_salary / $maxRef) * 100));
                     @endphp
                     <tr>
-                        <td><strong>{{ $st->name }}</strong></td>
+                        <td><strong data-translate-lookup="{{ $st->name }}">{{ $st->name }}</strong></td>
                         <td>
                             <div class="salary-scale-container">
                                 <div style="font-weight:700; color:var(--text-primary);">₹ {{ number_format($st->avg_salary, 0) }}</div>
@@ -331,16 +331,16 @@
                             </div>
                         </td>
                         <td><span style="font-weight:500;">₹ {{ number_format($st->min_salary, 0) }}</span> - <span style="font-weight:500;">₹ {{ number_format($st->max_salary, 0) }}</span></td>
-                        <td><span class="badge badge-dept" style="background:rgba(59,130,246,0.08); color:#3b82f6;">{{ $st->count }} Posts</span></td>
+                        <td><span class="badge badge-dept" style="background:rgba(59,130,246,0.08); color:#3b82f6;">{{ $st->count }} <span data-translate-lookup="Posts">Posts</span></span></td>
                         <td style="text-align:right;">
                             <a href="/search/state/{{ $st->slug }}" class="btn-view" style="padding:0.4rem 0.8rem; font-size:0.8rem; border-color:rgba(59, 130, 246, 0.3);">
-                                Explore &raquo;
+                                <span data-i18n="salary_explore_btn">Explore &raquo;</span>
                             </a>
                         </td>
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="5" style="text-align:center; padding:3rem; color:var(--text-secondary);">No salary aggregation metrics are currently available.</td>
+                        <td colspan="5" style="text-align:center; padding:3rem; color:var(--text-secondary);" data-i18n="salary_no_data">No salary aggregation metrics are currently available.</td>
                     </tr>
                 @endforelse
             </tbody>

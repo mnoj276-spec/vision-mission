@@ -222,20 +222,20 @@
 <div style="max-width: 1400px; margin: 0 auto; padding: 0 5%;">
     <!-- Breadcrumbs -->
     <div class="breadcrumb-trail">
-        <a href="/">Home</a>
+        <a href="/" data-translate-lookup="Home">Home</a>
         @foreach($breadcrumbs as $label => $url)
             <span class="breadcrumb-separator">&raquo;</span>
             @if($url)
-                <a href="{{ $url }}">{{ $label }}</a>
+                <a href="{{ $url }}" data-translate-lookup="{{ $label }}">{{ $label }}</a>
             @else
-                <span>{{ $label }}</span>
+                <span data-translate-lookup="{{ $label }}">{{ $label }}</span>
             @endif
         @endforeach
     </div>
 
     <!-- Hero Header -->
     <section class="seo-hero">
-        <h1>Sarkari Job Eligibility Checker 2026</h1>
+        <h1 data-i18n="eligibility_hero_title">Sarkari Job Eligibility Checker 2026</h1>
         <p>{{ $metaDescription }}</p>
     </section>
 
@@ -245,40 +245,40 @@
             <div class="wizard-grid">
                 <!-- 1. Education Qualification Select -->
                 <div class="wizard-group">
-                    <label for="qualification_id" class="wizard-label">🎓 Highest Qualification</label>
+                    <label for="qualification_id" class="wizard-label" data-i18n="eligibility_qualification_label">🎓 Highest Qualification</label>
                     <select id="qualification_id" name="qualification_id" class="wizard-select">
-                        <option value="">-- Select Qualification --</option>
+                        <option value="" data-i18n="eligibility_select_qualification">-- Select Qualification --</option>
                         @foreach($qualifications as $qual)
-                            <option value="{{ $qual->id }}">{{ $qual->name }}</option>
+                            <option value="{{ $qual->id }}" data-translate-lookup="{{ $qual->name }}">{{ $qual->name }}</option>
                         @endforeach
                     </select>
                 </div>
 
                 <!-- 2. Home Region State Select -->
                 <div class="wizard-group">
-                    <label for="state_id" class="wizard-label">📍 Preferred State / Region</label>
+                    <label for="state_id" class="wizard-label" data-i18n="eligibility_state_label">📍 Preferred State / Region</label>
                     <select id="state_id" name="state_id" class="wizard-select">
-                        <option value="">-- All India (Central) --</option>
+                        <option value="" data-i18n="eligibility_all_india">-- All India (Central) --</option>
                         @foreach($states as $st)
-                            <option value="{{ $st->id }}">{{ $st->name }}</option>
+                            <option value="{{ $st->id }}" data-translate-lookup="{{ $st->name }}">{{ $st->name }}</option>
                         @endforeach
                     </select>
                 </div>
 
                 <!-- 3. Desired Stream/Category Select -->
                 <div class="wizard-group">
-                    <label for="category_id" class="wizard-label">💼 Recruitment Category</label>
+                    <label for="category_id" class="wizard-label" data-i18n="eligibility_category_label">💼 Recruitment Category</label>
                     <select id="category_id" name="category_id" class="wizard-select">
-                        <option value="">-- All Sectors --</option>
+                        <option value="" data-i18n="eligibility_all_sectors">-- All Sectors --</option>
                         @foreach($categories as $cat)
-                            <option value="{{ $cat->id }}">{{ $cat->name }}</option>
+                            <option value="{{ $cat->id }}" data-translate-lookup="{{ $cat->name }}">{{ $cat->name }}</option>
                         @endforeach
                     </select>
                 </div>
 
                 <!-- 4. Interactive Age Slider -->
                 <div class="wizard-group">
-                    <label for="age" class="wizard-label">🎂 Candidate Age (Years)</label>
+                    <label for="age" class="wizard-label" data-i18n="eligibility_age_label">🎂 Candidate Age (Years)</label>
                     <div class="age-container">
                         <input type="range" id="age_slider" class="age-slider" min="16" max="65" value="21">
                         <input type="number" id="age" name="age" class="wizard-input age-number-input" min="16" max="65" value="21">
@@ -288,9 +288,9 @@
 
             <!-- Action buttons -->
             <div class="wizard-actions">
-                <button type="button" id="resetEligibilityBtn" class="btn-secondary">Reset Filters</button>
+                <button type="button" id="resetEligibilityBtn" class="btn-secondary" data-i18n="eligibility_reset_btn">Reset Filters</button>
                 <button type="submit" id="checkEligibilityBtn" class="btn-primary" style="background: linear-gradient(135deg, var(--accent-color) 0%, var(--accent-hover) 100%);">
-                    Check Eligibility &raquo;
+                    <span data-i18n="eligibility_check_btn">Check Eligibility &raquo;</span>
                 </button>
             </div>
         </form>
@@ -301,7 +301,7 @@
         <div class="results-title">
             <span style="display:flex; align-items:center; gap:0.5rem;">
                 <svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138z"></path></svg>
-                Matched Recruitments
+                <span data-i18n="eligibility_matched_title">Matched Recruitments</span>
             </span>
             <span id="resultsCountBadge" class="badge" style="background:var(--accent-color); color:#fff; font-size:0.85rem;">0 Matches</span>
         </div>
@@ -317,8 +317,8 @@
         <div id="matchedJobsContainer">
             <div style="padding: 4rem; text-align: center; color: var(--text-secondary); font-size: 0.95rem;">
                 <svg width="48" height="48" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" style="margin-bottom:1rem; opacity:0.6;"><path d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
-                <div style="font-weight:700; font-family:'Outfit'; font-size:1.1rem; color:var(--text-primary); margin-bottom:0.25rem;">No Check Performed Yet</div>
-                <p>Input your parameters above and click "Check Eligibility" to instantly discover matching active recruitments.</p>
+                <div style="font-weight:700; font-family:'Outfit'; font-size:1.1rem; color:var(--text-primary); margin-bottom:0.25rem;" data-i18n="eligibility_no_check_title">No Check Performed Yet</div>
+                <p data-i18n="eligibility_no_check_desc">Input your parameters above and click "Check Eligibility" to instantly discover matching active recruitments.</p>
             </div>
         </div>
     </section>

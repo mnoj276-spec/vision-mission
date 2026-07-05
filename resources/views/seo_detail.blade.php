@@ -517,16 +517,16 @@
     <!-- Breadcrumbs -->
     <nav aria-label="Breadcrumb" class="breadcrumb-trail" itemscope itemtype="https://schema.org/BreadcrumbList">
         <span itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
-            <a itemprop="item" href="/"><span itemprop="name">Home</span></a>
+            <a itemprop="item" href="/"><span itemprop="name" data-translate-lookup="Home">Home</span></a>
             <meta itemprop="position" content="1">
         </span>
         @foreach($breadcrumbs as $label => $url)
             <span class="breadcrumb-separator">&raquo;</span>
             <span itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
                 @if($url)
-                    <a itemprop="item" href="{{ $url }}"><span itemprop="name">{{ $label }}</span></a>
+                    <a itemprop="item" href="{{ $url }}"><span itemprop="name" data-translate-lookup="{{ $label }}">{{ $label }}</span></a>
                 @else
-                    <span itemprop="name">{{ $label }}</span>
+                    <span itemprop="name" data-translate-lookup="{{ $label }}">{{ $label }}</span>
                 @endif
                 <meta itemprop="position" content="{{ $loop->iteration + 1 }}">
             </span>
@@ -537,16 +537,16 @@
     <article class="detail-card">
         <!-- Header -->
         <header class="detail-header-block">
-            <h1>{{ $pageHeader }}</h1>
+            <h1 data-translate-title="{{ $pageHeader }}">{{ $pageHeader }}</h1>
             <div class="detail-badges">
-                <span class="status-badge {{ $statusClass }}">{{ $statusText }}</span>
-                <span class="badge">{{ strtoupper($job->post_type) }}</span>
-                <span class="badge badge-dept">{{ $job->department->name ?? 'Government Ministry' }}</span>
-                <span class="badge" style="background: rgba(139, 92, 246, 0.1); color: #8b5cf6;">📍 {{ $job->state->name ?? 'Pan India' }}</span>
+                <span class="status-badge {{ $statusClass }}" data-translate-lookup="{{ $statusText }}">{{ $statusText }}</span>
+                <span class="badge" data-translate-lookup="{{ strtoupper($job->post_type) }}">{{ strtoupper($job->post_type) }}</span>
+                <span class="badge badge-dept" data-translate-lookup="{{ $job->department->name ?? 'Government Ministry' }}">{{ $job->department->name ?? 'Government Ministry' }}</span>
+                <span class="badge" style="background: rgba(139, 92, 246, 0.1); color: #8b5cf6;" data-translate-prefix="📍 " data-translate-lookup="{{ $job->state->name ?? 'Pan India' }}">📍 {{ $job->state->name ?? 'Pan India' }}</span>
                 @if($job->district)
-                    <span class="badge" style="background: rgba(245, 158, 11, 0.1); color: #f59e0b;">🏢 District: {{ $job->district->name }}</span>
+                    <span class="badge" style="background: rgba(245, 158, 11, 0.1); color: #f59e0b;" data-translate-prefix="🏢 District: " data-translate-lookup="{{ $job->district->name }}">🏢 District: {{ $job->district->name }}</span>
                 @endif
-                <span class="badge badge-dept">{{ $job->qualification->name ?? 'Degree Required' }}</span>
+                <span class="badge badge-dept" data-translate-lookup="{{ $job->qualification->name ?? 'Degree Required' }}">{{ $job->qualification->name ?? 'Degree Required' }}</span>
                 @if($job->advertisement_number)
                     <span class="badge" style="background: rgba(59, 130, 246, 0.1); color: #3b82f6;">📋 Advt No: {{ $job->advertisement_number }}</span>
                 @endif
@@ -557,35 +557,53 @@
         <div class="split-info-card">
             <!-- Left: Important Dates -->
             <div class="split-info-column">
-                <h5 class="column-title"><i class="fa-regular fa-calendar-days"></i> Important Dates</h5>
+                <h5 class="column-title"><i class="fa-regular fa-calendar-days"></i> <span data-i18n="important_dates">Important Dates</span></h5>
                 <ul class="info-list">
                     <li>
-                        <span class="info-label">Application Begin:</span>
+                        <span class="info-label" data-i18n="app_begin">Application Begin:</span>
                         <span class="info-val">
-                            {{ $job->start_date ? $job->start_date->format('d/m/Y') : ($job->published_at ? $job->published_at->format('d/m/Y') : 'Refer Notification') }}
+                            @if($job->start_date)
+                                {{ $job->start_date->format('d/m/Y') }}
+                            @elseif($job->published_at)
+                                {{ $job->published_at->format('d/m/Y') }}
+                            @else
+                                <span data-translate-lookup="Refer Notification">Refer Notification</span>
+                            @endif
                         </span>
                     </li>
                     <li>
-                        <span class="info-label">Last Date to Apply:</span>
+                        <span class="info-label" data-i18n="last_date_apply">Last Date to Apply:</span>
                         <span class="info-val deadline-text">
-                            {{ $job->last_date_to_apply ? $job->last_date_to_apply->format('d/m/Y') : 'Announced Soon' }}
+                            @if($job->last_date_to_apply)
+                                {{ $job->last_date_to_apply->format('d/m/Y') }}
+                            @else
+                                <span data-translate-lookup="Announced Soon">Announced Soon</span>
+                            @endif
                         </span>
                     </li>
                     <li>
-                        <span class="info-label">Online Fee Last Date:</span>
+                        <span class="info-label" data-i18n="fee_last_date">Online Fee Last Date:</span>
                         <span class="info-val">
-                            {{ $job->last_date_to_apply ? $job->last_date_to_apply->format('d/m/Y') : 'Announced Soon' }}
+                            @if($job->last_date_to_apply)
+                                {{ $job->last_date_to_apply->format('d/m/Y') }}
+                            @else
+                                <span data-translate-lookup="Announced Soon">Announced Soon</span>
+                            @endif
                         </span>
                     </li>
                     <li>
-                        <span class="info-label">Exam Date:</span>
+                        <span class="info-label" data-i18n="exam_date_lbl">Exam Date:</span>
                         <span class="info-val exam-text">
-                            {{ $job->exam_date ? $job->exam_date->format('d/m/Y') : 'Announced Soon' }}
+                            @if($job->exam_date)
+                                {{ $job->exam_date->format('d/m/Y') }}
+                            @else
+                                <span data-translate-lookup="Announced Soon">Announced Soon</span>
+                            @endif
                         </span>
                     </li>
                     @if($job->result_date)
                         <li>
-                            <span class="info-label">Expected Result Date:</span>
+                            <span class="info-label" data-i18n="result_date_lbl">Expected Result Date:</span>
                             <span class="info-val result-text">{{ $job->result_date->format('d/m/Y') }}</span>
                         </li>
                     @endif
@@ -594,30 +612,30 @@
 
             <!-- Right: Application Fees -->
             <div class="split-info-column">
-                <h5 class="column-title"><i class="fa-solid fa-indian-rupee-sign"></i> Application Fee</h5>
+                <h5 class="column-title"><i class="fa-solid fa-indian-rupee-sign"></i> <span data-i18n="app_fee_lbl">Application Fee</span></h5>
                 <ul class="info-list">
                     @if($job->application_fee > 0)
                         <li>
-                            <span class="info-label">General / OBC / EWS:</span>
+                            <span class="info-label" data-i18n="fee_gen">General / OBC / EWS:</span>
                             <span class="info-val">₹ {{ number_format($job->application_fee, 2) }}</span>
                         </li>
                         <li>
-                            <span class="info-label">SC / ST / PH:</span>
-                            <span class="info-val">₹ 0.00 (Exempted)</span>
+                            <span class="info-label" data-i18n="fee_sc">SC / ST / PH:</span>
+                            <span class="info-val">₹ 0.00 <span data-translate-prefix="(" data-translate-suffix=")" data-translate-lookup="Exempted">(Exempted)</span></span>
                         </li>
                         <li>
-                            <span class="info-label">Females (All Category):</span>
-                            <span class="info-val">₹ 0.00 (Exempted)</span>
+                            <span class="info-label" data-i18n="fee_female">Females (All Category):</span>
+                            <span class="info-val">₹ 0.00 <span data-translate-prefix="(" data-translate-suffix=")" data-translate-lookup="Exempted">(Exempted)</span></span>
                         </li>
                     @else
                         <li>
-                            <span class="info-label">All Category Candidates:</span>
-                            <span class="info-val text-success">Free (No Fee)</span>
+                            <span class="info-label" data-i18n="fee_all">All Category Candidates:</span>
+                            <span class="info-val text-success" data-translate-lookup="Free (No Fee)">Free (No Fee)</span>
                         </li>
                     @endif
                     <li class="fee-note">
-                        <span class="info-label">Payment Mode:</span>
-                        <span class="info-val">Pay the examination fee through Debit Card, Credit Card, Net Banking, or UPI mode only.</span>
+                        <span class="info-label" data-i18n="pay_mode_lbl">Payment Mode:</span>
+                        <span class="info-val" data-i18n="pay_mode_desc">Pay the examination fee through Debit Card, Credit Card, Net Banking, or UPI mode only.</span>
                     </li>
                 </ul>
             </div>
@@ -625,26 +643,26 @@
 
         <!-- Age Limit Card -->
         <div class="age-limit-card">
-            <h5 class="column-title" style="border-bottom:none; margin-bottom:0; padding-bottom:0;"><i class="fa-regular fa-clock"></i> Age Limit Details</h5>
+            <h5 class="column-title" style="border-bottom:none; margin-bottom:0; padding-bottom:0;"><i class="fa-regular fa-clock"></i> <span data-i18n="age_limit_title">Age Limit Details</span></h5>
             <div class="age-grid">
                 <div class="age-box">
-                    <span class="age-label">Minimum Age</span>
-                    <span class="age-val">{{ $job->age_min ? $job->age_min . ' Years' : '18 Years' }}</span>
+                    <span class="age-label" data-i18n="age_min_lbl">Minimum Age</span>
+                    <span class="age-val">{{ $job->age_min ?? '18' }} <span data-translate-lookup="Years">Years</span></span>
                 </div>
                 <div class="age-box">
-                    <span class="age-label">Maximum Age</span>
-                    <span class="age-val">{{ $job->age_max ? $job->age_max . ' Years' : ($job->age_limit ? $job->age_limit : '32 Years') }}</span>
+                    <span class="age-label" data-i18n="age_max_lbl">Maximum Age</span>
+                    <span class="age-val">{{ $job->age_max ?? ($job->age_limit ?? '32') }} <span data-translate-lookup="Years">Years</span></span>
                 </div>
             </div>
             <div class="age-cutoff-info">
-                <strong>Age Limit Reference:</strong> Calculated based on the board's recruitment guidelines. Age relaxation is applicable extra as per government reservation rules.
+                <strong data-i18n="age_ref_lbl">Age Limit Reference:</strong> <span data-i18n="age_relaxation_desc">Calculated based on the board's recruitment guidelines. Age relaxation is applicable extra as per government reservation rules.</span>
             </div>
         </div>
 
         <!-- Recruitment Update Timeline & Lifecycle -->
         @if($timeline && $timeline->count() > 1)
             <section class="details-section" style="border-top:none; padding-top:0;">
-                <h4 style="font-family:'Outfit'; color:var(--accent-color); margin-bottom:0.75rem;"><i class="fa-solid fa-code-fork"></i> Recruitment Lifecycle & Update Timeline</h4>
+                <h4 style="font-family:'Outfit'; color:var(--accent-color); margin-bottom:0.75rem;"><i class="fa-solid fa-code-fork"></i> <span data-i18n="lifecycle_title">Recruitment Lifecycle & Update Timeline</span></h4>
                 <div class="timeline-container">
                     @foreach($timeline as $item)
                         @php
@@ -674,9 +692,9 @@
                                 <span class="node-date">{{ $item->published_at ? $item->published_at->format('d M Y') : $item->created_at->format('d M Y') }}</span>
                                 <h5 class="node-title">
                                     @if($isCurrent)
-                                        <strong>{{ $itemType }}: {{ $item->title }} (This Page)</strong>
+                                        <strong><span data-translate-lookup="{{ $itemType }}">{{ $itemType }}</span>: {{ $item->title }} <span data-translate-lookup="(This Page)">(This Page)</span></strong>
                                     @else
-                                        <a href="{{ route('seo.job_detail', ['slug' => $item->slug]) }}">{{ $itemType }}: {{ $item->title }}</a>
+                                        <a href="{{ route('seo.job_detail', ['slug' => $item->slug]) }}"><span data-translate-lookup="{{ $itemType }}">{{ $itemType }}</span>: {{ $item->title }}</a>
                                     @endif
                                 </h5>
                             </div>
@@ -691,7 +709,7 @@
             <div class="ai-summary-card">
                 <div class="ai-badge">
                     <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
-                    AI Summary
+                    <span data-i18n="ai_summary_lbl">AI Summary</span>
                 </div>
                 <div style="font-size: 0.95rem; color: var(--text-primary); line-height: 1.7;">
                     {!! $aiContent->summary !!}
@@ -702,7 +720,7 @@
         <!-- Vacancy Distribution Breakdown -->
         @if($job->categoryVacancies && $job->categoryVacancies->count() > 0)
             <section class="details-section">
-                <h4 style="font-family:'Outfit'; color:var(--accent-color); margin-bottom:1rem; display:flex; align-items:center; gap:0.5rem;">
+                <h4 style="font-family:'Outfit'; color:var(--accent-color); margin-bottom:1rem; display:flex; align-items:center; gap:0.5rem;" data-i18n="vacancy_breakdown_title">
                     Vacancy Distribution Breakdown
                 </h4>
                 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1.5rem;">
@@ -721,12 +739,12 @@
                             @endphp
                             <div style="background: rgba(255,255,255,0.01); border: 1px solid var(--border-color); border-radius: 8px; padding: 1rem;">
                                 <h5 style="font-size:0.85rem; text-transform:uppercase; color:var(--text-secondary); font-weight:700; margin-bottom:0.75rem; border-bottom: 1px solid var(--border-color); padding-bottom:0.4rem; font-family:'Outfit';">
-                                    {{ $groupTitle }}
+                                    <span data-translate-lookup="{{ $groupTitle }}">{{ $groupTitle }}</span>
                                 </h5>
                                 <ul style="list-style:none; padding:0; margin:0; display:flex; flex-direction:column; gap:0.5rem;">
                                     @foreach($items as $cv)
                                         <li style="display:flex; justify-content:space-between; align-items:center; font-size:0.9rem; color:var(--text-primary);">
-                                            <span>{{ $cv->category_name }}</span>
+                                            <span data-translate-lookup="{{ $cv->category_name }}">{{ $cv->category_name }}</span>
                                             <span class="badge" style="background:var(--border-color); color:var(--text-primary); font-weight:bold; padding: 2px 8px; font-size:0.75rem;">
                                                 {{ $cv->vacancy_count }}
                                             </span>
@@ -742,24 +760,24 @@
 
         <!-- Description -->
         <section class="details-section">
-            <h4>Recruitment Overview & Requirements</h4>
+            <h4 data-i18n="overview_title">Recruitment Overview & Requirements</h4>
             @if($aiContent && !empty($aiContent->eligibility))
                 <div style="margin-bottom: 1.5rem;">
-                    <h5 style="font-family: 'Outfit'; font-size: 1.05rem; font-weight: 700; color: var(--text-primary); margin-bottom: 0.5rem;">Detailed Eligibility Criteria</h5>
+                    <h5 style="font-family: 'Outfit'; font-size: 1.05rem; font-weight: 700; color: var(--text-primary); margin-bottom: 0.5rem;" data-i18n="eligibility_title">Detailed Eligibility Criteria</h5>
                     <div style="font-size: 0.95rem; color: var(--text-secondary); line-height: 1.7;">
                         {!! \Illuminate\Support\Str::markdown($aiContent->eligibility) !!}
                     </div>
                 </div>
             @endif
             
-            <h5 style="font-family: 'Outfit'; font-size: 1.05rem; font-weight: 700; color: var(--text-primary); margin-bottom: 0.5rem; margin-top: 1rem;">Original Announcement Overview</h5>
+            <h5 style="font-family: 'Outfit'; font-size: 1.05rem; font-weight: 700; color: var(--text-primary); margin-bottom: 0.5rem; margin-top: 1rem;" data-i18n="original_overview_title">Original Announcement Overview</h5>
             <div class="original-overview-content">{!! $job->description !!}</div>
         </section>
 
         <!-- Exam Pattern & Syllabus -->
         @if($job->exam_pattern)
             <section class="details-section" id="exam-pattern-section">
-                <h4>Official Syllabus & Exam Pattern</h4>
+                <h4 data-i18n="syllabus_title">Official Syllabus & Exam Pattern</h4>
                 <div>{!! $job->exam_pattern !!}</div>
             </section>
         @endif
@@ -767,14 +785,14 @@
         <!-- Selection Process -->
         @if($aiContent && !empty($aiContent->selection_process))
             <section class="details-section">
-                <h4>Selection Process Details</h4>
+                <h4 data-i18n="selection_details_title">Selection Process Details</h4>
                 <div style="font-size: 0.95rem; color: var(--text-secondary); line-height: 1.7;">
                     {!! $aiContent->selection_process !!}
                 </div>
             </section>
         @elseif($job->selection_process)
             <section class="details-section">
-                <h4>Selection Process</h4>
+                <h4 data-i18n="selection_process_lbl">Selection Process</h4>
                 <div>{!! $job->selection_process !!}</div>
             </section>
         @endif
@@ -782,7 +800,7 @@
         <!-- Enriched AI FAQs -->
         @if($aiContent && !empty($aiContent->faqs) && count($aiContent->faqs) > 0)
             <section class="details-section">
-                <h4>Frequently Asked Questions (FAQs)</h4>
+                <h4 data-i18n="faqs_title">Frequently Asked Questions (FAQs)</h4>
                 <div class="faq-accordion">
                     @foreach($aiContent->faqs as $faq)
                         @if(!empty($faq['question']) && !empty($faq['answer']))
@@ -798,58 +816,58 @@
 
         <!-- Dynamic board-specific guidelines -->
         <section class="details-section" style="border-top: 1px solid var(--border-color); padding-top: 1.5rem;">
-            <h4>How to Fill the Form - Step-by-Step Instructions</h4>
+            <h4 data-i18n="instructions_title">How to Fill the Form - Step-by-Step Instructions</h4>
             <ul style="list-style-type: none; padding-left: 0; display: flex; flex-direction: column; gap: 0.75rem;">
                 <li style="display: flex; gap: 0.75rem; font-size: 0.95rem; color: var(--text-secondary); line-height: 1.6;">
                     <span style="color:var(--accent-color); font-weight:bold;">1.</span>
-                    <span><strong>OTR Registration:</strong> Most recruitment boards (like UPSC, SSC, and State PSCs) mandate completing a One-Time Registration (OTR) profile on their official website before submitting any exam application forms.</span>
+                    <span data-i18n="instr_1"><strong>OTR Registration:</strong> Most recruitment boards (like UPSC, SSC, and State PSCs) mandate completing a One-Time Registration (OTR) profile on their official website before submitting any exam application forms.</span>
                 </li>
                 @if(str_contains(strtolower($job->title), 'ssc') || str_contains(strtolower($job->description), 'webcam') || str_contains(strtolower($job->description), 'live photo'))
                     <li style="display: flex; gap: 0.75rem; font-size: 0.95rem; color: var(--text-secondary); line-height: 1.6;">
                         <span style="color:var(--accent-color); font-weight:bold;">2.</span>
-                        <span><strong>Webcam Live Photograph:</strong> SSC and other major commissions require taking a live photo of yourself via webcam or through the official mobile app. Stand in front of a light/white background and look straight. Do not wear caps, spectacles, or masks.</span>
+                        <span data-i18n="instr_2"><strong>Webcam Live Photograph:</strong> SSC and other major commissions require taking a live photo of yourself via webcam or through the official mobile app. Stand in front of a light/white background and look straight. Do not wear caps, spectacles, or masks.</span>
                     </li>
                 @endif
                 <li style="display: flex; gap: 0.75rem; font-size: 0.95rem; color: var(--text-secondary); line-height: 1.6;">
                     <span style="color:var(--accent-color); font-weight:bold;">3.</span>
-                    <span><strong>Check Credentials & Preview:</strong> Before clicking on final submit, review the form preview thoroughly. Confirm that spelling, dates, caste category, and certificates are accurate.</span>
+                    <span data-i18n="instr_3"><strong>Check Credentials & Preview:</strong> Before clicking on final submit, review the form preview thoroughly. Confirm that spelling, dates, caste category, and certificates are accurate.</span>
                 </li>
                 <li style="display: flex; gap: 0.75rem; font-size: 0.95rem; color: var(--text-secondary); line-height: 1.6;">
                     <span style="color:var(--accent-color); font-weight:bold;">4.</span>
-                    <span><strong>Fee Payment:</strong> Candidates requiring a fee must complete the payment (using UPI, Credit/Debit cards, or Net banking). Unpaid applications are treated as incomplete and rejected automatically.</span>
+                    <span data-i18n="instr_4"><strong>Fee Payment:</strong> Candidates requiring a fee must complete the payment (using UPI, Credit/Debit cards, or Net banking). Unpaid applications are treated as incomplete and rejected automatically.</span>
                 </li>
                 <li style="display: flex; gap: 0.75rem; font-size: 0.95rem; color: var(--text-secondary); line-height: 1.6;">
                     <span style="color:var(--accent-color); font-weight:bold;">5.</span>
-                    <span><strong>Print Confirmation:</strong> Save and print a hard copy of the final submitted application form for future reference and exam attendance confirmation.</span>
+                    <span data-i18n="instr_5"><strong>Print Confirmation:</strong> Save and print a hard copy of the final submitted application form for future reference and exam attendance confirmation.</span>
                 </li>
             </ul>
         </section>
 
         <!-- Official Useful Important Links -->
         <section class="details-section">
-            <h4>Some Useful Important Links</h4>
+            <h4 data-i18n="useful_links_title">Some Useful Important Links</h4>
             <div class="links-table-container">
                 <table class="links-table">
                     <thead>
                         <tr>
-                            <th>Resource / Action Name</th>
-                            <th style="text-align: right;">Action Link</th>
+                            <th data-i18n="resource_name_th">Resource / Action Name</th>
+                            <th style="text-align: right;" data-i18n="action_link_th">Action Link</th>
                         </tr>
                     </thead>
                     <tbody>
                         @if($job->apply_link)
                             <tr>
-                                <td><strong>Apply Online (Registration & Login)</strong></td>
+                                <td><strong data-i18n="apply_online_row">Apply Online (Registration & Login)</strong></td>
                                 <td style="text-align: right;">
                                     <a href="{{ $job->apply_link }}" target="_blank" rel="nofollow noopener" class="btn-link-action btn-pulse">
-                                        <i class="fa-solid fa-pen-to-square"></i> Apply Online
+                                        <i class="fa-solid fa-pen-to-square"></i> <span data-i18n="apply_online_btn">Apply Online</span>
                                     </a>
                                 </td>
                             </tr>
                         @endif
                         @if($job->notification_pdf_path)
                             <tr>
-                                <td><strong>Download Official Notification PDF</strong></td>
+                                <td><strong data-i18n="download_pdf_row">Download Official Notification PDF</strong></td>
                                 <td style="text-align: right;">
                                     @php
                                         $pdfUrl = str_starts_with($job->notification_pdf_path, 'http') 
@@ -857,44 +875,44 @@
                                             : Storage::url($job->notification_pdf_path);
                                     @endphp
                                     <a href="{{ $pdfUrl }}" target="_blank" rel="noopener" class="btn-link-action" style="background:#dc2626;">
-                                        <i class="fa-solid fa-file-pdf"></i> Download PDF
+                                        <i class="fa-solid fa-file-pdf"></i> <span data-i18n="download_pdf_btn">Download PDF</span>
                                     </a>
                                 </td>
                             </tr>
                         @endif
                         @if($job->exam_pattern)
                             <tr>
-                                <td><strong>Download Syllabus & Exam Pattern</strong></td>
+                                <td><strong data-i18n="download_syllabus_row">Download Syllabus & Exam Pattern</strong></td>
                                 <td style="text-align: right;">
                                     <a href="#exam-pattern-section" class="btn-link-action" style="background:#8b5cf6;">
-                                        <i class="fa-solid fa-book-open"></i> View Syllabus
+                                        <i class="fa-solid fa-book-open"></i> <span data-i18n="view_syllabus_btn">View Syllabus</span>
                                     </a>
                                 </td>
                             </tr>
                         @endif
                         @if($job->official_website_link)
                             <tr>
-                                <td><strong>Official Recruitment Website</strong></td>
+                                <td><strong data-i18n="official_website_row">Official Recruitment Website</strong></td>
                                 <td style="text-align: right;">
                                     <a href="{{ $job->official_website_link }}" target="_blank" rel="nofollow noopener" class="btn-link-action" style="background:#4b5563;">
-                                        <i class="fa-solid fa-globe"></i> Visit Website
+                                        <i class="fa-solid fa-globe"></i> <span data-i18n="visit_website_btn">Visit Website</span>
                                     </a>
                                 </td>
                             </tr>
                         @endif
                         <tr>
-                            <td><strong>Join Telegram Alerts Channel</strong></td>
+                            <td><strong data-i18n="join_telegram_row">Join Telegram Alerts Channel</strong></td>
                             <td style="text-align: right;">
                                 <a href="https://t.me/sarkariresult" target="_blank" rel="noopener" class="btn-link-action" style="background:#229ED9;">
-                                    <i class="fa-brands fa-telegram"></i> Telegram Channel
+                                    <i class="fa-brands fa-telegram"></i> <span data-i18n="telegram_channel_btn">Telegram Channel</span>
                                 </a>
                             </td>
                         </tr>
                         <tr>
-                            <td><strong>Join WhatsApp Updates Channel</strong></td>
+                            <td><strong data-i18n="join_whatsapp_row">Join WhatsApp Updates Channel</strong></td>
                             <td style="text-align: right;">
                                 <a href="https://whatsapp.com/channel/sarkariresult" target="_blank" rel="noopener" class="btn-link-action" style="background:#25D366;">
-                                    <i class="fa-brands fa-whatsapp"></i> WhatsApp Group
+                                    <i class="fa-brands fa-whatsapp"></i> <span data-i18n="whatsapp_group_btn">WhatsApp Group</span>
                                 </a>
                             </td>
                         </tr>
@@ -907,25 +925,25 @@
         <section class="apply-panel">
             <div class="apply-card">
                 @auth
-                    <h3 style="font-family: 'Outfit'; font-size: 1.3rem; margin-bottom: 0.5rem; color: var(--accent-color);">Submit Job Application</h3>
-                    <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 1.25rem;">Upload your resume to complete your application for this government posting instantly.</p>
+                    <h3 style="font-family: 'Outfit'; font-size: 1.3rem; margin-bottom: 0.5rem; color: var(--accent-color);" data-i18n="submit_app_title">Submit Job Application</h3>
+                    <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 1.25rem;" data-i18n="submit_app_desc">Upload your resume to complete your application for this government posting instantly.</p>
                     
                     <form id="standaloneRecruitmentApplyForm" enctype="multipart/form-data">
                         @csrf
                         <div class="form-group">
-                            <label for="standaloneAppResume">Select CV / Resume (PDF, DOC, DOCX up to 2MB)</label>
+                            <label for="standaloneAppResume" data-i18n="select_cv_lbl">Select CV / Resume (PDF, DOC, DOCX up to 2MB)</label>
                             <input type="file" name="resume" id="standaloneAppResume" class="form-control" required style="padding: 0.65rem 1rem;">
                             <div class="invalid-feedback" id="standaloneResumeError" style="color: #ef4444; font-size: 0.8rem; margin-top: 0.25rem;"></div>
                         </div>
-                        <button type="submit" class="form-btn" id="standaloneApplySubmitBtn" style="margin-top: 0.75rem;">
+                        <button type="submit" class="form-btn" id="standaloneApplySubmitBtn" style="margin-top: 0.75rem;" data-i18n="submit_app_btn">
                             Submit Application Now
                         </button>
                     </form>
                 @else
                     <div style="text-align: center; padding: 1.5rem 0;">
-                        <h3 style="font-family: 'Outfit'; font-size: 1.25rem; margin-bottom: 0.5rem; color: var(--text-primary);">Apply for this Announcement</h3>
-                        <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 1.25rem;">Please register or login to your candidate dashboard to apply directly using your resume profile.</p>
-                        <button class="form-btn trigger-auth-redirect-btn" style="width: auto; padding: 0.75rem 2rem; display: inline-block;">
+                        <h3 style="font-family: 'Outfit'; font-size: 1.25rem; margin-bottom: 0.5rem; color: var(--text-primary);" data-i18n="apply_announcement_title">Apply for this Announcement</h3>
+                        <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 1.25rem;" data-i18n="apply_announcement_desc">Please register or login to your candidate dashboard to apply directly using your resume profile.</p>
+                        <button class="form-btn trigger-auth-redirect-btn" style="width: auto; padding: 0.75rem 2rem; display: inline-block;" data-i18n="login_register_apply_btn">
                             Login / Register to Apply
                         </button>
                     </div>

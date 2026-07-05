@@ -136,19 +136,21 @@
 <section class="il-explorer" id="il-landing-explorer">
     <h3 class="il-explorer-title">
         <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" style="color: var(--accent-color);"><path d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"></path></svg>
-        Explore More Government Job Hubs
+        <span data-i18n="explore_hubs_title">Explore More Government Job Hubs</span>
     </h3>
-    <p class="il-explorer-subtitle">Navigate our search networks for alternative recruitments, exam schedules, and circular announcements.</p>
+    <p class="il-explorer-subtitle" data-i18n="explore_hubs_subtitle">Navigate our search networks for alternative recruitments, exam schedules, and circular announcements.</p>
 
     <div class="il-explorer-grid">
         {{-- Column 1: States with Job Counts --}}
         <div class="il-explorer-col">
-            <h4>📍 State-Wise Jobs</h4>
+            <h4>📍 <span data-i18n="state_wise_jobs_title">State-Wise Jobs</span></h4>
             <ul class="il-explorer-list">
                 @foreach($explorer['states'] as $st)
                     <li>
                         <a href="{{ route('seo.dynamic_state', ['state_slug' => $st->slug]) }}" class="il-explorer-link">
-                            <span class="il-explorer-link-label">{{ $st->name }} Jobs</span>
+                            <span class="il-explorer-link-label">
+                                <span data-translate-lookup="{{ $st->name }}">{{ $st->name }}</span> <span data-i18n="jobs_suffix">Jobs</span>
+                            </span>
                             @if($st->job_posts_count > 0)
                                 <span class="il-explorer-badge">{{ $st->job_posts_count }}</span>
                             @endif
@@ -157,7 +159,7 @@
                 @endforeach
                 <li>
                     <a href="{{ route('seo.state') }}" class="il-explorer-link" style="color: var(--accent-color); font-weight: 700;">
-                        View All States »
+                        <span data-i18n="view_all_states_btn">View All States »</span>
                     </a>
                 </li>
             </ul>
@@ -166,12 +168,14 @@
         {{-- Column 2: Districts (contextual) --}}
         @if($explorer['districts']->isNotEmpty())
             <div class="il-explorer-col">
-                <h4>🏢 District Jobs</h4>
+                <h4>🏢 <span data-i18n="district_jobs_title">District Jobs</span></h4>
                 <ul class="il-explorer-list">
                     @foreach($explorer['districts'] as $dist)
                         <li>
                             <a href="{{ route('seo.dynamic_district', ['state_slug' => $dist->state->slug, 'district_slug' => $dist->slug]) }}" class="il-explorer-link">
-                                <span class="il-explorer-link-label">Jobs in {{ $dist->name }}</span>
+                                <span class="il-explorer-link-label">
+                                    <span data-translate-lookup="{{ $dist->name }}">{{ $dist->name }}</span> <span data-translate-lookup="Jobs in">Jobs in</span>
+                                </span>
                                 @if(($dist->job_posts_count ?? 0) > 0)
                                     <span class="il-explorer-badge">{{ $dist->job_posts_count }}</span>
                                 @endif
@@ -184,12 +188,14 @@
 
         {{-- Column 3: Sector Categories --}}
         <div class="il-explorer-col">
-            <h4>💼 Trending Sectors</h4>
+            <h4>💼 <span data-i18n="trending_sectors_title">Trending Sectors</span></h4>
             <ul class="il-explorer-list">
                 @foreach($explorer['sectors'] as $sector)
                     <li>
                         <a href="{{ $sector['url'] }}" class="il-explorer-link">
-                            <span class="il-explorer-link-label">{{ $sector['icon'] }} {{ $sector['label'] }}</span>
+                            <span class="il-explorer-link-label">
+                                {{ $sector['icon'] }} <span data-translate-lookup="{{ $sector['label'] }}">{{ $sector['label'] }}</span>
+                            </span>
                         </a>
                     </li>
                 @endforeach
@@ -198,14 +204,16 @@
 
         {{-- Column 4: Exam Utilities with Counts --}}
         <div class="il-explorer-col">
-            <h4>✓ Utilities Hub</h4>
+            <h4>✓ <span data-i18n="utilities_hub_title">Utilities Hub</span></h4>
             <ul class="il-explorer-list">
                 @foreach($explorer['utilities'] as $util)
                     <li>
                         <a href="{{ $util['url'] }}" class="il-explorer-link">
-                            <span class="il-explorer-link-label">{{ $util['icon'] }} {{ $util['label'] }}</span>
+                            <span class="il-explorer-link-label">
+                                {{ $util['icon'] }} <span data-translate-lookup="{{ $util['label'] }}">{{ $util['label'] }}</span>
+                            </span>
                             @if(($util['count'] ?? 0) > 0)
-                                <span class="il-explorer-badge il-explorer-badge-fresh">{{ $util['count'] }} active</span>
+                                <span class="il-explorer-badge il-explorer-badge-fresh">{{ $util['count'] }} <span data-translate-lookup="active">active</span></span>
                             @endif
                         </a>
                     </li>
@@ -218,12 +226,12 @@
     @if($explorer['trending_categories']->isNotEmpty())
         <div style="margin-top: 1.75rem; padding-top: 1.25rem; border-top: 1px solid var(--border-color);">
             <h4 style="font-family: 'Outfit'; font-size: 0.95rem; font-weight: 700; color: var(--text-primary); margin-bottom: 0.75rem; display: flex; align-items: center; gap: 0.35rem;">
-                🔥 Trending Categories
+                🔥 <span data-i18n="trending_categories_title">Trending Categories</span>
             </h4>
             <div class="il-trending-chips">
                 @foreach($explorer['trending_categories'] as $tCat)
                     <a href="{{ route('search.category', ['category_slug' => $tCat->slug]) }}" class="il-trending-chip">
-                        {{ $tCat->name }}
+                        <span data-translate-lookup="{{ $tCat->name }}">{{ $tCat->name }}</span>
                         <span class="il-chip-count">({{ $tCat->job_posts_count }})</span>
                     </a>
                 @endforeach
