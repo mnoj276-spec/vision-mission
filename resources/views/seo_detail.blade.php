@@ -1442,7 +1442,7 @@
         </div>
 
         <!-- Lead Capture Form / Submission -->
-        <section class="apply-panel">
+        <!-- <section class="apply-panel">
             <div class="apply-card">
                 @auth
                     <h3 style="font-family: 'Outfit'; font-size: 1.3rem; margin-bottom: 0.5rem; color: var(--accent-color);" data-i18n="submit_app_title">Submit Job Application</h3>
@@ -1469,7 +1469,7 @@
                     </div>
                 @endauth
             </div>
-        </section>
+        </section> -->
     </article>
 
     {{-- ─── Automated Internal Linking System ────────────────────────────── --}}
