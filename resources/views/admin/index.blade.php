@@ -96,11 +96,16 @@
                 </div>
             </div>
 
-            <!-- Visualization Row -->
+            <!-- Visualization & Telemetry Grid Row -->
             <div class="grid grid-cols-1 lg:grid-cols-[2fr_1fr] gap-8 items-start">
                 <!-- Crawler status and health -->
                 <div class="glass-panel p-6 rounded-2xl">
-                    <h3 class="font-['Outfit'] text-xl text-blue-600 mb-4 font-semibold">System Health & Crawl Metrics</h3>
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem; flex-wrap: wrap; gap: 0.5rem;">
+                        <h3 class="font-['Outfit'] text-xl text-blue-600 font-semibold" style="margin: 0;">System Health & Crawl Metrics</h3>
+                        <div>
+                            <input type="text" id="overview-crawlers-search" placeholder="Search feeds..." style="max-width: 200px; font-size: 0.8rem; padding: 0.4rem 0.75rem; border-radius: 8px; border: 1px solid var(--border-color); background: var(--bg-primary); color: var(--text-primary); outline: none; transition: border-color 0.2s;" onfocus="this.style.borderColor='var(--accent-color)'" onblur="this.style.borderColor='var(--border-color)'" />
+                        </div>
+                    </div>
                     <div class="responsive-table-container">
                         <table class="enterprise-table density-compact">
                             <thead>
@@ -126,25 +131,28 @@
                     </div>
                 </div>
 
-                <!-- SVG Graph circular gauge -->
-                <div class="glass-panel" style="padding: 1.5rem; border-radius: 16px; text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center;">
-                    <h3 style="font-family: 'Outfit'; font-size: 1.1rem; margin-bottom: 1.5rem;">Crawl Success Ratio</h3>
-                    <div style="position: relative; width: 140px; height: 140px;">
-                        <svg width="140" height="140" viewBox="0 0 36 36" style="transform: rotate(-90deg);">
-                            <circle cx="18" cy="18" r="16" fill="none" stroke="var(--border-color)" stroke-width="3"></circle>
-                            <circle id="success-svg-gauge" cx="18" cy="18" r="16" fill="none" stroke="#10b981" stroke-width="3" stroke-dasharray="100 100" stroke-linecap="round"></circle>
-                        </svg>
-                        <div id="success-ratio-label" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 1.4rem; font-weight: bold; font-family: 'Outfit'; color: #10b981;">100%</div>
+                <!-- SVG Graph circular gauge & Quarantined Listings column -->
+                <div style="display: flex; flex-direction: column; gap: 2rem;">
+                    <!-- SVG Graph circular gauge -->
+                    <div class="glass-panel" style="padding: 1.5rem; border-radius: 16px; text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+                        <h3 style="font-family: 'Outfit'; font-size: 1.1rem; margin-bottom: 1.5rem; margin-top: 0;">Crawl Success Ratio</h3>
+                        <div style="position: relative; width: 140px; height: 140px;">
+                            <svg width="140" height="140" viewBox="0 0 36 36" style="transform: rotate(-90deg);">
+                                <circle cx="18" cy="18" r="16" fill="none" stroke="var(--border-color)" stroke-width="3"></circle>
+                                <circle id="success-svg-gauge" cx="18" cy="18" r="16" fill="none" stroke="#10b981" stroke-width="3" stroke-dasharray="100 100" stroke-linecap="round"></circle>
+                            </svg>
+                            <div id="success-ratio-label" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 1.4rem; font-weight: bold; font-family: 'Outfit'; color: #10b981;">100%</div>
+                        </div>
+                        <p style="font-size: 0.8rem; color: var(--text-secondary); margin-top: 1.5rem; line-height: 1.4;">Ratio of successful feed harvesting runs to critical diagnostic failures.</p>
                     </div>
-                    <p style="font-size: 0.8rem; color: var(--text-secondary); margin-top: 1.5rem; line-height: 1.4;">Ratio of successful feed harvesting runs to critical diagnostic failures.</p>
-                </div>
-            </div>
 
-            <!-- Pending Quarantine rescue card -->
-            <div class="glass-panel" style="padding: 1.5rem; border-radius: 16px; margin-top: 2rem;">
-                <h3 style="font-family: 'Outfit'; font-size: 1.25rem; color: #f59e0b; margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;"><span style="display:inline-block; width:10px; height:20px; background:#f59e0b; border-radius:3px;"></span> Quarantined Scraped Listings (Awaiting Approval)</h3>
-                <div id="admin-quarantine-override-canvas">
-                    <!-- Populated dynamically via AJAX -->
+                    <!-- Pending Quarantine rescue card -->
+                    <div class="glass-panel" style="padding: 1.5rem; border-radius: 16px;">
+                        <h3 style="font-family: 'Outfit'; font-size: 1.15rem; color: #f59e0b; margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem; margin-top: 0;"><span style="display:inline-block; width:8px; height:16px; background:#f59e0b; border-radius:2px;"></span> Quarantined Listings</h3>
+                        <div id="admin-quarantine-override-canvas">
+                            <!-- Populated dynamically via AJAX -->
+                        </div>
+                    </div>
                 </div>
             </div>
         </section>
@@ -1733,9 +1741,17 @@
         const itemsPerOverviewPage = 10;
 
         function renderOverviewCrawlersTable() {
+            const query = ($('#overview-crawlers-search').val() || '').toLowerCase().trim();
+            
+            // Filter sources based on search query
+            const filteredSources = overviewSources.filter(src => {
+                return src.name.toLowerCase().includes(query) || 
+                       (src.source_url && src.source_url.toLowerCase().includes(query));
+            });
+
             const start = (currentOverviewPage - 1) * itemsPerOverviewPage;
             const end = start + itemsPerOverviewPage;
-            const pageItems = overviewSources.slice(start, end);
+            const pageItems = filteredSources.slice(start, end);
 
             let trs = '';
             pageItems.forEach(src => {
@@ -1762,9 +1778,9 @@
                     </tr>
                 `;
             });
-            $('#overview-crawlers-table').html(trs || '<tr><td colspan="4" style="text-align:center; color:var(--text-secondary);">No crawlers active.</td></tr>');
+            $('#overview-crawlers-table').html(trs || '<tr><td colspan="4" style="text-align:center; color:var(--text-secondary);">No matching crawlers active.</td></tr>');
 
-            const totalCount = overviewSources.length;
+            const totalCount = filteredSources.length;
             const fromEntry = totalCount > 0 ? start + 1 : 0;
             const toEntry = Math.min(end, totalCount);
             $('#overview-crawlers-count').text(`Showing ${fromEntry}-${toEntry} of ${totalCount} entries`);
@@ -1775,6 +1791,12 @@
                 renderOverviewCrawlersTable();
             });
         }
+
+        // Search Input handler
+        $(document).on('input', '#overview-crawlers-search', function() {
+            currentOverviewPage = 1;
+            renderOverviewCrawlersTable();
+        });
 
         function loadOverviewData() {
             $.ajax({
