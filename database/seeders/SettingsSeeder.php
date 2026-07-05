@@ -373,10 +373,10 @@ class SettingsSeeder extends Seeder
         // Header Menu Items
         $headerItems = [
             ['title' => 'Home', 'url' => '/', 'icon' => 'fas fa-home', 'order_index' => 0],
-            ['title' => 'All Jobs', 'url' => '/jobs', 'icon' => 'fas fa-briefcase', 'order_index' => 1],
-            ['title' => 'UPSC & SSC', 'url' => '/jobs?category=upsc-ssc-jobs', 'icon' => 'fas fa-gavel', 'order_index' => 2],
-            ['title' => 'Banking', 'url' => '/jobs?category=banking-finance', 'icon' => 'fas fa-university', 'order_index' => 3],
-            ['title' => 'Railways', 'url' => '/jobs?category=railway-jobs', 'icon' => 'fas fa-subway', 'order_index' => 4],
+            ['title' => 'All Jobs', 'url' => '/search', 'icon' => 'fas fa-briefcase', 'order_index' => 1],
+            ['title' => 'UPSC & SSC', 'url' => '/search/category/upsc-ssc-jobs', 'icon' => 'fas fa-gavel', 'order_index' => 2],
+            ['title' => 'Banking', 'url' => '/search/category/banking-finance', 'icon' => 'fas fa-university', 'order_index' => 3],
+            ['title' => 'Railways', 'url' => '/search/category/railway-jobs', 'icon' => 'fas fa-subway', 'order_index' => 4],
         ];
 
         foreach ($headerItems as $item) {

@@ -19,6 +19,7 @@ class JobRepository implements JobRepositoryInterface
         return JobPost::query()
             ->published()
             ->rootPosts()
+            ->jobs()
             ->search($filters['search'] ?? null)
             ->filterBy($filters)
             ->with(['category', 'department', 'state', 'qualification', 'source'])
