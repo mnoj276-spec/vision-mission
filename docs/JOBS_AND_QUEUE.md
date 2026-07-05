@@ -1,3 +1,11 @@
+---
+title: "Background Jobs & Horizon Queue Reference"
+aliases: ["Background Jobs","Horizon Queue"]
+tags: ["automation","queue","jobs","horizon","existing"]
+created: 2024-01-05
+updated: 2026-07-05
+---
+
 # Background Jobs & Horizon Queue Reference
 
 `vision-mission` offloads intensive tasks (scraping, document parsing, AI summarization, email dispatching, and search engine pings) to background queues managed by **Laravel Horizon**.
@@ -42,3 +50,11 @@ When background jobs fail (e.g. LLM API timeouts or SMTP service downtime), they
   * **Retry Job**: Retries a specific job by its UUID.
   * **Retry All**: Dispatches a recovery request to retry all pending DLQ items.
   * **Delete / Flush**: Deletes individual failed jobs or flushes the DLQ list.
+
+---
+## Related Notes
+* **MOC Connections**: [[Automation MOC]], [[DevOps MOC]]
+* **Navigation**:
+  * ⬅️ Prev: [[CRON_JOBS]]
+  * ➡️ Next: [[SEO]]
+  * 🏠 Home: [[Home]] | 📊 Dashboard: [[Dashboard]]

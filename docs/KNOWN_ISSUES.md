@@ -1,3 +1,11 @@
+---
+title: "Known Issues & Technical Debt"
+aliases: ["Known Issues","Technical Debt"]
+tags: ["troubleshooting","bugs","debt","existing"]
+created: 2024-01-05
+updated: 2026-07-05
+---
+
 # Known Issues & Technical Debt
 
 This document tracks system constraints, scraper dependencies, and performance/concurrency bottlenecks.
@@ -29,3 +37,11 @@ This document tracks system constraints, scraper dependencies, and performance/c
 
 * **Problem**: Strict DNS checking in `UrlSecurity` may block valid government portals if they use non-standard IP configurations, private network mappings, or subdomains that fail lookup checks.
 * **Mitigation**: Approved domains should be explicitly whitelisted inside the `approvedDomains` array in [UrlSecurity.php](file:///C:/xampp_8.2.12/htdocs/vision-mission/app/Services/UrlSecurity.php).
+
+---
+## Related Notes
+* **MOC Connections**: [[Business MOC]]
+* **Navigation**:
+  * ⬅️ Prev: [[UI_COMPONENTS]]
+  * ➡️ Next: [[TODO]]
+  * 🏠 Home: [[Home]] | 📊 Dashboard: [[Dashboard]]

@@ -255,4 +255,77 @@ class PortalEnhancementTest extends TestCase
             'status' => 'published'
         ]);
     }
+
+    /**
+     * Verify that link auto-discovery scans HTML, crawls target URLs, and ingests them with correct categories.
+     */
+    public function test_link_auto_discovery_and_classification(): void
+    {
+        \Illuminate\Support\Facades\Http::fake([
+            'https://gpsc-autodiscover.goa.gov.in/feed' => \Illuminate\Support\Facades\Http::response('
+                <div class="menu">
+                    <a href="https://gpsc-autodiscover.goa.gov.in/feed/results">Written Results</a>
+                    <a href="https://gpsc-autodiscover.goa.gov.in/feed/admit-cards">Download Admit Cards</a>
+                </div>
+                <div class="item">
+                    <h3>GPSC Scientific Officer Job Ingestion 2026</h3>
+                    <span>31-12-2026</span>
+                    <a href="https://gpsc-autodiscover.goa.gov.in/apply">Apply</a>
+                </div>
+            ', 200),
+            'https://gpsc-autodiscover.goa.gov.in/feed/results' => \Illuminate\Support\Facades\Http::response('
+                <div class="item">
+                    <h3>GPSC Civil Services Exam Written Result 2026</h3>
+                    <span>31-12-2026</span>
+                    <a href="https://gpsc-autodiscover.goa.gov.in/result.pdf">Download</a>
+                </div>
+            ', 200),
+            'https://gpsc-autodiscover.goa.gov.in/feed/admit-cards' => \Illuminate\Support\Facades\Http::response('
+                <div class="item">
+                    <h3>GPSC Civil Services Exam Hall Ticket Admit Card 2026</h3>
+                    <span>31-12-2026</span>
+                    <a href="https://gpsc-autodiscover.goa.gov.in/admit.pdf">Download</a>
+                </div>
+            ', 200),
+        ]);
+
+        $customSource = ScrapingSource::create([
+            'name' => 'Auto Discovery Test GPSC',
+            'source_url' => 'https://gpsc-autodiscover.goa.gov.in/feed',
+            'source_type' => 'html',
+            'is_active' => true,
+            'selectors_config' => [
+                'item_selector' => 'div.item',
+                'title_selector' => 'h3',
+                'deadline_selector' => 'span',
+                'default_category_id' => $this->category->id,
+                'default_department_id' => $this->department->id,
+                'default_state_id' => $this->state->id,
+                'default_qualification_id' => $this->qualification->id,
+            ]
+        ]);
+
+        $scrapingService = app(\App\Domains\Scrapers\Services\ScrapingService::class);
+        $result = $scrapingService->scrapeSource($customSource);
+
+        $this->assertTrue($result['success']);
+        
+        // Assert base recruitment is created
+        $this->assertDatabaseHas('job_posts', [
+            'title' => 'GPSC Scientific Officer Job Ingestion 2026',
+            'post_type' => 'job',
+        ]);
+
+        // Assert auto-discovered result is crawled & created
+        $this->assertDatabaseHas('job_posts', [
+            'title' => 'GPSC Civil Services Exam Written Result 2026',
+            'post_type' => 'result',
+        ]);
+
+        // Assert auto-discovered admit card is crawled & created
+        $this->assertDatabaseHas('job_posts', [
+            'title' => 'GPSC Civil Services Exam Hall Ticket Admit Card 2026',
+            'post_type' => 'admit_card',
+        ]);
+    }
 }

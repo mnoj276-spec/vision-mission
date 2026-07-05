@@ -1,3 +1,11 @@
+---
+title: "Cron Jobs & Task Scheduler Reference"
+aliases: ["Cron Jobs","Task Scheduler"]
+tags: ["automation","cron","scheduler","existing"]
+created: 2024-01-05
+updated: 2026-07-05
+---
+
 # Cron Jobs & Task Scheduler Reference
 
 `vision-mission` relies on Laravel's Task Scheduler to coordinate periodic events, scraping iterations, email drips, and system maintenance.
@@ -36,3 +44,11 @@ These are run manually or during setup operations (not registered on periodic sc
 * **`seo:warm-internal-links`** (class: `WarmInternalLinksCache`): Rebuilds cache maps linking state, category, and qualification slugs inside job description fields.
 * **`search:build-vocabulary`** (class: `BuildSearchVocabularyCommand`): Compiles unique search phrase lists to facilitate front-end autocomplete.
 * **`ocr:benchmark`** (class: `BenchmarkOcrCommand`): Analyzes speed and accuracy rates across Tesseract, PaddleOCR, and Gemini/OpenAI engines.
+
+---
+## Related Notes
+* **MOC Connections**: [[Automation MOC]], [[DevOps MOC]]
+* **Navigation**:
+  * ⬅️ Prev: [[DATABASE]]
+  * ➡️ Next: [[JOBS_AND_QUEUE]]
+  * 🏠 Home: [[Home]] | 📊 Dashboard: [[Dashboard]]

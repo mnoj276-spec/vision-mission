@@ -1,3 +1,11 @@
+---
+title: "AI Coding Rules & Constraints"
+aliases: ["AI Coding Rules","Rules"]
+tags: ["guidelines","ai","rules","existing"]
+created: 2024-01-05
+updated: 2026-07-05
+---
+
 # AI Coding Rules & Constraints
 
 Future AI assistants working on this codebase **must** adhere strictly to the following rules. Failure to do so will result in broken integrations, regressions in SEO ranking, or query execution exceptions.
@@ -46,3 +54,11 @@ Future AI assistants working on this codebase **must** adhere strictly to the fo
 * **Always explain modifications**: When editing a file, explain the change, its design rationale, and its security implications.
 * **Follow Repository Pattern**: Always write Eloquent database queries inside the Repository classes, not inside controllers or command scripts. Use bindings in AppServiceProvider.
 * **Document changes in the log**: When completing a task, append a log entry to [CHANGELOG_AI.md](file:///C:/xampp_8.2.12/htdocs/vision-mission/docs/CHANGELOG_AI.md).
+
+---
+## Related Notes
+* **MOC Connections**: [[DevOps MOC]]
+* **Navigation**:
+  * ⬅️ Prev: [[AI_CONTEXT]]
+  * ➡️ Next: [[ARCHITECTURE]]
+  * 🏠 Home: [[Home]] | 📊 Dashboard: [[Dashboard]]

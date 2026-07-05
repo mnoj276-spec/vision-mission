@@ -16,7 +16,9 @@ class NotificationClassifier
                 '/\badmit\s*card\b/i',
                 '/\bhall\s*ticket\b/i',
                 '/\bcall\s*letter\b/i',
-                '/\bdownload\s*admit\b/i'
+                '/\bdownload\s*admit\b/i',
+                '/\be-admit\b/i',
+                '/\binterview\s*call\b/i'
             ],
             NotificationType::FINAL_ANSWER_KEY->value => [
                 '/\bfinal\s*answer\s*key\b/i',
@@ -28,7 +30,10 @@ class NotificationClassifier
                 '/\bkey\s*answers\b/i',
                 '/\bresponse\s*sheet\b/i',
                 '/\bomr\s*sheet\b/i',
-                '/\bprovisional\s*key\b/i'
+                '/\bprovisional\s*key\b/i',
+                '/\bprovisional\s*answer\s*key\b/i',
+                '/\bobjection\s*notice\b/i',
+                '/\bobjection\s*window\b/i'
             ],
             NotificationType::OBJECTION->value => [
                 '/\bobjection\b/i',
@@ -40,15 +45,59 @@ class NotificationClassifier
                 '/\bmerit\s*list\b/i',
                 '/\bshortlisted\s*candidates\b/i',
                 '/\bselect\s*list\b/i',
-                '/\brank\s*list\b/i'
+                '/\brank\s*list\b/i',
+                '/\bwaiting\s*list\b/i',
+                '/\bselection\s*list\b/i',
+                '/\bshortlisted\b/i'
             ],
             NotificationType::RESULT->value => [
                 '/\bresult\b/i',
                 '/\bmarks\b/i',
                 '/\bcutoff\b/i',
+                '/\bcut\s*off\b/i',
+                '/\bcut-off\b/i',
                 '/\bscore\s*card\b/i',
+                '/\bscore-card\b/i',
                 '/\bqualified\s*candidates\b/i',
-                '/\bwritten\s*exam\s*status\b/i'
+                '/\bwritten\s*exam\s*status\b/i',
+                '/\bwritten\s*result\b/i',
+                '/\bfinal\s*result\b/i',
+                '/\binterview\s*result\b/i'
+            ],
+            NotificationType::SYLLABUS->value => [
+                '/\bsyllabus\b/i',
+                '/\bexam\s*pattern\b/i',
+                '/\bscheme\s*of\s*exam\b/i',
+                '/\bcurriculum\b/i',
+                '/\bselection\s*procedure\b/i'
+            ],
+            NotificationType::SCHOLARSHIP->value => [
+                '/\bscholarship\b/i',
+                '/\bfellowship\b/i',
+                '/\bfinancial\s*assistance\b/i',
+                '/\bresearch\s*grant\b/i',
+                '/\bstudent\s*grant\b/i',
+                '/\bstipend\b/i'
+            ],
+            NotificationType::ADMISSION->value => [
+                '/\badmission\b/i',
+                '/\bentrance\s*exam\b/i',
+                '/\bcounselling\b/i',
+                '/\bcounseling\b/i',
+                '/\bseat\s*allotment\b/i',
+                '/\badmission\s*schedule\b/i',
+                '/\bprospectus\b/i'
+            ],
+            NotificationType::EXAM_NOTICE->value => [
+                '/\bexam\s*notice\b/i',
+                '/\bexam\s*schedule\b/i',
+                '/\bexam\s*date\b/i',
+                '/\bcbt\s*notice\b/i',
+                '/\bwritten\s*exam\b/i',
+                '/\bskill\s*test\b/i',
+                '/\btyping\s*test\b/i',
+                '/\bpet\s*\/?\s*pst\b/i',
+                '/\bdv\s*schedule\b/i'
             ],
             NotificationType::WALK_IN->value => [
                 '/\bwalk\s*-\s*in\b/i',
@@ -219,10 +268,24 @@ class NotificationClassifier
      */
     protected function classifyWithAI(string $title, string $rawText): string
     {
-        // Check if there are signature words that hint categories
         $t = strtolower($title . ' ' . $rawText);
         if (str_contains($t, 'draft answer') || str_contains($t, 'provisional key')) {
             return NotificationType::ANSWER_KEY->value;
+        }
+        if (str_contains($t, 'syllabus') || str_contains($t, 'exam pattern') || str_contains($t, 'scheme of examination')) {
+            return NotificationType::SYLLABUS->value;
+        }
+        if (str_contains($t, 'scholarship') || str_contains($t, 'fellowship') || str_contains($t, 'stipend')) {
+            return NotificationType::SCHOLARSHIP->value;
+        }
+        if (str_contains($t, 'admission') || str_contains($t, 'entrance exam') || str_contains($t, 'counseling') || str_contains($t, 'counselling')) {
+            return NotificationType::ADMISSION->value;
+        }
+        if (str_contains($t, 'admit card') || str_contains($t, 'hall ticket') || str_contains($t, 'call letter')) {
+            return NotificationType::ADMIT_CARD->value;
+        }
+        if (str_contains($t, 'result') || str_contains($t, 'merit list') || str_contains($t, 'shortlisted')) {
+            return NotificationType::RESULT->value;
         }
 
         return NotificationType::UNKNOWN->value;

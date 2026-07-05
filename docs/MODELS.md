@@ -1,3 +1,11 @@
+---
+title: "Eloquent Models & ORM Mapping"
+aliases: ["Models","Eloquent ORM"]
+tags: ["backend","models","database","eloquent","existing"]
+created: 2024-01-05
+updated: 2026-07-05
+---
+
 # Models & Eloquent ORM Mapping
 
 `vision-mission` contains 38 Eloquent Models. To avoid high memory overhead and maintain code cleanliness, models are grouped logically.
@@ -75,3 +83,11 @@ These define categorizations for jobs:
 * **JobAlert**: Email alerts saved by guest users.
 * **PersonalRefreshToken**: Dynamic JWT bearer storage.
 * **Advertisement**: Holds Ad slots configurations.
+
+---
+## Related Notes
+* **MOC Connections**: [[Backend MOC]], [[Database MOC]]
+* **Navigation**:
+  * ⬅️ Prev: [[SERVICES]]
+  * ➡️ Next: [[MIDDLEWARE]]
+  * 🏠 Home: [[Home]] | 📊 Dashboard: [[Dashboard]]

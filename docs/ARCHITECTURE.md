@@ -1,3 +1,11 @@
+---
+title: "System Architecture & Design Patterns"
+aliases: ["Architecture","Design Patterns"]
+tags: ["architecture","design","patterns","existing"]
+created: 2024-01-05
+updated: 2026-07-05
+---
+
 # Architecture: Code Layout & Control Flow
 
 This document details the system design, core design patterns, request lifecycle, and component relationships of the `vision-mission` application.
@@ -81,3 +89,11 @@ The `RecruitmentLifecycleManager` acts as a state transition machine. When a chi
 Managed via `JobPostObserver`. When a `JobPost` is saved, deleted, or restored, the observer automatically:
 * Flushes sitemaps and homepage cache tags.
 * Dispatches a background job to notify search engines via **IndexNow**.
+
+---
+## Related Notes
+* **MOC Connections**: [[DevOps MOC]]
+* **Navigation**:
+  * ⬅️ Prev: [[AI_RULES]]
+  * ➡️ Next: [[MODULES]]
+  * 🏠 Home: [[Home]] | 📊 Dashboard: [[Dashboard]]

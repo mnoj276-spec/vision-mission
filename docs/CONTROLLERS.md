@@ -1,3 +1,11 @@
+---
+title: "Controllers & HTTP Endpoints Reference"
+aliases: ["Controllers","HTTP Endpoints"]
+tags: ["backend","controllers","http","existing"]
+created: 2024-01-05
+updated: 2026-07-05
+---
+
 # Controllers & HTTP Endpoints Reference
 
 Controllers in `vision-mission` are partitioned between Laravel's standard REST API folders and DDD domain controller subdirectories.
@@ -72,3 +80,11 @@ All routes require auth, EnsureAdmin middleware, and Spatie permission checks:
 * **AnalyticsApiController**: Captures pageviews, interaction triggers, and ad events for analytical auditing.
 * **EmailTrackingController**: Tracks email pixel opens and redirect clicks.
 * **MonetizationController**: Handles `/go/{slug}` affiliate link generation redirects, membership payments, and revenue analytics.
+
+---
+## Related Notes
+* **MOC Connections**: [[Backend MOC]], [[API MOC]]
+* **Navigation**:
+  * ⬅️ Prev: [[MODULES]]
+  * ➡️ Next: [[SERVICES]]
+  * 🏠 Home: [[Home]] | 📊 Dashboard: [[Dashboard]]

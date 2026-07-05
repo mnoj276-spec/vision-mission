@@ -1,3 +1,11 @@
+---
+title: "Domain Modules (DDD)"
+aliases: ["Domain Modules","DDD"]
+tags: ["architecture","ddd","modules","existing"]
+created: 2024-01-05
+updated: 2026-07-05
+---
+
 # Domain Modules Reference
 
 `vision-mission` organizes its business logic into 6 domain modules under the `app/Domains` namespace. This file outlines each module's purpose, controllers, models, views, routing hooks, dependencies, related tables, and potential risks.
@@ -91,3 +99,11 @@
 * **Dependencies**: `JwtService` library.
 * **Related Tables**: `users`, `personal_refresh_tokens`.
 * **Potential Risks**: Refresh token leakage; JWT key verification speed bottleneck under concurrent requests.
+
+---
+## Related Notes
+* **MOC Connections**: [[Backend MOC]], [[Frontend MOC]], [[Database MOC]], [[Crawler MOC]], [[Government Sources MOC]]
+* **Navigation**:
+  * ⬅️ Prev: [[ARCHITECTURE]]
+  * ➡️ Next: [[CONTROLLERS]]
+  * 🏠 Home: [[Home]] | 📊 Dashboard: [[Dashboard]]

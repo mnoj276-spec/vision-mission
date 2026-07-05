@@ -322,6 +322,293 @@ class DatabaseSeeder extends Seeder
             ]
         );
 
+        // 8. Seed Admit Cards (post_type = admit_card)
+        JobPost::firstOrCreate(
+            ['slug' => 'upsc-ias-civil-services-prelims-2026-admit-card'],
+            [
+                'category_id' => $catCivil->id,
+                'department_id' => $deptUPSC->id,
+                'state_id' => $statePanIndia->id,
+                'qualification_id' => $qGrad->id,
+                'title' => 'UPSC IAS Civil Services Prelims 2026 Admit Card',
+                'description' => 'The Union Public Service Commission (UPSC) has released the admit cards for Civil Services (Preliminary) Examination 2026. Download your e-admit card using your registration ID or roll number.',
+                'status' => 'published',
+                'post_type' => 'admit_card',
+                'vacancy_count' => 0,
+                'application_fee' => 0,
+                'official_website_link' => 'https://upsc.gov.in',
+                'apply_link' => 'https://upsconline.nic.in/admitcard',
+                'last_date_to_apply' => Carbon::now()->addDays(15)->toDateString(),
+                'published_at' => Carbon::now(),
+            ]
+        );
+
+        JobPost::firstOrCreate(
+            ['slug' => 'ssc-cgl-tier-1-hall-ticket-2026'],
+            [
+                'category_id' => $catCivil->id,
+                'department_id' => $deptSSC->id,
+                'state_id' => $statePanIndia->id,
+                'qualification_id' => $qGrad->id,
+                'title' => 'SSC CGL Tier 1 Hall Ticket 2026',
+                'description' => 'Staff Selection Commission (SSC) has released the status and admit cards for the Combined Graduate Level (CGL) Tier 1 examination. Candidate portal is now active for region-wise downloading.',
+                'status' => 'published',
+                'post_type' => 'admit_card',
+                'vacancy_count' => 0,
+                'application_fee' => 0,
+                'official_website_link' => 'https://ssc.gov.in',
+                'apply_link' => 'https://ssc.gov.in/admit-card',
+                'last_date_to_apply' => Carbon::now()->addDays(20)->toDateString(),
+                'published_at' => Carbon::now(),
+            ]
+        );
+
+        // 9. Seed Exam Results (post_type = result)
+        JobPost::firstOrCreate(
+            ['slug' => 'upsc-cse-main-written-result-2025'],
+            [
+                'category_id' => $catCivil->id,
+                'department_id' => $deptUPSC->id,
+                'state_id' => $statePanIndia->id,
+                'qualification_id' => $qGrad->id,
+                'title' => 'UPSC CSE Main Written Result 2025',
+                'description' => 'The Union Public Service Commission (UPSC) has declared the written results for the Civil Services (Main) Examination 2025. Candidates with the qualified roll numbers are summoned for the personality test.',
+                'status' => 'published',
+                'post_type' => 'result',
+                'vacancy_count' => 0,
+                'application_fee' => 0,
+                'official_website_link' => 'https://upsc.gov.in',
+                'apply_link' => 'https://upsc.gov.in/written-results',
+                'last_date_to_apply' => Carbon::now()->addDays(30)->toDateString(),
+                'published_at' => Carbon::now(),
+            ]
+        );
+
+        JobPost::firstOrCreate(
+            ['slug' => 'ssc-cgl-tier-1-declared-cutoff-result-2026'],
+            [
+                'category_id' => $catCivil->id,
+                'department_id' => $deptSSC->id,
+                'state_id' => $statePanIndia->id,
+                'qualification_id' => $qGrad->id,
+                'title' => 'SSC CGL Tier 1 Declared Cutoff & Result 2026',
+                'description' => 'Staff Selection Commission (SSC) has officially declared the results and category-wise cutoff marks for Combined Graduate Level (CGL) Tier-1 CBT Exam.',
+                'status' => 'published',
+                'post_type' => 'result',
+                'vacancy_count' => 0,
+                'application_fee' => 0,
+                'official_website_link' => 'https://ssc.gov.in',
+                'apply_link' => 'https://ssc.gov.in/results',
+                'last_date_to_apply' => Carbon::now()->addDays(30)->toDateString(),
+                'published_at' => Carbon::now(),
+            ]
+        );
+
+        // 10. Seed Answer Keys (post_type = answer_key)
+        JobPost::firstOrCreate(
+            ['slug' => 'upsc-ias-civil-services-prelims-2026-official-answer-key'],
+            [
+                'category_id' => $catCivil->id,
+                'department_id' => $deptUPSC->id,
+                'state_id' => $statePanIndia->id,
+                'qualification_id' => $qGrad->id,
+                'title' => 'UPSC IAS Civil Services Prelims 2026 Official Answer Key',
+                'description' => 'Union Public Service Commission has published the official answer keys for Civil Services Prelims Exam. General Studies Paper 1 and CSAT Paper 2 solutions are downloadable.',
+                'status' => 'published',
+                'post_type' => 'answer_key',
+                'vacancy_count' => 0,
+                'application_fee' => 0,
+                'official_website_link' => 'https://upsc.gov.in',
+                'apply_link' => 'https://upsc.gov.in/answer-keys',
+                'last_date_to_apply' => Carbon::now()->addDays(15)->toDateString(),
+                'published_at' => Carbon::now(),
+            ]
+        );
+
+        JobPost::firstOrCreate(
+            ['slug' => 'ssc-cgl-tier-1-answer-key-omr-sheet-2026'],
+            [
+                'category_id' => $catCivil->id,
+                'department_id' => $deptSSC->id,
+                'state_id' => $statePanIndia->id,
+                'qualification_id' => $qGrad->id,
+                'title' => 'SSC CGL Tier 1 Answer Key & OMR Sheet 2026',
+                'description' => 'Staff Selection Commission (SSC) has uploaded candidate response sheets along with tentative Answer Keys for CGL Tier 1 exam. Login to raise objections.',
+                'status' => 'published',
+                'post_type' => 'answer_key',
+                'vacancy_count' => 0,
+                'application_fee' => 0,
+                'official_website_link' => 'https://ssc.gov.in',
+                'apply_link' => 'https://ssc.gov.in/answer-key-challenge',
+                'last_date_to_apply' => Carbon::now()->addDays(10)->toDateString(),
+                'published_at' => Carbon::now(),
+            ]
+        );
+
+        // 11. Seed Syllabus & Exams (post_type = syllabus)
+        JobPost::firstOrCreate(
+            ['slug' => 'upsc-ias-civil-services-syllabus-exam-pattern-2026'],
+            [
+                'category_id' => $catCivil->id,
+                'department_id' => $deptUPSC->id,
+                'state_id' => $statePanIndia->id,
+                'qualification_id' => $qGrad->id,
+                'title' => 'UPSC IAS Civil Services Syllabus & Exam Pattern 2026',
+                'description' => 'Get the comprehensive and updated syllabus guidelines for UPSC Civil Services IAS Exam 2026. Includes details for Prelims (GS & CSAT) and Mains optional subjects.',
+                'status' => 'published',
+                'post_type' => 'syllabus',
+                'vacancy_count' => 0,
+                'application_fee' => 0,
+                'official_website_link' => 'https://upsc.gov.in',
+                'apply_link' => 'https://upsc.gov.in/syllabus',
+                'last_date_to_apply' => Carbon::now()->addDays(120)->toDateString(),
+                'published_at' => Carbon::now(),
+            ]
+        );
+
+        JobPost::firstOrCreate(
+            ['slug' => 'ssc-cgl-tier-1-2-syllabus-scheme'],
+            [
+                'category_id' => $catCivil->id,
+                'department_id' => $deptSSC->id,
+                'state_id' => $statePanIndia->id,
+                'qualification_id' => $qGrad->id,
+                'title' => 'SSC CGL Tier 1 & 2 Syllabus Scheme',
+                'description' => 'Detailed exam pattern and marking scheme structure for Staff Selection Commission Combined Graduate Level (CGL) 2026.',
+                'status' => 'published',
+                'post_type' => 'syllabus',
+                'vacancy_count' => 0,
+                'application_fee' => 0,
+                'official_website_link' => 'https://ssc.gov.in',
+                'apply_link' => 'https://ssc.gov.in/syllabus',
+                'last_date_to_apply' => Carbon::now()->addDays(60)->toDateString(),
+                'published_at' => Carbon::now(),
+            ]
+        );
+
+        // 12. Seed Important Notices (post_type = notice)
+        JobPost::firstOrCreate(
+            ['slug' => 'upsc-civil-services-application-deadline-extended-notice'],
+            [
+                'category_id' => $catCivil->id,
+                'department_id' => $deptUPSC->id,
+                'state_id' => $statePanIndia->id,
+                'qualification_id' => $qGrad->id,
+                'title' => 'UPSC Civil Services Application Deadline Extended Notice',
+                'description' => 'Union Public Service Commission (UPSC) has issued a circular extending the last date for submitting online applications for IAS/IFS exam. Candidates are advised to apply early.',
+                'status' => 'published',
+                'post_type' => 'notice',
+                'vacancy_count' => 0,
+                'application_fee' => 0,
+                'official_website_link' => 'https://upsc.gov.in',
+                'apply_link' => 'https://upsconline.nic.in',
+                'last_date_to_apply' => Carbon::now()->addDays(5)->toDateString(),
+                'published_at' => Carbon::now(),
+            ]
+        );
+
+        JobPost::firstOrCreate(
+            ['slug' => 'ssc-cgl-exam-dates-postponement-circular'],
+            [
+                'category_id' => $catCivil->id,
+                'department_id' => $deptSSC->id,
+                'state_id' => $statePanIndia->id,
+                'qualification_id' => $qGrad->id,
+                'title' => 'SSC CGL Exam Dates Postponement Circular',
+                'description' => 'Official notice from Staff Selection Commission regarding rescheduling of SSC CGL Tier 1 CBT exams due to administrative reasons. New dates inside.',
+                'status' => 'published',
+                'post_type' => 'notice',
+                'vacancy_count' => 0,
+                'application_fee' => 0,
+                'official_website_link' => 'https://ssc.gov.in',
+                'apply_link' => 'https://ssc.gov.in/notices',
+                'last_date_to_apply' => Carbon::now()->addDays(15)->toDateString(),
+                'published_at' => Carbon::now(),
+            ]
+        );
+
+        // 13. Seed Admissions Hub (post_type = admission)
+        JobPost::firstOrCreate(
+            ['slug' => 'iit-jee-advanced-online-admission-form-2026'],
+            [
+                'category_id' => $catCivil->id,
+                'department_id' => $deptUPSC->id,
+                'state_id' => $statePanIndia->id,
+                'qualification_id' => $qTwelve->id,
+                'title' => 'IIT JEE Advanced Online Admission Form 2026',
+                'description' => 'National Testing Agency & IIT Joint Admission Board has opened registration for JEE Advanced 2026. Top rankers of JEE Mains are eligible for admission into IITs.',
+                'status' => 'published',
+                'post_type' => 'admission',
+                'vacancy_count' => 0,
+                'application_fee' => 3200,
+                'official_website_link' => 'https://jeeadv.ac.in',
+                'apply_link' => 'https://jeeadv.nic.in/apply',
+                'last_date_to_apply' => Carbon::now()->addDays(40)->toDateString(),
+                'published_at' => Carbon::now(),
+            ]
+        );
+
+        JobPost::firstOrCreate(
+            ['slug' => 'neet-pg-national-eligibility-medical-admission-2026'],
+            [
+                'category_id' => $catCivil->id,
+                'department_id' => $deptUPSC->id,
+                'state_id' => $statePanIndia->id,
+                'qualification_id' => $qGrad->id,
+                'title' => 'NEET PG National Eligibility Medical Admission 2026',
+                'description' => 'National Board of Examinations in Medical Sciences (NBEMS) invites online registration forms for NEET-PG 2026 for admission to MD/MS and PG Diploma Courses.',
+                'status' => 'published',
+                'post_type' => 'admission',
+                'vacancy_count' => 0,
+                'application_fee' => 4250,
+                'official_website_link' => 'https://natboard.edu.in',
+                'apply_link' => 'https://nbe.edu.in',
+                'last_date_to_apply' => Carbon::now()->addDays(25)->toDateString(),
+                'published_at' => Carbon::now(),
+            ]
+        );
+
+        // 14. Seed Scholarships & Grants (post_type = scholarship)
+        JobPost::firstOrCreate(
+            ['slug' => 'prime-minister-scholarship-scheme-pmss-2026'],
+            [
+                'category_id' => $catCivil->id,
+                'department_id' => $deptUPSC->id,
+                'state_id' => $statePanIndia->id,
+                'qualification_id' => $qTwelve->id,
+                'title' => 'Prime Minister Scholarship Scheme (PMSS) 2026',
+                'description' => 'Ministry of Home Affairs & Welfare Board invites applications for Prime Minister Scholarship Scheme. Offered to dependent wards & widows of Central Armed Police Forces & Ex-servicemen.',
+                'status' => 'published',
+                'post_type' => 'scholarship',
+                'vacancy_count' => 0,
+                'application_fee' => 0,
+                'official_website_link' => 'https://desw.gov.in',
+                'apply_link' => 'https://scholarships.gov.in',
+                'last_date_to_apply' => Carbon::now()->addDays(60)->toDateString(),
+                'published_at' => Carbon::now(),
+            ]
+        );
+
+        JobPost::firstOrCreate(
+            ['slug' => 'post-matric-scholarship-scheme-for-sc-st-candidates'],
+            [
+                'category_id' => $catCivil->id,
+                'department_id' => $deptUPSC->id,
+                'state_id' => $statePanIndia->id,
+                'qualification_id' => $qTen->id,
+                'title' => 'Post Matric Scholarship Scheme for SC/ST Candidates',
+                'description' => 'Ministry of Social Justice and Empowerment invites applications for the Post Matric Scholarship Scheme for SC and ST students pursuing higher education studies.',
+                'status' => 'published',
+                'post_type' => 'scholarship',
+                'vacancy_count' => 0,
+                'application_fee' => 0,
+                'official_website_link' => 'https://socialjustice.gov.in',
+                'apply_link' => 'https://scholarships.gov.in/postmatric-sc',
+                'last_date_to_apply' => Carbon::now()->addDays(90)->toDateString(),
+                'published_at' => Carbon::now(),
+            ]
+        );
+
         $this->call(SettingsSeeder::class);
         $this->call(OfficialGovSourcesSeeder::class);
     }

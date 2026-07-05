@@ -1,3 +1,11 @@
+---
+title: "UI Components & Frontend Interface Reference"
+aliases: ["UI Components","Frontend Interface"]
+tags: ["frontend","ui","components","pwa","existing"]
+created: 2024-01-05
+updated: 2026-07-05
+---
+
 # UI Components & Frontend Interface Reference
 
 `vision-mission` implements a Progressive Web App (PWA) layout powered by Blade templates, Vite compiler setups, and modular front-end interfaces.
@@ -44,3 +52,11 @@ Frontend components are instrumented to collect user interaction data without vi
 * **Page View Tracks**: Dispatches posts to `/api/analytics/page-view` on route changes.
 * **Ad Click Tracks**: Intercepts sponsor links to log revenue hits to `/api/analytics/ad-event` before redirect runs.
 * **Affiliate Redirects**: Converts outbound job apply links to local `/go/{slug}` redirect targets, updating logs on the fly.
+
+---
+## Related Notes
+* **MOC Connections**: [[Frontend MOC]]
+* **Navigation**:
+  * ⬅️ Prev: [[DEPLOYMENT]]
+  * ➡️ Next: [[KNOWN_ISSUES]]
+  * 🏠 Home: [[Home]] | 📊 Dashboard: [[Dashboard]]
