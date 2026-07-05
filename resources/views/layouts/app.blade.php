@@ -147,6 +147,7 @@
         .dropdown-menu-list a:hover {
             background: rgba(37,99,235,0.08) !important;
             color: var(--accent-color) !important;
+        }
         /* Dynamic Split Info and Age Limit Cards */
         .split-info-card {
             display: grid;

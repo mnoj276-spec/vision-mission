@@ -3125,6 +3125,23 @@
                 success: function(res) {
                     if (res.status === 'success') {
                         const job = res.data;
+                        
+                        // Sanitize and clean description to avoid duplication and format newlines
+                        let cleanDescription = job.description || '';
+                        cleanDescription = cleanDescription.replace(/(📅|🗓️)?\s*Important Dates[\s\S]*?(?=(₹|💵)?\s*Application Fee|(📅|⏰)?\s*Age Limit|Selection Process|Vacancy|Overview|$)/gi, '');
+                        cleanDescription = cleanDescription.replace(/(₹|💵)?\s*Application Fee[\s\S]*?(?=(📅|⏰)?\s*Age Limit|Selection Process|Vacancy|Overview|$)/gi, '');
+                        cleanDescription = cleanDescription.replace(/(📅|⏰)?\s*Age Limit Details[\s\S]*?(?=Selection Process|Vacancy|Overview|$)/gi, '');
+                        cleanDescription = cleanDescription.trim().replace(/\n/g, '<br>');
+                        cleanDescription = cleanDescription.replace(/(<br>\s*){2,}/g, '<br><br>');
+                        cleanDescription = cleanDescription.replace(/^(<br>\s*)+|(<br>\s*)+$/g, '');
+                        
+                        if (!cleanDescription || cleanDescription.replace(/<br>/g, '').trim().length < 5) {
+                            cleanDescription = `Recruitment notification details for <strong>${job.title}</strong> in the ${job.department} department. Please read the official notification PDF and ensure your eligibility before submitting your application.`;
+                        }
+
+                        let selectionProcessHtml = (job.selection_process || 'Written Exam.').trim().replace(/\n/g, '<br>').replace(/(<br>\s*){2,}/g, '<br><br>');
+                        let examPatternHtml = (job.exam_pattern || 'Objective MCQs.').trim().replace(/\n/g, '<br>').replace(/(<br>\s*){2,}/g, '<br><br>');
+
                         const type = job.post_type;
                         let html = '';
                         if (type === 'job') {
@@ -3362,18 +3379,18 @@
 
                                     <div class="details-full-section" style="margin-top:1.5rem;">
                                         <h4 style="color: var(--accent-color); font-weight:700; font-family:'Outfit';">${window.t('modal_overview', 'Recruitment Overview & Eligibility')}</h4>
-                                        <p style="color: var(--text-secondary); line-height:1.75; font-size:0.95rem; margin-top:0.5rem;">${job.description}</p>
+                                        <p style="color: var(--text-secondary); line-height:1.75; font-size:0.95rem; margin-top:0.5rem;">${cleanDescription}</p>
                                     </div>
 
                                     <div class="details-full-section" style="margin-top:1.5rem;">
                                         <h4 style="color: var(--accent-color); font-weight:700; font-family:'Outfit';">${window.t('modal_selection', 'Selection Process Steps')}</h4>
-                                        <p style="color: var(--text-secondary); line-height:1.75; font-size:0.95rem; margin-top:0.5rem;">${job.selection_process}</p>
+                                        <p style="color: var(--text-secondary); line-height:1.75; font-size:0.95rem; margin-top:0.5rem;">${selectionProcessHtml}</p>
                                     </div>
 
                                     <div class="details-full-section" style="margin-top:1.5rem;">
                                         <h4 style="color: var(--accent-color); font-weight:700; font-family:'Outfit';">${window.t('modal_syllabus', 'Exam Scheme & Syllabus Patterns')}</h4>
                                         <div class="details-syllabus-container" style="max-height: none; overflow: visible; margin-top:0.5rem; color:var(--text-secondary); line-height:1.75;">
-                                            ${job.exam_pattern}
+                                            ${examPatternHtml}
                                         </div>
                                     </div>
 

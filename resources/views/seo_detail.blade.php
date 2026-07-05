@@ -44,6 +44,23 @@
         border-bottom: 1px solid var(--border-color);
         padding-bottom: 1.5rem;
         margin-bottom: 2rem;
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .detail-header-main {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 1.5rem;
+    }
+
+    @media (max-width: 768px) {
+        .detail-header-main {
+            flex-direction: column;
+            align-items: stretch;
+        }
     }
 
     .detail-header-block h1 {
@@ -52,7 +69,8 @@
         font-weight: 800;
         line-height: 1.25;
         color: var(--text-primary);
-        margin-bottom: 0.75rem;
+        margin: 0;
+        text-align: left;
     }
 
     .detail-badges {
@@ -63,12 +81,85 @@
         margin-top: 0.5rem;
     }
 
+    /* Dynamic Board Branding */
+    .board-branding-strip {
+        display: flex;
+        align-items: center;
+        gap: 1.25rem;
+        background: rgba(255, 255, 255, 0.01);
+        border: 1px solid var(--border-color);
+        border-radius: 12px;
+        padding: 1.25rem;
+        margin-bottom: 2rem;
+        backdrop-filter: blur(8px);
+    }
+    .board-logo {
+        width: 54px;
+        height: 54px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-family: 'Outfit', sans-serif;
+        font-weight: 800;
+        font-size: 1.15rem;
+        text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+    }
+    .board-meta {
+        display: flex;
+        flex-direction: column;
+        gap: 0.25rem;
+        text-align: left;
+    }
+    .board-dept-name {
+        font-family: 'Outfit', sans-serif;
+        font-size: 1.1rem;
+        font-weight: 700;
+        color: var(--text-primary);
+    }
+    .board-state {
+        font-size: 0.8rem;
+        color: var(--text-secondary);
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+    }
+
+    /* Short Info Card Block */
+    .short-info-card-block {
+        background: rgba(255, 255, 255, 0.005);
+        border: 1px solid var(--border-color);
+        border-radius: 12px;
+        padding: 1.5rem;
+        margin-bottom: 2rem;
+        backdrop-filter: blur(8px);
+        text-align: left;
+    }
+    .short-info-title {
+        font-family: 'Outfit', sans-serif;
+        font-size: 1.05rem;
+        font-weight: 800;
+        color: var(--accent-color);
+        margin-bottom: 0.75rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    .short-info-text {
+        font-size: 0.95rem;
+        color: var(--text-secondary);
+        line-height: 1.65;
+        margin: 0;
+    }
+
     /* Split Info Card */
     .split-info-card {
         display: grid;
         grid-template-columns: 1fr 1fr;
         gap: 1.5rem;
         margin-bottom: 2rem;
+        text-align: left;
     }
     @media (max-width: 768px) {
         .split-info-card {
@@ -152,6 +243,7 @@
         padding: 1.5rem;
         margin-bottom: 2rem;
         backdrop-filter: blur(8px);
+        text-align: left;
     }
     .age-grid {
         display: grid;
@@ -187,6 +279,79 @@
         border-top: 1px solid var(--border-color);
         padding-top: 0.75rem;
         margin-top: 0.5rem;
+    }
+
+    /* Modern Vacancy Table list design */
+    .vacancy-type-table-wrapper {
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        overflow: hidden;
+        margin-top: 0.5rem;
+    }
+    .vacancy-detail-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.9rem;
+        text-align: left;
+    }
+    .vacancy-detail-table th {
+        background: rgba(255, 255, 255, 0.02);
+        color: var(--text-secondary);
+        font-weight: 700;
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        padding: 0.6rem 0.75rem;
+        border-bottom: 1px solid var(--border-color);
+    }
+    .vacancy-detail-table td {
+        padding: 0.65rem 0.75rem;
+        border-bottom: 1px solid var(--border-color);
+        color: var(--text-primary);
+    }
+    .vacancy-detail-table tr:last-child td {
+        border-bottom: none;
+    }
+    .badge-vacancy-number {
+        background: rgba(37, 99, 235, 0.1);
+        color: var(--accent-color);
+        font-weight: 700;
+        border: 1px solid rgba(37, 99, 235, 0.2);
+    }
+
+    /* Physical Standards Table Styles */
+    .physical-table-container {
+        border: 1px solid var(--border-color);
+        border-radius: 12px;
+        overflow: hidden;
+        margin-top: 1rem;
+        margin-bottom: 2rem;
+        background: rgba(255, 255, 255, 0.002);
+    }
+    .physical-table {
+        width: 100%;
+        border-collapse: collapse;
+        text-align: left;
+        font-size: 0.9rem;
+    }
+    .physical-table th {
+        background: rgba(37, 99, 235, 0.05);
+        color: var(--text-primary);
+        font-family: 'Outfit', sans-serif;
+        font-weight: 700;
+        padding: 0.85rem 1rem;
+        border-bottom: 1px solid var(--border-color);
+    }
+    .physical-table td {
+        padding: 0.85rem 1rem;
+        border-bottom: 1px solid var(--border-color);
+        color: var(--text-secondary);
+    }
+    .physical-table tr:last-child td {
+        border-bottom: none;
+    }
+    .physical-table tr:hover {
+        background: rgba(255,255,255,0.01);
     }
 
     /* Useful Links Table styling */
@@ -250,12 +415,62 @@
         100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
     }
 
+    /* Print action styles */
+    .print-btn-header {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        background: transparent;
+        border: 1px solid var(--border-color);
+        color: var(--text-primary);
+        padding: 0.5rem 1rem;
+        border-radius: 8px;
+        font-weight: 600;
+        font-size: 0.85rem;
+        cursor: pointer;
+        transition: all 0.2s;
+        font-family: 'Outfit', sans-serif;
+        align-self: flex-start;
+    }
+    .print-btn-header:hover {
+        background: rgba(255,255,255,0.05);
+        border-color: var(--accent-color);
+    }
+
+    /* Disclaimer Card */
+    .disclaimer-alert-card {
+        background: linear-gradient(135deg, rgba(245, 158, 11, 0.03) 0%, rgba(251, 191, 36, 0.01) 100%);
+        border: 1px dashed rgba(245, 158, 11, 0.3);
+        border-radius: 12px;
+        padding: 1.5rem;
+        margin-top: 2.5rem;
+        backdrop-filter: blur(8px);
+        text-align: left;
+    }
+    .disclaimer-title {
+        font-family: 'Outfit', sans-serif;
+        font-size: 0.95rem;
+        font-weight: 800;
+        color: #f59e0b;
+        margin-bottom: 0.5rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    .disclaimer-text {
+        font-size: 0.85rem;
+        color: var(--text-secondary);
+        line-height: 1.6;
+        margin: 0;
+    }
+
     /* Timeline Section styling */
     .timeline-container {
         position: relative;
         padding-left: 2rem;
         margin-top: 1.5rem;
         margin-bottom: 1.5rem;
+        text-align: left;
     }
     .timeline-container::before {
         content: '';
@@ -363,6 +578,7 @@
         margin-bottom: 2rem;
         border-top: 1px solid var(--border-color);
         padding-top: 1.5rem;
+        text-align: left;
     }
 
     .details-section h4 {
@@ -384,6 +600,7 @@
         border-top: 1px solid var(--border-color);
         padding-top: 2rem;
         margin-top: 2.5rem;
+        text-align: left;
     }
 
     .apply-card {
@@ -402,6 +619,7 @@
         margin-bottom: 2rem;
         position: relative;
         box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        text-align: left;
     }
     .ai-badge {
         position: absolute;
@@ -478,6 +696,62 @@
         padding: 1rem 1.25rem;
         border-top: 1px solid var(--border-color);
     }
+
+    /* Print media rules */
+    @media print {
+        body {
+            background: #fff !important;
+            color: #000 !important;
+            font-family: Arial, sans-serif !important;
+        }
+        header, footer, nav, .breadcrumb-trail, .apply-panel, .social-share-container, .mobile-sticky-bar, .print-btn-header {
+            display: none !important;
+        }
+        .detail-card {
+            border: none !important;
+            box-shadow: none !important;
+            padding: 0 !important;
+            background: transparent !important;
+        }
+        .detail-header-block h1 {
+            color: #000 !important;
+            font-size: 1.8rem !important;
+        }
+        .split-info-card {
+            grid-template-columns: 1fr 1fr !important;
+            gap: 1.5rem !important;
+        }
+        .split-info-column {
+            border: 1px solid #ccc !important;
+            background: #fff !important;
+            color: #000 !important;
+        }
+        .column-title {
+            color: #000 !important;
+            border-bottom: 2px solid #000 !important;
+        }
+        .info-list li {
+            border-bottom: 1px dashed #ccc !important;
+        }
+        .info-label, .info-val {
+            color: #000 !important;
+        }
+        .links-table-container {
+            border: 1px solid #ccc !important;
+        }
+        .links-table th, .links-table td {
+            border-bottom: 1px solid #ccc !important;
+            color: #000 !important;
+        }
+        .btn-link-action {
+            display: none !important;
+        }
+        .links-table td::after {
+            content: " (Refer Official Site)";
+            font-size: 0.8rem;
+            color: #555;
+        }
+    }
 </style>
 
 @php
@@ -511,6 +785,75 @@
         $statusText = 'Active';
         $statusClass = 'status-open';
     }
+
+    // Dynamic Board Identity Branding resolver
+    $boardName = $job->department->name ?? 'Government Ministry';
+    $boardShort = 'GOVT';
+    $boardColor = 'var(--accent-color)';
+    
+    if (str_contains(strtolower($boardName), 'staff selection') || str_contains(strtolower($boardName), 'ssc')) {
+        $boardShort = 'SSC';
+        $boardColor = 'linear-gradient(135deg, #1e40af 0%, #3b82f6 100%)';
+    } elseif (str_contains(strtolower($boardName), 'union public') || str_contains(strtolower($boardName), 'upsc')) {
+        $boardShort = 'UPSC';
+        $boardColor = 'linear-gradient(135deg, #78350f 0%, #d97706 100%)';
+    } elseif (str_contains(strtolower($boardName), 'railway') || str_contains(strtolower($boardName), 'rrb')) {
+        $boardShort = 'RRB';
+        $boardColor = 'linear-gradient(135deg, #991b1b 0%, #dc2626 100%)';
+    } elseif (str_contains(strtolower($boardName), 'public service commission') || str_contains(strtolower($boardName), 'psc')) {
+        $boardShort = 'PSC';
+        $boardColor = 'linear-gradient(135deg, #065f46 0%, #10b981 100%)';
+    } elseif (str_contains(strtolower($boardName), 'police')) {
+        $boardShort = 'POLICE';
+        $boardColor = 'linear-gradient(135deg, #1e3a8a 0%, #1d4ed8 100%)';
+    } else {
+        $words = array_values(array_filter(explode(' ', $boardName)));
+        if (count($words) >= 2) {
+            $boardShort = strtoupper(substr($words[0], 0, 1) . substr($words[1], 0, 1));
+        } else {
+            $boardShort = strtoupper(substr($boardName, 0, 2));
+        }
+        $boardColor = 'linear-gradient(135deg, rgba(37, 99, 235, 0.2) 0%, rgba(139, 92, 246, 0.2) 100%)';
+    }
+
+    // Dynamic Police/Defence physical standards detector
+    $isPhysicalJob = false;
+    $searchTerms = ['police', 'si', 'constable', 'gd', 'agniveer', 'army', 'navy', 'airforce', 'paramilitary', 'cpdf', 'bsf', 'cisf', 'crpf', 'itbp', 'ssb', 'rifleman', 'sub inspector', 'physical test', 'physical efficiency'];
+    $titleLower = strtolower($job->title);
+    $descLower = strtolower($job->description);
+    foreach ($searchTerms as $term) {
+        if (str_contains($titleLower, $term) || str_contains($descLower, $term)) {
+            $isPhysicalJob = true;
+            break;
+        }
+    }
+
+    // Dynamic timeline child-link compiler for Useful links table
+    $admitCardLink = null;
+    $resultLink = null;
+    $answerKeyLink = null;
+    $syllabusLink = null;
+    $cutoffLink = null;
+    $noticeLink = null;
+    
+    if ($timeline && $timeline->count() > 0) {
+        foreach ($timeline as $tItem) {
+            if ($tItem->id === $job->id) continue;
+            if ($tItem->post_type === 'admit_card') {
+                $admitCardLink = route('seo.job_detail', ['slug' => $tItem->slug]);
+            } elseif ($tItem->post_type === 'result') {
+                $resultLink = route('seo.job_detail', ['slug' => $tItem->slug]);
+            } elseif ($tItem->post_type === 'answer_key') {
+                $answerKeyLink = route('seo.job_detail', ['slug' => $tItem->slug]);
+            } elseif ($tItem->post_type === 'syllabus') {
+                $syllabusLink = route('seo.job_detail', ['slug' => $tItem->slug]);
+            } elseif ($tItem->post_type === 'cutoff') {
+                $cutoffLink = route('seo.job_detail', ['slug' => $tItem->slug]);
+            } elseif ($tItem->post_type === 'notice') {
+                $noticeLink = route('seo.job_detail', ['slug' => $tItem->slug]);
+            }
+        }
+    }
 @endphp
 
 <div style="max-width: 1000px; margin: 0 auto; padding: 0 5%;">
@@ -537,7 +880,12 @@
     <article class="detail-card">
         <!-- Header -->
         <header class="detail-header-block">
-            <h1 data-translate-title="{{ $pageHeader }}">{{ $pageHeader }}</h1>
+            <div class="detail-header-main">
+                <h1 data-translate-title="{{ $pageHeader }}">{{ $pageHeader }}</h1>
+                <button type="button" onclick="window.print()" class="print-btn-header">
+                    <i class="fa-solid fa-print"></i> Print Details
+                </button>
+            </div>
             <div class="detail-badges">
                 <span class="status-badge {{ $statusClass }}" data-translate-lookup="{{ $statusText }}">{{ $statusText }}</span>
                 <span class="badge" data-translate-lookup="{{ strtoupper($job->post_type) }}">{{ strtoupper($job->post_type) }}</span>
@@ -552,6 +900,33 @@
                 @endif
             </div>
         </header>
+
+        <!-- Social Share Strip -->
+        <x-job-details.social-share :url="request()->url()" :title="$pageTitle" />
+
+        <!-- Recruiting Board Brand Identity Strip -->
+        <div class="board-branding-strip">
+            <div class="board-logo" style="background: {{ $boardColor }}; color: #fff;">
+                {{ $boardShort }}
+            </div>
+            <div class="board-meta">
+                <span class="board-dept-name">{{ $boardName }}</span>
+                <span class="board-state">{{ $job->state->name ?? 'Central Government' }} Notification</span>
+            </div>
+        </div>
+
+        <!-- Short Information Context Card -->
+        <div class="short-info-card-block">
+            <h5 class="short-info-title"><i class="fa-solid fa-circle-info"></i> Short Information</h5>
+            <p class="short-info-text">
+                @if($aiContent && !empty($aiContent->summary))
+                    {!! strip_tags($aiContent->summary) !!}
+                @else
+                    {!! Str::limit(strip_tags($job->description), 280) !!}
+                @endif
+                Candidates who are interested in this recruitment can read the notification details, exam dates, salary ranges, and eligibility criteria online before applying.
+            </p>
+        </div>
 
         <!-- Dynamic Split Info Panel (Dates & Fees) -->
         <div class="split-info-card">
@@ -717,13 +1092,13 @@
             </div>
         @endif
 
-        <!-- Vacancy Distribution Breakdown -->
+        <!-- Vacancy Distribution Breakdown (Tabular Matrix redesign) -->
         @if($job->categoryVacancies && $job->categoryVacancies->count() > 0)
             <section class="details-section">
                 <h4 style="font-family:'Outfit'; color:var(--accent-color); margin-bottom:1rem; display:flex; align-items:center; gap:0.5rem;" data-i18n="vacancy_breakdown_title">
                     Vacancy Distribution Breakdown
                 </h4>
-                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1.5rem;">
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem;">
                     @foreach(['post', 'caste_category', 'department', 'trade', 'discipline'] as $type)
                         @php
                             $items = $job->categoryVacancies->where('type', $type);
@@ -737,23 +1112,94 @@
                                 elseif ($type === 'trade') $groupTitle = 'Trade-wise Posts';
                                 elseif ($type === 'discipline') $groupTitle = 'Discipline-wise Posts';
                             @endphp
-                            <div style="background: rgba(255,255,255,0.01); border: 1px solid var(--border-color); border-radius: 8px; padding: 1rem;">
+                            <div style="background: rgba(255,255,255,0.01); border: 1px solid var(--border-color); border-radius: 12px; padding: 1.25rem;">
                                 <h5 style="font-size:0.85rem; text-transform:uppercase; color:var(--text-secondary); font-weight:700; margin-bottom:0.75rem; border-bottom: 1px solid var(--border-color); padding-bottom:0.4rem; font-family:'Outfit';">
                                     <span data-translate-lookup="{{ $groupTitle }}">{{ $groupTitle }}</span>
                                 </h5>
-                                <ul style="list-style:none; padding:0; margin:0; display:flex; flex-direction:column; gap:0.5rem;">
-                                    @foreach($items as $cv)
-                                        <li style="display:flex; justify-content:space-between; align-items:center; font-size:0.9rem; color:var(--text-primary);">
-                                            <span data-translate-lookup="{{ $cv->category_name }}">{{ $cv->category_name }}</span>
-                                            <span class="badge" style="background:var(--border-color); color:var(--text-primary); font-weight:bold; padding: 2px 8px; font-size:0.75rem;">
-                                                {{ $cv->vacancy_count }}
-                                            </span>
-                                        </li>
-                                    @endforeach
-                                </ul>
+                                <div class="vacancy-type-table-wrapper">
+                                    <table class="vacancy-detail-table">
+                                        <thead>
+                                            <tr>
+                                                <th>Post / Category</th>
+                                                <th style="text-align: right;">Vacancies</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @foreach($items as $cv)
+                                                <tr>
+                                                    <td><span data-translate-lookup="{{ $cv->category_name }}">{{ $cv->category_name }}</span></td>
+                                                    <td style="text-align: right;">
+                                                        <span class="badge badge-vacancy-number">
+                                                            {{ $cv->vacancy_count }}
+                                                        </span>
+                                                    </td>
+                                                </tr>
+                                            @endforeach
+                                        </tbody>
+                                    </table>
+                                </div>
                             </div>
                         @endif
                     @endforeach
+                </div>
+            </section>
+        @endif
+
+        <!-- Physical Eligibility Matrix (Dynamic display for police/military notifications) -->
+        @if($isPhysicalJob)
+            <section class="details-section">
+                <h4 style="font-family:'Outfit'; color:var(--accent-color); margin-bottom:1rem; display:flex; align-items:center; gap:0.5rem;">
+                    <i class="fa-solid fa-person-running"></i> Physical Standards & Eligibility
+                </h4>
+                <p style="font-size:0.85rem; color:var(--text-secondary); margin-bottom:1rem;">
+                    Indicative physical criteria matching standard police and defense recruitment commissions:
+                </p>
+                <div class="physical-table-container">
+                    <table class="physical-table">
+                        <thead>
+                            <tr>
+                                <th>Physical Test Element</th>
+                                <th>Male (General/OBC/BC)</th>
+                                <th>Male (SC/ST)</th>
+                                <th>Female (All Category)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>Height</strong></td>
+                                <td>170 Cms</td>
+                                <td>162.5 Cms</td>
+                                <td>157 Cms</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Chest</strong></td>
+                                <td>80 - 85 Cms</td>
+                                <td>76 - 81 Cms</td>
+                                <td>N/A</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Running</strong></td>
+                                <td>1.6 Km in 6 Minutes</td>
+                                <td>1.6 Km in 6 Minutes</td>
+                                <td>800 Meters in 4 Minutes</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Long Jump</strong></td>
+                                <td>12 Feet</td>
+                                <td>12 Feet</td>
+                                <td>9 Feet</td>
+                            </tr>
+                            <tr>
+                                <td><strong>High Jump</strong></td>
+                                <td>3 Feet 9 Inches</td>
+                                <td>3 Feet 9 Inches</td>
+                                <td>3 Feet</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div style="font-size: 0.8rem; color: var(--text-secondary); line-height: 1.5; border-top: 1px solid var(--border-color); padding-top: 0.5rem;">
+                    * <em>Physical standards vary by board guidelines. Always check the official PDF notification below for final validated requirements.</em>
                 </div>
             </section>
         @endif
@@ -843,7 +1289,7 @@
             </ul>
         </section>
 
-        <!-- Official Useful Important Links -->
+        <!-- Official Useful Important Links (Enriched with related timeline files) -->
         <section class="details-section">
             <h4 data-i18n="useful_links_title">Some Useful Important Links</h4>
             <div class="links-table-container">
@@ -855,6 +1301,69 @@
                         </tr>
                     </thead>
                     <tbody>
+                        <!-- Sibling timeline events dynamically resolving -->
+                        @if($admitCardLink)
+                            <tr>
+                                <td><strong style="color: var(--accent-color);">Download Admit Card / Hall Ticket</strong></td>
+                                <td style="text-align: right;">
+                                    <a href="{{ $admitCardLink }}" class="btn-link-action" style="background:#3b82f6;">
+                                        <i class="fa-solid fa-id-card"></i> Click Here
+                                    </a>
+                                </td>
+                            </tr>
+                        @endif
+                        @if($answerKeyLink)
+                            <tr>
+                                <td><strong style="color: var(--accent-color);">Download Answer Key</strong></td>
+                                <td style="text-align: right;">
+                                    <a href="{{ $answerKeyLink }}" class="btn-link-action" style="background:#8b5cf6;">
+                                        <i class="fa-solid fa-key"></i> Click Here
+                                    </a>
+                                </td>
+                            </tr>
+                        @endif
+                        @if($resultLink)
+                            <tr>
+                                <td><strong style="color: #10b981;">Download Written Exam Result</strong></td>
+                                <td style="text-align: right;">
+                                    <a href="{{ $resultLink }}" class="btn-link-action btn-pulse">
+                                        <i class="fa-solid fa-trophy"></i> Click Here
+                                    </a>
+                                </td>
+                            </tr>
+                        @endif
+                        @if($cutoffLink)
+                            <tr>
+                                <td><strong style="color: #f59e0b;">Check Declared Cutoff Marks</strong></td>
+                                <td style="text-align: right;">
+                                    <a href="{{ $cutoffLink }}" class="btn-link-action" style="background:#f59e0b;">
+                                        <i class="fa-solid fa-chart-bar"></i> Click Here
+                                    </a>
+                                </td>
+                            </tr>
+                        @endif
+                        @if($syllabusLink)
+                            <tr>
+                                <td><strong style="color: var(--accent-color);">Download Detailed PDF Syllabus</strong></td>
+                                <td style="text-align: right;">
+                                    <a href="{{ $syllabusLink }}" class="btn-link-action" style="background:#6366f1;">
+                                        <i class="fa-solid fa-book-open"></i> Click Here
+                                    </a>
+                                </td>
+                            </tr>
+                        @endif
+                        @if($noticeLink)
+                            <tr>
+                                <td><strong style="color: var(--text-secondary);">Download Official Corrigendum / Notice</strong></td>
+                                <td style="text-align: right;">
+                                    <a href="{{ $noticeLink }}" class="btn-link-action" style="background:#4b5563;">
+                                        <i class="fa-solid fa-circle-exclamation"></i> Click Here
+                                    </a>
+                                </td>
+                            </tr>
+                        @endif
+
+                        <!-- Standard core links -->
                         @if($job->apply_link)
                             <tr>
                                 <td><strong data-i18n="apply_online_row">Apply Online (Registration & Login)</strong></td>
@@ -921,6 +1430,17 @@
             </div>
         </section>
 
+        <!-- Social Share Strip (Footer placement) -->
+        <x-job-details.social-share :url="request()->url()" :title="$pageTitle" />
+
+        <!-- Disclaimer Liability Alert Card -->
+        <div class="disclaimer-alert-card">
+            <span class="disclaimer-title"><i class="fa-solid fa-triangle-exclamation"></i> Disclaimer & Important Notice</span>
+            <p class="disclaimer-text">
+                Although every effort has been made to ensure the accuracy and completeness of the information on this website, GovJobs is not responsible for any inadvertent errors in notification details or outcomes. Candidates are strongly advised to download the official notification PDF and verify all specifications, timelines, and requirements directly on the official board website before submitting an application.
+            </p>
+        </div>
+
         <!-- Lead Capture Form / Submission -->
         <section class="apply-panel">
             <div class="apply-card">
@@ -960,6 +1480,9 @@
         ])
     @endif
 </div>
+
+<!-- Mobile Sticky Bar Component -->
+<x-job-details.sticky-apply-bar :job="$job" />
 
 @endsection
 
