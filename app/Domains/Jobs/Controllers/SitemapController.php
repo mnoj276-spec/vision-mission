@@ -68,7 +68,7 @@ class SitemapController extends Controller
             $jobs = JobPost::published()
                 ->select('id', 'slug', 'post_type', 'published_at', 'updated_at')
                 ->orderByDesc('id')
-                ->get();
+                ->cursor();
 
             return view('seo.sitemap-jobs', compact('jobs'))->render();
         });
@@ -88,7 +88,7 @@ class SitemapController extends Controller
             $jobs = JobPost::published()
                 ->select('id', 'slug', 'post_type', 'title', 'notification_pdf_path', 'published_at')
                 ->orderByDesc('id')
-                ->get();
+                ->cursor();
 
             $baseUrl = config('app.url');
             $defaultImage = $baseUrl . '/assets/images/icons/pwa-icon-512.png';
