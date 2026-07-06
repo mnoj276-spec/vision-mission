@@ -292,7 +292,7 @@ class ProgrammaticSeoController extends Controller
     public function showJob(string $slug)
     {
         $job = JobPost::published()
-            ->with(['category', 'department', 'state', 'qualification', 'district', 'tags', 'aiContent'])
+            ->with(['category', 'department', 'state', 'qualification', 'district', 'tags', 'aiContent', 'vacancyDetails', 'categoryWiseVacancies'])
             ->where('slug', $slug)
             ->firstOrFail();
 

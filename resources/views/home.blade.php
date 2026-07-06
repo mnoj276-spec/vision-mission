@@ -3336,7 +3336,89 @@
 
                                     <!-- Recruitment timeline -->
                                     ${timelineHtml}
-                                    
+
+                                    <!-- Vacancy Details Card (SPA) -->
+                                    <div class="details-full-section" style="margin-top:1.5rem; border-top: 1px solid var(--border-color); padding-top:1.25rem;">
+                                        <h4 style="color: var(--accent-color); font-weight:700; font-family:'Outfit'; margin-bottom:1rem; display:flex; align-items:center; gap:0.5rem;">
+                                            Vacancy Details
+                                        </h4>
+                                        ${(job.vacancy_details && job.vacancy_details.length > 0) ? `
+                                        <div style="overflow-x: auto; background: rgba(255,255,255,0.01); border: 1px solid var(--border-color); border-radius: 8px; padding: 1rem; margin-bottom: 1rem;">
+                                            <table style="width: 100%; border-collapse: collapse; font-size: 0.9rem; text-align: left;">
+                                                <thead>
+                                                    <tr style="border-bottom: 1px solid var(--border-color);">
+                                                        <th style="padding: 0.5rem; font-weight: 700; color: var(--text-primary);">Post Name</th>
+                                                        <th style="padding: 0.5rem; font-weight: 700; color: var(--text-primary); text-align: center; width: 100px;">Total Post</th>
+                                                        <th style="padding: 0.5rem; font-weight: 700; color: var(--text-primary);">Post Recruitment Eligibility Details</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    ${job.vacancy_details.map(vd => `
+                                                        <tr style="border-bottom: 1px solid var(--border-color);">
+                                                            <td style="padding: 0.5rem; color: var(--text-primary); font-weight: 600;">${vd.post_name}</td>
+                                                            <td style="padding: 0.5rem; text-align: center;">
+                                                                <span class="badge" style="background: rgba(37, 99, 235, 0.1); color: var(--accent-color); font-weight: 700; padding: 2px 8px; border-radius: 4px; font-size: 0.75rem;">
+                                                                    ${vd.total_post}
+                                                                </span>
+                                                            </td>
+                                                            <td style="padding: 0.5rem; color: var(--text-secondary); white-space: pre-line;">${vd.eligibility}</td>
+                                                        </tr>
+                                                    `).join('')}
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                        ` : `
+                                        <div style="background: rgba(255,255,255,0.01); border: 1px dashed var(--border-color); border-radius: 8px; padding: 1.5rem; text-align: center; color: var(--text-secondary);">
+                                            <p style="margin: 0; font-size: 0.85rem;">No vacancy details specified for this post.</p>
+                                        </div>
+                                        `}
+                                    </div>
+
+                                    <!-- Category Wise Vacancy Details Card (SPA) -->
+                                    <div class="details-full-section" style="margin-top:1.5rem; border-top: 1px solid var(--border-color); padding-top:1.25rem;">
+                                        <h4 style="color: var(--accent-color); font-weight:700; font-family:'Outfit'; margin-bottom:1rem; display:flex; align-items:center; gap:0.5rem;">
+                                            Category Wise Vacancy Details
+                                        </h4>
+                                        ${(job.category_wise_vacancies && job.category_wise_vacancies.length > 0) ? `
+                                        <div style="overflow-x: auto; background: rgba(255,255,255,0.01); border: 1px solid var(--border-color); border-radius: 8px; padding: 1rem; margin-bottom: 1rem;">
+                                            <table style="min-width: 750px; border-collapse: collapse; font-size: 0.9rem; text-align: left;">
+                                                <thead>
+                                                    <tr style="border-bottom: 1px solid var(--border-color);">
+                                                        <th style="padding: 0.5rem; font-weight: 700; color: var(--text-primary);">Post Name</th>
+                                                        <th style="padding: 0.5rem; font-weight: 700; color: var(--text-primary); text-align: right;">UR</th>
+                                                        <th style="padding: 0.5rem; font-weight: 700; color: var(--text-primary); text-align: right;">EWS</th>
+                                                        <th style="padding: 0.5rem; font-weight: 700; color: var(--text-primary); text-align: right;">EBC</th>
+                                                        <th style="padding: 0.5rem; font-weight: 700; color: var(--text-primary); text-align: right;">BC</th>
+                                                        <th style="padding: 0.5rem; font-weight: 700; color: var(--text-primary); text-align: right;">BC (F)</th>
+                                                        <th style="padding: 0.5rem; font-weight: 700; color: var(--text-primary); text-align: right;">SC</th>
+                                                        <th style="padding: 0.5rem; font-weight: 700; color: var(--text-primary); text-align: right;">ST</th>
+                                                        <th style="padding: 0.5rem; font-weight: 700; color: var(--text-primary); text-align: right; background: rgba(37, 99, 235, 0.05);">Total</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    ${job.category_wise_vacancies.map(cwv => `
+                                                        <tr style="border-bottom: 1px solid var(--border-color);">
+                                                            <td style="padding: 0.5rem; color: var(--text-primary); font-weight: 600;">${cwv.post_name}</td>
+                                                            <td style="padding: 0.5rem; text-align: right; color: var(--text-secondary);">${cwv.ur}</td>
+                                                            <td style="padding: 0.5rem; text-align: right; color: var(--text-secondary);">${cwv.ews}</td>
+                                                            <td style="padding: 0.5rem; text-align: right; color: var(--text-secondary);">${cwv.ebc}</td>
+                                                            <td style="padding: 0.5rem; text-align: right; color: var(--text-secondary);">${cwv.bc}</td>
+                                                            <td style="padding: 0.5rem; text-align: right; color: var(--text-secondary);">${cwv.bc_female}</td>
+                                                            <td style="padding: 0.5rem; text-align: right; color: var(--text-secondary);">${cwv.sc}</td>
+                                                            <td style="padding: 0.5rem; text-align: right; color: var(--text-secondary);">${cwv.st}</td>
+                                                            <td style="padding: 0.5rem; text-align: right; font-weight: 700; color: var(--accent-color); background: rgba(37, 99, 235, 0.05);">${cwv.total}</td>
+                                                        </tr>
+                                                    `).join('')}
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                        ` : `
+                                        <div style="background: rgba(255,255,255,0.01); border: 1px dashed var(--border-color); border-radius: 8px; padding: 1.5rem; text-align: center; color: var(--text-secondary);">
+                                            <p style="margin: 0; font-size: 0.85rem;">No category wise vacancy details specified for this post.</p>
+                                        </div>
+                                        `}
+                                    </div>
+
                                     <!-- Vacancy Breakdown -->
                                     ${(job.category_vacancies && job.category_vacancies.length > 0) ? `
                                     <div class="details-full-section" style="margin-top:1.5rem; border-top: 1px solid var(--border-color); padding-top:1.25rem;">

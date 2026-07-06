@@ -151,6 +151,16 @@ class JobPost extends Model
         return $this->hasMany(CategoryVacancy::class, 'job_post_id');
     }
 
+    public function vacancyDetails(): HasMany
+    {
+        return $this->hasMany(VacancyDetail::class, 'job_post_id')->orderBy('sort_order', 'asc');
+    }
+
+    public function categoryWiseVacancies(): HasMany
+    {
+        return $this->hasMany(CategoryWiseVacancy::class, 'job_post_id')->orderBy('sort_order', 'asc');
+    }
+
     /**
      * Get the AI-generated content associated with this job post.
      */

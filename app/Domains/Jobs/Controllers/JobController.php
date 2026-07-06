@@ -133,6 +133,22 @@ class JobController extends Controller
                 'vacancy_count' => $cv->vacancy_count,
                 'type'          => $cv->type,
             ])->toArray(),
+            'vacancy_details'       => $job->vacancyDetails->map(fn($vd) => [
+                'post_name'   => $vd->post_name,
+                'total_post'  => $vd->total_post,
+                'eligibility' => $vd->eligibility,
+            ])->toArray(),
+            'category_wise_vacancies' => $job->categoryWiseVacancies->map(fn($cwv) => [
+                'post_name' => $cwv->post_name,
+                'ur'        => $cwv->ur,
+                'ews'       => $cwv->ews,
+                'ebc'       => $cwv->ebc,
+                'bc'        => $cwv->bc,
+                'bc_female' => $cwv->bc_female,
+                'sc'        => $cwv->sc,
+                'st'        => $cwv->st,
+                'total'     => $cwv->total,
+            ])->toArray(),
             'timeline'              => $timeline,
         ]]);
     }

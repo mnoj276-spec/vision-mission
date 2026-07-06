@@ -77,6 +77,10 @@ class JobService implements JobServiceInterface
      */
     public function createJob(array $data): JobPost
     {
+        $vacancyDetails = $data['vacancy_details'] ?? [];
+        $categoryWiseVacancies = $data['category_wise_vacancies'] ?? [];
+        unset($data['vacancy_details'], $data['category_wise_vacancies']);
+
         $data = $this->sanitizeJobFields($data);
         $data = $this->applyJobDefaults($data);
         $data['slug'] = $this->generateUniqueSlug($data['title']);
@@ -86,7 +90,35 @@ class JobService implements JobServiceInterface
             $data['expires_at'] = $data['last_date_to_apply'];
         }
 
-        return $this->jobRepo->create($data);
+        return \Illuminate\Support\Facades\DB::transaction(function () use ($data, $vacancyDetails, $categoryWiseVacancies) {
+            $jobPost = $this->jobRepo->create($data);
+
+            foreach ($vacancyDetails as $index => $vd) {
+                $jobPost->vacancyDetails()->create([
+                    'post_name' => $vd['post_name'],
+                    'total_post' => $vd['total_post'],
+                    'eligibility' => $vd['eligibility'],
+                    'sort_order' => $vd['sort_order'] ?? $index,
+                ]);
+            }
+
+            foreach ($categoryWiseVacancies as $index => $cwv) {
+                $jobPost->categoryWiseVacancies()->create([
+                    'post_name' => $cwv['post_name'],
+                    'ur' => $cwv['ur'],
+                    'ews' => $cwv['ews'],
+                    'ebc' => $cwv['ebc'],
+                    'bc' => $cwv['bc'],
+                    'bc_female' => $cwv['bc_female'],
+                    'sc' => $cwv['sc'],
+                    'st' => $cwv['st'],
+                    'total' => $cwv['total'],
+                    'sort_order' => $cwv['sort_order'] ?? $index,
+                ]);
+            }
+
+            return $jobPost;
+        });
     }
 
     /**
@@ -94,15 +126,48 @@ class JobService implements JobServiceInterface
      */
     public function updateJob(int $id, array $data): JobPost
     {
+        $vacancyDetails = $data['vacancy_details'] ?? [];
+        $categoryWiseVacancies = $data['category_wise_vacancies'] ?? [];
+        unset($data['vacancy_details'], $data['category_wise_vacancies']);
+
         $data = $this->sanitizeJobFields($data);
         $data['slug'] = $this->generateUniqueSlug($data['title']);
         if (isset($data['last_date_to_apply'])) {
             $data['expires_at'] = $data['last_date_to_apply'];
         }
 
-        $this->jobRepo->update($id, $data);
+        return \Illuminate\Support\Facades\DB::transaction(function () use ($id, $data, $vacancyDetails, $categoryWiseVacancies) {
+            $this->jobRepo->update($id, $data);
+            $jobPost = JobPost::findOrFail($id);
 
-        return JobPost::findOrFail($id);
+            $jobPost->vacancyDetails()->delete();
+            foreach ($vacancyDetails as $index => $vd) {
+                $jobPost->vacancyDetails()->create([
+                    'post_name' => $vd['post_name'],
+                    'total_post' => $vd['total_post'],
+                    'eligibility' => $vd['eligibility'],
+                    'sort_order' => $vd['sort_order'] ?? $index,
+                ]);
+            }
+
+            $jobPost->categoryWiseVacancies()->delete();
+            foreach ($categoryWiseVacancies as $index => $cwv) {
+                $jobPost->categoryWiseVacancies()->create([
+                    'post_name' => $cwv['post_name'],
+                    'ur' => $cwv['ur'],
+                    'ews' => $cwv['ews'],
+                    'ebc' => $cwv['ebc'],
+                    'bc' => $cwv['bc'],
+                    'bc_female' => $cwv['bc_female'],
+                    'sc' => $cwv['sc'],
+                    'st' => $cwv['st'],
+                    'total' => $cwv['total'],
+                    'sort_order' => $cwv['sort_order'] ?? $index,
+                ]);
+            }
+
+            return $jobPost;
+        });
     }
 
     /**
