@@ -137,6 +137,12 @@ class AiStructuringService
                 'result_date' => null,
             ],
             'official_website' => null,
+            'posting_location' => null,
+            'medical_test' => null,
+            'specific_reservations' => null,
+            'syllabus' => null,
+            'rich_instructions' => null,
+            'attachments_media' => [],
         ];
     }
 
@@ -264,6 +270,37 @@ class AiStructuringService
             } elseif ($hasCasteBreakdown) {
                 $data['vacancy_count'] = $casteSum;
             }
+        }
+
+        // 12. Posting Location
+        if (preg_match('/(?:Job Location|Posting Location|Place of Posting|State|District)\s*:\s*([^\n\r]+)/i', $text, $m)) {
+            $data['posting_location'] = trim($m[1]);
+        }
+
+        // 13. Testing Specifics
+        if (preg_match('/(?:Medical Test|Physical Endurance Test|PET|PST|Skill Test|Typing Test|Trade Test)\s*:\s*([^\n\r]+)/i', $text, $m)) {
+            $data['medical_test'] = trim($m[1]);
+        }
+
+        // 14. Specific Reservations
+        if (preg_match('/(?:PwBD|Ex-Servicemen|Reservation for Women)\s*:\s*([^\n\r]+)/i', $text, $m)) {
+            $data['specific_reservations'] = trim($m[1]);
+        }
+
+        // 15. Syllabus / Exam Pattern (Multiline block)
+        if (preg_match('/(?:Syllabus|Scheme of Examination)\s*:\s*(.*?)(?=\n[A-Z][a-z]+:|\n#|$)/is', $text, $m)) {
+            $data['syllabus'] = trim($m[1]);
+        }
+
+        // 16. Rich Instructions
+        if (preg_match('/(?:How to Apply|Important Instructions)\s*:\s*(.*?)(?=\n[A-Z][a-z]+:|\n#|$)/is', $text, $m)) {
+            $data['rich_instructions'] = trim($m[1]);
+        }
+
+        // 17. Attachments/Media
+        if (preg_match_all('/\[(?:Image|PDF Attachment|Link):?\s*([^\]\n\r]+)\]|\[(?:Image|PDF Attachment|Link)\]\s*([^\n\r]+)/i', $text, $m)) {
+            $media = array_merge(array_filter($m[1]), array_filter($m[2]));
+            $data['attachments_media'] = array_values(array_unique(array_map('trim', $media)));
         }
 
         return $data;

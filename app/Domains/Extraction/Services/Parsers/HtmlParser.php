@@ -58,7 +58,7 @@ class HtmlParser
      * Extract structured data from an HTML file.
      *
      * @param string $filePath
-     * @return array ['text', 'tables', 'headers', 'lists', 'metadata']
+     * @return array ['text', 'tables', 'headers', 'lists', 'metadata', 'media']
      */
     public function extractStructured(string $filePath): array
     {
@@ -114,8 +114,15 @@ class HtmlParser
         // Extract lists
         $lists = $this->extractLists($xpath);
 
+        // Extract media
+        $media = $this->extractMedia($xpath);
+
         // Build combined text output
         $text = $this->buildTextOutput($doc, $xpath, $headers, $tables, $lists);
+        
+        if (!empty($media)) {
+            $text .= "\n\n--- MEDIA AND ATTACHMENTS ---\n" . implode("\n", $media);
+        }
 
         return [
             'text'     => trim($text),
@@ -123,6 +130,7 @@ class HtmlParser
             'headers'  => $headers,
             'lists'    => $lists,
             'metadata' => $metadata,
+            'media'    => $media,
         ];
     }
 
@@ -251,6 +259,32 @@ class HtmlParser
     }
 
     /**
+     * Extract media and PDF attachments.
+     */
+    protected function extractMedia(\DOMXPath $xpath): array
+    {
+        $media = [];
+        
+        $imgNodes = $xpath->query('//img/@src');
+        foreach ($imgNodes as $node) {
+            $val = trim($node->nodeValue);
+            if (!empty($val) && !str_starts_with($val, 'data:image')) {
+                $media[] = '[Image] ' . $val;
+            }
+        }
+
+        $pdfNodes = $xpath->query('//a[contains(translate(@href, "PDF", "pdf"), ".pdf")]/@href');
+        foreach ($pdfNodes as $node) {
+            $val = trim($node->nodeValue);
+            if (!empty($val)) {
+                $media[] = '[PDF Attachment] ' . $val;
+            }
+        }
+        
+        return array_unique($media);
+    }
+
+    /**
      * Build the combined text output from DOM with structure preservation.
      */
     protected function buildTextOutput(\DOMDocument $doc, \DOMXPath $xpath, array $headers, array $tables, array $lists): string
@@ -343,6 +377,14 @@ class HtmlParser
                     return;
                 }
                 break;
+                
+            case 'img':
+                $src = $node->getAttribute('src');
+                $alt = $node->getAttribute('alt');
+                if (!empty($src) && !str_starts_with($src, 'data:image')) {
+                    $text .= " [Image: " . (!empty($alt) ? $alt . " " : "") . $src . "] ";
+                }
+                return;
         }
 
         // Recurse into children
@@ -429,6 +471,7 @@ class HtmlParser
             'headers'  => [],
             'lists'    => [],
             'metadata' => [],
+            'media'    => [],
         ];
     }
 }
