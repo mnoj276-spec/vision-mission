@@ -234,8 +234,14 @@
 
     .search-dropdown-col {
         flex: 1.2;
-        min-width: 180px;
+        min-width: 0; /* Reset for flex/grid on mobile */
         position: relative;
+    }
+    
+    @media (min-width: 993px) {
+        .search-dropdown-col {
+            min-width: 180px;
+        }
     }
 
     .search-btn-col {
@@ -767,6 +773,21 @@
             bottom: 0;
         }
     }
+    
+    /* Premium Empty State */
+    .empty-state-panel {
+        padding: 4rem; 
+        text-align: center; 
+        color: var(--text-secondary); 
+        border: 2px dashed var(--border-color);
+        border-radius: 12px;
+        background: linear-gradient(180deg, rgba(255,255,255,0.01) 0%, rgba(255,255,255,0.03) 100%);
+    }
+    @media (max-width: 576px) {
+        .empty-state-panel {
+            padding: 2rem 1rem;
+        }
+    }
 </style>
 
 <div style="max-width: 1400px; margin: 0 auto; padding: 0 5%;">
@@ -1042,7 +1063,7 @@
                         </div>
                     </div>
                 @empty
-                    <div class="glass-panel" style="padding: 4rem; text-align: center; color: var(--text-secondary); border-style:dashed;">
+                    <div class="glass-panel empty-state-panel">
                         <svg width="48" height="48" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" style="color:var(--text-secondary); margin-bottom:1rem; opacity:0.6;"><path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
                         <h3 style="font-family:'Outfit'; color:var(--text-primary); margin-bottom:0.5rem;">No matching recruitments found</h3>
                         <p style="font-size:0.9rem;">We couldn't locate any active postings matching your search filters. Try widening your criteria or resetting filters.</p>
@@ -1158,7 +1179,7 @@
                         // 3. Render Job cards list
                         if (jobs.length === 0) {
                             $('#jobsListContainer').html(`
-                                <div class="glass-panel" style="padding: 4rem; text-align: center; color: var(--text-secondary); border-style:dashed;">
+                                <div class="glass-panel empty-state-panel">
                                     <svg width="48" height="48" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" style="color:var(--text-secondary); margin-bottom:1rem; opacity:0.6;"><path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
                                     <h3 style="font-family:'Outfit'; color:var(--text-primary); margin-bottom:0.5rem;" data-i18n="no_matching_jobs">No matching recruitments found</h3>
                                     <p style="font-size:0.9rem;" data-i18n="no_matching_jobs_desc">We couldn't locate any active postings matching your search filters. Try widening your criteria or resetting filters.</p>

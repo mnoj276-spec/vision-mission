@@ -95,6 +95,13 @@
         }
     }
     
+    @media (max-width: 414px) {
+        .trending-grid {
+            grid-template-columns: 1fr;
+            gap: 0.85rem;
+        }
+    }
+    
     .trending-card {
         background: var(--bg-secondary);
         border: 1px solid var(--border-color);
@@ -158,6 +165,7 @@
         max-width: 100%;
         padding: 0 0.25rem;
         white-space: normal;
+        word-break: break-word;
         display: -webkit-box;
         -webkit-line-clamp: 2;
         -webkit-box-orient: vertical;
@@ -260,6 +268,7 @@
         flex-grow: 1;
         cursor: pointer;
         white-space: normal !important;
+        word-break: break-word;
         display: -webkit-box;
         -webkit-line-clamp: 2;
         -webkit-box-orient: vertical;
@@ -3262,17 +3271,67 @@
                                 `;
                             }
 
+                            let boardName = job.department || 'Government Ministry';
+                            let boardShort = 'GOVT';
+                            let boardColor = 'var(--accent-color)';
+                            let bnLower = boardName.toLowerCase();
+                            if (bnLower.includes('staff selection') || bnLower.includes('ssc')) {
+                                boardShort = 'SSC';
+                                boardColor = 'linear-gradient(135deg, #1e40af 0%, #3b82f6 100%)';
+                            } else if (bnLower.includes('union public') || bnLower.includes('upsc')) {
+                                boardShort = 'UPSC';
+                                boardColor = 'linear-gradient(135deg, #78350f 0%, #d97706 100%)';
+                            } else if (bnLower.includes('railway') || bnLower.includes('rrb')) {
+                                boardShort = 'RRB';
+                                boardColor = 'linear-gradient(135deg, #991b1b 0%, #dc2626 100%)';
+                            } else if (bnLower.includes('public service commission') || bnLower.includes('psc')) {
+                                boardShort = 'PSC';
+                                boardColor = 'linear-gradient(135deg, #065f46 0%, #10b981 100%)';
+                            } else if (bnLower.includes('police')) {
+                                boardShort = 'POLICE';
+                                boardColor = 'linear-gradient(135deg, #1e3a8a 0%, #1d4ed8 100%)';
+                            } else {
+                                let words = boardName.split(' ').filter(w => w);
+                                if (words.length >= 2) {
+                                    boardShort = (words[0].charAt(0) + words[1].charAt(0)).toUpperCase();
+                                } else {
+                                    boardShort = boardName.substring(0, 2).toUpperCase();
+                                }
+                                boardColor = 'linear-gradient(135deg, rgba(37, 99, 235, 0.2) 0%, rgba(139, 92, 246, 0.2) 100%)';
+                            }
+
                             html = `
-                                <div class="theme-accent-job">
-                                    <div class="category-visual-header">
-                                        <h2>💼 <span class="notranslate" translate="no" data-translate-title="${job.title}">${window.translateJobTitle(job.title)}</span></h2>
-                                        <p>${window.t(job.department, job.department)} &bull; ${window.t(job.state, job.state)} &bull; ${window.t(job.category, job.category)}</p>
+                                <article class="detail-card" style="margin: 0; box-shadow: none; border: none; padding: 0.5rem; background: transparent; -webkit-backdrop-filter: none; backdrop-filter: none;">
+                                    <header class="detail-header-block">
+                                        <div class="detail-header-main">
+                                            <h1 class="notranslate" translate="no" data-translate-title="${job.title}" style="font-size:1.8rem; margin-bottom: 0;">${window.translateJobTitle(job.title)}</h1>
+                                        </div>
+                                        <div class="detail-badges">
+                                            <span class="status-badge ${statusClass}">${statusText}</span>
+                                            <span class="badge">${type.toUpperCase()}</span>
+                                            <span class="badge badge-dept">${job.department || 'Government Ministry'}</span>
+                                            <span class="badge" style="background: rgba(139, 92, 246, 0.1); color: #8b5cf6;">📍 ${job.state || 'Pan India'}</span>
+                                            <span class="badge badge-dept">${job.qualification || 'Degree Required'}</span>
+                                        </div>
+                                    </header>
+
+                                    <!-- Recruiting Board Brand Identity Strip -->
+                                    <div class="board-branding-strip">
+                                        <div class="board-logo" style="background: ${boardColor}; color: #fff;">
+                                            ${boardShort}
+                                        </div>
+                                        <div class="board-meta">
+                                            <span class="board-dept-name">${boardName}</span>
+                                            <span class="board-state">${job.state || 'Central Government'} Notification</span>
+                                        </div>
                                     </div>
 
-                                    <div class="detail-badges" style="margin-top: 1rem; margin-bottom: 1.5rem; display: flex; justify-content: center; flex-wrap: wrap; gap: 0.5rem;">
-                                        <span class="status-badge ${statusClass}">${statusText}</span>
-                                        <span class="badge badge-dept" style="background: rgba(37,99,235,0.06); color: var(--accent-color); border: 1px solid rgba(37,99,235,0.15); padding: 3px 10px; border-radius: 99px; font-size: 0.75rem;">Vacancy Count: ${job.vacancy_count}</span>
-                                        <span class="badge badge-dept" style="background: rgba(37,99,235,0.06); color: var(--accent-color); border: 1px solid rgba(37,99,235,0.15); padding: 3px 10px; border-radius: 99px; font-size: 0.75rem;">Qualification: ${job.qualification}</span>
+                                    <!-- Short Information Context Card -->
+                                    <div class="short-info-card-block">
+                                        <h5 class="short-info-title"><i class="fa-solid fa-circle-info"></i> Short Information</h5>
+                                        <p class="short-info-text">
+                                            ${cleanDescription}
+                                        </p>
                                     </div>
 
                                     <!-- Split Dates & Fees Card -->
@@ -3344,11 +3403,11 @@
                                         </h4>
                                         ${(job.vacancy_details && job.vacancy_details.length > 0) ? `
                                         <div style="overflow-x: auto; background: rgba(255,255,255,0.01); border: 1px solid var(--border-color); border-radius: 8px; padding: 1rem; margin-bottom: 1rem;">
-                                            <table style="width: 100%; border-collapse: collapse; font-size: 0.9rem; text-align: left;">
+                                            <table style="min-width: 800px; width: 100%; border-collapse: collapse; font-size: 0.9rem; text-align: left;">
                                                 <thead>
                                                     <tr style="border-bottom: 1px solid var(--border-color);">
-                                                        <th style="padding: 0.5rem; font-weight: 700; color: var(--text-primary);">Post Name</th>
-                                                        <th style="padding: 0.5rem; font-weight: 700; color: var(--text-primary); text-align: center; width: 100px;">Total Post</th>
+                                                        <th style="padding: 0.5rem; font-weight: 700; color: var(--text-primary); width: 25%; min-width: 200px;">Post Name</th>
+                                                        <th style="padding: 0.5rem; font-weight: 700; color: var(--text-primary); text-align: center; width: 120px; min-width: 120px;">Total Post</th>
                                                         <th style="padding: 0.5rem; font-weight: 700; color: var(--text-primary);">Post Recruitment Eligibility Details</th>
                                                     </tr>
                                                 </thead>
@@ -3484,7 +3543,7 @@
                                         </a>
                                         ` : ''}
                                     </div>
-                                </div>
+                                </article>
                             `;
                         } else if (type === 'admit_card') {
                             html = `

@@ -118,21 +118,18 @@
             @if(theme_setting('text_color')) --text-primary: {{ theme_setting('text_color') }}; @endif
         }
         .dark-theme {
-            --bg-primary: #090d16;
-            --bg-secondary: #111827;
-            --text-primary: #f3f4f6;
-            --text-secondary: #9ca3af;
-            --accent-color: #3b82f6;
-            --accent-hover: #60a5fa;
-            --border-color: rgba(37, 99, 235, 0.15);
-            --glass-bg: rgba(17, 24, 39, 0.65);
-            --glass-border: rgba(255, 255, 255, 0.08);
-            --card-shadow: 0 15px 35px -12px rgba(0, 0, 0, 0.5);
-            --pulse-bg: #1f2937;
-
             @if(theme_setting('dark_primary_color')) --accent-color: {{ theme_setting('dark_primary_color') }}; @endif
             @if(theme_setting('dark_primary_color')) --accent-hover: {{ theme_setting('dark_primary_color') }}dd; @endif
             @if(theme_setting('dark_background_color')) --bg-primary: {{ theme_setting('dark_background_color') }}; @endif
+        }
+        
+        /* Global Typography Fixes for long text overflow */
+        .text-wrap-balance {
+            text-wrap: balance;
+        }
+        .text-break-word {
+            word-break: break-word;
+            overflow-wrap: break-word;
         }
         
         /* Dropdown styling */
@@ -822,7 +819,7 @@
 
     <!-- B. Asynchronous Job Details Modal -->
     <div class="modal-overlay" id="jobDetailsModal">
-        <div class="modal-box glass-panel" style="max-width: 800px;">
+        <div class="modal-box glass-panel" style="max-width: 1000px;">
             <button class="modal-close-btn" id="closeJobDetailsModal" aria-label="Close Details Dialog">&times;</button>
             
             <!-- Skeleton Loader placeholder inside modal -->
