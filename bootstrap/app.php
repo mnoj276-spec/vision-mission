@@ -45,7 +45,10 @@ return Application::configure(basePath: dirname(__DIR__))
             'feature'            => \App\Http\Middleware\EnsureFeatureEnabled::class,
         ]);
 
+        $middleware->prependToGroup('web', \App\Http\Middleware\SecurityHeaders::class);
         $middleware->prependToGroup('web', \App\Http\Middleware\DynamicMaintenanceMode::class);
+        
+        $middleware->prependToGroup('api', \App\Http\Middleware\SecurityHeaders::class);
         $middleware->prependToGroup('api', \App\Http\Middleware\DynamicMaintenanceMode::class);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
