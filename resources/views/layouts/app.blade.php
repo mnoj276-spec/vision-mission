@@ -1394,7 +1394,7 @@
             }
         </style>
         <div style="display: flex; align-items: center; gap: 0.75rem; text-align: left;">
-            <img src="/assets/images/icons/pwa-icon-96.png" width="48" height="48" alt="GovJobs Logo" style="border-radius: 10px;">
+            <img src="/assets/images/icons/pwa-icon-96.png" width="48" height="48" alt="GovJobs Logo" style="border-radius: 10px;" loading="lazy">
             <div>
                 <h4 style="font-family: 'Outfit'; font-size: 0.95rem; font-weight: 800; color: #ffffff; margin: 0 0 0.15rem 0;">Install GovJobs App</h4>
                 <p style="font-size: 0.75rem; color: var(--text-secondary); margin: 0;">Add to your home screen for instant updates & offline search!</p>
