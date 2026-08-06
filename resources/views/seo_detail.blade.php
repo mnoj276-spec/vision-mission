@@ -108,7 +108,7 @@
     }
 @endphp
 
-<div style="max-width: 1000px; margin: 0 auto; padding: 0 5%;">
+<main style="max-width: 1000px; margin: 0 auto; padding: 0 5%;">
     <!-- Breadcrumbs -->
     <nav aria-label="Breadcrumb" class="breadcrumb-trail" itemscope itemtype="https://schema.org/BreadcrumbList">
         <span itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
@@ -815,7 +815,7 @@
             'currentJob' => $job,
         ])
     @endif
-</div>
+</main>
 
 <!-- Mobile Sticky Bar Component -->
 <x-job-details.sticky-apply-bar :job="$job" />

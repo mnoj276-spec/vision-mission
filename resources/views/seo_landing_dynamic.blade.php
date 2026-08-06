@@ -327,7 +327,7 @@
     }
 </style>
 
-<div style="max-width: 1400px; margin: 0 auto; padding: 0 5%;">
+<main style="max-width: 1400px; margin: 0 auto; padding: 0 5%;">
     <!-- Breadcrumbs -->
     <nav aria-label="Breadcrumb" class="breadcrumb-trail" itemscope itemtype="https://schema.org/BreadcrumbList">
         <span itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
@@ -513,7 +513,7 @@
 
     {{-- ─── Enhanced Internal Linking Explorer Component ────────────────── --}}
     @include('components.internal-linking.landing-links', ['explorer' => $explorer])
-</div>
+</main>
 
 @endsection
 
