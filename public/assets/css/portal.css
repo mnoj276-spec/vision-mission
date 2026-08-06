@@ -529,6 +529,15 @@ header {
     font-size: 1.2rem;
     color: var(--text-primary);
     margin-bottom: 0.5rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
+}
+
+.job-info {
+    min-width: 0;
+    flex: 1;
 }
 
 .job-tags {
@@ -922,6 +931,18 @@ textarea:focus-visible,
     border-color: var(--accent-color) !important;
     box-shadow: 0 4px 10px rgba(37, 99, 235, 0.25) !important;
     transform: none !important;
+}
+
+.dark-theme .page-link:not(.active),
+.dark-theme .pagination-btn:not(.active) {
+    color: #cbd5e1 !important; /* Higher contrast than default text-secondary */
+    background: rgba(255, 255, 255, 0.05) !important;
+}
+
+.dark-theme .page-link:hover:not(.active),
+.dark-theme .pagination-btn:hover:not(.active) {
+    background: rgba(255, 255, 255, 0.1) !important;
+    color: #ffffff !important;
 }
 
 /* Premium Modals & Overlays */
@@ -3332,7 +3353,7 @@ a.btn-view,
    ========================================================================= */
 
 /* Premium SaaS Tables */
-.enterprise-table {
+.enterprise-table.collapse-override {
     width: 100%;
     border-collapse: collapse;
     background: transparent;
