@@ -780,8 +780,8 @@
 
         <!-- Disclaimer Liability Alert Card -->
         <div class="disclaimer-alert-card">
-            <span class="disclaimer-title"><i class="fa-solid fa-triangle-exclamation"></i> Disclaimer & Important Notice</span>
-            <p class="disclaimer-text">
+            <span class="disclaimer-title"><i class="fa-solid fa-triangle-exclamation"></i> <span data-i18n="seo_disclaimer_title">Disclaimer & Important Notice</span></span>
+            <p class="disclaimer-text" data-i18n="seo_disclaimer_text">
                 Although every effort has been made to ensure the accuracy and completeness of the information on this website, GovJobs is not responsible for any inadvertent errors in notification details or outcomes. Candidates are strongly advised to download the official notification PDF and verify all specifications, timelines, and requirements directly on the official board website before submitting an application.
             </p>
         </div>
