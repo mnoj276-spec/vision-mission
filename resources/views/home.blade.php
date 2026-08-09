@@ -2035,6 +2035,10 @@
             if (!slug) return;
             e.preventDefault();
 
+            // Redirect to the job detail page instead of opening modal
+            window.location.href = `/job/${slug}`;
+            return;
+
             detailsModal.addClass('active');
             $('#modalSkeletonLoader').show();
             $('#modalRealContent').hide();
