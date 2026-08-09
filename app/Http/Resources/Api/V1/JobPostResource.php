@@ -98,6 +98,12 @@ class JobPostResource extends JsonResource
                 'slug'     => (string) $child->slug,
                 'postType' => (string) $child->post_type,
             ])->toArray() : [],
+            'categoryVacancies' => $this->relationLoaded('categoryVacancies') || $this->categoryVacancies ? $this->categoryVacancies->map(fn($cv) => [
+                'id'            => (int) $cv->id,
+                'categoryName'  => (string) $cv->category_name,
+                'vacancyCount'  => (int) $cv->vacancy_count,
+                'type'          => (string) $cv->type,
+            ])->toArray() : [],
         ];
     }
 }

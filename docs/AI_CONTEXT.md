@@ -1,3 +1,11 @@
+---
+title: "AI Context & Developer Guidelines"
+aliases: ["AI Context","Developer Guidelines"]
+tags: ["guidelines","ai","development","existing"]
+created: 2024-01-05
+updated: 2026-07-05
+---
+
 # AI Context: Developer/Agent Guidelines
 
 This is the primary context file for AI assistants. Read this before reading or modifying any other files in the codebase.
@@ -78,3 +86,10 @@ A job posting can have child notices (results, admit cards, answer keys, syllabi
    php artisan test
    ```
 3. **Keep changes localized**: Do not perform broad refactorings. Limit modifications exactly to the requested module or service.
+
+---
+## Related Notes
+* **MOC Connections**: [[DevOps MOC]], [[Business MOC]]
+* **Navigation**:
+  * ➡️ Next: [[AI_RULES]]
+  * 🏠 Home: [[Home]] | 📊 Dashboard: [[Dashboard]]

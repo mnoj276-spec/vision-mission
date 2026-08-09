@@ -43,6 +43,54 @@ class ScrapingService implements ScrapingServiceInterface
 
             $html = $this->hybridEngine->fetch($source);
             $rawJobs = $this->extractJobPostNodes($html, $source);
+
+            // Link Auto-Discovery for secondary pages (Phase 3)
+            try {
+                $secondaryUrls = $this->discoverSecondaryUrls($html, $source);
+                
+                // Also check notification_page if configured and different
+                $notifPage = $source->selectors_config['notification_page'] ?? null;
+                if ($notifPage && $notifPage !== $source->source_url && \App\Services\UrlSecurity::isSafeUrl($notifPage)) {
+                    try {
+                        $tempNotifSource = clone $source;
+                        $tempNotifSource->source_url = $notifPage;
+                        $notifHtml = $this->hybridEngine->fetch($tempNotifSource);
+                        $extraUrls = $this->discoverSecondaryUrls($notifHtml, $source);
+                        $secondaryUrls = array_merge($secondaryUrls, $extraUrls);
+                    } catch (\Exception $e) {
+                        Log::warning("Could not fetch notification_page for link discovery: " . $e->getMessage());
+                    }
+                }
+                
+                // Limit secondary URLs to crawl (e.g. max 3 pages to prevent timeout)
+                $secondaryUrls = array_slice($secondaryUrls, 0, 3, true);
+                
+                foreach ($secondaryUrls as $secUrl => $expectedCategory) {
+                    if ($secUrl === $source->source_url || $secUrl === $notifPage) {
+                        continue;
+                    }
+                    
+                    try {
+                        Log::info("Auto-discovered secondary page to crawl: {$secUrl} (Expected Category: {$expectedCategory})");
+                        
+                        $tempSource = clone $source;
+                        $tempSource->source_url = $secUrl;
+                        $secHtml = $this->hybridEngine->fetch($tempSource);
+                        $secRawItems = $this->extractJobPostNodes($secHtml, $tempSource);
+                        
+                        foreach ($secRawItems as &$item) {
+                            $item['category_hint'] = $expectedCategory;
+                        }
+                        
+                        $rawJobs = array_merge($rawJobs, $secRawItems);
+                    } catch (\Exception $e) {
+                        Log::warning("Failed crawling secondary page [{$secUrl}]: " . $e->getMessage());
+                    }
+                }
+            } catch (\Exception $e) {
+                Log::warning("Error during link auto-discovery: " . $e->getMessage());
+            }
+
             $s = $d = $q = $f = 0;
             foreach ($rawJobs as $rawJobData) {
                 $result = $this->processScrapedItem($source, $rawJobData);
@@ -152,7 +200,7 @@ class ScrapingService implements ScrapingServiceInterface
                 $finalJobData['age_limit'] = \App\Services\HtmlSanitizer::sanitizeString($finalJobData['age_limit']);
             }
 
-            $finalJobData['post_type'] = $this->classifyPostType($finalJobData['title'], $parsedData['raw_text'] ?? '');
+            $finalJobData['post_type'] = $this->classifyPostType($finalJobData['title'], $parsedData['raw_text'] ?? '', $rawData['category_hint'] ?? '');
             $textForMapping = ($parsedData['title'] ?? '') . ' ' . ($parsedData['raw_text'] ?? '');
             $defaultCat   = $source->selectors_config['default_category_id']     ?? 1;
             $defaultDept  = $source->selectors_config['default_department_id']   ?? 1;
@@ -314,7 +362,46 @@ class ScrapingService implements ScrapingServiceInterface
             try {
                 $jobPost = DB::transaction(function () use ($finalJobData, $source, $rawLogPayload, $rawData) {
                     $finalJobData['slug'] = str()->slug($finalJobData['title']) . '-' . rand(100, 999);
+                    
+                    // Recalculate vacancy_count if breakdown is present
+                    $vacanciesBreakdown = $finalJobData['vacancies_breakdown'] ?? [];
+                    if (!empty($vacanciesBreakdown)) {
+                        $totalVacancies = 0;
+                        $hasPostBreakdown = false;
+                        $hasCasteBreakdown = false;
+                        $postSum = 0;
+                        $casteSum = 0;
+                        foreach ($vacanciesBreakdown as $item) {
+                            if (($item['type'] ?? '') === 'post') {
+                                $hasPostBreakdown = true;
+                                $postSum += (int)($item['count'] ?? 0);
+                            } elseif (($item['type'] ?? '') === 'caste_category') {
+                                $hasCasteBreakdown = true;
+                                $casteSum += (int)($item['count'] ?? 0);
+                            }
+                        }
+                        if ($hasPostBreakdown) {
+                            $totalVacancies = $postSum;
+                        } elseif ($hasCasteBreakdown) {
+                            $totalVacancies = $casteSum;
+                        } else {
+                            $totalVacancies = (int)($finalJobData['vacancy_count'] ?? 0);
+                        }
+                        $finalJobData['vacancy_count'] = $totalVacancies;
+                    }
+
                     $jobPost = $this->jobRepo->create($finalJobData);
+
+                    // Save vacancies breakdown
+                    foreach ($vacanciesBreakdown as $item) {
+                        \App\Models\CategoryVacancy::create([
+                            'job_post_id' => $jobPost->id,
+                            'category_name' => $item['name'] ?? '',
+                            'vacancy_count' => $item['count'] ?? 0,
+                            'type' => $item['type'] ?? 'caste_category',
+                        ]);
+                    }
+
                     if (!empty($rawData['tags'])) {
                         $tagsArray = is_array($rawData['tags']) ? $rawData['tags'] : array_map('trim', explode(',', $rawData['tags']));
                         $tagIds = [];
@@ -439,8 +526,13 @@ class ScrapingService implements ScrapingServiceInterface
         return 0.00;
     }
 
-    public function classifyPostType(string $title, string $rawText): string
+    public function classifyPostType(string $title, string $rawText, string $hint = ''): string
     {
+        // 0. Use hint first if available (Phase 4)
+        if (!empty($hint) && in_array($hint, ['job', 'result', 'admit_card', 'answer_key', 'syllabus', 'notice', 'admission', 'scholarship'])) {
+            return $hint;
+        }
+
         // 1. Run legacy overrides first to maintain compatibility
         $t = strtolower($title . ' ' . $rawText);
         if (str_contains($t, 'notice') || str_contains($t, 'circular') || str_contains($t, 'corrigendum') || str_contains($t, 'postponement')) {
@@ -465,6 +557,74 @@ class ScrapingService implements ScrapingServiceInterface
         }
 
         return 'job';
+    }
+
+    /**
+     * Parse HTML and extract secondary links matching official categories (Phase 3)
+     */
+    protected function discoverSecondaryUrls(string $html, ScrapingSource $source): array
+    {
+        $sourceUrl = $source->source_url;
+        $sourceHost = parse_url($sourceUrl, PHP_URL_HOST);
+        if (!$sourceHost) {
+            return [];
+        }
+        
+        $dom = new \DOMDocument();
+        libxml_use_internal_errors(true);
+        $dom->loadHTML(mb_convert_encoding($html, 'HTML-ENTITIES', 'UTF-8'));
+        libxml_clear_errors();
+        
+        $xpath = new \DOMXPath($dom);
+        $links = $xpath->query('//a[@href]');
+        
+        $discovered = [];
+        
+        $keywords = [
+            'admit_card'  => ['admit-card', 'admit_card', 'admitcard', 'hall-ticket', 'hallticket', 'call-letter', 'callletter', 'admit'],
+            'result'      => ['result', 'merit-list', 'merit_list', 'meritlist', 'cutoff', 'cut-off', 'scorecard', 'score-card'],
+            'answer_key'  => ['answer-key', 'answer_key', 'answerkey', 'key-answers', 'response-sheet', 'omr-sheet'],
+            'syllabus'    => ['syllabus', 'exam-pattern', 'exam_pattern', 'exampattern', 'curriculum'],
+            'notice'      => ['notice', 'circular', 'corrigendum', 'addendum', 'announcement', 'what-new', 'whatsnew', 'press-release', 'corrigenda'],
+            'admission'   => ['admission', 'counselling', 'counseling', 'seat-allotment', 'seat_allotment'],
+            'scholarship' => ['scholarship', 'fellowship', 'stipend', 'grant'],
+        ];
+
+        foreach ($links as $linkNode) {
+            $href = trim($linkNode->getAttribute('href'));
+            $text = strtolower(trim($linkNode->nodeValue));
+            
+            if (empty($href) || str_starts_with($href, '#') || str_starts_with($href, 'javascript:')) {
+                continue;
+            }
+            
+            if (!str_starts_with($href, 'http')) {
+                $base = parse_url($sourceUrl, PHP_URL_SCHEME) . '://' . $sourceHost;
+                $href = rtrim($base, '/') . '/' . ltrim($href, '/');
+            }
+            
+            $linkHost = parse_url($href, PHP_URL_HOST);
+            if ($linkHost !== $sourceHost) {
+                continue;
+            }
+            
+            $path = strtolower(parse_url($href, PHP_URL_PATH) ?? '');
+            $query = strtolower(parse_url($href, PHP_URL_QUERY) ?? '');
+            $urlToCheck = $path . ' ' . $query . ' ' . $text;
+            
+            foreach ($keywords as $type => $kws) {
+                foreach ($kws as $kw) {
+                    if (str_contains($urlToCheck, $kw)) {
+                        if (!isset($discovered[$href])) {
+                            $discovered[$href] = $type;
+                        }
+                        break 2;
+                    }
+                }
+            }
+        }
+        
+        return $discovered;
     }
 
     protected function extractJobPostNodes(string $html, ScrapingSource $source): array

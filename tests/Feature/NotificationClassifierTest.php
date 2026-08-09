@@ -61,6 +61,33 @@ class NotificationClassifierTest extends TestCase
         );
     }
 
+    public function test_new_categories_classification(): void
+    {
+        // 1. Syllabus
+        $this->assertEquals(
+            NotificationType::SYLLABUS->value,
+            $this->classifier->classify('UPSC CSE Civil Services Syllabus & Scheme of Exam')
+        );
+
+        // 2. Scholarship
+        $this->assertEquals(
+            NotificationType::SCHOLARSHIP->value,
+            $this->classifier->classify('National Merit Scholarship Notification Fellowship 2026')
+        );
+
+        // 3. Admission
+        $this->assertEquals(
+            NotificationType::ADMISSION->value,
+            $this->classifier->classify('IIT Admissions Counseling Seat Allotment Schedule')
+        );
+
+        // 4. Exam Notice
+        $this->assertEquals(
+            NotificationType::EXAM_NOTICE->value,
+            $this->classifier->classify('SSC CGL Written Exam CBT Date Schedule Notice')
+        );
+    }
+
     public function test_safety_fallback_on_unknown_content(): void
     {
         // Random irrelevant title should return unknown to prevent false positives
@@ -90,6 +117,24 @@ class NotificationClassifierTest extends TestCase
         $this->assertEquals(
             'job',
             $scrapingService->classifyPostType('Irrelevant title text', '')
+        );
+
+        // Test new category mappings
+        $this->assertEquals(
+            'syllabus',
+            $scrapingService->classifyPostType('UPSC Civil Services Syllabus 2026', '')
+        );
+        $this->assertEquals(
+            'scholarship',
+            $scrapingService->classifyPostType('Fellowship stipend details', '')
+        );
+        $this->assertEquals(
+            'admission',
+            $scrapingService->classifyPostType('IIT Counselling updates', '')
+        );
+        $this->assertEquals(
+            'notice',
+            $scrapingService->classifyPostType('SSC CBT Exam Date Schedule', '')
         );
     }
 }

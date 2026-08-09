@@ -5,1085 +5,6 @@
 @section('content')
 
 <!-- AAGGREGATOR DESIGN SYSTEM STYLES -->
-<style>
-    /* Scrolling Marquee Update Ticker */
-    .ticker-wrap {
-        width: 100%;
-        box-sizing: border-box;
-        overflow: hidden;
-        height: 48px;
-        background: linear-gradient(135deg, rgba(37, 99, 235, 0.15) 0%, rgba(16, 185, 129, 0.1) 100%);
-        border: 1px solid var(--border-color);
-        border-radius: 8px;
-        display: flex;
-        align-items: center;
-        margin-bottom: 2rem;
-        padding: 0 1rem;
-        box-shadow: 0 4px 30px rgba(0, 0, 0, 0.05);
-        backdrop-filter: blur(8px);
-        -webkit-backdrop-filter: blur(8px);
-    }
-    .ticker-label {
-        background: linear-gradient(90deg, #ef4444 0%, #dc2626 100%);
-        color: #fff;
-        font-weight: 700;
-        font-size: 0.75rem;
-        padding: 0.3rem 0.75rem;
-        border-radius: 4px;
-        text-transform: uppercase;
-        letter-spacing: 0.05em;
-        margin-right: 1.5rem;
-        white-space: nowrap;
-        animation: ticker-pulse 1.5s infinite;
-    }
-    @keyframes ticker-pulse {
-        0% { opacity: 0.85; transform: scale(1); }
-        50% { opacity: 1; transform: scale(1.03); }
-        100% { opacity: 0.85; transform: scale(1); }
-    }
-    .ticker {
-        display: flex;
-        white-space: nowrap;
-        width: 100%;
-        overflow: hidden;
-        position: relative;
-    }
-    .ticker-item-list {
-        display: inline-flex;
-        animation: marquee 35s linear infinite;
-    }
-    .ticker-item {
-        color: var(--text-primary);
-        text-decoration: none;
-        font-size: 0.85rem;
-        font-weight: 600;
-        margin-right: 3rem;
-        transition: color 0.2s;
-        display: inline-flex;
-        align-items: center;
-        gap: 0.4rem;
-        white-space: nowrap;
-    }
-    .ticker-item:hover {
-        color: var(--accent-color);
-        text-decoration: underline;
-    }
-    @keyframes marquee {
-        0% { transform: translate3d(0, 0, 0); }
-        100% { transform: translate3d(-50%, 0, 0); }
-    }
-
-    /* Trending Hot Action Cards */
-    .trending-grid {
-        display: grid;
-        grid-template-columns: repeat(8, 1fr);
-        gap: 0.75rem;
-        margin-bottom: 3rem;
-    }
-    
-    @media (max-width: 1200px) {
-        .trending-grid {
-            grid-template-columns: repeat(4, 1fr);
-            gap: 1rem;
-        }
-    }
-    
-    @media (max-width: 640px) {
-        .trending-grid {
-            grid-template-columns: repeat(2, 1fr);
-            gap: 0.75rem;
-        }
-    }
-    
-    .trending-card {
-        background: var(--bg-secondary);
-        border: 1px solid var(--border-color);
-        border-radius: 14px;
-        padding: 1.1rem 0.5rem;
-        text-align: center;
-        text-decoration: none;
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        gap: 0.4rem;
-        min-height: 105px;
-        height: auto;
-        position: relative;
-        overflow: hidden;
-        box-shadow: var(--card-shadow);
-    }
-    
-    .trending-card::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 3px;
-        background: var(--card-accent, var(--accent-color));
-        opacity: 0.85;
-    }
-    
-    .trending-card:hover {
-        transform: translateY(-5px);
-        border-color: var(--card-accent, var(--accent-color));
-        box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 0 15px -3px var(--card-accent, var(--accent-color));
-        background: var(--bg-secondary);
-    }
-    
-    .dark-theme .trending-card:hover {
-        box-shadow: 0 12px 30px -8px rgba(0, 0, 0, 0.5), 0 0 20px -5px var(--card-accent, var(--accent-color));
-    }
-    
-    .trending-card .card-icon {
-        font-size: 1.6rem;
-        margin-bottom: 0.15rem;
-        filter: drop-shadow(0 2px 6px rgba(0,0,0,0.15));
-        transition: transform 0.3s ease;
-    }
-    
-    .trending-card:hover .card-icon {
-        transform: scale(1.12) rotate(3deg);
-    }
-    
-    .trending-card .card-title {
-        font-family: 'Outfit', sans-serif;
-        font-size: 0.82rem;
-        font-weight: 700;
-        color: var(--text-primary);
-        text-transform: uppercase;
-        letter-spacing: 0.02em;
-        max-width: 100%;
-        padding: 0 0.25rem;
-        white-space: normal;
-        display: -webkit-box;
-        -webkit-line-clamp: 2;
-        -webkit-box-orient: vertical;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        line-height: 1.25;
-        height: 2.5em;
-    }
-
-    /* Sarkari Board Panels */
-    .sarkari-panels-container {
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        gap: 1.5rem;
-        margin-bottom: 2.5rem;
-    }
-    @media (max-width: 1024px) {
-        .sarkari-panels-container {
-            grid-template-columns: repeat(2, 1fr);
-        }
-    }
-    @media (max-width: 768px) {
-        .sarkari-panels-container {
-            grid-template-columns: 1fr;
-        }
-    }
-    .sarkari-panel {
-        min-width: 0;
-        background: rgba(255, 255, 255, 0.02);
-        border: 1px solid var(--border-color);
-        border-radius: 12px;
-        padding: 1.5rem 1.25rem;
-        display: flex;
-        flex-direction: column;
-        backdrop-filter: blur(10px);
-        -webkit-backdrop-filter: blur(10px);
-        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
-        transition: all 0.3s ease;
-    }
-    .sarkari-panel:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3);
-    }
-    .sarkari-panel-header {
-        font-size: 1.2rem;
-        font-weight: 800;
-        margin-bottom: 1.25rem;
-        padding-bottom: 0.75rem;
-        border-bottom: 2px solid var(--border-color);
-        display: flex;
-        align-items: center;
-        gap: 0.6rem;
-        font-family: 'Outfit', sans-serif;
-        text-transform: uppercase;
-        letter-spacing: 0.03em;
-    }
-    .sarkari-list {
-        list-style: none;
-        padding: 0;
-        margin: 0;
-        display: flex;
-        flex-direction: column;
-        gap: 0.6rem;
-        max-height: 480px;
-        overflow-y: auto;
-    }
-    /* Style scrollbar for list containers */
-    .sarkari-list::-webkit-scrollbar {
-        width: 5px;
-    }
-    .sarkari-list::-webkit-scrollbar-track {
-        background: rgba(255,255,255,0.02);
-    }
-    .sarkari-list::-webkit-scrollbar-thumb {
-        background: rgba(255,255,255,0.1);
-        border-radius: 3px;
-    }
-    .sarkari-item {
-        min-width: 0;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        gap: 0.5rem;
-        padding: 0.5rem 0.75rem;
-        border-radius: 6px;
-        background: rgba(255, 255, 255, 0.01);
-        border: 1px solid rgba(255,255,255,0.02);
-        transition: all 0.2s ease;
-    }
-    .sarkari-item:hover {
-        background: rgba(255, 255, 255, 0.04);
-        border-color: rgba(255,255,255,0.06);
-    }
-    .sarkari-item-link {
-        color: var(--text-primary);
-        text-decoration: none;
-        font-size: 0.82rem;
-        font-weight: 500;
-        line-height: 1.4;
-        flex-grow: 1;
-        cursor: pointer;
-        white-space: normal !important;
-        display: -webkit-box;
-        -webkit-line-clamp: 2;
-        -webkit-box-orient: vertical;
-        overflow: hidden;
-        text-overflow: ellipsis;
-    }
-    .sarkari-item-link:hover {
-        color: var(--accent-color);
-    }
-    .new-badge {
-        font-size: 0.6rem;
-        font-weight: 800;
-        color: #fff;
-        background: linear-gradient(90deg, #ef4444 0%, #ea580c 100%);
-        padding: 0.15rem 0.4rem;
-        border-radius: 3px;
-        text-transform: uppercase;
-        letter-spacing: 0.05em;
-        white-space: nowrap;
-        animation: badge-blink 1.2s infinite;
-    }
-    @keyframes badge-blink {
-        0% { opacity: 0.7; }
-        50% { opacity: 1; }
-        100% { opacity: 0.7; }
-    }
-
-    /* Monetization Google AdSense Responsive Frame */
-    .ad-banner-placeholder {
-        width: 100%;
-        background: linear-gradient(135deg, rgba(255,255,255,0.01) 0%, rgba(255,255,255,0.02) 100%);
-        border: 1px dashed var(--border-color);
-        border-radius: 10px;
-        padding: 1.5rem;
-        text-align: center;
-        margin-bottom: 2.5rem;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        gap: 0.6rem;
-        position: relative;
-        overflow: hidden;
-    }
-    .ad-banner-placeholder::before {
-        content: '';
-        position: absolute;
-        top: -50%;
-        left: -50%;
-        width: 200%;
-        height: 200%;
-        background: radial-gradient(circle, rgba(37,99,235,0.03) 0%, transparent 60%);
-        pointer-events: none;
-    }
-    .ad-badge {
-        background: rgba(255, 255, 255, 0.05);
-        border: 1px solid rgba(255,255,255,0.05);
-        color: var(--text-secondary);
-        font-size: 0.6rem;
-        font-weight: 700;
-        text-transform: uppercase;
-        padding: 0.2rem 0.6rem;
-        border-radius: 4px;
-        letter-spacing: 0.08em;
-    }
-
-    /* Monetization Premium Styles */
-    .job-card.is-sponsored {
-        background: linear-gradient(135deg, rgba(217, 119, 6, 0.04) 0%, rgba(217, 119, 6, 0.01) 100%) !important;
-        border: 1.5px solid rgba(217, 119, 6, 0.35) !important;
-        box-shadow: 0 8px 30px rgba(217, 119, 6, 0.06);
-        position: relative;
-        animation: sponsor-glow-pulse 2.5s infinite alternate;
-    }
-    .job-card.is-sponsored::after {
-        content: 'SPONSORED MATCH';
-        position: absolute;
-        top: 0;
-        right: 0;
-        background: linear-gradient(90deg, #d97706 0%, #f59e0b 100%);
-        color: white;
-        font-size: 0.62rem;
-        font-weight: 800;
-        padding: 0.2rem 0.5rem;
-        border-radius: 0 0 0 8px;
-        letter-spacing: 0.05em;
-        z-index: 10;
-    }
-    @keyframes sponsor-glow-pulse {
-        0% { border-color: rgba(217, 119, 6, 0.25); box-shadow: 0 8px 30px rgba(217, 119, 6, 0.05); }
-        100% { border-color: rgba(217, 119, 6, 0.5); box-shadow: 0 8px 35px rgba(217, 119, 6, 0.12); }
-    }
-    .badge.badge-sponsored {
-        background: linear-gradient(90deg, #d97706 0%, #f59e0b 100%) !important;
-        color: white !important;
-        font-weight: 800;
-        letter-spacing: 0.03em;
-    }
-    /* Autocomplete Suggestions Menu */
-    .autocomplete-dropdown {
-        position: absolute;
-        top: 100%;
-        left: 0;
-        right: 0;
-        background: var(--bg-secondary);
-        border: 1px solid var(--border-color);
-        border-radius: 12px;
-        margin-top: 0.5rem;
-        max-height: 350px;
-        overflow-y: auto;
-        z-index: 1000;
-        box-shadow: 0 15px 35px -5px rgba(0,0,0,0.25);
-        display: none;
-        backdrop-filter: blur(14px);
-    }
-    .autocomplete-section {
-        border-bottom: 1px solid var(--border-color);
-        padding-bottom: 0.5rem;
-    }
-    .autocomplete-section:last-child {
-        border-bottom: none;
-    }
-    .autocomplete-header {
-        font-size: 0.72rem;
-        font-weight: 800;
-        text-transform: uppercase;
-        color: var(--accent-color);
-        letter-spacing: 0.08em;
-        padding: 0.75rem 1rem 0.4rem 1rem;
-        display: flex;
-        align-items: center;
-        gap: 0.4rem;
-        background: rgba(255,255,255,0.01);
-    }
-    .autocomplete-item {
-        padding: 0.6rem 1.25rem;
-        font-size: 0.88rem;
-        color: var(--text-secondary);
-        cursor: pointer;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        transition: all 0.15s ease;
-    }
-    .autocomplete-item:hover {
-        background: rgba(37, 99, 235, 0.08);
-        color: var(--text-primary);
-        padding-left: 1.5rem;
-    }
-    .autocomplete-item .badge-type {
-        font-size: 0.68rem;
-        font-weight: 700;
-        background: rgba(255,255,255,0.04);
-        padding: 0.15rem 0.4rem;
-        border-radius: 4px;
-        color: var(--text-secondary);
-    }
-    .typo-banner {
-        background: rgba(245, 158, 11, 0.08);
-        border: 1.5px solid rgba(245, 158, 11, 0.2);
-        color: #f59e0b;
-        padding: 0.85rem 1.25rem;
-        border-radius: 10px;
-        margin-bottom: 1.5rem;
-        font-size: 0.95rem;
-        display: flex;
-        align-items: center;
-        gap: 0.6rem;
-        animation: slideDown 0.3s ease;
-        font-weight: 500;
-    }
-    .typo-banner a {
-        color: var(--text-primary);
-        text-decoration: underline;
-        font-weight: 700;
-        cursor: pointer;
-    }
-    .typo-banner a:hover {
-        color: var(--accent-color);
-    }
-
-    /* Systemic Reset of button styles inherited by inline text links using the btn-view class for event handling */
-    .sarkari-item-link.btn-view,
-    .ticker-item.btn-view {
-        background: none !important;
-        border: none !important;
-        padding: 0 !important;
-        border-radius: 0 !important;
-        box-shadow: none !important;
-        transform: none !important;
-        min-height: auto !important;
-        min-width: auto !important;
-    }
-    .sarkari-item-link.btn-view {
-        display: block !important;
-        width: 100% !important;
-    }
-    .ticker-item.btn-view {
-        display: inline-flex !important;
-    }
-    .sarkari-item-link.btn-view:hover,
-    .ticker-item.btn-view:hover {
-        background: none !important;
-        border: none !important;
-        box-shadow: none !important;
-        transform: none !important;
-        color: var(--accent-color) !important;
-    }
-
-    /* ==================== REDESIGNED SINGLE ROW SEARCH & FILTER SYSTEM ==================== */
-    .search-toolbar-wrapper {
-        background: linear-gradient(135deg, rgba(255, 255, 255, 0.02) 0%, rgba(255, 255, 255, 0.01) 100%);
-        border: 1px solid var(--border-color);
-        backdrop-filter: blur(16px);
-        -webkit-backdrop-filter: blur(16px);
-        border-radius: 16px;
-        padding: 1.25rem;
-        box-shadow: var(--card-shadow);
-        margin-bottom: 1.5rem;
-        position: relative;
-        z-index: 100;
-    }
-
-    .search-toolbar-main {
-        display: flex;
-        align-items: center;
-        gap: 0.75rem;
-        width: 100%;
-    }
-
-    .search-input-col {
-        flex: 2.5;
-        position: relative;
-        min-width: 200px;
-    }
-
-    .search-input-container {
-        position: relative;
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-        background: var(--bg-primary);
-        border: 2px solid var(--border-color);
-        border-radius: 10px;
-        padding: 0.25rem 0.5rem;
-        transition: all 0.25s ease;
-    }
-
-    .search-input-container:focus-within {
-        border-color: var(--accent-color);
-        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
-    }
-
-    .search-input-container input {
-        flex: 1;
-        border: none;
-        background: transparent;
-        padding: 0.65rem 0.5rem;
-        color: var(--text-primary);
-        font-size: 1rem;
-        font-weight: 500;
-        outline: none;
-    }
-
-    .search-input-container svg.search-icon {
-        color: var(--text-secondary);
-        margin-left: 0.5rem;
-        flex-shrink: 0;
-    }
-
-    .clear-search-btn {
-        background: var(--bg-secondary);
-        border: none;
-        color: var(--text-secondary);
-        cursor: pointer;
-        padding: 0.35rem 0.5rem;
-        border-radius: 6px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        transition: all 0.2s;
-    }
-
-    .clear-search-btn:hover {
-        color: #ef4444;
-        background: rgba(239, 68, 68, 0.08);
-    }
-
-    .search-dropdown-col {
-        flex: 1.2;
-        min-width: 180px;
-        position: relative;
-    }
-
-    .search-btn-col {
-        flex-shrink: 0;
-    }
-
-    /* Primary CTA Search Button */
-    .btn-search-primary {
-        background: linear-gradient(135deg, var(--accent-color) 0%, #1e40af 100%);
-        color: #ffffff;
-        border: none;
-        border-radius: 10px;
-        padding: 0.75rem 1.5rem;
-        font-size: 0.95rem;
-        font-weight: 700;
-        cursor: pointer;
-        display: inline-flex;
-        align-items: center;
-        gap: 0.5rem;
-        transition: all 0.25s ease;
-        box-shadow: 0 4px 15px rgba(37, 99, 235, 0.2);
-    }
-
-    .btn-search-primary:hover {
-        transform: translateY(-1px);
-        box-shadow: 0 6px 20px rgba(37, 99, 235, 0.3);
-        filter: brightness(1.1);
-    }
-
-    .btn-search-primary:active {
-        transform: translateY(0);
-    }
-
-    /* Custom Searchable Dropdowns */
-    .searchable-dropdown {
-        position: relative;
-        width: 100%;
-    }
-
-    .dropdown-selected {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        background: var(--bg-primary);
-        border: 2px solid var(--border-color);
-        border-radius: 10px;
-        padding: 0.65rem 1rem;
-        color: var(--text-primary);
-        font-size: 0.95rem;
-        font-weight: 500;
-        cursor: pointer;
-        transition: all 0.2s ease;
-        user-select: none;
-    }
-
-    .dropdown-selected:focus {
-        border-color: var(--accent-color);
-        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
-        outline: none;
-    }
-
-    .searchable-dropdown.open .dropdown-selected {
-        border-color: var(--accent-color);
-        border-bottom-left-radius: 0;
-        border-bottom-right-radius: 0;
-    }
-
-    .caret-icon {
-        color: var(--text-secondary);
-        transition: transform 0.2s ease;
-        flex-shrink: 0;
-    }
-
-    .searchable-dropdown.open .caret-icon {
-        transform: rotate(180deg);
-    }
-
-    .dropdown-panel {
-        display: none;
-        position: absolute;
-        top: 100%;
-        left: 0;
-        right: 0;
-        background: var(--bg-secondary);
-        border: 2px solid var(--accent-color);
-        border-top: none;
-        border-bottom-left-radius: 10px;
-        border-bottom-right-radius: 10px;
-        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
-        z-index: 1010;
-        backdrop-filter: blur(14px);
-        -webkit-backdrop-filter: blur(14px);
-    }
-
-    .searchable-dropdown.open .dropdown-panel {
-        display: block;
-    }
-
-    .dropdown-search {
-        padding: 0.5rem;
-        border-bottom: 1px solid var(--border-color);
-    }
-
-    .dropdown-search-input {
-        width: 100%;
-        background: var(--bg-primary);
-        border: 1px solid var(--border-color);
-        border-radius: 6px;
-        padding: 0.5rem;
-        color: var(--text-primary);
-        font-size: 0.9rem;
-        outline: none;
-    }
-
-    .dropdown-search-input:focus {
-        border-color: var(--accent-color);
-    }
-
-    .dropdown-list {
-        max-height: 200px;
-        overflow-y: auto;
-        padding: 0.25rem 0;
-    }
-
-    .dropdown-list::-webkit-scrollbar {
-        width: 6px;
-    }
-
-    .dropdown-list::-webkit-scrollbar-thumb {
-        background: rgba(255, 255, 255, 0.15);
-        border-radius: 3px;
-    }
-
-    .dropdown-option {
-        padding: 0.6rem 1rem;
-        color: var(--text-secondary);
-        font-size: 0.9rem;
-        cursor: pointer;
-        transition: all 0.15s ease;
-    }
-
-    .dropdown-option:hover, .dropdown-option.highlighted {
-        background: rgba(37, 99, 235, 0.08);
-        color: var(--text-primary);
-        padding-left: 1.25rem;
-    }
-
-    .dropdown-option.selected {
-        background: var(--accent-color);
-        color: #ffffff;
-        font-weight: 600;
-    }
-
-    /* Quick suggestions row */
-    .quick-suggestions-row {
-        display: flex;
-        align-items: center;
-        gap: 0.75rem;
-        margin-top: 1rem;
-        font-size: 0.85rem;
-    }
-
-    .suggestion-label {
-        font-weight: 600;
-        color: var(--text-secondary);
-        white-space: nowrap;
-        display: flex;
-        align-items: center;
-        gap: 0.25rem;
-    }
-
-    .suggestions-chips-container {
-        display: flex;
-        gap: 0.5rem;
-        overflow-x: auto;
-        scrollbar-width: none;
-        -webkit-overflow-scrolling: touch;
-        padding-bottom: 2px;
-    }
-
-    .suggestions-chips-container::-webkit-scrollbar {
-        display: none;
-    }
-
-    .suggestion-chip-item {
-        flex-shrink: 0;
-        background: rgba(255, 255, 255, 0.03);
-        border: 1px solid var(--border-color);
-        padding: 0.35rem 0.85rem;
-        border-radius: 20px;
-        color: var(--text-secondary);
-        font-weight: 500;
-        cursor: pointer;
-        transition: all 0.2s ease;
-    }
-
-    .suggestion-chip-item:hover {
-        border-color: var(--accent-color);
-        color: var(--text-primary);
-        transform: translateY(-1px);
-        background: rgba(37, 99, 235, 0.05);
-    }
-
-    /* Sub-toolbar */
-    .search-sub-toolbar {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 1rem;
-        margin-top: 1rem;
-        padding-top: 1rem;
-        border-top: 1px dashed var(--border-color);
-        flex-wrap: wrap;
-    }
-
-    .sub-toolbar-left-group {
-        display: flex;
-        align-items: center;
-        gap: 0.75rem;
-    }
-
-    .btn-advanced-trigger {
-        background: var(--bg-secondary);
-        border: 1px solid var(--border-color);
-        color: var(--text-primary);
-        font-size: 0.85rem;
-        font-weight: 600;
-        padding: 0.5rem 0.85rem;
-        border-radius: 8px;
-        cursor: pointer;
-        display: inline-flex;
-        align-items: center;
-        gap: 0.35rem;
-        transition: all 0.2s;
-    }
-
-    .btn-advanced-trigger:hover {
-        border-color: var(--accent-color);
-        background: rgba(37, 99, 235, 0.04);
-    }
-
-    .btn-advanced-trigger.active {
-        background: rgba(37, 99, 235, 0.08);
-        border-color: var(--accent-color);
-        color: var(--accent-color);
-    }
-
-    .btn-reset-trigger {
-        background: transparent;
-        border: 1px solid transparent;
-        color: #ef4444;
-        font-size: 0.85rem;
-        font-weight: 600;
-        padding: 0.5rem 0.85rem;
-        border-radius: 8px;
-        cursor: pointer;
-        display: inline-flex;
-        align-items: center;
-        gap: 0.35rem;
-        transition: all 0.2s;
-    }
-
-    .btn-reset-trigger:hover {
-        background: rgba(239, 68, 68, 0.08);
-        border-color: rgba(239, 68, 68, 0.15);
-    }
-
-    /* Active Filter Summary tags */
-    .active-filter-chips-list {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 0.5rem;
-        align-items: center;
-    }
-
-    .active-filter-chip {
-        display: inline-flex;
-        align-items: center;
-        gap: 0.35rem;
-        background: rgba(37, 99, 235, 0.06);
-        border: 1px solid rgba(37, 99, 235, 0.15);
-        border-radius: 16px;
-        padding: 0.3rem 0.7rem;
-        font-size: 0.8rem;
-        font-weight: 600;
-        color: var(--accent-color);
-    }
-
-    .active-filter-chip .remove-filter-btn {
-        cursor: pointer;
-        font-size: 1rem;
-        font-weight: 700;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        width: 14px;
-        height: 14px;
-        border-radius: 50%;
-        transition: all 0.15s;
-    }
-
-    .active-filter-chip .remove-filter-btn:hover {
-        background: #ef4444;
-        color: #ffffff;
-    }
-
-    /* Collapsible Advanced Filters Drawer */
-    .advanced-drawer-overlay {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: rgba(0, 0, 0, 0.6);
-        backdrop-filter: blur(4px);
-        -webkit-backdrop-filter: blur(4px);
-        z-index: 1999;
-        opacity: 0;
-        visibility: hidden;
-        transition: opacity 0.3s ease, visibility 0.3s ease;
-    }
-
-    .advanced-drawer-overlay.open {
-        opacity: 1;
-        visibility: visible;
-    }
-
-    .advanced-drawer {
-        position: fixed;
-        top: 0;
-        right: -420px;
-        width: 400px;
-        height: 100%;
-        background: var(--bg-secondary);
-        border-left: 1px solid var(--border-color);
-        box-shadow: -10px 0 30px rgba(0, 0, 0, 0.25);
-        z-index: 2000;
-        display: flex;
-        flex-direction: column;
-        transition: right 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-    }
-
-    .advanced-drawer.open {
-        right: 0;
-    }
-
-    .drawer-header {
-        padding: 1.25rem 1.5rem;
-        border-bottom: 1px solid var(--border-color);
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-    }
-
-    .drawer-header h3 {
-        margin: 0;
-        font-family: 'Outfit', sans-serif;
-        font-size: 1.2rem;
-        font-weight: 700;
-        color: var(--text-primary);
-    }
-
-    .close-drawer-btn {
-        background: none;
-        border: none;
-        color: var(--text-secondary);
-        font-size: 1.5rem;
-        cursor: pointer;
-        line-height: 1;
-        padding: 0.25rem;
-        transition: color 0.2s;
-    }
-
-    .close-drawer-btn:hover {
-        color: #ef4444;
-    }
-
-    .drawer-body {
-        padding: 1.5rem 1.5rem 8rem 1.5rem;
-        flex: 1;
-        overflow-y: auto;
-    }
-
-    .filter-group {
-        margin-bottom: 1.25rem;
-    }
-
-    .filter-label {
-        display: block;
-        margin-bottom: 0.5rem;
-        font-size: 0.88rem;
-        font-weight: 600;
-        color: var(--text-secondary);
-    }
-
-    /* User-friendly clearly visible custom toggle switch */
-    .custom-switch {
-        position: relative;
-        display: inline-block;
-        width: 46px !important;
-        height: 26px !important;
-    }
-
-    .slider-switch {
-        position: absolute;
-        cursor: pointer;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background-color: rgba(255, 255, 255, 0.18) !important;
-        border: 1.5px solid var(--border-color);
-        transition: .3s;
-        border-radius: 26px !important;
-    }
-
-    .slider-switch:before {
-        position: absolute;
-        content: "";
-        height: 18px !important;
-        width: 18px !important;
-        left: 3px !important;
-        bottom: 2.5px !important;
-        background-color: #ffffff !important;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.4);
-        transition: .3s;
-        border-radius: 50% !important;
-    }
-
-    .custom-switch input:checked + .slider-switch {
-        background-color: #10b981 !important;
-        border-color: #10b981;
-    }
-
-    .custom-switch input:checked + .slider-switch:before {
-        transform: translateX(18px) !important;
-    }
-
-    .drawer-footer {
-        padding: 1.25rem 1.5rem;
-        border-top: 1px solid var(--border-color);
-        display: flex;
-        gap: 0.75rem;
-        background: rgba(255, 255, 255, 0.01);
-    }
-
-    .btn-reset-drawer {
-        flex: 1;
-        background: rgba(239, 68, 68, 0.08);
-        border: 1px solid rgba(239, 68, 68, 0.15);
-        color: #ef4444;
-        border-radius: 8px;
-        padding: 0.75rem;
-        font-weight: 700;
-        font-size: 0.9rem;
-        cursor: pointer;
-        transition: all 0.2s;
-        text-align: center;
-    }
-
-    .btn-reset-drawer:hover {
-        background: #ef4444;
-        color: white;
-    }
-
-    .btn-apply-drawer {
-        flex: 2;
-        background: var(--accent-color);
-        border: none;
-        color: white;
-        border-radius: 8px;
-        padding: 0.75rem;
-        font-weight: 700;
-        font-size: 0.9rem;
-        cursor: pointer;
-        transition: all 0.2s;
-        text-align: center;
-    }
-
-    .btn-apply-drawer:hover {
-        filter: brightness(1.1);
-    }
-
-    /* Media Queries */
-    @media (max-width: 992px) {
-        .search-toolbar-main {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 0.75rem;
-        }
-        .search-input-col {
-            grid-column: span 2;
-        }
-        .search-dropdown-col {
-            grid-column: span 1;
-        }
-        .search-btn-col {
-            grid-column: span 2;
-        }
-        .btn-search-primary {
-            width: 100%;
-            justify-content: center;
-        }
-    }
-
-    @media (max-width: 576px) {
-        .search-toolbar-main {
-            display: flex;
-            flex-direction: column;
-            align-items: stretch;
-            gap: 0.75rem;
-        }
-        .search-input-col, .search-dropdown-col, .search-btn-col {
-            width: 100%;
-        }
-        .advanced-drawer {
-            width: 100%;
-            height: auto;
-            max-height: 85vh;
-            bottom: -100%;
-            top: auto;
-            right: 0;
-            border-left: none;
-            border-radius: 20px 20px 0 0;
-            box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.25);
-            transition: bottom 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-        }
-        .advanced-drawer.open {
-            bottom: 0;
-        }
-    }
-</style>
 
 <div style="max-width: 1400px; margin: 0 auto; padding: 0 5%;">
 
@@ -1409,7 +330,7 @@
         <select id="stateSelect" style="display: none;">
             <option value="" data-i18n="select_state">Select Region/State</option>
             @foreach($states as $state)
-                <option value="{{ $state->id }}" {{ request('state') === $state->slug ? 'selected' : '' }}>{{ $state->name }}</option>
+                <option value="{{ $state->id }}">{{ $state->name }}</option>
             @endforeach
         </select>
         <select id="qualificationSelect" style="display: none;">
@@ -3125,67 +2046,404 @@
                 success: function(res) {
                     if (res.status === 'success') {
                         const job = res.data;
+                        
+                        // Sanitize and clean description to avoid duplication and format newlines
+                        let cleanDescription = job.description || '';
+                        cleanDescription = cleanDescription.replace(/(📅|🗓️)?\s*Important Dates[\s\S]*?(?=(₹|💵)?\s*Application Fee|(📅|⏰)?\s*Age Limit|Selection Process|Vacancy|Overview|$)/gi, '');
+                        cleanDescription = cleanDescription.replace(/(₹|💵)?\s*Application Fee[\s\S]*?(?=(📅|⏰)?\s*Age Limit|Selection Process|Vacancy|Overview|$)/gi, '');
+                        cleanDescription = cleanDescription.replace(/(📅|⏰)?\s*Age Limit Details[\s\S]*?(?=Selection Process|Vacancy|Overview|$)/gi, '');
+                        cleanDescription = cleanDescription.trim().replace(/\n/g, '<br>');
+                        cleanDescription = cleanDescription.replace(/(<br>\s*){2,}/g, '<br><br>');
+                        cleanDescription = cleanDescription.replace(/^(<br>\s*)+|(<br>\s*)+$/g, '');
+                        
+                        if (!cleanDescription || cleanDescription.replace(/<br>/g, '').trim().length < 5) {
+                            cleanDescription = `Recruitment notification details for <strong>${job.title}</strong> in the ${job.department} department. Please read the official notification PDF and ensure your eligibility before submitting your application.`;
+                        }
+
+                        let selectionProcessHtml = (job.selection_process || 'Written Exam.').trim().replace(/\n/g, '<br>').replace(/(<br>\s*){2,}/g, '<br><br>');
+                        let examPatternHtml = (job.exam_pattern || 'Objective MCQs.').trim().replace(/\n/g, '<br>').replace(/(<br>\s*){2,}/g, '<br><br>');
+
                         const type = job.post_type;
                         let html = '';
                         if (type === 'job') {
-                            html = `
-                                <div class="theme-accent-job">
-                                    <div class="category-visual-header">
-                                        <h2>💼 <span class="notranslate" translate="no" data-translate-title="${job.title}">${window.translateJobTitle(job.title)}</span></h2>
-                                        <p>${window.t(job.department, job.department)} &bull; ${window.t(job.state, job.state)} &bull; ${window.t(job.category, job.category)}</p>
-                                    </div>
-                                    
-                                    <div class="details-summary-grid">
-                                        <div class="details-summary-item" style="grid-column: span 1; height: auto;">
-                                            <div style="font-size:0.75rem; text-transform:uppercase; color:var(--text-secondary);">${window.t('modal_salary_lbl_index', 'Salary Details')}</div>
-                                            <div style="font-size:1.15rem; font-weight:700; color:var(--text-primary); margin-top:0.25rem;">
-                                                ${
-                                                    job.stipend ? `${job.stipend}` :
-                                                    (job.salary_min && job.salary_min !== '0' && job.salary_max && job.salary_max !== '0') ? `₹ ${job.salary_min} - ₹ ${job.salary_max}` :
-                                                    (job.salary_min && job.salary_min !== '0') ? `₹ ${job.salary_min} onwards` :
-                                                    (job.pay_scale) ? job.pay_scale : 'Govt Scale'
-                                                }
-                                            </div>
-                                            ${
-                                                (job.pay_level || job.salary_grade || job.pay_matrix) ? `
-                                                    <div style="font-size:0.7rem; color:var(--text-secondary); margin-top:0.35rem; display:flex; flex-wrap:wrap; gap:0.25rem; justify-content:center; opacity: 0.85;">
-                                                        ${[
-                                                            job.pay_level ? `📈 ${job.pay_level}` : '',
-                                                            job.salary_grade ? `🎖️ ${job.salary_grade}` : '',
-                                                            job.pay_matrix ? `📊 ${job.pay_matrix}` : ''
-                                                        ].filter(Boolean).join(' | ')}
+                            // Determine status badge values
+                            let statusText = 'Active';
+                            let statusClass = 'status-open';
+                            
+                            const now = new Date();
+                            const lastDate = job.last_date ? new Date(job.last_date) : null;
+                            const startDate = job.start_date ? new Date(job.start_date) : null;
+                            
+                            if (lastDate && lastDate < now) {
+                                statusText = 'Apply Closed';
+                                statusClass = 'status-closed';
+                            } else if (startDate && startDate > now) {
+                                statusText = 'Upcoming';
+                                statusClass = 'status-upcoming';
+                            } else {
+                                statusText = 'Apply Open';
+                                statusClass = 'status-open';
+                            }
+
+                            // Build Application Fee HTML
+                            let feeHtml = '';
+                            if (job.application_fee > 0) {
+                                feeHtml = `
+                                    <li>
+                                        <span class="info-label">General / OBC / EWS:</span>
+                                        <span class="info-val">₹ ${parseFloat(job.application_fee).toFixed(2)}</span>
+                                    </li>
+                                    <li>
+                                        <span class="info-label">SC / ST / PH:</span>
+                                        <span class="info-val">₹ 0.00 (Exempted)</span>
+                                    </li>
+                                    <li>
+                                        <span class="info-label">Females (All Category):</span>
+                                        <span class="info-val">₹ 0.00 (Exempted)</span>
+                                    </li>
+                                `;
+                            } else {
+                                feeHtml = `
+                                    <li>
+                                        <span class="info-label">All Category Candidates:</span>
+                                        <span class="info-val text-success">Free (No Fee)</span>
+                                    </li>
+                                `;
+                            }
+
+                            // Build Timeline Nodes HTML
+                            let timelineHtml = '';
+                            if (job.timeline && job.timeline.length > 1) {
+                                timelineHtml = `
+                                    <div class="details-full-section" style="margin-top:1.5rem; border-top:1px solid var(--border-color); padding-top:1.25rem;">
+                                        <h4 style="color:var(--accent-color); font-weight:700; font-family:'Outfit'; margin-bottom:0.75rem;"><i class="fa-solid fa-code-fork"></i> Recruitment Lifecycle & Update Timeline</h4>
+                                        <div class="timeline-container">
+                                            ${job.timeline.map(item => {
+                                                const isCurrent = (item.id === job.id);
+                                                let itemType = item.post_type;
+                                                if (itemType === 'job') itemType = 'Original Announcement';
+                                                else if (itemType === 'admit_card') itemType = 'Admit Card Available';
+                                                else if (itemType === 'result') itemType = 'Final Exam Results';
+                                                else if (itemType === 'answer_key') itemType = 'Answer Key Objections';
+                                                else if (itemType === 'syllabus') itemType = 'Exam Syllabus Published';
+                                                else if (itemType === 'cutoff') itemType = 'Declared Cutoffs';
+                                                else if (itemType === 'notice') itemType = 'Official Notice';
+                                                else itemType = itemType.charAt(0).toUpperCase() + itemType.slice(1);
+
+                                                let iconHtml = '<i class="fa-solid fa-circle-info"></i>';
+                                                if (item.post_type === 'job') iconHtml = '<i class="fa-solid fa-bullhorn"></i>';
+                                                else if (item.post_type === 'admit_card') iconHtml = '<i class="fa-solid fa-id-card"></i>';
+                                                else if (item.post_type === 'result') iconHtml = '<i class="fa-solid fa-trophy"></i>';
+                                                else if (item.post_type === 'answer_key') iconHtml = '<i class="fa-solid fa-key"></i>';
+                                                else if (item.post_type === 'syllabus') iconHtml = '<i class="fa-solid fa-book-open"></i>';
+
+                                                return `
+                                                    <div class="timeline-node ${isCurrent ? 'current-node' : ''}">
+                                                        <div class="node-icon">${iconHtml}</div>
+                                                        <div class="node-content">
+                                                            <span class="node-date">${item.published_at}</span>
+                                                            <h5 class="node-title">
+                                                                ${isCurrent ? `<strong>${itemType}: ${item.title} (This Popup)</strong>` : `<a href="#" class="btn-view" data-slug="${item.slug}">${itemType}: ${item.title}</a>`}
+                                                            </h5>
+                                                        </div>
                                                     </div>
-                                                ` : ''
-                                            }
+                                                `;
+                                            }).join('')}
                                         </div>
-                                        <div class="details-summary-item">
-                                            <div style="font-size:0.75rem; text-transform:uppercase; color:var(--text-secondary);">${window.t('modal_vacancies_lbl', 'Total Vacancies')}</div>
-                                            <div style="font-size:1.15rem; font-weight:700; color:var(--accent-color); margin-top:0.25rem;">${job.vacancy_count} ${window.t('active_posts_lbl', 'Active Posts')}</div>
+                                    </div>
+                                `;
+                            }
+
+                            // Build Guidelines Photo Rule conditional list
+                            let sscPhotoGuideline = '';
+                            if (job.title.toLowerCase().includes('ssc') || job.description.toLowerCase().includes('webcam') || job.description.toLowerCase().includes('live photo')) {
+                                sscPhotoGuideline = `
+                                    <li style="display: flex; gap: 0.75rem; font-size: 0.95rem; color: var(--text-secondary); line-height: 1.6;">
+                                        <span style="color:var(--accent-color); font-weight:bold;">2.</span>
+                                        <span><strong>Webcam Live Photograph:</strong> SSC and other major commissions require taking a live photo of yourself via webcam or through the official mobile app. Stand in front of a light/white background and look straight. Do not wear caps, spectacles, or masks.</span>
+                                    </li>
+                                `;
+                            }
+
+                            // PDF Link logic
+                            let pdfRow = '';
+                            if (job.notification_pdf_path) {
+                                const pdfUrl = job.notification_pdf_path.startsWith('http')
+                                    ? job.notification_pdf_path
+                                    : `/storage/${job.notification_pdf_path}`;
+                                pdfRow = `
+                                    <tr>
+                                        <td><strong>Download Official Notification PDF</strong></td>
+                                        <td style="text-align: right;">
+                                            <a href="${pdfUrl}" target="_blank" class="btn-link-action" style="background:#dc2626;">
+                                                <i class="fa-solid fa-file-pdf"></i> Download PDF
+                                            </a>
+                                        </td>
+                                    </tr>
+                                `;
+                            }
+
+                            let boardName = job.department || 'Government Ministry';
+                            let boardShort = 'GOVT';
+                            let boardColor = 'var(--accent-color)';
+                            let bnLower = boardName.toLowerCase();
+                            if (bnLower.includes('staff selection') || bnLower.includes('ssc')) {
+                                boardShort = 'SSC';
+                                boardColor = 'linear-gradient(135deg, #1e40af 0%, #3b82f6 100%)';
+                            } else if (bnLower.includes('union public') || bnLower.includes('upsc')) {
+                                boardShort = 'UPSC';
+                                boardColor = 'linear-gradient(135deg, #78350f 0%, #d97706 100%)';
+                            } else if (bnLower.includes('railway') || bnLower.includes('rrb')) {
+                                boardShort = 'RRB';
+                                boardColor = 'linear-gradient(135deg, #991b1b 0%, #dc2626 100%)';
+                            } else if (bnLower.includes('public service commission') || bnLower.includes('psc')) {
+                                boardShort = 'PSC';
+                                boardColor = 'linear-gradient(135deg, #065f46 0%, #10b981 100%)';
+                            } else if (bnLower.includes('police')) {
+                                boardShort = 'POLICE';
+                                boardColor = 'linear-gradient(135deg, #1e3a8a 0%, #1d4ed8 100%)';
+                            } else {
+                                let words = boardName.split(' ').filter(w => w);
+                                if (words.length >= 2) {
+                                    boardShort = (words[0].charAt(0) + words[1].charAt(0)).toUpperCase();
+                                } else {
+                                    boardShort = boardName.substring(0, 2).toUpperCase();
+                                }
+                                boardColor = 'linear-gradient(135deg, rgba(37, 99, 235, 0.2) 0%, rgba(139, 92, 246, 0.2) 100%)';
+                            }
+
+                            html = `
+                                <article class="detail-card" style="margin: 0; box-shadow: none; border: none; padding: 0.5rem; background: transparent; -webkit-backdrop-filter: none; backdrop-filter: none;">
+                                    <header class="detail-header-block">
+                                        <div class="detail-header-main">
+                                            <h1 class="notranslate" translate="no" data-translate-title="${job.title}" style="font-size:1.8rem; margin-bottom: 0;">${window.translateJobTitle(job.title)}</h1>
                                         </div>
-                                        <div class="details-summary-item">
-                                            <div style="font-size:0.75rem; text-transform:uppercase; color:var(--text-secondary);">${window.t('modal_fees_lbl', 'Application Fees')}</div>
-                                            <div style="font-size:1.15rem; font-weight:700; color:var(--text-primary); margin-top:0.25rem;">₹ ${job.application_fee}</div>
+                                        <div class="detail-badges">
+                                            <span class="status-badge ${statusClass}">${statusText}</span>
+                                            <span class="badge">${type.toUpperCase()}</span>
+                                            <span class="badge badge-dept">${job.department || 'Government Ministry'}</span>
+                                            <span class="badge" style="background: rgba(139, 92, 246, 0.1); color: #8b5cf6;">📍 ${job.state || 'Pan India'}</span>
+                                            <span class="badge badge-dept">${job.qualification || 'Degree Required'}</span>
                                         </div>
-                                        <div class="details-summary-item">
-                                            <div style="font-size:0.75rem; text-transform:uppercase; color:var(--text-secondary);">${window.t('modal_age_lbl', 'Age Requirements')}</div>
-                                            <div style="font-size:1.15rem; font-weight:700; color:var(--text-primary); margin-top:0.25rem;">${job.age_limit}</div>
+                                    </header>
+
+                                    <!-- Recruiting Board Brand Identity Strip -->
+                                    <div class="board-branding-strip">
+                                        <div class="board-logo" style="background: ${boardColor}; color: #fff;">
+                                            ${boardShort}
+                                        </div>
+                                        <div class="board-meta">
+                                            <span class="board-dept-name">${boardName}</span>
+                                            <span class="board-state">${job.state || 'Central Government'} Notification</span>
                                         </div>
                                     </div>
 
+                                    <!-- Short Information Context Card -->
+                                    <div class="short-info-card-block">
+                                        <h5 class="short-info-title"><i class="fa-solid fa-circle-info"></i> Short Information</h5>
+                                        <p class="short-info-text">
+                                            ${cleanDescription}
+                                        </p>
+                                    </div>
+
+                                    <!-- Split Dates & Fees Card -->
+                                    <div class="split-info-card" style="margin-top: 1rem;">
+                                        <div class="split-info-column">
+                                            <h5 class="column-title" style="margin-top:0;"><i class="fa-regular fa-calendar-days"></i> Important Dates</h5>
+                                            <ul class="info-list">
+                                                <li>
+                                                    <span class="info-label">Application Begin:</span>
+                                                    <span class="info-val">${job.start_date}</span>
+                                                </li>
+                                                <li>
+                                                    <span class="info-label">Last Date to Apply:</span>
+                                                    <span class="info-val deadline-text">${job.last_date}</span>
+                                                </li>
+                                                <li>
+                                                    <span class="info-label">Online Fee Last Date:</span>
+                                                    <span class="info-val">${job.last_date}</span>
+                                                </li>
+                                                <li>
+                                                    <span class="info-label">Exam Date:</span>
+                                                    <span class="info-val exam-text">${job.exam_date}</span>
+                                                </li>
+                                                ${job.result_date ? `
+                                                <li>
+                                                    <span class="info-label">Expected Result Date:</span>
+                                                    <span class="info-val result-text">${job.result_date}</span>
+                                                </li>
+                                                ` : ''}
+                                            </ul>
+                                        </div>
+                                        <div class="split-info-column">
+                                            <h5 class="column-title" style="margin-top:0;"><i class="fa-solid fa-indian-rupee-sign"></i> Application Fee</h5>
+                                            <ul class="info-list">
+                                                ${feeHtml}
+                                                <li class="fee-note">
+                                                    <span class="info-label">Payment Mode:</span>
+                                                    <span class="info-val">Pay the examination fee through Debit Card, Credit Card, Net Banking, or UPI mode only.</span>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+
+                                    <!-- Age Limit Card -->
+                                    <div class="age-limit-card" style="margin-top: 1rem;">
+                                        <h5 class="column-title" style="border-bottom:none; margin-bottom:0; padding-bottom:0; margin-top:0;"><i class="fa-regular fa-clock"></i> Age Limit Details</h5>
+                                        <div class="age-grid">
+                                            <div class="age-box">
+                                                <span class="age-label">Minimum Age</span>
+                                                <span class="age-val">${job.age_min ? job.age_min + ' Years' : '18 Years'}</span>
+                                            </div>
+                                            <div class="age-box">
+                                                <span class="age-label">Maximum Age</span>
+                                                <span class="age-val">${job.age_max ? job.age_max + ' Years' : (job.age_limit ? job.age_limit : '32 Years')}</span>
+                                            </div>
+                                        </div>
+                                        <div class="age-cutoff-info">
+                                            <strong>Age Limit Reference:</strong> Calculated based on the board's recruitment guidelines. Age relaxation is applicable extra as per government reservation rules.
+                                        </div>
+                                    </div>
+
+                                    <!-- Recruitment timeline -->
+                                    ${timelineHtml}
+
+                                    <!-- Vacancy Details Card (SPA) -->
+                                    <div class="details-full-section" style="margin-top:1.5rem; border-top: 1px solid var(--border-color); padding-top:1.25rem;">
+                                        <h4 style="color: var(--accent-color); font-weight:700; font-family:'Outfit'; margin-bottom:1rem; display:flex; align-items:center; gap:0.5rem;">
+                                            Vacancy Details
+                                        </h4>
+                                        ${(job.vacancy_details && job.vacancy_details.length > 0) ? `
+                                        <div style="overflow-x: auto; background: rgba(255,255,255,0.01); border: 1px solid var(--border-color); border-radius: 8px; padding: 1rem; margin-bottom: 1rem;">
+                                            <table style="min-width: 800px; width: 100%; border-collapse: collapse; font-size: 0.9rem; text-align: left;">
+                                                <thead>
+                                                    <tr style="border-bottom: 1px solid var(--border-color);">
+                                                        <th style="padding: 0.5rem; font-weight: 700; color: var(--text-primary); width: 25%; min-width: 200px;">Post Name</th>
+                                                        <th style="padding: 0.5rem; font-weight: 700; color: var(--text-primary); text-align: center; width: 120px; min-width: 120px;">Total Post</th>
+                                                        <th style="padding: 0.5rem; font-weight: 700; color: var(--text-primary);">Post Recruitment Eligibility Details</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    ${job.vacancy_details.map(vd => `
+                                                        <tr style="border-bottom: 1px solid var(--border-color);">
+                                                            <td style="padding: 0.5rem; color: var(--text-primary); font-weight: 600;">${vd.post_name}</td>
+                                                            <td style="padding: 0.5rem; text-align: center;">
+                                                                <span class="badge" style="background: rgba(37, 99, 235, 0.1); color: var(--accent-color); font-weight: 700; padding: 2px 8px; border-radius: 4px; font-size: 0.75rem;">
+                                                                    ${vd.total_post}
+                                                                </span>
+                                                            </td>
+                                                            <td style="padding: 0.5rem; color: var(--text-secondary); white-space: pre-line;">${vd.eligibility}</td>
+                                                        </tr>
+                                                    `).join('')}
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                        ` : `
+                                        <div style="background: rgba(255,255,255,0.01); border: 1px dashed var(--border-color); border-radius: 8px; padding: 1.5rem; text-align: center; color: var(--text-secondary);">
+                                            <p style="margin: 0; font-size: 0.85rem;">No vacancy details specified for this post.</p>
+                                        </div>
+                                        `}
+                                    </div>
+
+                                    <!-- Category Wise Vacancy Details Card (SPA) -->
+                                    <div class="details-full-section" style="margin-top:1.5rem; border-top: 1px solid var(--border-color); padding-top:1.25rem;">
+                                        <h4 style="color: var(--accent-color); font-weight:700; font-family:'Outfit'; margin-bottom:1rem; display:flex; align-items:center; gap:0.5rem;">
+                                            Category Wise Vacancy Details
+                                        </h4>
+                                        ${(job.category_wise_vacancies && job.category_wise_vacancies.length > 0) ? `
+                                        <div style="overflow-x: auto; background: rgba(255,255,255,0.01); border: 1px solid var(--border-color); border-radius: 8px; padding: 1rem; margin-bottom: 1rem;">
+                                            <table style="min-width: 750px; border-collapse: collapse; font-size: 0.9rem; text-align: left;">
+                                                <thead>
+                                                    <tr style="border-bottom: 1px solid var(--border-color);">
+                                                        <th style="padding: 0.5rem; font-weight: 700; color: var(--text-primary);">Post Name</th>
+                                                        <th style="padding: 0.5rem; font-weight: 700; color: var(--text-primary); text-align: right;">UR</th>
+                                                        <th style="padding: 0.5rem; font-weight: 700; color: var(--text-primary); text-align: right;">EWS</th>
+                                                        <th style="padding: 0.5rem; font-weight: 700; color: var(--text-primary); text-align: right;">EBC</th>
+                                                        <th style="padding: 0.5rem; font-weight: 700; color: var(--text-primary); text-align: right;">BC</th>
+                                                        <th style="padding: 0.5rem; font-weight: 700; color: var(--text-primary); text-align: right;">BC (F)</th>
+                                                        <th style="padding: 0.5rem; font-weight: 700; color: var(--text-primary); text-align: right;">SC</th>
+                                                        <th style="padding: 0.5rem; font-weight: 700; color: var(--text-primary); text-align: right;">ST</th>
+                                                        <th style="padding: 0.5rem; font-weight: 700; color: var(--text-primary); text-align: right; background: rgba(37, 99, 235, 0.05);">Total</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    ${job.category_wise_vacancies.map(cwv => `
+                                                        <tr style="border-bottom: 1px solid var(--border-color);">
+                                                            <td style="padding: 0.5rem; color: var(--text-primary); font-weight: 600;">${cwv.post_name}</td>
+                                                            <td style="padding: 0.5rem; text-align: right; color: var(--text-secondary);">${cwv.ur}</td>
+                                                            <td style="padding: 0.5rem; text-align: right; color: var(--text-secondary);">${cwv.ews}</td>
+                                                            <td style="padding: 0.5rem; text-align: right; color: var(--text-secondary);">${cwv.ebc}</td>
+                                                            <td style="padding: 0.5rem; text-align: right; color: var(--text-secondary);">${cwv.bc}</td>
+                                                            <td style="padding: 0.5rem; text-align: right; color: var(--text-secondary);">${cwv.bc_female}</td>
+                                                            <td style="padding: 0.5rem; text-align: right; color: var(--text-secondary);">${cwv.sc}</td>
+                                                            <td style="padding: 0.5rem; text-align: right; color: var(--text-secondary);">${cwv.st}</td>
+                                                            <td style="padding: 0.5rem; text-align: right; font-weight: 700; color: var(--accent-color); background: rgba(37, 99, 235, 0.05);">${cwv.total}</td>
+                                                        </tr>
+                                                    `).join('')}
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                        ` : `
+                                        <div style="background: rgba(255,255,255,0.01); border: 1px dashed var(--border-color); border-radius: 8px; padding: 1.5rem; text-align: center; color: var(--text-secondary);">
+                                            <p style="margin: 0; font-size: 0.85rem;">No category wise vacancy details specified for this post.</p>
+                                        </div>
+                                        `}
+                                    </div>
+
+                                    <!-- Vacancy Breakdown -->
+                                    ${(job.category_vacancies && job.category_vacancies.length > 0) ? `
+                                    <div class="details-full-section" style="margin-top:1.5rem; border-top: 1px solid var(--border-color); padding-top:1.25rem;">
+                                        <h4 style="color: var(--accent-color); font-weight:700; font-family:'Outfit'; margin-bottom:1rem; display:flex; align-items:center; gap:0.5rem;">
+                                            Vacancy Distribution Breakdown
+                                        </h4>
+                                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1.5rem;">
+                                            ${['post', 'caste_category', 'department', 'trade', 'discipline'].map(type => {
+                                                const items = job.category_vacancies.filter(cv => cv.type === type);
+                                                if (items.length === 0) return '';
+                                                
+                                                let groupTitle = '';
+                                                if (type === 'post') groupTitle = 'Trade-wise / Post-wise Posts';
+                                                else if (type === 'caste_category') groupTitle = 'Category-wise Posts';
+                                                else if (type === 'department') groupTitle = 'Department-wise Posts';
+                                                else if (type === 'trade') groupTitle = 'Trade-wise Posts';
+                                                else if (type === 'discipline') groupTitle = 'Discipline-wise Posts';
+                                                
+                                                return `
+                                                    <div style="background: rgba(255,255,255,0.02); border: 1px solid var(--border-color); border-radius: 8px; padding: 1rem;">
+                                                        <h5 style="font-size:0.85rem; text-transform:uppercase; color:var(--text-secondary); font-weight:700; margin-bottom:0.75rem; border-bottom: 1px solid var(--border-color); padding-bottom:0.4rem; font-family:'Outfit';">
+                                                            ${groupTitle}
+                                                        </h5>
+                                                        <ul style="list-style:none; padding:0; margin:0; display:flex; flex-direction:column; gap:0.5rem;">
+                                                            ${items.map(cv => `
+                                                                <li style="display:flex; justify-content:space-between; align-items:center; font-size:0.9rem; color:var(--text-primary);">
+                                                                    <span>${cv.category_name}</span>
+                                                                    <span class="badge" style="background:var(--border-color); color:var(--text-primary); font-weight:bold; padding: 2px 8px; font-size:0.75rem;">
+                                                                        ${cv.vacancy_count}
+                                                                    </span>
+                                                                </li>
+                                                            `).join('')}
+                                                        </ul>
+                                                    </div>
+                                                `;
+                                            }).join('')}
+                                        </div>
+                                    </div>
+                                    ` : ''}
+
                                     <div class="details-full-section" style="margin-top:1.5rem;">
                                         <h4 style="color: var(--accent-color); font-weight:700; font-family:'Outfit';">${window.t('modal_overview', 'Recruitment Overview & Eligibility')}</h4>
-                                        <p style="color: var(--text-secondary); line-height:1.75; font-size:0.95rem; margin-top:0.5rem;">${job.description}</p>
+                                        <p style="color: var(--text-secondary); line-height:1.75; font-size:0.95rem; margin-top:0.5rem;">${cleanDescription}</p>
                                     </div>
 
                                     <div class="details-full-section" style="margin-top:1.5rem;">
                                         <h4 style="color: var(--accent-color); font-weight:700; font-family:'Outfit';">${window.t('modal_selection', 'Selection Process Steps')}</h4>
-                                        <p style="color: var(--text-secondary); line-height:1.75; font-size:0.95rem; margin-top:0.5rem;">${job.selection_process}</p>
+                                        <p style="color: var(--text-secondary); line-height:1.75; font-size:0.95rem; margin-top:0.5rem;">${selectionProcessHtml}</p>
                                     </div>
 
                                     <div class="details-full-section" style="margin-top:1.5rem;">
                                         <h4 style="color: var(--accent-color); font-weight:700; font-family:'Outfit';">${window.t('modal_syllabus', 'Exam Scheme & Syllabus Patterns')}</h4>
                                         <div class="details-syllabus-container" style="max-height: none; overflow: visible; margin-top:0.5rem; color:var(--text-secondary); line-height:1.75;">
-                                            ${job.exam_pattern}
+                                            ${examPatternHtml}
                                         </div>
                                     </div>
 
@@ -3197,7 +2455,7 @@
                                         </a>
                                         ` : ''}
                                     </div>
-                                </div>
+                                </article>
                             `;
                         } else if (type === 'admit_card') {
                             html = `

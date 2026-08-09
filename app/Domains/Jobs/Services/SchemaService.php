@@ -186,14 +186,27 @@ class SchemaService
         $detailUrl = route('seo.job_detail', ['slug' => $job->slug]);
         $logoUrl = $baseUrl . '/assets/images/icons/pwa-icon-512.png';
 
+        // Load approved AI content summary for a cleaner meta description if available
+        $cleanDesc = null;
+        if ($job->relationLoaded('aiContent') && $job->aiContent && $job->aiContent->status === 'approved' && !empty($job->aiContent->summary)) {
+            $cleanDesc = strip_tags($job->aiContent->summary);
+        }
+        if (empty($cleanDesc)) {
+            $cleanDesc = strip_tags($job->description);
+        }
+        // Fallback for short descriptions
+        if (empty($cleanDesc)) {
+            $cleanDesc = "Apply online for {$job->title}. Find age limits, application fees, qualification requirements, and useful links.";
+        }
+
         $schema = [
             '@context' => 'https://schema.org',
             '@type' => 'JobPosting',
             '@id' => $detailUrl . '/#jobposting',
             'title' => $job->title,
-            'description' => strip_tags($job->description),
+            'description' => trim($cleanDesc),
             'datePosted' => $job->published_at ? $job->published_at->toDateString() : ($job->created_at ? $job->created_at->toDateString() : now()->toDateString()),
-            'validThrough' => $job->last_date_to_apply ? $job->last_date_to_apply->toDateString() : now()->addDays(30)->toDateString(),
+            'validThrough' => $job->last_date_to_apply ? $job->last_date_to_apply->toDateString() : now()->addDays(45)->toDateString(),
             'employmentType' => 'FULL_TIME',
             'hiringOrganization' => [
                 '@type' => 'Organization',

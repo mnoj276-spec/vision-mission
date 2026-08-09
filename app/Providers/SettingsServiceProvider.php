@@ -30,9 +30,15 @@ class SettingsServiceProvider extends ServiceProvider
     public function boot(): void
     {
         // 1. Dynamic SMTP config override
-        $hasEmailSettingsTable = Cache::rememberForever('has_email_settings_table', function () {
-            return Schema::hasTable('email_settings');
-        });
+        $hasEmailSettingsTable = false;
+        try {
+            $hasEmailSettingsTable = Cache::rememberForever('has_email_settings_table', function () {
+                return Schema::hasTable('email_settings');
+            });
+        } catch (\Exception $e) {
+            // DB/Cache connection not available yet or not migrated
+        }
+
         if ($hasEmailSettingsTable) {
             try {
                 $host = email_setting('smtp_host');
@@ -54,63 +60,73 @@ class SettingsServiceProvider extends ServiceProvider
         }
 
         // 2. View Composer to share settings, menus, social links and ads to all views
-        View::composer('*', function ($view) {
-            $hasSettingsTable = Cache::rememberForever('has_settings_table', function () {
-                return Schema::hasTable('settings');
-            });
-            if ($hasSettingsTable) {
+        try {
+            View::composer('*', function ($view) {
+                $hasSettingsTable = false;
                 try {
-                    $composerData = Cache::rememberForever('settings_composer_data', function () {
-                        // Pull menus
-                        $headerMenu = Menu::where('location', 'header')
-                            ->where('is_active', true)
-                            ->first();
-                        $headerItems = $headerMenu 
-                            ? $headerMenu->rootItems()->with('children')->get() 
-                            : collect();
-
-                        $footerMenu1 = Menu::where('location', 'footer_col1')->where('is_active', true)->first();
-                        $footerItems1 = $footerMenu1 ? $footerMenu1->rootItems()->get() : collect();
-
-                        $footerMenu2 = Menu::where('location', 'footer_col2')->where('is_active', true)->first();
-                        $footerItems2 = $footerMenu2 ? $footerMenu2->rootItems()->get() : collect();
-
-                        $footerMenu3 = Menu::where('location', 'footer_col3')->where('is_active', true)->first();
-                        $footerItems3 = $footerMenu3 ? $footerMenu3->rootItems()->get() : collect();
-
-                        $footerMenu4 = Menu::where('location', 'footer_col4')->where('is_active', true)->first();
-                        $footerItems4 = $footerMenu4 ? $footerMenu4->rootItems()->get() : collect();
-
-                        // Pull social links
-                        $socialLinks = SocialLink::where('is_active', true)
-                            ->orderBy('order_index')
-                            ->get();
-
-                        // Pull CMS pages
-                        $cmsPagesList = CmsPage::where('is_active', true)->get();
-
-                        // Pull ads
-                        $ads = Advertisement::where('is_active', true)
-                            ->get()
-                            ->keyBy('slot_name');
-
-                        return [
-                            'headerMenu' => $headerItems,
-                            'footerMenu1' => $footerItems1,
-                            'footerMenu2' => $footerItems2,
-                            'footerMenu3' => $footerItems3,
-                            'footerMenu4' => $footerItems4,
-                            'socialLinks' => $socialLinks,
-                            'cmsPagesList' => $cmsPagesList,
-                            'activeAds' => $ads,
-                        ];
+                    $hasSettingsTable = Cache::rememberForever('has_settings_table', function () {
+                        return Schema::hasTable('settings');
                     });
-
-                    $view->with($composerData);
                 } catch (\Exception $e) {
-                    // Failsafe
+                    // DB/Cache connection not available yet or not migrated
                 }
-            }
-        });
+
+                if ($hasSettingsTable) {
+                    try {
+                        $composerData = Cache::rememberForever('settings_composer_data', function () {
+                            // Pull menus
+                            $headerMenu = Menu::where('location', 'header')
+                                ->where('is_active', true)
+                                ->first();
+                            $headerItems = $headerMenu 
+                                ? $headerMenu->rootItems()->with('children')->get() 
+                                : collect();
+
+                            $footerMenu1 = Menu::where('location', 'footer_col1')->where('is_active', true)->first();
+                            $footerItems1 = $footerMenu1 ? $footerMenu1->rootItems()->get() : collect();
+
+                            $footerMenu2 = Menu::where('location', 'footer_col2')->where('is_active', true)->first();
+                            $footerItems2 = $footerMenu2 ? $footerMenu2->rootItems()->get() : collect();
+
+                            $footerMenu3 = Menu::where('location', 'footer_col3')->where('is_active', true)->first();
+                            $footerItems3 = $footerMenu3 ? $footerMenu3->rootItems()->get() : collect();
+
+                            $footerMenu4 = Menu::where('location', 'footer_col4')->where('is_active', true)->first();
+                            $footerItems4 = $footerMenu4 ? $footerMenu4->rootItems()->get() : collect();
+
+                            // Pull social links
+                            $socialLinks = SocialLink::where('is_active', true)
+                                ->orderBy('order_index')
+                                ->get();
+
+                            // Pull CMS pages
+                            $cmsPagesList = CmsPage::where('is_active', true)->get();
+
+                            // Pull ads
+                            $ads = Advertisement::where('is_active', true)
+                                ->get()
+                                ->keyBy('slot_name');
+
+                            return [
+                                'headerMenu' => $headerItems,
+                                'footerMenu1' => $footerItems1,
+                                'footerMenu2' => $footerItems2,
+                                'footerMenu3' => $footerItems3,
+                                'footerMenu4' => $footerItems4,
+                                'socialLinks' => $socialLinks,
+                                'cmsPagesList' => $cmsPagesList,
+                                'activeAds' => $ads,
+                            ];
+                        });
+
+                        $view->with($composerData);
+                    } catch (\Exception $e) {
+                        // Failsafe
+                    }
+                }
+            });
+        } catch (\Exception $e) {
+            // Failsafe
+        }
     }
 }

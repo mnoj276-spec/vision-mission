@@ -64,6 +64,7 @@ class AiStructuringService
             . "- title (string or null): Job Title\n"
             . "- department (string or null): Department name\n"
             . "- vacancy_count (integer): Vacancy count (0 if not mentioned)\n"
+            . "- vacancies_breakdown (array of objects or null): Detailed vacancies breakdown. Each object must have fields: name (string), count (integer), type (string, must be one of: 'caste_category', 'department', 'trade', 'discipline', 'post').\n"
             . "- qualification (string or null): Required Qualification\n"
             . "- age_limit (string or null): Age constraints\n"
             . "- age_min (integer or null): Minimum age required (e.g., 18 or 21)\n"
@@ -121,6 +122,7 @@ class AiStructuringService
             'title' => null,
             'department' => null,
             'vacancy_count' => 0,
+            'vacancies_breakdown' => [],
             'qualification' => null,
             'age_limit' => null,
             'age_min' => null,
@@ -135,6 +137,12 @@ class AiStructuringService
                 'result_date' => null,
             ],
             'official_website' => null,
+            'posting_location' => null,
+            'medical_test' => null,
+            'specific_reservations' => null,
+            'syllabus' => null,
+            'rich_instructions' => null,
+            'attachments_media' => [],
         ];
     }
 
@@ -215,6 +223,86 @@ class AiStructuringService
             $data['official_website'] = trim($m[1]);
         }
 
+        // 11. Vacancies Breakdown
+        $breakdown = [];
+        if (preg_match_all('/(?:([A-Za-z\s]+)(?:-|–|:)\s*(\d+))/i', $text, $matches, PREG_SET_ORDER)) {
+            foreach ($matches as $match) {
+                $name = trim($match[1]);
+                $count = (int)$match[2];
+                $lowerName = strtolower($name);
+                if (in_array($lowerName, [
+                    'vacancy', 'vacancies', 'posts', 'post', 'total', 'age', 'fee', 'rs', 'inr', 'stipend',
+                    'salary', 'min', 'max', 'years', 'year', 'fee amount', 'application fee', 'vacancy count',
+                    'date', 'last date', 'start date', 'opening date', 'closing date', 'exam date', 'result date',
+                    'phone', 'mobile', 'contact', 'code', 'pin', 'otp', 'id', 'class', 'grade', 'level'
+                ]) || str_contains($lowerName, 'date') || str_contains($lowerName, 'time')) {
+                    continue;
+                }
+                $type = 'post';
+                if (in_array(strtoupper($name), ['UR', 'OBC', 'SC', 'ST', 'EWS', 'GEN', 'GENERAL'])) {
+                    $type = 'caste_category';
+                }
+                $breakdown[] = [
+                    'name'  => $name,
+                    'count' => $count,
+                    'type'  => $type,
+                ];
+            }
+        }
+        $data['vacancies_breakdown'] = $breakdown;
+
+        if ($data['vacancy_count'] === 0 && !empty($breakdown)) {
+            $hasPostBreakdown = false;
+            $hasCasteBreakdown = false;
+            $postSum = 0;
+            $casteSum = 0;
+            foreach ($breakdown as $item) {
+                if (($item['type'] ?? '') === 'post') {
+                    $hasPostBreakdown = true;
+                    $postSum += (int)($item['count'] ?? 0);
+                } elseif (($item['type'] ?? '') === 'caste_category') {
+                    $hasCasteBreakdown = true;
+                    $casteSum += (int)($item['count'] ?? 0);
+                }
+            }
+            if ($hasPostBreakdown) {
+                $data['vacancy_count'] = $postSum;
+            } elseif ($hasCasteBreakdown) {
+                $data['vacancy_count'] = $casteSum;
+            }
+        }
+
+        // 12. Posting Location
+        if (preg_match('/(?:Job Location|Posting Location|Place of Posting|State|District)\s*:\s*([^\n\r]+)/i', $text, $m)) {
+            $data['posting_location'] = trim($m[1]);
+        }
+
+        // 13. Testing Specifics
+        if (preg_match('/(?:Medical Test|Physical Endurance Test|PET|PST|Skill Test|Typing Test|Trade Test)\s*:\s*([^\n\r]+)/i', $text, $m)) {
+            $data['medical_test'] = trim($m[1]);
+        }
+
+        // 14. Specific Reservations
+        if (preg_match('/(?:PwBD|Ex-Servicemen|Reservation for Women)\s*:\s*([^\n\r]+)/i', $text, $m)) {
+            $data['specific_reservations'] = trim($m[1]);
+        }
+
+        // 15. Syllabus / Exam Pattern (Multiline block)
+        if (preg_match('/(?:Syllabus|Scheme of Examination)\s*:\s*(.*?)(?=\n[A-Z][a-z]+:|\n#|$)/is', $text, $m)) {
+            $data['syllabus'] = trim($m[1]);
+        }
+
+        // 16. Rich Instructions
+        if (preg_match('/(?:How to Apply|Important Instructions)\s*:\s*(.*?)(?=\n[A-Z][a-z]+:|\n#|$)/is', $text, $m)) {
+            $data['rich_instructions'] = trim($m[1]);
+        }
+
+        // 17. Attachments/Media
+        if (preg_match_all('/\[(?:Image|PDF Attachment|Link):?\s*([^\]\n\r]+)\]|\[(?:Image|PDF Attachment|Link)\]\s*([^\n\r]+)/i', $text, $m)) {
+            $media = array_merge(array_filter($m[1]), array_filter($m[2]));
+            $data['attachments_media'] = array_values(array_unique(array_map('trim', $media)));
+        }
+
         return $data;
     }
 
@@ -239,6 +327,7 @@ class AiStructuringService
             . "- title (string or null): Job Title\n"
             . "- department (string or null): Department name\n"
             . "- vacancy_count (integer): Vacancy count (0 if not mentioned)\n"
+            . "- vacancies_breakdown (array of objects or null): Detailed vacancies breakdown. Each object must have fields: name (string), count (integer), type (string, must be one of: 'caste_category', 'department', 'trade', 'discipline', 'post').\n"
             . "- qualification (string or null): Required Qualification\n"
             . "- age_limit (string or null): Age constraints\n"
             . "- age_min (integer or null): Minimum age required (e.g., 18 or 21)\n"

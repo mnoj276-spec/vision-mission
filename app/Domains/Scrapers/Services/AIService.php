@@ -45,6 +45,7 @@ class AIService
             . "- salary_min (numeric or null)\n"
             . "- salary_max (numeric or null)\n"
             . "- vacancy_count (integer)\n"
+            . "- vacancies_breakdown (array of objects or null): Detailed vacancies breakdown. Each object must have fields: name (string), count (integer), type (string, must be one of: 'caste_category', 'department', 'trade', 'discipline', 'post').\n"
             . "- application_fee (numeric)\n"
             . "- last_date_to_apply (string: YYYY-MM-DD)\n"
             . "- selection_process (string or null)\n"
@@ -94,6 +95,7 @@ class AIService
             'stipend' => null,
             'salary' => null,
             'vacancy_count' => 0,
+            'vacancies_breakdown' => [],
             'application_fee' => 0.00,
             'last_date_to_apply' => null,
             'selection_process' => null,
@@ -147,6 +149,55 @@ class AIService
             try {
                 $data['last_date_to_apply'] = \Carbon\Carbon::parse(str_replace('/', '-', $m[1]))->format('Y-m-d');
             } catch (\Exception $e) {}
+        }
+
+        // Parse Vacancies Breakdown
+        $breakdown = [];
+        if (preg_match_all('/(?:([A-Za-z\s]+)(?:-|–|:)\s*(\d+))/i', $text, $matches, PREG_SET_ORDER)) {
+            foreach ($matches as $match) {
+                $name = trim($match[1]);
+                $count = (int)$match[2];
+                $lowerName = strtolower($name);
+                if (in_array($lowerName, [
+                    'vacancy', 'vacancies', 'posts', 'post', 'total', 'age', 'fee', 'rs', 'inr', 'stipend',
+                    'salary', 'min', 'max', 'years', 'year', 'fee amount', 'application fee', 'vacancy count',
+                    'date', 'last date', 'start date', 'opening date', 'closing date', 'exam date', 'result date',
+                    'phone', 'mobile', 'contact', 'code', 'pin', 'otp', 'id', 'class', 'grade', 'level'
+                ]) || str_contains($lowerName, 'date') || str_contains($lowerName, 'time')) {
+                    continue;
+                }
+                $type = 'post';
+                if (in_array(strtoupper($name), ['UR', 'OBC', 'SC', 'ST', 'EWS', 'GEN', 'GENERAL'])) {
+                    $type = 'caste_category';
+                }
+                $breakdown[] = [
+                    'name'  => $name,
+                    'count' => $count,
+                    'type'  => $type,
+                ];
+            }
+        }
+        $data['vacancies_breakdown'] = $breakdown;
+
+        if ($data['vacancy_count'] === 0 && !empty($breakdown)) {
+            $hasPostBreakdown = false;
+            $hasCasteBreakdown = false;
+            $postSum = 0;
+            $casteSum = 0;
+            foreach ($breakdown as $item) {
+                if (($item['type'] ?? '') === 'post') {
+                    $hasPostBreakdown = true;
+                    $postSum += (int)($item['count'] ?? 0);
+                } elseif (($item['type'] ?? '') === 'caste_category') {
+                    $hasCasteBreakdown = true;
+                    $casteSum += (int)($item['count'] ?? 0);
+                }
+            }
+            if ($hasPostBreakdown) {
+                $data['vacancy_count'] = $postSum;
+            } elseif ($hasCasteBreakdown) {
+                $data['vacancy_count'] = $casteSum;
+            }
         }
 
         return $data;

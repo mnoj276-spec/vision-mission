@@ -1,3 +1,11 @@
+---
+title: "System Configuration & Environment Variables"
+aliases: ["System Configuration","Configuration"]
+tags: ["configuration","setup","env","existing"]
+created: 2024-01-05
+updated: 2026-07-05
+---
+
 # System Configuration & Environment Variables
 
 This document maps configuration directories, feature toggles, environment variables, and external service credentials.
@@ -47,3 +55,11 @@ Features are toggled dynamically through the database configuration model.
   * `settings.operations`: Allows CMS page and menu edits.
   * `settings.media`: Enables file uploads and folders management.
   * `settings.security.backups`: Activates backup generation and download options.
+
+---
+## Related Notes
+* **MOC Connections**: [[Deployment MOC]], [[DevOps MOC]]
+* **Navigation**:
+  * ⬅️ Prev: [[TESTING]]
+  * ➡️ Next: [[DEPENDENCIES]]
+  * 🏠 Home: [[Home]] | 📊 Dashboard: [[Dashboard]]

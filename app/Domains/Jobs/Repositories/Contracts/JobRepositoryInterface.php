@@ -15,6 +15,21 @@ interface JobRepositoryInterface
     public function getPaginatedFiltered(array $filters, int $perPage = 10): LengthAwarePaginator;
 
     /**
+     * Programmatic SEO specialized queries.
+     */
+    public function getByState(int $stateId, int $perPage = 20): LengthAwarePaginator;
+    public function getByDistrict(int $stateId, int $districtId, int $perPage = 20): LengthAwarePaginator;
+    public function getRailwayJobs(int $perPage = 20): LengthAwarePaginator;
+    public function getBankingJobs(int $perPage = 20): LengthAwarePaginator;
+    public function getSscJobs(int $perPage = 20): LengthAwarePaginator;
+    public function getUpscJobs(int $perPage = 20): LengthAwarePaginator;
+    public function getDefenceJobs(int $perPage = 20): LengthAwarePaginator;
+    public function getPsuJobs(int $perPage = 20): LengthAwarePaginator;
+    public function getByType(string $postType, int $perPage = 20): LengthAwarePaginator;
+    public function getJobForSeoDetail(string $slug): ?JobPost;
+    public function getNewsSitemapJobs(int $hoursBack = 48): Collection;
+
+    /**
      * Get active featured job posts.
      */
     public function getFeatured(int $limit = 5): Collection;

@@ -1,3 +1,11 @@
+---
+title: "vision-mission Job Portal Overview"
+aliases: ["Project Overview","Business Overview"]
+tags: ["overview","business","goals","existing"]
+created: 2024-01-05
+updated: 2026-07-05
+---
+
 # Project Overview: vision-mission Job Portal
 
 `vision-mission` is a high-performance, automated Indian Government Jobs Aggregator and Recruitment Lifecycle Tracker. It ingests public recruitment documents, parses and classifies them using AI, deduplicates them via dynamic fingerprinting, and publishes them for candidate searches, eligibility matching, and automated email alerts.
@@ -81,3 +89,10 @@ graph TD
     G -->|New Post| K[Insert JobPost]
     K -->|Observe| L[Bust Caches & Dispatch IndexNow]
 ```
+
+---
+## Related Notes
+* **MOC Connections**: [[Business MOC]], [[Government Sources MOC]]
+* **Navigation**:
+  * ⬅️ Prev: [[CHANGELOG_AI]]
+  * 🏠 Home: [[Home]] | 📊 Dashboard: [[Dashboard]]

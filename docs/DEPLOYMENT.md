@@ -1,3 +1,11 @@
+---
+title: "Deployment & Setup Operations Reference"
+aliases: ["Deployment Setup","Deployment Operations"]
+tags: ["deployment","operations","setup","existing"]
+created: 2024-01-05
+updated: 2026-07-05
+---
+
 # Deployment & Setup Operations Reference
 
 This document maps out the system setup, database provisioning, front-end compilation, and queue runner daemon activation.
@@ -65,3 +73,11 @@ Standard crontab scheduling:
 ```bash
 * * * * * cd /path-to-your-project && php artisan schedule:run >> /dev/null 2>&1
 ```
+
+---
+## Related Notes
+* **MOC Connections**: [[Deployment MOC]], [[DevOps MOC]]
+* **Navigation**:
+  * ⬅️ Prev: [[DEPENDENCIES]]
+  * ➡️ Next: [[UI_COMPONENTS]]
+  * 🏠 Home: [[Home]] | 📊 Dashboard: [[Dashboard]]

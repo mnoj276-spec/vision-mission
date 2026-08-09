@@ -1,3 +1,11 @@
+---
+title: "Routing Map Reference"
+aliases: ["Routes","Routing Map"]
+tags: ["backend","routing","endpoints","existing"]
+created: 2024-01-05
+updated: 2026-07-05
+---
+
 # Routing Map Reference
 
 `vision-mission` divides its HTTP routes into five files under the `routes` directory, segregating public, REST, admin, scraper, and scheduled commands.
@@ -61,3 +69,11 @@ Prefix: `/api/admin` (Protected by `auth`, `admin` and `permission:create_jobs`)
 ## 5. Console Routings ([routes/console.php](file:///C:/xampp_8.2.12/htdocs/vision-mission/routes/console.php))
 Registers commands and cron definitions:
 * **Cron executions**: Runs `scraper:run` every 5 mins, `scraper:detect-results` every 10 mins, daily/hourly mailers, features expirations.
+
+---
+## Related Notes
+* **MOC Connections**: [[Backend MOC]], [[API MOC]]
+* **Navigation**:
+  * ⬅️ Prev: [[MIDDLEWARE]]
+  * ➡️ Next: [[API]]
+  * 🏠 Home: [[Home]] | 📊 Dashboard: [[Dashboard]]

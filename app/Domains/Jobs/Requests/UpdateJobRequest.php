@@ -31,6 +31,22 @@ class UpdateJobRequest extends FormRequest
                     }
                 }
             ],
+            'vacancy_details' => 'nullable|array',
+            'vacancy_details.*.post_name' => 'required|string',
+            'vacancy_details.*.total_post' => 'required|integer|min:0',
+            'vacancy_details.*.eligibility' => 'required|string',
+            'vacancy_details.*.sort_order' => 'nullable|integer',
+            'category_wise_vacancies' => 'nullable|array',
+            'category_wise_vacancies.*.post_name' => 'required|string',
+            'category_wise_vacancies.*.ur' => 'required|integer|min:0',
+            'category_wise_vacancies.*.ews' => 'required|integer|min:0',
+            'category_wise_vacancies.*.ebc' => 'required|integer|min:0',
+            'category_wise_vacancies.*.bc' => 'required|integer|min:0',
+            'category_wise_vacancies.*.bc_female' => 'required|integer|min:0',
+            'category_wise_vacancies.*.sc' => 'required|integer|min:0',
+            'category_wise_vacancies.*.st' => 'required|integer|min:0',
+            'category_wise_vacancies.*.total' => 'required|integer|min:0',
+            'category_wise_vacancies.*.sort_order' => 'nullable|integer',
         ];
     }
 }

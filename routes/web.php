@@ -130,8 +130,12 @@ Route::get('/api/admin/revenue-analytics', [MonetizationController::class, 'getR
 Route::prefix('api')->group(function () {
     // Public AJAX Endpoints
     Route::get('/jobs/{slug}',       [JobController::class, 'show'])->name('jobs.show');
-    Route::get('/search/autocomplete', [\App\Domains\Jobs\Controllers\SearchController::class, 'apiAutocomplete'])->name('api.search.autocomplete');
-    Route::get('/search/typo',         [\App\Domains\Jobs\Controllers\SearchController::class, 'apiTypoCorrection'])->name('api.search.typo');
+    Route::get('/search/autocomplete', [\App\Domains\Jobs\Controllers\SearchController::class, 'apiAutocomplete'])
+        ->middleware('throttle:30,1')
+        ->name('api.search.autocomplete');
+    Route::get('/search/typo',         [\App\Domains\Jobs\Controllers\SearchController::class, 'apiTypoCorrection'])
+        ->middleware('throttle:30,1')
+        ->name('api.search.typo');
 
     // Authentication
     Route::post('/register',         [AuthController::class, 'register'])->name('register');

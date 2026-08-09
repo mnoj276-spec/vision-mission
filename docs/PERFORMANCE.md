@@ -1,3 +1,11 @@
+---
+title: "Performance Optimization Reference"
+aliases: ["Performance Optimization","Performance"]
+tags: ["performance","caching","database","existing"]
+created: 2024-01-05
+updated: 2026-07-05
+---
+
 # Performance Optimization Reference
 
 This document details database indexing, query caching, N+1 query prevention, and crawler optimization layers.
@@ -38,3 +46,11 @@ The DB schema is optimized for fast read-heavy search and filtering operations:
 To reduce network overhead and API call spikes:
 * If a scraper finds new postings, the interval is set to **30 minutes** (active feed mode).
 * If a scraper run results in no new postings, the crawler scales up the execution interval by **1.5x** up to a maximum cap of **24 hours** (idle feed mode).
+
+---
+## Related Notes
+* **MOC Connections**: [[DevOps MOC]], [[Analytics MOC]]
+* **Navigation**:
+  * ⬅️ Prev: [[ERROR_HANDLING]]
+  * ➡️ Next: [[TESTING]]
+  * 🏠 Home: [[Home]] | 📊 Dashboard: [[Dashboard]]

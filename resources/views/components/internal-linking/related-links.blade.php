@@ -337,7 +337,7 @@
 <section class="il-section" id="il-cross-type-nav">
     <h3 class="il-section-header">
         <svg class="il-icon" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path></svg>
-        Related Updates for This Exam
+        <span data-i18n="related_updates_title">Related Updates for This Exam</span>
     </h3>
     <div class="il-lifecycle-nav">
         @foreach($links['cross_type'] as $cross)
@@ -354,8 +354,8 @@
                     {{ $iconMap[$cross['type']] ?? '📋' }}
                 </div>
                 <div class="il-lifecycle-text">
-                    <div class="il-lifecycle-label">{{ $cross['label'] }}</div>
-                    <div class="il-lifecycle-title">{{ $cross['anchor'] }}</div>
+                    <div class="il-lifecycle-label" data-translate-lookup="{{ $cross['label'] }}">{{ $cross['label'] }}</div>
+                    <div class="il-lifecycle-title" data-translate-title="{{ $cross['anchor'] }}">{{ $cross['anchor'] }}</div>
                 </div>
             </a>
         @endforeach
@@ -368,7 +368,7 @@
 <section class="il-section" id="il-related-jobs">
     <h3 class="il-section-header">
         <svg class="il-icon" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
-        Similar Government Jobs
+        <span data-i18n="similar_jobs_title">Similar Government Jobs</span>
         <span class="il-count">{{ $links['related_jobs']->count() }}</span>
     </h3>
     <div class="il-jobs-grid">
@@ -376,10 +376,10 @@
             <a href="{{ $linkingService->getDetailUrl($relJob) }}" class="il-job-card il-tracked-link"
                data-il-source="{{ $currentJob->id }}" data-il-target="{{ $relJob->id }}"
                data-il-section="related_jobs" data-il-anchor="{{ $linkingService->generateAnchor($relJob) }}">
-                <div class="il-job-card-title">{{ $linkingService->generateAnchor($relJob) }}</div>
+                <div class="il-job-card-title" data-translate-title="{{ $linkingService->generateAnchor($relJob) }}">{{ $linkingService->generateAnchor($relJob) }}</div>
                 <div class="il-job-card-meta">
-                    <span class="il-tag il-tag-dept">{{ $relJob->department->name ?? 'Govt' }}</span>
-                    <span class="il-tag il-tag-state">📍 {{ $relJob->state->name ?? 'India' }}</span>
+                    <span class="il-tag il-tag-dept" data-translate-lookup="{{ $relJob->department->name ?? 'Govt' }}">{{ $relJob->department->name ?? 'Govt' }}</span>
+                    <span class="il-tag il-tag-state" data-translate-prefix="📍 " data-translate-lookup="{{ $relJob->state->name ?? 'India' }}">📍 {{ $relJob->state->name ?? 'India' }}</span>
                     @if($relJob->last_date_to_apply)
                         <span class="il-tag il-tag-deadline">⏰ {{ $relJob->last_date_to_apply->format('d M') }}</span>
                     @endif
@@ -389,10 +389,10 @@
                         @if($relJob->salary_min > 0)
                             ₹{{ number_format($relJob->salary_min, 0) }} - {{ number_format($relJob->salary_max, 0) }}
                         @else
-                            Govt Scale
+                            <span data-translate-lookup="Govt Scale">Govt Scale</span>
                         @endif
                     </span>
-                    <span class="il-arrow">View Details →</span>
+                    <span class="il-arrow" data-i18n="view_details_btn">View Details →</span>
                 </div>
             </a>
         @endforeach
@@ -405,7 +405,7 @@
 <section class="il-section" id="il-exam-updates">
     <h3 class="il-section-header">
         <svg class="il-icon" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-        Exam Updates & Notifications
+        <span data-i18n="exam_updates_title">Exam Updates & Notifications</span>
     </h3>
     <div class="il-exam-row">
         @foreach($links['related_results'] as $result)
@@ -414,8 +414,10 @@
                data-il-section="related_results" data-il-anchor="{{ $result->title }}">
                 <div class="il-exam-icon il-exam-icon-result">📊</div>
                 <div class="il-exam-text">
-                    <div class="il-exam-title">{{ Str::limit($result->title, 45) }}</div>
-                    <div class="il-exam-dept">{{ $result->department->name ?? 'Result' }} • Result</div>
+                    <div class="il-exam-title" data-translate-title="{{ Str::limit($result->title, 45) }}">{{ Str::limit($result->title, 45) }}</div>
+                    <div class="il-exam-dept">
+                        <span data-translate-lookup="{{ $result->department->name ?? 'Result' }}">{{ $result->department->name ?? 'Result' }}</span> • <span data-translate-lookup="Result">Result</span>
+                    </div>
                 </div>
             </a>
         @endforeach
@@ -425,8 +427,10 @@
                data-il-section="related_admit_cards" data-il-anchor="{{ $admit->title }}">
                 <div class="il-exam-icon il-exam-icon-admit">🎫</div>
                 <div class="il-exam-text">
-                    <div class="il-exam-title">{{ Str::limit($admit->title, 45) }}</div>
-                    <div class="il-exam-dept">{{ $admit->department->name ?? 'Admit Card' }} • Admit Card</div>
+                    <div class="il-exam-title" data-translate-title="{{ Str::limit($admit->title, 45) }}">{{ Str::limit($admit->title, 45) }}</div>
+                    <div class="il-exam-dept">
+                        <span data-translate-lookup="{{ $admit->department->name ?? 'Admit Card' }}">{{ $admit->department->name ?? 'Admit Card' }}</span> • <span data-translate-lookup="Admit Card">Admit Card</span>
+                    </div>
                 </div>
             </a>
         @endforeach
@@ -439,14 +443,14 @@
 <section class="il-section" id="il-categories">
     <h3 class="il-section-header">
         <svg class="il-icon" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M4 6h16M4 10h16M4 14h16M4 18h16"></path></svg>
-        Explore Job Categories
+        <span data-i18n="explore_categories_title">Explore Job Categories</span>
     </h3>
     <div class="il-category-scroll">
         @foreach($links['categories'] as $cat)
             <a href="{{ $cat['url'] }}" class="il-category-pill il-tracked-link"
                data-il-source="{{ $currentJob->id }}" data-il-section="categories"
                data-il-anchor="{{ $cat['name'] }} Jobs">
-                💼 {{ $cat['name'] }}
+                💼 <span data-translate-lookup="{{ $cat['name'] }}">{{ $cat['name'] }}</span>
                 @if($cat['count'] > 0)
                     <span class="il-category-count">{{ $cat['count'] }}</span>
                 @endif
@@ -461,14 +465,14 @@
 <section class="il-section" id="il-states">
     <h3 class="il-section-header">
         <svg class="il-icon" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
-        Jobs by State
+        <span data-i18n="jobs_by_state_title">Jobs by State</span>
     </h3>
     <div class="il-state-grid">
         @foreach($links['state_recommendations'] as $state)
             <a href="{{ $state['url'] }}" class="il-state-link il-tracked-link"
                data-il-source="{{ $currentJob->id }}" data-il-section="state_reco"
                data-il-anchor="{{ $state['name'] }} Jobs">
-                📍 {{ $state['name'] }}
+                📍 <span data-translate-lookup="{{ $state['name'] }}">{{ $state['name'] }}</span>
                 <span class="il-state-count">{{ $state['count'] }}</span>
             </a>
         @endforeach

@@ -1,3 +1,11 @@
+---
+title: "Logging Architecture & Auditing Reference"
+aliases: ["Logging Architecture","Logging"]
+tags: ["backend","logging","auditing","existing"]
+created: 2024-01-05
+updated: 2026-07-05
+---
+
 # Logging Architecture & Auditing Reference
 
 `vision-mission` implements structured database-backed logs alongside standard framework files to track automated crawler ingestion, deduplication gates, and administrative modifications.
@@ -36,3 +44,11 @@ For traceability, operations are logged directly to the database:
     php artisan pail
     ```
   * Pail captures logs from web requests, scraper crons, and Horizon queue threads into a single console stream.
+
+---
+## Related Notes
+* **MOC Connections**: [[Backend MOC]], [[DevOps MOC]], [[Analytics MOC]]
+* **Navigation**:
+  * ⬅️ Prev: [[SECURITY]]
+  * ➡️ Next: [[ERROR_HANDLING]]
+  * 🏠 Home: [[Home]] | 📊 Dashboard: [[Dashboard]]

@@ -96,11 +96,16 @@
                 </div>
             </div>
 
-            <!-- Visualization Row -->
+            <!-- Visualization & Telemetry Grid Row -->
             <div class="grid grid-cols-1 lg:grid-cols-[2fr_1fr] gap-8 items-start">
                 <!-- Crawler status and health -->
                 <div class="glass-panel p-6 rounded-2xl">
-                    <h3 class="font-['Outfit'] text-xl text-blue-600 mb-4 font-semibold">System Health & Crawl Metrics</h3>
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem; flex-wrap: wrap; gap: 0.5rem;">
+                        <h3 class="font-['Outfit'] text-xl text-blue-600 font-semibold" style="margin: 0;">System Health & Crawl Metrics</h3>
+                        <div>
+                            <input type="text" id="overview-crawlers-search" placeholder="Search feeds..." style="max-width: 200px; font-size: 0.8rem; padding: 0.4rem 0.75rem; border-radius: 8px; border: 1px solid var(--border-color); background: var(--bg-primary); color: var(--text-primary); outline: none; transition: border-color 0.2s;" onfocus="this.style.borderColor='var(--accent-color)'" onblur="this.style.borderColor='var(--border-color)'" />
+                        </div>
+                    </div>
                     <div class="responsive-table-container">
                         <table class="enterprise-table density-compact">
                             <thead>
@@ -116,27 +121,38 @@
                             </tbody>
                         </table>
                     </div>
-                </div>
-
-                <!-- SVG Graph circular gauge -->
-                <div class="glass-panel" style="padding: 1.5rem; border-radius: 16px; text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center;">
-                    <h3 style="font-family: 'Outfit'; font-size: 1.1rem; margin-bottom: 1.5rem;">Crawl Success Ratio</h3>
-                    <div style="position: relative; width: 140px; height: 140px;">
-                        <svg width="140" height="140" viewBox="0 0 36 36" style="transform: rotate(-90deg);">
-                            <circle cx="18" cy="18" r="16" fill="none" stroke="var(--border-color)" stroke-width="3"></circle>
-                            <circle id="success-svg-gauge" cx="18" cy="18" r="16" fill="none" stroke="#10b981" stroke-width="3" stroke-dasharray="100 100" stroke-linecap="round"></circle>
-                        </svg>
-                        <div id="success-ratio-label" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 1.4rem; font-weight: bold; font-family: 'Outfit'; color: #10b981;">100%</div>
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 1rem; flex-wrap: wrap; gap: 0.5rem;">
+                        <div id="overview-crawlers-count" style="font-size: 0.85rem; color: var(--text-secondary);">
+                            Showing 0-0 of 0 entries
+                        </div>
+                        <div id="overview-crawlers-pagination" class="flex gap-1">
+                            <!-- Populated dynamically -->
+                        </div>
                     </div>
-                    <p style="font-size: 0.8rem; color: var(--text-secondary); margin-top: 1.5rem; line-height: 1.4;">Ratio of successful feed harvesting runs to critical diagnostic failures.</p>
                 </div>
-            </div>
 
-            <!-- Pending Quarantine rescue card -->
-            <div class="glass-panel" style="padding: 1.5rem; border-radius: 16px; margin-top: 2rem;">
-                <h3 style="font-family: 'Outfit'; font-size: 1.25rem; color: #f59e0b; margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;"><span style="display:inline-block; width:10px; height:20px; background:#f59e0b; border-radius:3px;"></span> Quarantined Scraped Listings (Awaiting Approval)</h3>
-                <div id="admin-quarantine-override-canvas">
-                    <!-- Populated dynamically via AJAX -->
+                <!-- SVG Graph circular gauge & Quarantined Listings column -->
+                <div style="display: flex; flex-direction: column; gap: 2rem;">
+                    <!-- SVG Graph circular gauge -->
+                    <div class="glass-panel" style="padding: 1.5rem; border-radius: 16px; text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+                        <h3 style="font-family: 'Outfit'; font-size: 1.1rem; margin-bottom: 1.5rem; margin-top: 0;">Crawl Success Ratio</h3>
+                        <div style="position: relative; width: 140px; height: 140px;">
+                            <svg width="140" height="140" viewBox="0 0 36 36" style="transform: rotate(-90deg);">
+                                <circle cx="18" cy="18" r="16" fill="none" stroke="var(--border-color)" stroke-width="3"></circle>
+                                <circle id="success-svg-gauge" cx="18" cy="18" r="16" fill="none" stroke="#10b981" stroke-width="3" stroke-dasharray="100 100" stroke-linecap="round"></circle>
+                            </svg>
+                            <div id="success-ratio-label" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 1.4rem; font-weight: bold; font-family: 'Outfit'; color: #10b981;">100%</div>
+                        </div>
+                        <p style="font-size: 0.8rem; color: var(--text-secondary); margin-top: 1.5rem; line-height: 1.4;">Ratio of successful feed harvesting runs to critical diagnostic failures.</p>
+                    </div>
+
+                    <!-- Pending Quarantine rescue card -->
+                    <div class="glass-panel" style="padding: 1.5rem; border-radius: 16px;">
+                        <h3 style="font-family: 'Outfit'; font-size: 1.15rem; color: #f59e0b; margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem; margin-top: 0;"><span style="display:inline-block; width:8px; height:16px; background:#f59e0b; border-radius:2px;"></span> Quarantined Listings</h3>
+                        <div id="admin-quarantine-override-canvas">
+                            <!-- Populated dynamically via AJAX -->
+                        </div>
+                    </div>
                 </div>
             </div>
         </section>
@@ -883,7 +899,6 @@
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
                 <h2 style="font-family: 'Outfit'; font-size: 1.75rem; margin: 0;">Distributed Queue Control Center</h2>
                 <div style="display: flex; gap: 0.75rem;">
-                    <a href="/horizon" target="_blank" class="btn-primary" style="margin: 0; padding: 0.6rem 1.2rem; border: none; text-decoration: none; display: flex; align-items: center; gap: 0.5rem;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg> Open Horizon Console</a>
                     <button class="btn-success" id="btn-queues-retry-all" style="margin: 0; padding: 0.6rem 1.2rem; border: none; display: flex; align-items: center; gap: 0.5rem;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="23 4 23 10 17 10"></polyline><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path></svg> Retry All Failures</button>
                     <button class="btn-danger" id="btn-queues-clear-all" style="margin: 0; padding: 0.6rem 1.2rem; border: none; display: flex; align-items: center; gap: 0.5rem;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg> Flush DLQ Store</button>
                 </div>
@@ -1171,7 +1186,7 @@
 <div class="drawer-backdrop" id="admin-drawer-backdrop" style="display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.5); backdrop-filter: blur(4px); z-index: 1000; transition: opacity 0.3s ease;"></div>
 
 <!-- A. Job Posting Form Slide-out Drawer -->
-<div class="admin-drawer glass-panel" id="job-post-drawer" style="position: fixed; right: -480px; top: 0; width: 450px; height: 100vh; background: var(--bg-secondary); border-left: 1px solid var(--border-color); z-index: 1001; transition: right 0.4s cubic-bezier(0.16, 1, 0.3, 1); padding: 2rem; overflow-y: auto; box-shadow: -10px 0 30px rgba(0,0,0,0.15);">
+<div class="admin-drawer glass-panel" id="job-post-drawer" style="position: fixed; right: -730px; top: 0; width: 700px; height: 100vh; background: var(--bg-secondary); border-left: 1px solid var(--border-color); z-index: 1001; transition: right 0.4s cubic-bezier(0.16, 1, 0.3, 1); padding: 2rem; overflow-y: auto; box-shadow: -10px 0 30px rgba(0,0,0,0.15);">
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; border-bottom: 1px solid var(--border-color); padding-bottom: 1rem;">
         <h3 id="job-drawer-title" style="font-family: 'Outfit'; font-size: 1.4rem; color: var(--accent-color); margin: 0;">Publish Announcement</h3>
         <button class="btn-sm-danger" id="close-job-drawer" style="padding: 0.25rem 0.5rem; cursor: pointer;">&times; Close</button>
@@ -1256,6 +1271,28 @@
         <div class="form-group">
             <label for="job-link">Official Web Link</label>
             <input type="url" name="official_website_link" id="job-link" class="form-control" placeholder="https://upsc.gov.in" required>
+        </div>
+
+        <!-- Vacancy Details Section in Admin Form -->
+        <div style="border-top: 1px solid var(--border-color); padding-top: 1rem; margin-top: 1rem;">
+            <h4 style="font-family: 'Outfit'; color: var(--accent-color); font-size: 1.1rem; margin-bottom: 0.5rem; display: flex; justify-content: space-between; align-items: center; margin-top: 0;">
+                Vacancy Details
+                <button type="button" class="btn-sm" id="btn-admin-add-vacancy" style="padding: 0.2rem 0.5rem; font-size: 0.8rem; background: var(--accent-color); color: #fff; border: none; border-radius: 4px; cursor: pointer;">+ Add Row</button>
+            </h4>
+            <div id="admin-vacancy-details-container" style="margin-bottom: 1rem;">
+                <!-- Dynamic Rows Go Here -->
+            </div>
+        </div>
+
+        <!-- Category Wise Vacancy Details Section in Admin Form -->
+        <div style="border-top: 1px solid var(--border-color); padding-top: 1rem; margin-top: 1rem; margin-bottom: 1.5rem;">
+            <h4 style="font-family: 'Outfit'; color: var(--accent-color); font-size: 1.1rem; margin-bottom: 0.5rem; display: flex; justify-content: space-between; align-items: center; margin-top: 0;">
+                Category Wise Vacancies
+                <button type="button" class="btn-sm" id="btn-admin-add-cat-vacancy" style="padding: 0.2rem 0.5rem; font-size: 0.8rem; background: var(--accent-color); color: #fff; border: none; border-radius: 4px; cursor: pointer;">+ Add Row</button>
+            </h4>
+            <div id="admin-category-wise-container" style="margin-bottom: 1rem;">
+                <!-- Dynamic Rows Go Here -->
+            </div>
         </div>
 
         <button type="submit" class="form-btn" id="job-drawer-submit-btn" style="width:100%;">Save Announcement Live</button>
@@ -1687,7 +1724,8 @@
 
         // Close Slide-out drawers and backdrops
         function closeAllDrawers() {
-            $('#job-post-drawer, #crawler-drawer').css('right', '-480px');
+            $('#job-post-drawer').css('right', '-730px');
+            $('#crawler-drawer').css('right', '-480px');
             $('#ai-review-drawer').css('right', '-650px');
             $('#admin-drawer-backdrop').fadeOut(300);
         }
@@ -1701,6 +1739,10 @@
             $('#job-drawer-title').text('Publish Recruitment');
             $('#job-edit-id').val('');
             $('#ajax-job-drawer-form')[0].reset();
+            
+            // Reset vacancy lists
+            $('#admin-vacancy-details-container').empty();
+            $('#admin-category-wise-container').empty();
             
             $('#admin-drawer-backdrop').fadeIn(300);
             $('#job-post-drawer').css('right', '0');
@@ -1719,6 +1761,69 @@
         // ===================================================================
         // 1. DASHBOARD OVERVIEW LOAD DATA & RECOVERY PANELS
         // ===================================================================
+        let overviewSources = [];
+        let overviewLogs = [];
+        let currentOverviewPage = 1;
+        const itemsPerOverviewPage = 10;
+
+        function renderOverviewCrawlersTable() {
+            const query = ($('#overview-crawlers-search').val() || '').toLowerCase().trim();
+            
+            // Filter sources based on search query
+            const filteredSources = overviewSources.filter(src => {
+                return src.name.toLowerCase().includes(query) || 
+                       (src.source_url && src.source_url.toLowerCase().includes(query));
+            });
+
+            const start = (currentOverviewPage - 1) * itemsPerOverviewPage;
+            const end = start + itemsPerOverviewPage;
+            const pageItems = filteredSources.slice(start, end);
+
+            let trs = '';
+            pageItems.forEach(src => {
+                const isAct = src.is_active ? '<span class="badge" style="background:rgba(16,185,129,0.08); color:#10b981;">Active</span>' : '<span class="badge" style="background:rgba(239,68,68,0.08); color:#ef4444;">Suspended</span>';
+                // Find last audit status
+                const log = overviewLogs.find(l => l.source_name === src.name);
+                const healthStatus = log ? log.status : 'pending';
+                let healthBadge = '<span class="badge" style="background:rgba(156,163,175,0.08); color:#9ca3af;">Pending</span>';
+                if (healthStatus === 'success') {
+                    healthBadge = '<span class="badge" style="background:rgba(16,185,129,0.08); color:#10b981;">Healthy</span>';
+                } else if (healthStatus === 'failed') {
+                    const errMsg = log ? (log.error_message || 'Unknown error during scraping run').replace(/"/g, '&quot;').replace(/'/g, '&#39;') : 'Unknown Error';
+                    healthBadge = `<span class="badge enterprise-tooltip" data-tooltip="${errMsg}" style="background:rgba(239,68,68,0.08); color:#ef4444; cursor:help;">Error ⚠️</span>`;
+                } else if (healthStatus === 'quarantined') {
+                    healthBadge = '<span class="badge" style="background:rgba(245,158,11,0.08); color:#f59e0b;">Quarantine</span>';
+                }
+
+                trs += `
+                    <tr>
+                        <td><strong>${src.name}</strong></td>
+                        <td><span style="font-size:0.8rem; color:var(--text-secondary);">${log ? log.time : 'Never run'}</span></td>
+                        <td style="font-weight:bold;">${log ? log.items_found : 0}</td>
+                        <td>${healthBadge}</td>
+                    </tr>
+                `;
+            });
+            $('#overview-crawlers-table').html(trs || '<tr><td colspan="4" style="text-align:center; color:var(--text-secondary);">No matching crawlers active.</td></tr>');
+
+            const totalCount = filteredSources.length;
+            const fromEntry = totalCount > 0 ? start + 1 : 0;
+            const toEntry = Math.min(end, totalCount);
+            $('#overview-crawlers-count').text(`Showing ${fromEntry}-${toEntry} of ${totalCount} entries`);
+
+            const lastPage = Math.ceil(totalCount / itemsPerOverviewPage);
+            buildPagination('#overview-crawlers-pagination', currentOverviewPage, lastPage, function(page) {
+                currentOverviewPage = page;
+                renderOverviewCrawlersTable();
+            });
+        }
+
+        // Search Input handler
+        $(document).on('input', '#overview-crawlers-search', function() {
+            currentOverviewPage = 1;
+            renderOverviewCrawlersTable();
+        });
+
         function loadOverviewData() {
             $.ajax({
                 url: '/api/admin/data',
@@ -1741,33 +1846,11 @@
                         const strokeDash = ratio + ' 100';
                         $('#success-svg-gauge').attr('stroke-dasharray', strokeDash);
 
-                        // Populate Overview active crawlers table
-                        let trs = '';
-                        res.data.sources.forEach(src => {
-                            const isAct = src.is_active ? '<span class="badge" style="background:rgba(16,185,129,0.08); color:#10b981;">Active</span>' : '<span class="badge" style="background:rgba(239,68,68,0.08); color:#ef4444;">Suspended</span>';
-                            // Find last audit status
-                            const log = res.data.logs.find(l => l.source_name === src.name);
-                            const healthStatus = log ? log.status : 'pending';
-                            let healthBadge = '<span class="badge" style="background:rgba(156,163,175,0.08); color:#9ca3af;">Pending</span>';
-                            if (healthStatus === 'success') {
-                                healthBadge = '<span class="badge" style="background:rgba(16,185,129,0.08); color:#10b981;">Healthy</span>';
-                            } else if (healthStatus === 'failed') {
-                                const errMsg = log ? (log.error_message || 'Unknown error during scraping run').replace(/"/g, '&quot;').replace(/'/g, '&#39;') : 'Unknown Error';
-                                healthBadge = `<span class="badge enterprise-tooltip" data-tooltip="${errMsg}" style="background:rgba(239,68,68,0.08); color:#ef4444; cursor:help;">Error ⚠️</span>`;
-                            } else if (healthStatus === 'quarantined') {
-                                healthBadge = '<span class="badge" style="background:rgba(245,158,11,0.08); color:#f59e0b;">Quarantine</span>';
-                            }
-
-                            trs += `
-                                <tr>
-                                    <td><strong>${src.name}</strong></td>
-                                    <td><span style="font-size:0.8rem; color:var(--text-secondary);">${log ? log.time : 'Never run'}</span></td>
-                                    <td style="font-weight:bold;">${log ? log.items_found : 0}</td>
-                                    <td>${healthBadge}</td>
-                                </tr>
-                            `;
-                        });
-                        $('#overview-crawlers-table').html(trs || '<tr><td colspan="4" style="text-align:center; color:var(--text-secondary);">No crawlers active.</td></tr>');
+                        // Populate Overview active crawlers table via paginated function
+                        overviewSources = res.data.sources || [];
+                        overviewLogs = res.data.logs || [];
+                        currentOverviewPage = 1;
+                        renderOverviewCrawlersTable();
 
                         // Populate quarantine listings overriding
                         let qHtml = '';
@@ -2080,7 +2163,7 @@
                             return `
                                 <div style="display:flex; gap:0.35rem; justify-content:center; align-items:center;">
                                     <button class="enterprise-action-icon-btn enterprise-action-icon-btn-ai btn-trigger-ai-gen enterprise-tooltip" data-tooltip="Verify Listing" data-id="${row.id}"><i class="fas fa-check-circle"></i></button>
-                                    <button class="enterprise-action-icon-btn enterprise-action-icon-btn-view btn-edit-job enterprise-tooltip" data-tooltip="Edit" data-id="${row.id}" data-title="${jobsTable.escape(row.title)}" data-category="${row.category_id}" data-dept="${row.department_id}" data-state="${row.state_id}" data-qual="${row.qualification_id}" data-desc="${jobsTable.escape(row.description)}" data-min="${row.salary_min}" data-max="${row.salary_max}" data-vac="${row.vacancy_count}" data-fee="${row.application_fee}" data-deadline="${row.last_date_to_apply ? row.last_date_to_apply.substring(0, 10) : ''}" data-url="${jobsTable.escape(row.official_website_link)}"><i class="fas fa-edit"></i></button>
+                                    <button class="enterprise-action-icon-btn enterprise-action-icon-btn-view btn-edit-job enterprise-tooltip" data-tooltip="Edit" data-id="${row.id}" data-slug="${row.slug}" data-title="${jobsTable.escape(row.title)}" data-category="${row.category_id}" data-dept="${row.department_id}" data-state="${row.state_id}" data-qual="${row.qualification_id}" data-desc="${jobsTable.escape(row.description)}" data-min="${row.salary_min}" data-max="${row.salary_max}" data-vac="${row.vacancy_count}" data-fee="${row.application_fee}" data-deadline="${row.last_date_to_apply ? row.last_date_to_apply.substring(0, 10) : ''}" data-url="${jobsTable.escape(row.official_website_link)}"><i class="fas fa-edit"></i></button>
                                     <button class="enterprise-action-icon-btn enterprise-action-icon-btn-danger btn-delete-job enterprise-tooltip" data-tooltip="Delete" data-id="${row.id}"><i class="fas fa-trash-alt"></i></button>
                                 </div>
                             `;
@@ -2095,6 +2178,7 @@
         // Trigger Edit Job
         $(document).on('click', '.btn-edit-job', function() {
             const id = $(this).data('id');
+            const slug = $(this).data('slug');
             $('#job-drawer-title').text('Edit Recruitment Post');
             $('#job-edit-id').val(id);
             
@@ -2110,6 +2194,31 @@
             $('#job-fee').val($(this).data('fee'));
             $('#job-deadline').val($(this).data('deadline'));
             $('#job-link').val($(this).data('url'));
+
+            // Reset containers
+            $('#admin-vacancy-details-container').empty();
+            $('#admin-category-wise-container').empty();
+
+            if (slug) {
+                $.ajax({
+                    url: `/api/jobs/${slug}`,
+                    method: 'GET',
+                    success: function(res) {
+                        if (res.status === 'success' && res.data) {
+                            if (res.data.vacancy_details) {
+                                res.data.vacancy_details.forEach(function(vd, index) {
+                                    addVacancyRow(vd.post_name, vd.total_post, vd.eligibility, index);
+                                });
+                            }
+                            if (res.data.category_wise_vacancies) {
+                                res.data.category_wise_vacancies.forEach(function(cwv, index) {
+                                    addCategoryVacancyRow(cwv);
+                                });
+                            }
+                        }
+                    }
+                });
+            }
 
             $('#admin-drawer-backdrop').fadeIn(300);
             $('#job-post-drawer').css('right', '0');
@@ -3198,6 +3307,200 @@
                 .replace(/"/g, "&quot;")
                 .replace(/'/g, "&#039;");
         }
+
+        let vacancyCounter = 0;
+        function addVacancyRow(postName = '', totalPost = '', eligibility = '', sortOrder = null) {
+            const container = $('#admin-vacancy-details-container');
+            const idx = vacancyCounter++;
+            const order = sortOrder !== null ? sortOrder : container.children().length;
+            const html = `
+                <div class="vacancy-row-item glass-panel" style="padding: 1rem; border-radius: 8px; border: 1px solid var(--border-color); margin-bottom: 0.75rem; position: relative;" data-order="${order}">
+                    <div style="position: absolute; top: 0.5rem; right: 0.5rem; display: flex; gap: 0.25rem;">
+                        <button type="button" class="btn-sm-secondary btn-move-vacancy-up" style="padding: 0.15rem 0.35rem; font-size: 0.75rem; cursor:pointer;"><i class="fas fa-chevron-up"></i></button>
+                        <button type="button" class="btn-sm-secondary btn-move-vacancy-down" style="padding: 0.15rem 0.35rem; font-size: 0.75rem; cursor:pointer;"><i class="fas fa-chevron-down"></i></button>
+                        <button type="button" class="btn-sm-danger btn-remove-vacancy-row" style="padding: 0.15rem 0.35rem; font-size: 0.75rem; cursor:pointer;">&times; Remove</button>
+                    </div>
+                    <div class="form-group" style="margin-bottom: 0.5rem; margin-top: 1.5rem;">
+                        <label style="font-size: 0.75rem; font-weight: 700;">Post Name</label>
+                        <input type="text" name="vacancy_details[${idx}][post_name]" class="form-control vacancy-post-name" value="${escapeHtml(postName)}" placeholder="e.g. Junior Engineer" required style="padding: 0.4rem 0.8rem; font-size: 0.85rem;">
+                    </div>
+                    <div class="form-group" style="margin-bottom: 0.5rem;">
+                        <label style="font-size: 0.75rem; font-weight: 700;">Total Post</label>
+                        <input type="number" name="vacancy_details[${idx}][total_post]" class="form-control vacancy-total-post" value="${totalPost}" placeholder="e.g. 120" required min="0" style="padding: 0.4rem 0.8rem; font-size: 0.85rem;">
+                    </div>
+                    <div class="form-group" style="margin-bottom: 0;">
+                        <label style="font-size: 0.75rem; font-weight: 700;">Eligibility Details</label>
+                        <textarea name="vacancy_details[${idx}][eligibility]" class="form-control vacancy-eligibility" rows="2" placeholder="e.g. Diploma in Civil Engineering" required style="padding: 0.4rem 0.8rem; font-size: 0.85rem;">${escapeHtml(eligibility)}</textarea>
+                    </div>
+                    <input type="hidden" name="vacancy_details[${idx}][sort_order]" class="vacancy-sort-order" value="${order}">
+                </div>
+            `;
+            container.append(html);
+        }
+
+        let categoryVacancyCounter = 0;
+        function addCategoryVacancyRow(data = {}) {
+            const container = $('#admin-category-wise-container');
+            const idx = categoryVacancyCounter++;
+            const order = data.sort_order !== undefined ? data.sort_order : container.children().length;
+            const postName = data.post_name || '';
+            const ur = data.ur !== undefined ? data.ur : 0;
+            const ews = data.ews !== undefined ? data.ews : 0;
+            const ebc = data.ebc !== undefined ? data.ebc : 0;
+            const bc = data.bc !== undefined ? data.bc : 0;
+            const bcFemale = data.bc_female !== undefined ? data.bc_female : 0;
+            const sc = data.sc !== undefined ? data.sc : 0;
+            const st = data.st !== undefined ? data.st : 0;
+            const total = data.total !== undefined ? data.total : 0;
+
+            const html = `
+                <div class="category-vacancy-row-item glass-panel" style="padding: 1rem; border-radius: 8px; border: 1px solid var(--border-color); margin-bottom: 0.75rem; position: relative;" data-order="${order}">
+                    <div style="position: absolute; top: 0.5rem; right: 0.5rem; display: flex; gap: 0.25rem;">
+                        <button type="button" class="btn-sm-secondary btn-move-cat-up" style="padding: 0.15rem 0.35rem; font-size: 0.75rem; cursor:pointer;"><i class="fas fa-chevron-up"></i></button>
+                        <button type="button" class="btn-sm-secondary btn-move-cat-down" style="padding: 0.15rem 0.35rem; font-size: 0.75rem; cursor:pointer;"><i class="fas fa-chevron-down"></i></button>
+                        <button type="button" class="btn-sm-danger btn-remove-cat-row" style="padding: 0.15rem 0.35rem; font-size: 0.75rem; cursor:pointer;">&times; Remove</button>
+                    </div>
+                    <div class="form-group" style="margin-bottom: 0.5rem; margin-top: 1.5rem;">
+                        <label style="font-size: 0.75rem; font-weight: 700;">Post Name</label>
+                        <input type="text" name="category_wise_vacancies[${idx}][post_name]" class="form-control cat-post-name" value="${escapeHtml(postName)}" placeholder="e.g. Junior Engineer" required style="padding: 0.4rem 0.8rem; font-size: 0.85rem;">
+                    </div>
+                    
+                    <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.5rem; margin-bottom: 0.5rem;">
+                        <div class="form-group" style="margin-bottom: 0;">
+                            <label style="font-size: 0.7rem; font-weight: 700;">UR</label>
+                            <input type="number" name="category_wise_vacancies[${idx}][ur]" class="form-control cat-val cat-ur" value="${ur}" required min="0" style="padding: 0.3rem; font-size: 0.8rem;">
+                        </div>
+                        <div class="form-group" style="margin-bottom: 0;">
+                            <label style="font-size: 0.7rem; font-weight: 700;">EWS</label>
+                            <input type="number" name="category_wise_vacancies[${idx}][ews]" class="form-control cat-val cat-ews" value="${ews}" required min="0" style="padding: 0.3rem; font-size: 0.8rem;">
+                        </div>
+                        <div class="form-group" style="margin-bottom: 0;">
+                            <label style="font-size: 0.7rem; font-weight: 700;">EBC</label>
+                            <input type="number" name="category_wise_vacancies[${idx}][ebc]" class="form-control cat-val cat-ebc" value="${ebc}" required min="0" style="padding: 0.3rem; font-size: 0.8rem;">
+                        </div>
+                        <div class="form-group" style="margin-bottom: 0;">
+                            <label style="font-size: 0.7rem; font-weight: 700;">BC</label>
+                            <input type="number" name="category_wise_vacancies[${idx}][bc]" class="form-control cat-val cat-bc" value="${bc}" required min="0" style="padding: 0.3rem; font-size: 0.8rem;">
+                        </div>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.5rem; margin-bottom: 0.5rem;">
+                        <div class="form-group" style="margin-bottom: 0;">
+                            <label style="font-size: 0.7rem; font-weight: 700;">BC (F)</label>
+                            <input type="number" name="category_wise_vacancies[${idx}][bc_female]" class="form-control cat-val cat-bc-female" value="${bcFemale}" required min="0" style="padding: 0.3rem; font-size: 0.8rem;">
+                        </div>
+                        <div class="form-group" style="margin-bottom: 0;">
+                            <label style="font-size: 0.7rem; font-weight: 700;">SC</label>
+                            <input type="number" name="category_wise_vacancies[${idx}][sc]" class="form-control cat-val cat-sc" value="${sc}" required min="0" style="padding: 0.3rem; font-size: 0.8rem;">
+                        </div>
+                        <div class="form-group" style="margin-bottom: 0;">
+                            <label style="font-size: 0.7rem; font-weight: 700;">ST</label>
+                            <input type="number" name="category_wise_vacancies[${idx}][st]" class="form-control cat-val cat-st" value="${st}" required min="0" style="padding: 0.3rem; font-size: 0.8rem;">
+                        </div>
+                        <div class="form-group" style="margin-bottom: 0;">
+                            <label style="font-size: 0.7rem; font-weight: 700;">Total</label>
+                            <input type="number" name="category_wise_vacancies[${idx}][total]" class="form-control cat-total" value="${total}" required min="0" style="padding: 0.3rem; font-size: 0.8rem; border-color: var(--accent-color); font-weight: bold;">
+                        </div>
+                    </div>
+
+                    <input type="hidden" name="category_wise_vacancies[${idx}][sort_order]" class="cat-sort-order" value="${order}">
+                </div>
+            `;
+            container.append(html);
+        }
+
+        function reindexVacancyOrders() {
+            $('#admin-vacancy-details-container').children('.vacancy-row-item').each(function(index) {
+                $(this).attr('data-order', index);
+                $(this).find('.vacancy-sort-order').val(index);
+            });
+        }
+
+        function reindexCatOrders() {
+            $('#admin-category-wise-container').children('.category-vacancy-row-item').each(function(index) {
+                $(this).attr('data-order', index);
+                $(this).find('.cat-sort-order').val(index);
+            });
+        }
+
+        // Bind events for dynamically adding vacancy rows
+        $('#btn-admin-add-vacancy').on('click', function(e) {
+            e.preventDefault();
+            addVacancyRow();
+        });
+
+        $('#btn-admin-add-cat-vacancy').on('click', function(e) {
+            e.preventDefault();
+            addCategoryVacancyRow();
+        });
+
+        // Remove row handlers
+        $(document).on('click', '.btn-remove-vacancy-row', function(e) {
+            e.preventDefault();
+            $(this).closest('.vacancy-row-item').slideUp(200, function() {
+                $(this).remove();
+                reindexVacancyOrders();
+            });
+        });
+
+        $(document).on('click', '.btn-remove-cat-row', function(e) {
+            e.preventDefault();
+            $(this).closest('.category-vacancy-row-item').slideUp(200, function() {
+                $(this).remove();
+                reindexCatOrders();
+            });
+        });
+
+        // Reorder Up/Down handlers
+        $(document).on('click', '.btn-move-vacancy-up', function(e) {
+            e.preventDefault();
+            const current = $(this).closest('.vacancy-row-item');
+            const prev = current.prev('.vacancy-row-item');
+            if (prev.length > 0) {
+                current.insertBefore(prev);
+                reindexVacancyOrders();
+            }
+        });
+
+        $(document).on('click', '.btn-move-vacancy-down', function(e) {
+            e.preventDefault();
+            const current = $(this).closest('.vacancy-row-item');
+            const next = current.next('.vacancy-row-item');
+            if (next.length > 0) {
+                current.insertAfter(next);
+                reindexVacancyOrders();
+            }
+        });
+
+        $(document).on('click', '.btn-move-cat-up', function(e) {
+            e.preventDefault();
+            const current = $(this).closest('.category-vacancy-row-item');
+            const prev = current.prev('.category-vacancy-row-item');
+            if (prev.length > 0) {
+                current.insertBefore(prev);
+                reindexCatOrders();
+            }
+        });
+
+        $(document).on('click', '.btn-move-cat-down', function(e) {
+            e.preventDefault();
+            const current = $(this).closest('.category-vacancy-row-item');
+            const next = current.next('.category-vacancy-row-item');
+            if (next.length > 0) {
+                current.insertAfter(next);
+                reindexCatOrders();
+            }
+        });
+
+        // Auto sum categories to Total field
+        $(document).on('input', '.cat-val', function() {
+            const block = $(this).closest('.category-vacancy-row-item');
+            let sum = 0;
+            block.find('.cat-val').each(function() {
+                sum += parseInt($(this).val()) || 0;
+            });
+            block.find('.cat-total').val(sum);
+        });
 
         // FAQ input builder helper
         function appendFaqInputs(question = '', answer = '') {

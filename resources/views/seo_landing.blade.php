@@ -287,38 +287,38 @@
 <div style="max-width: 1400px; margin: 0 auto; padding: 0 5%;">
     <!-- Breadcrumbs -->
     <div class="breadcrumb-trail">
-        <a href="/">Home</a>
+        <a href="/" data-translate-lookup="Home">Home</a>
         <span class="breadcrumb-separator">&raquo;</span>
-        <span>{{ $breadcrumb }}</span>
+        <span data-translate-lookup="{{ $breadcrumb }}">{{ $breadcrumb }}</span>
     </div>
 
     <!-- SEO Banner -->
     <section class="seo-hero">
-        <h1>{{ $pageHeader }}</h1>
+        <h1 data-translate-title="{{ $pageHeader }}">{{ $pageHeader }}</h1>
         <p>{{ $metaDescription }}</p>
     </section>
 
     <!-- Real-Time Telemetry Dashboard -->
     <h2 style="font-size: 1.3rem; margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem; font-family: 'Outfit';">
         <span style="display:inline-block; width:8px; height:18px; background:var(--accent-color); border-radius:3px;"></span>
-        Real-Time Conversion Telemetry
+        <span data-i18n="conversion_telemetry_title">Real-Time Conversion Telemetry</span>
     </h2>
     <div class="funnel-dashboard-grid">
         <div class="funnel-stat-card" style="--stat-color: #3b82f6;">
             <div class="funnel-stat-val" id="telemetryViews">{{ number_format($funnel['views']) }}</div>
-            <div class="funnel-stat-label">Daily Page Visitors</div>
+            <div class="funnel-stat-label" data-i18n="daily_page_visitors">Daily Page Visitors</div>
         </div>
         <div class="funnel-stat-card" style="--stat-color: #10b981;">
             <div class="funnel-stat-val" id="telemetryAlerts">{{ number_format($funnel['subscribers']) }}</div>
-            <div class="funnel-stat-label">Lead Subscribers</div>
+            <div class="funnel-stat-label" data-i18n="lead_subscribers">Lead Subscribers</div>
         </div>
         <div class="funnel-stat-card" style="--stat-color: #8b5cf6;">
             <div class="funnel-stat-val">{{ number_format($funnel['applies']) }}</div>
-            <div class="funnel-stat-label">Job Applicants</div>
+            <div class="funnel-stat-label" data-i18n="job_applicants">Job Applicants</div>
         </div>
         <div class="funnel-stat-card" style="--stat-color: #f59e0b;">
             <div class="funnel-stat-val">{{ $funnel['conversion_rate'] }}%</div>
-            <div class="funnel-stat-label">Conversion Efficiency</div>
+            <div class="funnel-stat-label" data-i18n="conversion_efficiency">Conversion Efficiency</div>
         </div>
     </div>
 
@@ -329,30 +329,50 @@
             <div class="seo-table-panel">
                 <div class="seo-table-title" style="color: var(--accent-color);">
                     <svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
-                    Live Active Opportunities ({{ $jobs->count() }})
+                    <span data-i18n="live_opportunities_title">Live Active Opportunities</span> ({{ $jobs->count() }})
                 </div>
 
                 @forelse($jobs as $job)
+                    @php
+                        $detailRoute = match($job->post_type) {
+                            'result' => route('seo.result_detail', ['slug' => $job->slug]),
+                            'admit_card' => route('seo.admit_card_detail', ['slug' => $job->slug]),
+                            'answer_key' => route('seo.answer_key_detail', ['slug' => $job->slug]),
+                            'syllabus' => route('seo.syllabus_detail', ['slug' => $job->slug]),
+                            default => route('seo.job_detail', ['slug' => $job->slug]),
+                        };
+                    @endphp
                     <div class="job-row-item">
                         <div class="job-title-col">
-                            <h3>{{ $job->title }}</h3>
-                            <p>{{ $job->department->name ?? 'Government Ministry' }} &bull; {{ $job->state->name ?? 'Pan India' }}</p>
+                            <h3 data-translate-title="{{ $job->title }}">{{ $job->title }}</h3>
+                            <p>
+                                <span data-translate-lookup="{{ $job->department->name ?? 'Government Ministry' }}">{{ $job->department->name ?? 'Government Ministry' }}</span> &bull; 
+                                <span data-translate-lookup="{{ $job->state->name ?? 'Pan India' }}">{{ $job->state->name ?? 'Pan India' }}</span>
+                            </p>
                         </div>
                         <div class="job-meta-col">
-                            ₹ {{ number_format($job->salary_min, 0) }} - {{ number_format($job->salary_max, 0) }}
+                            @if($job->salary_min > 0)
+                                ₹ {{ number_format($job->salary_min, 0) }} - {{ number_format($job->salary_max, 0) }}
+                            @else
+                                <span data-translate-lookup="Govt Scales">Govt Scales</span>
+                            @endif
                         </div>
                         <div class="job-deadline-col">
-                            Till {{ $job->last_date_to_apply ? $job->last_date_to_apply->format('d M Y') : 'N/A' }}
+                            @if($job->last_date_to_apply)
+                                <span data-translate-lookup="Till">Till</span> {{ $job->last_date_to_apply->format('d M Y') }}
+                            @else
+                                <span data-translate-lookup="Announced Soon">Announced Soon</span>
+                            @endif
                         </div>
                         <div style="text-align: right;">
-                            <a href="/#jobs/{{ $job->slug }}" class="growth-btn seo-apply-trigger" data-slug="{{ $job->slug }}" style="padding: 0.4rem 0.8rem; font-size: 0.8rem; text-decoration: none; display: inline-block;">
-                                Details &raquo;
+                            <a href="{{ $detailRoute }}" class="growth-btn seo-apply-trigger" data-slug="{{ $job->slug }}" style="padding: 0.4rem 0.8rem; font-size: 0.8rem; text-decoration: none; display: inline-block;">
+                                <span data-i18n="btn_view">Details</span> &raquo;
                             </a>
                         </div>
                     </div>
                 @empty
                     <div style="padding: 3rem; text-align: center; color: var(--text-secondary); font-size: 0.9rem;">
-                        No state recruitments are currently active. Use the alerts form to register for instant releases!
+                        <span data-i18n="no_active_recruitments_alerts">No state recruitments are currently active. Use the alerts form to register for instant releases!</span>
                     </div>
                 @endforelse
             </div>
@@ -360,12 +380,12 @@
             <!-- Telegram Channel Call-To-Action (Tasks 7 & 9) -->
             <div class="telegram-cta-banner">
                 <div class="telegram-content">
-                    <h3>📢 Joint Telegram Alert Network</h3>
-                    <p>Get real-time push feeds of government postings. Join 150K+ candidates now!</p>
+                    <h3 data-i18n="telegram_cta_title">📢 Joint Telegram Alert Network</h3>
+                    <p data-i18n="telegram_cta_desc">Get real-time push feeds of government postings. Join 150K+ candidates now!</p>
                 </div>
                 <div>
                     <a href="https://t.me/gov_job_alerts_mock" class="telegram-btn" id="telegramAlertJoinBtn" target="_blank">
-                        Join Channel &raquo;
+                        <span data-i18n="telegram_cta_btn">Join Channel &raquo;</span>
                     </a>
                 </div>
             </div>
@@ -375,19 +395,19 @@
         <div>
             <!-- Email Alert subscription capture (Task 5 & 9) -->
             <div class="growth-sidebar-card" style="border-top: 4px solid #10b981;">
-                <div class="growth-card-header" style="color: #10b981;">
+                <div class="growth-card-header" style="color: #10b981;" data-i18n="email_alerts_title">
                     📧 Email Job Alerts
                 </div>
-                <p style="font-size: 0.82rem; color: var(--text-secondary); line-height: 1.5;">
-                    Receive instant notifications directly to your email whenever new {{ strtoupper($categoryName) }} vacancies are published.
+                <p style="font-size: 0.82rem; color: var(--text-secondary); line-height: 1.5;" data-i18n="email_alerts_desc_sidebar">
+                    Receive instant notifications directly to your email whenever new vacancies are published in this segment.
                 </p>
                 <form id="growthSubscribeForm">
                     @csrf
                     <input type="hidden" name="category_name" value="{{ $categoryName }}">
                     <div class="growth-input-group">
-                        <input type="email" name="email" id="subscriberEmail" class="growth-input" placeholder="candidate@example.com" required>
+                        <input type="email" name="email" id="subscriberEmail" class="growth-input" placeholder="candidate@example.com" data-i18n="email_placeholder_lbl" required>
                         <button type="submit" class="growth-btn" id="subscriberSubmitBtn" style="background: #10b981;">
-                            Activate
+                            <span data-i18n="btn_activate">Activate</span>
                         </button>
                     </div>
                 </form>
@@ -395,14 +415,14 @@
 
             <!-- Interactive Web Browser Push popup (Task 6 & 9) -->
             <div class="growth-sidebar-card" id="pushNotificationsCard" style="border-top: 4px solid #3b82f6;">
-                <div class="growth-card-header" style="color: #3b82f6;">
+                <div class="growth-card-header" style="color: #3b82f6;" data-i18n="push_alerts_title">
                     🔔 Desktop Push Alerts
                 </div>
-                <p style="font-size: 0.82rem; color: var(--text-secondary); line-height: 1.5;" id="pushCardBody">
+                <p style="font-size: 0.82rem; color: var(--text-secondary); line-height: 1.5;" id="pushCardBody" data-i18n="push_alerts_desc_sidebar">
                     Authorize real-time push notifications inside your browser window to bypass email delay filters.
                 </p>
                 <button class="growth-btn" id="browserPushTriggerBtn" style="background: #3b82f6; width: 100%; margin-top: 1rem;">
-                    Enable Instant Alerts
+                    <span data-i18n="btn_enable_push">Enable Instant Alerts</span>
                 </button>
             </div>
         </div>

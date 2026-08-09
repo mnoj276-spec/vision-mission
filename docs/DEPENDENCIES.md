@@ -1,3 +1,11 @@
+---
+title: "System Dependencies & Packages Reference"
+aliases: ["Dependencies","System Dependencies"]
+tags: ["setup","packages","composer","npm","existing"]
+created: 2024-01-05
+updated: 2026-07-05
+---
+
 # System Dependencies & Packages Reference
 
 This file documents the PHP and JavaScript libraries utilized in `vision-mission`, mapping their roles and versions.
@@ -32,3 +40,11 @@ This file documents the PHP and JavaScript libraries utilized in `vision-mission
 * **tailwindcss**: `^4.0.0` (Sleek CSS styling).
 * **lucide-react**: `^0.370.0` (Modern iconography library).
 * **concurrently**: `^9.0.1` (Utility script running server, queue, pail, and Vite simultaneously in dev).
+
+---
+## Related Notes
+* **MOC Connections**: [[Deployment MOC]]
+* **Navigation**:
+  * ⬅️ Prev: [[CONFIGURATION]]
+  * ➡️ Next: [[DEPLOYMENT]]
+  * 🏠 Home: [[Home]] | 📊 Dashboard: [[Dashboard]]

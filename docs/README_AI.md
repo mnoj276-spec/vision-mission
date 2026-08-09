@@ -1,3 +1,11 @@
+---
+title: "AI Assistant Documentation Manual"
+aliases: ["AI README","AI Manual"]
+tags: ["guidelines","ai","onboarding","existing"]
+created: 2024-01-05
+updated: 2026-07-05
+---
+
 # AI Assistant Documentation Manual
 
 Welcome! This documentation folder is designed to give you high-fidelity architectural context with minimal token consumption. 
@@ -42,3 +50,11 @@ When onboarding to a task in this repository:
 * **Do not read raw source code to answer conceptual questions**: Rely on [ARCHITECTURE.md](file:///C:/xampp_8.2.12/htdocs/vision-mission/docs/ARCHITECTURE.md), [SERVICES.md](file:///C:/xampp_8.2.12/htdocs/vision-mission/docs/SERVICES.md), and [MODELS.md](file:///C:/xampp_8.2.12/htdocs/vision-mission/docs/MODELS.md). They list model attributes, class responsibilities, and routing layers.
 * **Scan targeted directories**: Avoid recursive directory listings. Use specific absolute paths mapping to the target Domain folder.
 * **Write concise summaries**: Do not copy/paste large files or methods into the chat context. Summarize changes in short diffs.
+
+---
+## Related Notes
+* **MOC Connections**: [[DevOps MOC]]
+* **Navigation**:
+  * ⬅️ Prev: [[TODO]]
+  * ➡️ Next: [[CHANGELOG_AI]]
+  * 🏠 Home: [[Home]] | 📊 Dashboard: [[Dashboard]]

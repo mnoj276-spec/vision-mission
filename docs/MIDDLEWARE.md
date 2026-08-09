@@ -1,3 +1,11 @@
+---
+title: "Middleware Stack Reference"
+aliases: ["Middleware","Middleware Stack"]
+tags: ["backend","middleware","security","existing"]
+created: 2024-01-05
+updated: 2026-07-05
+---
+
 # Middleware Stack Reference
 
 This document maps custom and framework middlewares, execution orders, and target route groups.
@@ -42,3 +50,11 @@ Configured in [bootstrap/app.php](file:///C:/xampp_8.2.12/htdocs/vision-mission/
 
 ### D. Crawl-Friendly SEO Detail Detail Paths
 1. [InternalLinkingHeaders](file:///C:/xampp_8.2.12/htdocs/vision-mission/app/Http/Middleware/InternalLinkingHeaders.php): Runs on `/job/{slug}`, `/result/{slug}`, etc., appending index/noindex markers and cache headers.
+
+---
+## Related Notes
+* **MOC Connections**: [[Backend MOC]], [[Security MOC]], [[API MOC]], [[SEO MOC]]
+* **Navigation**:
+  * ⬅️ Prev: [[MODELS]]
+  * ➡️ Next: [[ROUTES]]
+  * 🏠 Home: [[Home]] | 📊 Dashboard: [[Dashboard]]

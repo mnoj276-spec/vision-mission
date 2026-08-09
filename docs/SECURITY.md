@@ -1,3 +1,11 @@
+---
+title: "Security Hardening & Protection Protocols"
+aliases: ["Security Hardening","Security"]
+tags: ["security","hardening","ssrf","xss","existing"]
+created: 2024-01-05
+updated: 2026-07-05
+---
+
 # Security Hardening & Protection Protocols
 
 `vision-mission` implements layers of defence against malware, XSS, SSRF, session hijackings, and rate abuses.
@@ -38,3 +46,11 @@
 
 * **Query Sanitization**: Database inputs pass through Eloquent's parameterized binding layers. Raw search clauses (`scopeSearch`) trim search terms and clean syntax characters before running boolean matches.
 * **CSRF Validation**: Stateful front-end API groups (defined in `routes/web.php` under the `/api` prefix) enforce standard session-token validations on POST/PUT requests.
+
+---
+## Related Notes
+* **MOC Connections**: [[Security MOC]]
+* **Navigation**:
+  * ⬅️ Prev: [[SEO]]
+  * ➡️ Next: [[LOGGING]]
+  * 🏠 Home: [[Home]] | 📊 Dashboard: [[Dashboard]]

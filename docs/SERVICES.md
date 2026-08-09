@@ -1,3 +1,11 @@
+---
+title: "Services & Business Logic Registry"
+aliases: ["Services","Business Logic"]
+tags: ["backend","services","logic","existing"]
+created: 2024-01-05
+updated: 2026-07-05
+---
+
 # Services & Business Logic Registry
 
 This file documents the service classes in `vision-mission`, describing their responsibilities, dependencies, and callers.
@@ -46,3 +54,11 @@ This file documents the service classes in `vision-mission`, describing their re
 * **HtmlSanitizer**: Strips unsafe script tags, event handlers, and styles from scraped HTML strings before they are persisted in `job_posts` (Stored XSS mitigation).
 * **JwtService**: Handles stateless token generation, signatures, validation, and expirations. Used by the `jwt` custom request guard.
 * **UrlSecurity**: SSRF protection utility checking target URLs to ensure they are on allowed lists and do not resolve to local host loops (127.0.0.1, localhost, private IP networks). Used by scrapers.
+
+---
+## Related Notes
+* **MOC Connections**: [[Backend MOC]]
+* **Navigation**:
+  * ⬅️ Prev: [[CONTROLLERS]]
+  * ➡️ Next: [[MODELS]]
+  * 🏠 Home: [[Home]] | 📊 Dashboard: [[Dashboard]]

@@ -1,3 +1,11 @@
+---
+title: "Search Engine Optimization (SEO) Architecture"
+aliases: ["SEO Architecture","SEO"]
+tags: ["seo","marketing","sitemap","indexnow","existing"]
+created: 2024-01-05
+updated: 2026-07-05
+---
+
 # Search Engine Optimization (SEO) Architecture
 
 `vision-mission` is architected as an SEO-first portal, using automated linking networks, programmatic landings, structural schemas, and IndexNow notifications to maximize organic crawl frequencies and search indexing.
@@ -49,3 +57,11 @@ Managed by [SitemapController](file:///C:/xampp_8.2.12/htdocs/vision-mission/rou
 * **Action Trigger**: [JobPostObserver](file:///C:/xampp_8.2.12/htdocs/vision-mission/app/Observers/JobPostObserver.php) listens for newly published posts or updates.
 * **Background Job**: Automatically dispatches [SubmitToIndexNow](file:///C:/xampp_8.2.12/htdocs/vision-mission/app/Jobs/SubmitToIndexNow.php) to queue pings containing the url payload to IndexNow hubs (Bing, Yandex, etc.).
 * **Key Verification Route**: `/{key}.txt` serves verification codes matching the active IndexNow credentials dynamically.
+
+---
+## Related Notes
+* **MOC Connections**: [[SEO MOC]]
+* **Navigation**:
+  * ⬅️ Prev: [[JOBS_AND_QUEUE]]
+  * ➡️ Next: [[SECURITY]]
+  * 🏠 Home: [[Home]] | 📊 Dashboard: [[Dashboard]]

@@ -1,3 +1,11 @@
+---
+title: "REST API Reference (v1.0)"
+aliases: ["API Reference","REST API"]
+tags: ["api","reference","v1","existing"]
+created: 2024-01-05
+updated: 2026-07-05
+---
+
 # REST API Reference (v1.0)
 
 `vision-mission` exposes a mobile-ready, stateless REST API version 1.0. All endpoints reside under the `/api/v1` prefix.
@@ -76,3 +84,11 @@ All API routes return a unified JSON response envelope:
 }
 ```
 Validation exceptions (422) return structured maps inside the `errors` object (see [ERROR_HANDLING.md](file:///C:/xampp_8.2.12/htdocs/vision-mission/docs/ERROR_HANDLING.md) for details).
+
+---
+## Related Notes
+* **MOC Connections**: [[API MOC]]
+* **Navigation**:
+  * ⬅️ Prev: [[ROUTES]]
+  * ➡️ Next: [[DATABASE]]
+  * 🏠 Home: [[Home]] | 📊 Dashboard: [[Dashboard]]

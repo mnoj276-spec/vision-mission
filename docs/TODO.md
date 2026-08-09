@@ -1,3 +1,11 @@
+---
+title: "Roadmap & Project TODO List"
+aliases: ["TODO List","Project TODO"]
+tags: ["roadmap","todo","backlog","existing"]
+created: 2024-01-05
+updated: 2026-07-05
+---
+
 # Roadmap & Project TODO List
 
 This document lists immediate refactoring goals and future optimization tasks for the `vision-mission` portal.
@@ -18,3 +26,11 @@ This document lists immediate refactoring goals and future optimization tasks fo
 - [ ] **IndexNow Direct Webhooks**: Trigger IndexNow notifications immediately on manual admin approvals instead of relying on the default queue delay.
 - [ ] **PWA Offline Synchronization**: Allow candidates to draft resume applications offline and queue them for auto-submission once a network connection is restored.
 - [ ] **Analytics Data Aggregations**: Implement scheduled daily aggregation routines to compile page views and click records, preventing table sizes from growing too large.
+
+---
+## Related Notes
+* **MOC Connections**: [[Business MOC]]
+* **Navigation**:
+  * ⬅️ Prev: [[KNOWN_ISSUES]]
+  * ➡️ Next: [[README_AI]]
+  * 🏠 Home: [[Home]] | 📊 Dashboard: [[Dashboard]]

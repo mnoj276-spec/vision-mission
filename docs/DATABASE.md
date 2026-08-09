@@ -1,3 +1,11 @@
+---
+title: "Database Schema & Relationships Reference"
+aliases: ["Database Schema","Database Relationships"]
+tags: ["database","schema","sql","existing"]
+created: 2024-01-05
+updated: 2026-07-05
+---
+
 # Database Schema & Relationships Reference
 
 This document maps out the database tables, keys, indexing, and logical purposes in the `vision-mission` application.
@@ -78,3 +86,11 @@ erDiagram
 * **`settings`** & **`setting_groups`**: Dynamic portal settings. Key-value structures with optional secret flag encryption support.
 * **`cms_pages`**, **`menus`**, **`menu_items`**, **`social_links`**: CMS routing objects.
 * **`personal_refresh_tokens`**: Stores refresh tokens mapped to user IDs for JWT operations.
+
+---
+## Related Notes
+* **MOC Connections**: [[Database MOC]]
+* **Navigation**:
+  * ⬅️ Prev: [[API]]
+  * ➡️ Next: [[CRON_JOBS]]
+  * 🏠 Home: [[Home]] | 📊 Dashboard: [[Dashboard]]

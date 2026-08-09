@@ -33,6 +33,10 @@ enum NotificationType: string
     case TRANSFER = 'departmental_transfer';
     case CONTRACT = 'contract_recruitment';
     case RETIREMENT_VACANCY = 'retirement_vacancy';
+    case SYLLABUS = 'syllabus';
+    case SCHOLARSHIP = 'scholarship';
+    case ADMISSION = 'admission';
+    case EXAM_NOTICE = 'exam_notice';
     case UNKNOWN = 'unknown';
 
     /**
@@ -66,7 +70,12 @@ enum NotificationType: string
             self::OBJECTION => 'answer_key',
 
             self::COUNSELLING,
-            self::SEAT_ALLOTMENT => 'admission',
+            self::SEAT_ALLOTMENT,
+            self::ADMISSION => 'admission',
+
+            self::SYLLABUS => 'syllabus',
+
+            self::SCHOLARSHIP => 'scholarship',
 
             self::INTERVIEW,
             self::DV,
@@ -74,7 +83,8 @@ enum NotificationType: string
             self::JOINING,
             self::TENDER_RECRUITMENT,
             self::PROMOTION,
-            self::TRANSFER => 'notice',
+            self::TRANSFER,
+            self::EXAM_NOTICE => 'notice',
 
             default => 'job',
         };

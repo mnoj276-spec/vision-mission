@@ -1,3 +1,11 @@
+---
+title: "Testing Framework & Regression Checklist"
+aliases: ["Testing Framework","Testing Checklist"]
+tags: ["testing","phpunit","qa","existing"]
+created: 2024-01-05
+updated: 2026-07-05
+---
+
 # Testing Framework & Regression Checklist
 
 `vision-mission` contains 26 feature test suites checking scraping workflows, deduplication blocks, document parsers, database performance, and security hardening.
@@ -50,3 +58,11 @@ Before submitting code edits, verify:
 - [ ] No HTML tags or event attributes bypass the `HtmlSanitizer` utility.
 - [ ] SSRF block validations reject private IP ranges when executing cURL crawls.
 - [ ] Email tracking tokens compile and capture pixel views.
+
+---
+## Related Notes
+* **MOC Connections**: [[Testing MOC]]
+* **Navigation**:
+  * ⬅️ Prev: [[PERFORMANCE]]
+  * ➡️ Next: [[CONFIGURATION]]
+  * 🏠 Home: [[Home]] | 📊 Dashboard: [[Dashboard]]

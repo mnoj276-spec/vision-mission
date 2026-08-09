@@ -44,7 +44,7 @@ class PdfParser
      * Extract structured data from a PDF file.
      *
      * @param string $filePath
-     * @return array ['text', 'pages', 'tables', 'metadata', 'is_scanned', 'page_count']
+     * @return array ['text', 'pages', 'tables', 'metadata', 'is_scanned', 'scanned_pages', 'page_count']
      */
     public function extractStructured(string $filePath): array
     {
@@ -80,10 +80,25 @@ class PdfParser
             $pageTexts = [];
             $allText = '';
             $tables = [];
+            $scannedPages = [];
+
+            // Extract raw links from PDF stream as a fallback for links lost in text extraction
+            $rawContent = file_get_contents($filePath);
+            preg_match_all('/\/URI\s*\((.*?)\)/', $rawContent, $linkMatches);
+            $extractedLinks = [];
+            if (!empty($linkMatches[1])) {
+                foreach ($linkMatches[1] as $match) {
+                    $extractedLinks[] = $match;
+                }
+            }
 
             foreach ($pages as $pageIndex => $page) {
                 $pageText = $page->getText();
                 $pageTexts[] = $pageText;
+                
+                if (mb_strlen(trim($pageText)) < self::SCANNED_THRESHOLD) {
+                    $scannedPages[] = $pageIndex + 1; // 1-indexed for OCR fallback
+                }
 
                 // Detect tables using line-alignment heuristics
                 $pageTables = $this->detectTablesInText($pageText);
@@ -95,6 +110,10 @@ class PdfParser
 
                 $allText .= $pageText . "\n\n";
             }
+            
+            if (!empty($extractedLinks)) {
+                $allText .= "\n\n--- EXTRACTED LINKS ---\n" . implode("\n", array_unique($extractedLinks));
+            }
 
             // Multi-column merging heuristic
             $allText = $this->mergeMultiColumnText($allText);
@@ -102,22 +121,24 @@ class PdfParser
             // Clean up the text
             $allText = $this->cleanExtractedText($allText);
 
-            // Scanned PDF detection
+            // Scanned PDF detection (Per-Page Basis)
             $pageCount = count($pages) ?: 1;
-            $avgCharsPerPage = mb_strlen(trim($allText)) / $pageCount;
-            $isScanned = $avgCharsPerPage < self::SCANNED_THRESHOLD;
+            $isScanned = $pageCount > 0 && count($scannedPages) === $pageCount;
 
             if ($isScanned) {
-                Log::info("PDF detected as scanned document (avg {$avgCharsPerPage} chars/page). OCR fallback recommended.");
+                Log::info("PDF detected as fully scanned document. OCR fallback recommended.");
+            } elseif (!empty($scannedPages)) {
+                Log::info("PDF detected as Hybrid document. Pages " . implode(',', $scannedPages) . " marked for OCR.");
             }
 
             return [
-                'text'       => trim($allText),
-                'pages'      => $pageTexts,
-                'tables'     => $tables,
-                'metadata'   => $metadata,
-                'is_scanned' => $isScanned,
-                'page_count' => $pageCount,
+                'text'          => trim($allText),
+                'pages'         => $pageTexts,
+                'tables'        => $tables,
+                'metadata'      => $metadata,
+                'is_scanned'    => $isScanned,
+                'scanned_pages' => $scannedPages,
+                'page_count'    => $pageCount,
             ];
 
         } catch (\Throwable $e) {
@@ -316,12 +337,13 @@ class PdfParser
     protected function emptyStructuredResult(): array
     {
         return [
-            'text'       => '',
-            'pages'      => [],
-            'tables'     => [],
-            'metadata'   => [],
-            'is_scanned' => false,
-            'page_count' => 0,
+            'text'          => '',
+            'pages'         => [],
+            'tables'        => [],
+            'metadata'      => [],
+            'is_scanned'    => false,
+            'scanned_pages' => [],
+            'page_count'    => 0,
         ];
     }
 }
