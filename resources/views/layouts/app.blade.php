@@ -315,16 +315,18 @@
     </main>
 
     <!-- 3. Dynamic Footer -->
-    <footer style="background-color: var(--bg-secondary); border-top: 1px solid var(--border-color); padding: 3rem 5% 2rem 5%; font-size: 0.9rem; color: var(--text-secondary); margin-top: 4rem;">
-        <div style="max-width: 1400px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 2rem; margin-bottom: 2rem;">
-            <div>
-                <h3 style="color: var(--text-primary); margin-bottom: 1rem; font-family: 'Outfit';">{{ setting('website_name', 'GovJobs') }}</h3>
-                <p>{{ setting('footer_about_text', 'An advanced, fully automated Government Recruitment Job Portal featuring low-temperature validation engines and zero full page refreshes.') }}</p>
+    <footer style="background-color: var(--bg-secondary); border-top: 1px solid var(--border-color); padding: 4rem 5% 2rem 5%; font-size: 0.9rem; color: var(--text-secondary); margin-top: 4rem;">
+        <div style="max-width: 1400px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 3rem; margin-bottom: 3rem;">
+            
+            <!-- Column 1: Brand & Trust -->
+            <div class="footer-brand">
+                <h3 style="color: var(--text-primary); margin-bottom: 1rem; font-family: 'Outfit'; font-size: 1.5rem; font-weight: 700;">{{ setting('website_name', 'GovJobs') }}</h3>
+                <p style="line-height: 1.6; margin-bottom: 1.5rem;">{{ setting('footer_about_text', 'GovJobs is India\'s premier platform for aggregating public sector employment notifications. We help job seekers find official government recruitment details efficiently.') }}</p>
                 
-                @if($socialLinks->count() > 0)
-                    <div class="social-links-row" style="margin-top: 1.5rem; display: flex; gap: 0.75rem;">
+                @if($socialLinks && $socialLinks->count() > 0)
+                    <div class="social-links-row" style="display: flex; gap: 0.75rem; flex-wrap: wrap;">
                         @foreach($socialLinks as $sLink)
-                            <a href="{{ $sLink->url }}" target="_blank" title="{{ $sLink->platform }}" style="display: flex; align-items: center; justify-content: center; width: 32px; height: 32px; border-radius: 50%; background: var(--bg-primary); border: 1px solid var(--border-color); color: var(--text-primary); text-decoration: none; font-size: 1rem;">
+                            <a href="{{ $sLink->url }}" target="_blank" aria-label="Visit our {{ $sLink->platform }} page" title="{{ $sLink->platform }}" style="display: flex; align-items: center; justify-content: center; width: 36px; height: 36px; border-radius: 50%; background: rgba(255,255,255,0.05); border: 1px solid var(--border-color); color: var(--text-primary); text-decoration: none; font-size: 1.1rem; transition: all 0.3s ease;">
                                 @if($sLink->icon)
                                     @if(str_starts_with(trim($sLink->icon), '<'))
                                         {!! $sLink->icon !!}
@@ -339,46 +341,65 @@
                     </div>
                 @endif
             </div>
-             <div>
-                <h4 style="color: var(--text-primary); margin-bottom: 1rem; font-family: 'Outfit';" data-translate-lookup="Quick Links">Quick Links</h4>
-                <ul style="list-style: none; display: grid; gap: 0.5rem; padding: 0;">
-                    @forelse($footerMenu1 as $mItem)
-                        <li><a href="{{ $mItem->url }}" target="{{ $mItem->target }}" style="color: var(--text-secondary); text-decoration: none;"><span data-translate-lookup="{{ $mItem->title }}">{{ $mItem->title }}</span></a></li>
+
+            <!-- Column 2: Top Job Categories -->
+            <div>
+                <h4 style="color: var(--text-primary); margin-bottom: 1.25rem; font-family: 'Outfit'; font-size: 1.1rem; font-weight: 600;" data-translate-lookup="Top Job Categories">Top Job Categories</h4>
+                <ul style="list-style: none; display: grid; gap: 0.75rem; padding: 0; margin: 0;">
+                    @forelse($footerMenu1 ?? [] as $mItem)
+                        <li><a href="{{ $mItem->url }}" target="{{ $mItem->target }}" style="color: var(--text-secondary); text-decoration: none; transition: color 0.3s ease;"><span data-translate-lookup="{{ $mItem->title }}">{{ $mItem->title }}</span></a></li>
                     @empty
-                        <li><a href="/#jobs-search-section" class="nav-tab-trigger" data-target="jobs" style="color: var(--text-secondary); text-decoration: none;"><span data-translate-lookup="Recruitments Board">Recruitments Board</span></a></li>
-                        <li><a href="/#info-hub-section" class="nav-tab-trigger" data-target="info-hub" style="color: var(--text-secondary); text-decoration: none;"><span data-translate-lookup="Information Hub">Information Hub</span></a></li>
-                        <li><a href="/#info-hub-section" class="nav-tab-trigger" data-target="info-hub" style="color: var(--text-secondary); text-decoration: none;"><span data-translate-lookup="FAQ Accordions">FAQ Accordions</span></a></li>
+                        <li><a href="/jobs/ssc" style="color: var(--text-secondary); text-decoration: none;"><span data-translate-lookup="SSC Jobs">SSC Jobs</span></a></li>
+                        <li><a href="/jobs/upsc" style="color: var(--text-secondary); text-decoration: none;"><span data-translate-lookup="UPSC Jobs">UPSC Jobs</span></a></li>
+                        <li><a href="/jobs/banking" style="color: var(--text-secondary); text-decoration: none;"><span data-translate-lookup="Banking Jobs">Banking Jobs</span></a></li>
+                        <li><a href="/jobs/railway" style="color: var(--text-secondary); text-decoration: none;"><span data-translate-lookup="Railway Jobs">Railway Jobs</span></a></li>
+                        <li><a href="/jobs/defence" style="color: var(--text-secondary); text-decoration: none;"><span data-translate-lookup="Defence Jobs">Defence Jobs</span></a></li>
+                        <li><a href="/jobs/psu" style="color: var(--text-secondary); text-decoration: none;"><span data-translate-lookup="PSU Jobs">PSU Jobs</span></a></li>
                     @endforelse
                 </ul>
             </div>
+
+            <!-- Column 3: Exam Resources -->
             <div>
-                <h4 style="color: var(--text-primary); margin-bottom: 1rem; font-family: 'Outfit';" data-translate-lookup="Useful Links">Useful Links</h4>
-                <ul style="list-style: none; display: grid; gap: 0.5rem; padding: 0;">
-                    @forelse($footerMenu2 as $mItem)
-                        <li><a href="{{ $mItem->url }}" target="{{ $mItem->target }}" style="color: var(--text-secondary); text-decoration: none;"><span data-translate-lookup="{{ $mItem->title }}">{{ $mItem->title }}</span></a></li>
+                <h4 style="color: var(--text-primary); margin-bottom: 1.25rem; font-family: 'Outfit'; font-size: 1.1rem; font-weight: 600;" data-translate-lookup="Exam Resources">Exam Resources</h4>
+                <ul style="list-style: none; display: grid; gap: 0.75rem; padding: 0; margin: 0;">
+                    @forelse($footerMenu2 ?? [] as $mItem)
+                        <li><a href="{{ $mItem->url }}" target="{{ $mItem->target }}" style="color: var(--text-secondary); text-decoration: none; transition: color 0.3s ease;"><span data-translate-lookup="{{ $mItem->title }}">{{ $mItem->title }}</span></a></li>
                     @empty
-                        <li><a href="#" style="color: var(--text-secondary); text-decoration: none;"><span data-translate-lookup="Union Public Service Commission (UPSC)">Union Public Service Commission (UPSC)</span></a></li>
-                        <li><a href="#" style="color: var(--text-secondary); text-decoration: none;"><span data-translate-lookup="Staff Selection Commission (SSC)">Staff Selection Commission (SSC)</span></a></li>
-                        <li><a href="#" style="color: var(--text-secondary); text-decoration: none;"><span data-translate-lookup="Reserve Bank of India (RBI)">Reserve Bank of India (RBI)</span></a></li>
+                        <li><a href="/admit-cards" style="color: var(--text-secondary); text-decoration: none;"><span data-translate-lookup="Admit Cards">Admit Cards</span></a></li>
+                        <li><a href="/results" style="color: var(--text-secondary); text-decoration: none;"><span data-translate-lookup="Exam Results">Exam Results</span></a></li>
+                        <li><a href="/answer-keys" style="color: var(--text-secondary); text-decoration: none;"><span data-translate-lookup="Answer Keys">Answer Keys</span></a></li>
+                        <li><a href="/syllabus" style="color: var(--text-secondary); text-decoration: none;"><span data-translate-lookup="Syllabus & Patterns">Syllabus & Patterns</span></a></li>
+                        <li><a href="/exam-calendars" style="color: var(--text-secondary); text-decoration: none;"><span data-translate-lookup="Exam Calendars">Exam Calendars</span></a></li>
                     @endforelse
                 </ul>
             </div>
+
+            <!-- Column 4: Legal & Company -->
             <div>
-                <h4 style="color: var(--text-primary); margin-bottom: 1rem; font-family: 'Outfit';" data-translate-lookup="Legal & Info">Legal & Info</h4>
-                <ul style="list-style: none; display: grid; gap: 0.5rem; padding: 0;">
-                    @forelse($cmsPagesList as $cmsPage)
-                        <li><a href="/p/{{ $cmsPage->slug }}" style="color: var(--text-secondary); text-decoration: none;"><span data-translate-lookup="{{ $cmsPage->title }}">{{ $cmsPage->title }}</span></a></li>
+                <h4 style="color: var(--text-primary); margin-bottom: 1.25rem; font-family: 'Outfit'; font-size: 1.1rem; font-weight: 600;" data-translate-lookup="Legal & Company">Legal & Company</h4>
+                <ul style="list-style: none; display: grid; gap: 0.75rem; padding: 0; margin: 0;">
+                    @forelse($cmsPagesList ?? [] as $cmsPage)
+                        <li><a href="/p/{{ $cmsPage->slug }}" style="color: var(--text-secondary); text-decoration: none; transition: color 0.3s ease;"><span data-translate-lookup="{{ $cmsPage->title }}">{{ $cmsPage->title }}</span></a></li>
                     @empty
                         <li><a href="/p/about-us" style="color: var(--text-secondary); text-decoration: none;"><span data-translate-lookup="About Us">About Us</span></a></li>
+                        <li><a href="/p/contact-us" style="color: var(--text-secondary); text-decoration: none;"><span data-translate-lookup="Contact Us">Contact Us</span></a></li>
                         <li><a href="/p/privacy-policy" style="color: var(--text-secondary); text-decoration: none;"><span data-translate-lookup="Privacy Policy">Privacy Policy</span></a></li>
-                        <li><a href="/p/terms-and-conditions" style="color: var(--text-secondary); text-decoration: none;"><span data-translate-lookup="Terms & Conditions">Terms & Conditions</span></a></li>
+                        <li><a href="/p/terms-of-service" style="color: var(--text-secondary); text-decoration: none;"><span data-translate-lookup="Terms of Service">Terms of Service</span></a></li>
+                        <li><a href="/p/disclaimer" style="color: var(--text-secondary); text-decoration: none;"><span data-translate-lookup="Disclaimer">Disclaimer</span></a></li>
                     @endforelse
                 </ul>
             </div>
         </div>
-        <div style="max-width: 1400px; margin: 0 auto; border-top: 1px solid var(--border-color); padding-top: 1.5rem; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 1rem;">
-            <p>{!! setting('copyright_text', '&copy; 2026 GovJobs Portal Automation Inc. All rights reserved.') !!}</p>
-            <p>Developed with robust MVC + Service-Repository architecture.</p>
+
+        <!-- Footer Bottom: Copyright & Disclaimer -->
+        <div style="max-width: 1400px; margin: 0 auto; border-top: 1px solid var(--border-color); padding-top: 2rem;">
+            <div style="display: flex; flex-direction: column; gap: 1rem; text-align: center; justify-content: center; align-items: center;">
+                <p style="margin: 0; font-size: 0.85rem; max-width: 900px; line-height: 1.5; color: rgba(255,255,255,0.4);" data-translate-lookup="GovJobs is a private informational platform. We are not affiliated with the Government of India or any State Government. Always verify recruitment details on the official board websites.">
+                    <strong>Disclaimer:</strong> GovJobs is a private informational platform. We are not affiliated with the Government of India or any State Government. Always verify recruitment details on the official board websites.
+                </p>
+                <p style="margin: 0; font-size: 0.95rem; color: var(--text-primary);">{!! setting('copyright_text', '&copy; ' . date('Y') . ' GovJobs. All rights reserved.') !!}</p>
+            </div>
         </div>
     </footer>
 

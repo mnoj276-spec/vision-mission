@@ -386,11 +386,14 @@ class SettingsSeeder extends Seeder
             ], array_merge($item, ['target' => '_self', 'is_active' => true]));
         }
 
-        // Footer Column 1 Items (Quick Links)
+        // Footer Column 1 Items (Top Job Categories)
         $footerCol1Items = [
-            ['title' => 'About Us', 'url' => '/p/about-us', 'order_index' => 0],
-            ['title' => 'Contact Us', 'url' => '/p/contact-us', 'order_index' => 1],
-            ['title' => 'Careers', 'url' => '/p/careers', 'order_index' => 2],
+            ['title' => 'SSC Jobs', 'url' => '/jobs/ssc', 'order_index' => 0],
+            ['title' => 'UPSC Jobs', 'url' => '/jobs/upsc', 'order_index' => 1],
+            ['title' => 'Banking Jobs', 'url' => '/jobs/banking', 'order_index' => 2],
+            ['title' => 'Railway Jobs', 'url' => '/jobs/railway', 'order_index' => 3],
+            ['title' => 'Defence Jobs', 'url' => '/jobs/defence', 'order_index' => 4],
+            ['title' => 'PSU Jobs', 'url' => '/jobs/psu', 'order_index' => 5],
         ];
 
         foreach ($footerCol1Items as $item) {
@@ -400,11 +403,13 @@ class SettingsSeeder extends Seeder
             ], array_merge($item, ['target' => '_self', 'is_active' => true]));
         }
 
-        // Footer Column 2 Items (Legal Info)
+        // Footer Column 2 Items (Exam Resources)
         $footerCol2Items = [
-            ['title' => 'Privacy Policy', 'url' => '/p/privacy-policy', 'order_index' => 0],
-            ['title' => 'Terms of Service', 'url' => '/p/terms-of-service', 'order_index' => 1],
-            ['title' => 'Disclaimer', 'url' => '/p/disclaimer', 'order_index' => 2],
+            ['title' => 'Admit Cards', 'url' => '/admit-cards', 'order_index' => 0],
+            ['title' => 'Exam Results', 'url' => '/results', 'order_index' => 1],
+            ['title' => 'Answer Keys', 'url' => '/answer-keys', 'order_index' => 2],
+            ['title' => 'Syllabus & Patterns', 'url' => '/syllabus', 'order_index' => 3],
+            ['title' => 'Exam Calendars', 'url' => '/exam-calendars', 'order_index' => 4],
         ];
 
         foreach ($footerCol2Items as $item) {
@@ -419,15 +424,23 @@ class SettingsSeeder extends Seeder
             [
                 'title' => 'About Us',
                 'slug' => 'about-us',
-                'content' => '<h1>About GovJobs Portal</h1><p>Welcome to GovJobs, the ultimate destination for verified public sector employment notifications in India. We aim to aggregate, filter, and structure official government recruitment details so job seekers can find and apply to their dream jobs efficiently.</p>',
+                'content' => '<h1>About GovJobs Portal</h1><p>Welcome to GovJobs, India\'s trusted platform for aggregating public sector employment notifications. We help job seekers find official government recruitment details efficiently by structuring complex notification documents into accessible formats.</p>',
                 'meta_title' => 'About GovJobs - Dedicated Public Sector Jobs aggregator',
                 'meta_description' => 'Read about our mission to organize public job notification listings across India.',
                 'meta_keywords' => 'about us, job portal mission'
             ],
             [
+                'title' => 'Contact Us',
+                'slug' => 'contact-us',
+                'content' => '<h1>Contact Us</h1><p>If you have any questions, suggestions, or wish to report an error in any job listing, please reach out to us.</p><p>Email: support@example-govjobs-portal.com</p><p><strong>Please Note:</strong> We do not accept physical job applications. All applications must be submitted directly to the official recruiting boards.</p>',
+                'meta_title' => 'Contact Us - GovJobs',
+                'meta_description' => 'Contact the GovJobs portal team for support or error reporting.',
+                'meta_keywords' => 'contact us, support'
+            ],
+            [
                 'title' => 'Privacy Policy',
                 'slug' => 'privacy-policy',
-                'content' => '<h1>Privacy Policy</h1><p>At GovJobs, accessible from our main website, one of our main priorities is the privacy of our visitors. This Privacy Policy document contains types of information that is collected and recorded by GovJobs and how we use it.</p>',
+                'content' => '<h1>Privacy Policy</h1><p>At GovJobs, one of our main priorities is the privacy of our visitors. This Privacy Policy document details the types of information we collect and how we use it to provide you with personalized job alerts and dashboard features.</p>',
                 'meta_title' => 'Privacy Policy - GovJobs',
                 'meta_description' => 'Learn how we collect and process visitor user data and bookmarks data.',
                 'meta_keywords' => 'privacy policy, user data'
@@ -435,7 +448,7 @@ class SettingsSeeder extends Seeder
             [
                 'title' => 'Terms of Service',
                 'slug' => 'terms-of-service',
-                'content' => '<h1>Terms of Service</h1><p>These terms and conditions outline the rules and regulations for the use of GovJobs\'s Website. By accessing this website we assume you accept these terms and conditions in full.</p>',
+                'content' => '<h1>Terms of Service</h1><p>These terms outline the rules and regulations for using the GovJobs Website. By accessing this platform, we assume you accept these terms in full. We provide aggregated information for convenience; users must independently verify all recruitment timelines on official board websites.</p>',
                 'meta_title' => 'Terms of Service - GovJobs Portal Regulations',
                 'meta_description' => 'Read user agreement policies and service access rules.',
                 'meta_keywords' => 'terms of service, legal user agreement'
@@ -443,7 +456,7 @@ class SettingsSeeder extends Seeder
             [
                 'title' => 'Disclaimer',
                 'slug' => 'disclaimer',
-                'content' => '<h1>Disclaimer</h1><p>All the information on this website - GovJobs - is published in good faith and for general information purpose only. GovJobs is not associated with any government department and does not guarantee the completeness or accuracy of job listings.</p>',
+                'content' => '<h1>Disclaimer</h1><p>GovJobs is a private informational platform. <strong>We are NOT affiliated, associated, authorized, endorsed by, or in any way officially connected with the Government of India or any State Government.</strong> The information provided on this website is for general informational purposes only and sourced from publicly available official notifications. We do not guarantee the completeness or accuracy of job listings.</p>',
                 'meta_title' => 'Disclaimer - GovJobs Information Policy',
                 'meta_description' => 'Read disclaimer details about government associations.',
                 'meta_keywords' => 'disclaimer, official listings'
