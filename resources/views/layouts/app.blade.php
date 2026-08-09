@@ -346,7 +346,7 @@
             <div>
                 <h4 style="color: var(--text-primary); margin-bottom: 1.25rem; font-family: 'Outfit'; font-size: 1.1rem; font-weight: 600;" data-translate-lookup="Top Job Categories">Top Job Categories</h4>
                 <ul style="list-style: none; display: grid; gap: 0.75rem; padding: 0; margin: 0;">
-                    @forelse($footerMenu1 ?? [] as $mItem)
+                    @forelse($footerMenu3 ?? [] as $mItem)
                         <li><a href="{{ $mItem->url }}" target="{{ $mItem->target }}" style="color: var(--text-secondary); text-decoration: none; transition: color 0.3s ease;"><span data-translate-lookup="{{ $mItem->title }}">{{ $mItem->title }}</span></a></li>
                     @empty
                         <li><a href="/jobs/ssc" style="color: var(--text-secondary); text-decoration: none;"><span data-translate-lookup="SSC Jobs">SSC Jobs</span></a></li>
@@ -363,7 +363,7 @@
             <div>
                 <h4 style="color: var(--text-primary); margin-bottom: 1.25rem; font-family: 'Outfit'; font-size: 1.1rem; font-weight: 600;" data-translate-lookup="Exam Resources">Exam Resources</h4>
                 <ul style="list-style: none; display: grid; gap: 0.75rem; padding: 0; margin: 0;">
-                    @forelse($footerMenu2 ?? [] as $mItem)
+                    @forelse($footerMenu4 ?? [] as $mItem)
                         <li><a href="{{ $mItem->url }}" target="{{ $mItem->target }}" style="color: var(--text-secondary); text-decoration: none; transition: color 0.3s ease;"><span data-translate-lookup="{{ $mItem->title }}">{{ $mItem->title }}</span></a></li>
                     @empty
                         <li><a href="/admit-cards" style="color: var(--text-secondary); text-decoration: none;"><span data-translate-lookup="Admit Cards">Admit Cards</span></a></li>
@@ -379,8 +379,17 @@
             <div>
                 <h4 style="color: var(--text-primary); margin-bottom: 1.25rem; font-family: 'Outfit'; font-size: 1.1rem; font-weight: 600;" data-translate-lookup="Legal & Company">Legal & Company</h4>
                 <ul style="list-style: none; display: grid; gap: 0.75rem; padding: 0; margin: 0;">
-                    @forelse($cmsPagesList ?? [] as $cmsPage)
-                        <li><a href="/p/{{ $cmsPage->slug }}" style="color: var(--text-secondary); text-decoration: none; transition: color 0.3s ease;"><span data-translate-lookup="{{ $cmsPage->title }}">{{ $cmsPage->title }}</span></a></li>
+                    @php
+                        $combinedFooter = collect();
+                        if(isset($footerMenu1) && $footerMenu1->count() > 0) {
+                            $combinedFooter = $combinedFooter->merge($footerMenu1);
+                        }
+                        if(isset($footerMenu2) && $footerMenu2->count() > 0) {
+                            $combinedFooter = $combinedFooter->merge($footerMenu2);
+                        }
+                    @endphp
+                    @forelse($combinedFooter as $mItem)
+                        <li><a href="{{ $mItem->url }}" target="{{ $mItem->target }}" style="color: var(--text-secondary); text-decoration: none; transition: color 0.3s ease;"><span data-translate-lookup="{{ $mItem->title }}">{{ $mItem->title }}</span></a></li>
                     @empty
                         <li><a href="/p/about-us" style="color: var(--text-secondary); text-decoration: none;"><span data-translate-lookup="About Us">About Us</span></a></li>
                         <li><a href="/p/contact-us" style="color: var(--text-secondary); text-decoration: none;"><span data-translate-lookup="Contact Us">Contact Us</span></a></li>
