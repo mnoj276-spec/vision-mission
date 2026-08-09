@@ -709,7 +709,7 @@
                         @endif
 
                         <!-- Standard core links -->
-                        @if($job->apply_link)
+                        @if($job->apply_link && in_array($job->post_type, ['job', 'admission']))
                             <tr>
                                 <td><strong data-i18n="apply_online_row">Apply Online (Registration & Login)</strong></td>
                                 <td style="text-align: right;">
@@ -746,7 +746,19 @@
                         @endif
                         @if($job->official_website_link)
                             <tr>
-                                <td><strong data-i18n="official_website_row">Official Recruitment Website</strong></td>
+                                <td>
+                                    <strong>
+                                        @if($job->post_type === 'scholarship')
+                                            Official Scholarship Website
+                                        @elseif($job->post_type === 'admission')
+                                            Official Admission Website
+                                        @elseif(in_array($job->post_type, ['admit_card', 'result', 'answer_key', 'syllabus', 'notice']))
+                                            Official Board Website
+                                        @else
+                                            <span data-i18n="official_website_row">Official Recruitment Website</span>
+                                        @endif
+                                    </strong>
+                                </td>
                                 <td style="text-align: right;">
                                     <a href="{{ $job->official_website_link }}" target="_blank" rel="nofollow noopener" class="btn-link-action" style="background:#4b5563;">
                                         <i class="fa-solid fa-globe"></i> <span data-i18n="visit_website_btn">Visit Website</span>

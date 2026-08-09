@@ -599,7 +599,7 @@ header {
     gap: 0.5rem;
     align-items: stretch;
     justify-content: center;
-    width: 140px;
+    width: 165px;
     flex-shrink: 0;
 }
 
@@ -617,6 +617,23 @@ header {
     justify-content: center !important;
     font-weight: 600 !important;
     margin: 0 !important;
+}
+
+.job-card-actions .badge-deadline {
+    width: 100% !important;
+    padding: 0.4rem 0.3rem !important;
+    font-size: 0.78rem !important;
+    height: 38px !important;
+    border-radius: 8px !important;
+    box-sizing: border-box !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    font-weight: 600 !important;
+    margin: 0 !important;
+    white-space: nowrap !important;
+    text-align: center !important;
+    letter-spacing: -0.2px !important;
 }
 
 .job-card-actions .toggle-bookmark-btn {
@@ -644,7 +661,8 @@ header {
         margin-top: 0.5rem;
     }
     .job-card-actions .btn-view,
-    .job-card-actions .toggle-bookmark-btn {
+    .job-card-actions .toggle-bookmark-btn,
+    .job-card-actions .badge-deadline {
         flex: 1 !important;
     }
 }

@@ -61,11 +61,11 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <!-- Custom Design Stylesheet -->
-    <link rel="stylesheet" href="{{ asset('assets/css/portal.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/css/portal.css') }}?v={{ filemtime(public_path('assets/css/portal.css')) }}">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
     <!-- Google Translate Custom Translator Stylesheet -->
-    <link rel="stylesheet" href="{{ asset('assets/css/translator.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/css/translator.css') }}?v={{ filemtime(public_path('assets/css/translator.css')) }}">
 
     @if(!auth()->check() || !in_array(auth()->user()->membership_plan, ['premium', 'pro']))
         @if(config('app.env') !== 'local' && config('app.env') !== 'testing')
