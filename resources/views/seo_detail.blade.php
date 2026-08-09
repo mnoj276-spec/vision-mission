@@ -5,6 +5,15 @@
 
 @section('content')
 
+<style>
+    .vacancy-table-wrapper {
+        -ms-overflow-style: none;  /* IE and Edge */
+        scrollbar-width: none;  /* Firefox */
+    }
+    .vacancy-table-wrapper::-webkit-scrollbar {
+        display: none; /* Chrome, Safari and Opera */
+    }
+</style>
 
 @php
     $statusText = 'Active';
@@ -338,12 +347,12 @@
             </h4>
             @if($job->vacancyDetails && $job->vacancyDetails->count() > 0)
                 <div class="vacancy-table-wrapper" style="overflow-x: auto; background: rgba(255,255,255,0.01); border: 1px solid var(--border-color); border-radius: 12px; padding: 1rem; margin-bottom: 1.5rem;">
-                    <table class="vacancy-detail-table" style="min-width: 800px;">
+                    <table class="vacancy-detail-table" style="width: 100%;">
                         <thead>
                             <tr>
-                                <th style="padding: 0.75rem 1rem; font-weight: 700; color: var(--text-primary); width: 25%; min-width: 200px;">Post Name</th>
-                                <th style="padding: 0.75rem 1rem; font-weight: 700; color: var(--text-primary); text-align: center; width: 120px; min-width: 120px;">Total Post</th>
-                                <th style="padding: 0.75rem 1rem; font-weight: 700; color: var(--text-primary); width: auto; min-width: 400px;">Post Recruitment Eligibility Details</th>
+                                <th style="padding: 0.75rem 1rem; font-weight: 700; color: var(--text-primary); width: 25%;">Post Name</th>
+                                <th style="padding: 0.75rem 1rem; font-weight: 700; color: var(--text-primary); text-align: center; width: 15%;">Total Post</th>
+                                <th style="padding: 0.75rem 1rem; font-weight: 700; color: var(--text-primary); width: 60%;">Post Recruitment Eligibility Details</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -376,7 +385,7 @@
             </h4>
             @if($job->categoryWiseVacancies && $job->categoryWiseVacancies->count() > 0)
                 <div class="vacancy-table-wrapper" style="overflow-x: auto; background: rgba(255,255,255,0.01); border: 1px solid var(--border-color); border-radius: 12px; padding: 1rem; margin-bottom: 1.5rem;">
-                    <table class="vacancy-detail-table" style="min-width: 800px;">
+                    <table class="vacancy-detail-table" style="width: 100%;">
                         <thead>
                             <tr>
                                 <th style="padding: 0.75rem 1rem; font-weight: 700; color: var(--text-primary);">Post Name</th>
@@ -491,7 +500,7 @@
                     Indicative physical criteria matching standard police and defense recruitment commissions:
                 </p>
                 <div class="physical-table-container">
-                    <table class="physical-table" style="min-width: 600px;">
+                    <table class="physical-table" style="width: 100%;">
                         <thead>
                             <tr>
                                 <th>Physical Test Element</th>
@@ -629,7 +638,7 @@
         <section class="details-section">
             <h4 data-i18n="useful_links_title">Some Useful Important Links</h4>
             <div class="links-table-container">
-                <table class="links-table" style="min-width: 500px;">
+                <table class="links-table" style="width: 100%;">
                     <thead>
                         <tr>
                             <th data-i18n="resource_name_th">Resource / Action Name</th>
