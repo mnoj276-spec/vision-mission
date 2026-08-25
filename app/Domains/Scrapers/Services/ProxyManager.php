@@ -11,11 +11,7 @@ class ProxyManager
     public function __construct()
     {
         // Load proxies from environment/config or default mock list
-        $this->proxies = config('services.scraper.proxies') ?: [
-            'http://proxy1.example.com:8080',
-            'http://proxy2.example.com:8080',
-            'http://proxy3.example.com:8080',
-        ];
+        $this->proxies = config('services.scraper.proxies') ?: [];
     }
 
     /**

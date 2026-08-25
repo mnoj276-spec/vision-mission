@@ -158,7 +158,9 @@ class HybridScrapingEngine
         $url = $source->source_url;
         $cookieHeader = $this->cookieManager->getCookieHeaderString($source);
         
-        $headers = [];
+        $headers = [
+            'User-Agent' => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36'
+        ];
         if ($cookieHeader) {
             $headers['Cookie'] = $cookieHeader;
         }
@@ -357,19 +359,8 @@ class HybridScrapingEngine
      */
     protected function executeFallback(ScrapingSource $source): string
     {
-        Log::info("Generating simulated recovery markup to maintain scraper uptime.");
-        $driver = app(\App\Domains\Scrapers\Drivers\ScraperDriverManager::class)->getDriverFor($source);
-        $driverName = strtolower(class_basename($driver));
-
-        if (str_contains($driverName, 'banking')) {
-            return '<html><body><div class="sbi-job"><a class="sbi-title" href="/careers/po">SBI Probationary Officer PO Ingestion 2026</a><span class="sbi-deadline">14-11-2026</span></div></body></html>';
-        } elseif (str_contains($driverName, 'upsc')) {
-            return '<html><body><table><tr class="views-table"><td class="title">UPSC Engineering Services Main Examination 2026</td><td class="last-date">25-09-2026</td></tr></table></body></html>';
-        } elseif (str_contains($driverName, 'ssc')) {
-            return '<html><body><table><tr class="ssc-table"><td>SSC Ingestion Fallback Recruitment 2026</td><td>31-12-2026</td></tr></table></body></html>';
-        }
-
-        return '<html><body><div>Generic Ingestion Fallback Recruitment 2026 - Last date to apply: 15-12-2026</div></body></html>';
+        Log::error("All scraper engines failed for source: {$source->name}. Mock fallback is DISABLED by security audit.");
+        throw new \Exception("Scraping completely failed for source ID: {$source->id}. Mock fallback has been disabled.");
     }
 
     /**

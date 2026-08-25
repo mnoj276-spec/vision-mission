@@ -21,6 +21,36 @@ class SscScraperDriver extends AbstractScraperDriver
     public function parse(string $content, ScrapingSource $source): array
     {
         $config = $source->selectors_config;
+        
+        // The API response may be wrapped in HTML (e.g. <html><body><pre>{json}</pre>...)
+        // Extract the raw JSON if present
+        $jsonContent = $content;
+        if (preg_match('/<pre[^>]*>(.*?)<\/pre>/s', $content, $matches)) {
+            $jsonContent = html_entity_decode($matches[1]);
+        }
+        
+        $decoded = json_decode($jsonContent, true);
+        if (json_last_error() === JSON_ERROR_NONE && isset($decoded['data'])) {
+            $extracted = [];
+            foreach ($decoded['data'] as $item) {
+                $attachmentUrl = '';
+                if (!empty($item['attachments'][0]['path'])) {
+                    // API paths look like "uploads\masterData\NoticeBoards\file.pdf"
+                    $normalizedPath = str_replace('\\', '/', $item['attachments'][0]['path']);
+                    $attachmentUrl = 'https://ssc.gov.in/api/attachment/' . $normalizedPath;
+                }
+                
+                $extracted[] = [
+                    'title' => $item['headline'] ?? '',
+                    'url' => $attachmentUrl,
+                    'deadline' => $item['endDate'] ?? null,
+                    'published_at' => $item['createdAt'] ?? null,
+                ];
+            }
+            return $extracted;
+        }
+
+        // Fallback to HTML parsing if not JSON
         $extracted = $this->parseWithSelectors($content, $config);
 
         if (empty($extracted)) {
