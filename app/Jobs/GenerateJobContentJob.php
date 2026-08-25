@@ -23,6 +23,8 @@ class GenerateJobContentJob implements ShouldQueue
      */
     public $tries = 3;
 
+    public bool $afterCommit = true;
+
     /**
      * The number of seconds the job can run before timing out.
      *

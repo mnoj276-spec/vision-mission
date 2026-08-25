@@ -94,7 +94,7 @@ class JobPostObserver
             try {
                 SubmitToIndexNow::dispatch($jobPost->id)
                     ->onQueue('default')
-                    ->delay(now()->addSeconds(5));
+                    ->afterCommit();
             } catch (\Exception $e) {
                 // Failsafe — never break the main flow for IndexNow
             }

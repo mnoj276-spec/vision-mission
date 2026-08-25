@@ -22,6 +22,8 @@ class ProcessScrapedJobNotification implements ShouldQueue
      */
     public $tries = 3;
 
+    public bool $afterCommit = true;
+
     /**
      * Determine the time at which the job should be retried.
      */

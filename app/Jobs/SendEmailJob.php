@@ -29,6 +29,8 @@ class SendEmailJob implements ShouldQueue
      */
     public int $tries = 3;
 
+    public bool $afterCommit = true;
+
     /**
      * The number of seconds to wait before retrying the job.
      */
