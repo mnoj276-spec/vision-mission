@@ -50,6 +50,10 @@ return Application::configure(basePath: dirname(__DIR__))
         
         $middleware->prependToGroup('api', \App\Http\Middleware\SecurityHeaders::class);
         $middleware->prependToGroup('api', \App\Http\Middleware\DynamicMaintenanceMode::class);
+
+        $middleware->redirectGuestsTo(fn (\Illuminate\Http\Request $request) => 
+            $request->is('api/*') ? null : route('login')
+        );
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         $exceptions->render(function (\Throwable $e, \Illuminate\Http\Request $request) {
