@@ -48,10 +48,12 @@ class ExtractionController extends Controller
                 $url = $request->input('url');
                 
                 // Mitigate SSRF
-                if (!UrlSecurity::isSafeUrl($url)) {
+                try {
+                    UrlSecurity::verifySafeUrl($url);
+                } catch (\Exception $e) {
                     return response()->json([
                         'success' => false,
-                        'message' => 'SSRF Block: The URL domain is not allowed.',
+                        'message' => 'SSRF Block: ' . $e->getMessage(),
                     ], 400);
                 }
 
@@ -86,8 +88,10 @@ class ExtractionController extends Controller
                             'protocols' => ['http', 'https'],
                             'on_redirect' => function(\Psr\Http\Message\RequestInterface $req, \Psr\Http\Message\ResponseInterface $res, \Psr\Http\Message\UriInterface $uri) {
                                 $redirectUrl = (string)$uri;
-                                if (!UrlSecurity::isSafeUrl($redirectUrl)) {
-                                    throw new \Exception("SSRF Block: Redirected to unsafe domain: " . $redirectUrl);
+                                try {
+                                    UrlSecurity::verifySafeUrl($redirectUrl);
+                                } catch (\Exception $e) {
+                                    throw new \Exception("SSRF Block: Redirected to unsafe domain: " . $redirectUrl . ". Reason: " . $e->getMessage());
                                 }
                             }
                         ]

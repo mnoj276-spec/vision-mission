@@ -37,8 +37,10 @@ class ScrapingService implements ScrapingServiceInterface
             }
             
             // Mitigate SSRF: enforce strict allowed domains and reject local loopback
-            if (!\App\Services\UrlSecurity::isSafeUrl($url)) {
-                throw new \Exception("SSRF Block: The source URL '{$url}' is not a permitted domain.");
+            try {
+                \App\Services\UrlSecurity::verifySafeUrl($url);
+            } catch (\Exception $e) {
+                throw new \Exception("SSRF Block: " . $e->getMessage());
             }
 
             $html = $this->hybridEngine->fetch($source);
@@ -50,7 +52,17 @@ class ScrapingService implements ScrapingServiceInterface
                 
                 // Also check notification_page if configured and different
                 $notifPage = $source->selectors_config['notification_page'] ?? null;
-                if ($notifPage && $notifPage !== $source->source_url && \App\Services\UrlSecurity::isSafeUrl($notifPage)) {
+                $notifSafe = false;
+                if ($notifPage && $notifPage !== $source->source_url) {
+                    try {
+                        \App\Services\UrlSecurity::verifySafeUrl($notifPage);
+                        $notifSafe = true;
+                    } catch (\Exception $e) {
+                        Log::warning("SSRF Block on notification page {$notifPage}: " . $e->getMessage());
+                    }
+                }
+                
+                if ($notifSafe) {
                     try {
                         $tempNotifSource = clone $source;
                         $tempNotifSource->source_url = $notifPage;

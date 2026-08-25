@@ -191,8 +191,10 @@ class TestPipelineCommand extends Command
                 $fileExtension = strtolower(pathinfo($originalName, PATHINFO_EXTENSION)) ?: 'html';
 
                 // SSRF restriction check (if checking live URLs, except testing localhost/reserved URLs is blocked)
-                if (!UrlSecurity::isSafeUrl($downloadUrl)) {
-                    throw new \Exception("SSRF Guard Blocked access to unsafe URL: {$downloadUrl}");
+                try {
+                    UrlSecurity::verifySafeUrl($downloadUrl);
+                } catch (\Exception $e) {
+                    throw new \Exception("SSRF Guard Blocked access to unsafe URL: {$downloadUrl}. Reason: " . $e->getMessage());
                 }
 
                 $storedPath = 'extractions/' . Str::uuid() . '.' . $fileExtension;
@@ -211,8 +213,10 @@ class TestPipelineCommand extends Command
                         'protocols' => ['http', 'https'],
                         'on_redirect' => function(\Psr\Http\Message\RequestInterface $req, \Psr\Http\Message\ResponseInterface $res, \Psr\Http\Message\UriInterface $uri) {
                             $redirectUrl = (string)$uri;
-                            if (!UrlSecurity::isSafeUrl($redirectUrl)) {
-                                throw new \Exception("SSRF Block: Redirected to unsafe domain: " . $redirectUrl);
+                            try {
+                                UrlSecurity::verifySafeUrl($redirectUrl);
+                            } catch (\Exception $e) {
+                                throw new \Exception("SSRF Block: Redirected to unsafe domain: " . $redirectUrl . ". Reason: " . $e->getMessage());
                             }
                         }
                     ]

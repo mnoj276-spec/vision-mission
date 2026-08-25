@@ -12,33 +12,32 @@ class UrlSecurity
      * @param string|null $url
      * @return bool
      */
-    public static function isSafeUrl(?string $url): bool
+    public static function verifySafeUrl(?string $url): void
     {
         if (empty($url)) {
-            return false;
+            throw new \Exception('URL is empty.');
         }
 
         // Validate URL structure
         if (!filter_var($url, FILTER_VALIDATE_URL)) {
-            return false;
+            throw new \Exception('Invalid URL format.');
         }
 
         $parsed = parse_url($url);
         if (!$parsed || !isset($parsed['host'])) {
-            return false;
+            throw new \Exception('Invalid URL structure or missing host.');
         }
 
         // Strict scheme verification
         if (!isset($parsed['scheme']) || !in_array(strtolower($parsed['scheme']), ['http', 'https'], true)) {
-            return false;
+            throw new \Exception('URL must use http or https scheme.');
         }
 
         $host = strtolower($parsed['host']);
 
-
         // Check host name directly first for loopback/localhost shortcuts
         if ($host === 'localhost' || $host === 'loopback' || $host === '127.0.0.1' || $host === '[::1]') {
-            return false;
+            throw new \Exception('Localhost or loopback domains are strictly blocked.');
         }
 
         // Only allow .gov.in, .nic.in, or approved domains
@@ -70,11 +69,11 @@ class UrlSecurity
         }
 
         if (!$isApprovedDomain) {
-            return false;
+            throw new \Exception('The domain must be a .gov.in, .nic.in, or explicitly approved domain.');
         }
 
         if (app()->environment('testing')) {
-            return true;
+            return;
         }
 
         // Resolve domain name to IP addresses and validate them (SSRF/DNS Rebinding Prevention)
@@ -102,16 +101,31 @@ class UrlSecurity
 
         if (empty($ips)) {
             // Could not resolve DNS or find any IPs - fail closed
-            return false;
+            throw new \Exception("DNS resolution failed for host {$host}. This might be a temporary network issue or local DNS limitation. Please try again later.");
         }
 
         foreach ($ips as $ip) {
             if (self::isPrivateIp($ip)) {
-                return false;
+                throw new \Exception("Host {$host} resolves to a restricted private/local IP address ({$ip}).");
             }
         }
+    }
 
-        return true;
+    /**
+     * Validate the given URL to prevent SSRF and restrict domains.
+     * Returns true if safe, false otherwise.
+     *
+     * @param string|null $url
+     * @return bool
+     */
+    public static function isSafeUrl(?string $url): bool
+    {
+        try {
+            self::verifySafeUrl($url);
+            return true;
+        } catch (\Exception $e) {
+            return false;
+        }
     }
 
     /**

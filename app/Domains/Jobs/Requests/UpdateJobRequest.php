@@ -26,8 +26,10 @@ class UpdateJobRequest extends FormRequest
                 'required',
                 'url',
                 function ($attribute, $value, $fail) {
-                    if (!\App\Services\UrlSecurity::isSafeUrl($value)) {
-                        $fail("The {$attribute} must be a .gov.in, .nic.in, or approved domain to prevent SSRF.");
+                    try {
+                        \App\Services\UrlSecurity::verifySafeUrl($value);
+                    } catch (\Exception $e) {
+                        $fail($e->getMessage());
                     }
                 }
             ],

@@ -58,10 +58,12 @@ class ScraperController extends Controller
             'link_selector'          => 'required|string',
         ]);
 
-        if (!\App\Services\UrlSecurity::isSafeUrl($request->source_url)) {
+        try {
+            \App\Services\UrlSecurity::verifySafeUrl($request->source_url);
+        } catch (\Exception $e) {
             return response()->json([
                 'status' => 'error',
-                'message' => 'The scraping source URL must be a .gov.in, .nic.in, or approved domain to prevent SSRF.'
+                'message' => $e->getMessage()
             ], 422);
         }
 
@@ -97,10 +99,12 @@ class ScraperController extends Controller
             'title_selector' => 'required|string', 'row_selector' => 'required|string', 'link_selector' => 'required|string',
         ]);
 
-        if (!\App\Services\UrlSecurity::isSafeUrl($request->source_url)) {
+        try {
+            \App\Services\UrlSecurity::verifySafeUrl($request->source_url);
+        } catch (\Exception $e) {
             return response()->json([
                 'status' => 'error',
-                'message' => 'The scraping source URL must be a .gov.in, .nic.in, or approved domain to prevent SSRF.'
+                'message' => $e->getMessage()
             ], 422);
         }
 
@@ -152,18 +156,24 @@ class ScraperController extends Controller
             'vacancy_count'         => 'required|integer|min:1',
         ]);
 
-        if (!\App\Services\UrlSecurity::isSafeUrl($request->official_website_link)) {
+        try {
+            \App\Services\UrlSecurity::verifySafeUrl($request->official_website_link);
+        } catch (\Exception $e) {
             return response()->json([
                 'status' => 'error',
-                'message' => 'The official website link must be a .gov.in, .nic.in, or approved domain to prevent SSRF.'
+                'message' => $e->getMessage()
             ], 422);
         }
 
-        if ($request->filled('apply_link') && !\App\Services\UrlSecurity::isSafeUrl($request->apply_link)) {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'The application link must be a .gov.in, .nic.in, or approved domain to prevent SSRF.'
-            ], 422);
+        if ($request->filled('apply_link')) {
+            try {
+                \App\Services\UrlSecurity::verifySafeUrl($request->apply_link);
+            } catch (\Exception $e) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Apply Link Error: ' . $e->getMessage()
+                ], 422);
+            }
         }
 
         try {

@@ -180,8 +180,10 @@ class HybridScrapingEngine
                 'track_redirects' => true,
                 'on_redirect'     => function(\Psr\Http\Message\RequestInterface $req, \Psr\Http\Message\ResponseInterface $res, \Psr\Http\Message\UriInterface $uri) {
                     $redirectUrl = (string)$uri;
-                    if (!\App\Services\UrlSecurity::isSafeUrl($redirectUrl)) {
-                        throw new \Exception("SSRF Block: Redirect target '{$redirectUrl}' is not permitted.");
+                    try {
+                        \App\Services\UrlSecurity::verifySafeUrl($redirectUrl);
+                    } catch (\Exception $e) {
+                        throw new \Exception("SSRF Block: Redirect target '{$redirectUrl}' is not permitted. Reason: " . $e->getMessage());
                     }
                 }
             ]
@@ -273,8 +275,10 @@ class HybridScrapingEngine
                 'track_redirects' => true,
                 'on_redirect'     => function(\Psr\Http\Message\RequestInterface $req, \Psr\Http\Message\ResponseInterface $res, \Psr\Http\Message\UriInterface $uri) {
                     $redirectUrl = (string)$uri;
-                    if (!\App\Services\UrlSecurity::isSafeUrl($redirectUrl)) {
-                        throw new \Exception("SSRF Block: Redirect target '{$redirectUrl}' is not permitted.");
+                    try {
+                        \App\Services\UrlSecurity::verifySafeUrl($redirectUrl);
+                    } catch (\Exception $e) {
+                        throw new \Exception("SSRF Block: Redirect target '{$redirectUrl}' is not permitted. Reason: " . $e->getMessage());
                     }
                 }
             ]
