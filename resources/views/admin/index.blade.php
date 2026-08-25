@@ -33,6 +33,13 @@
 @endphp
 
 @section('content')
+<style>
+    /* Fix dropdown clipping in User Access Registry */
+    #admin-users .responsive-table-container {
+        overflow: visible !important;
+        min-height: 400px; /* Ensure space for dropdown */
+    }
+</style>
 <div class="admin-container min-h-screen gap-8 px-[5%] max-w-[1600px] mx-auto mt-8 grid grid-cols-1 md:grid-cols-[200px_1fr] lg:grid-cols-[260px_1fr]">
     
     <!-- 1. Enterprise Sidebar Navigation -->

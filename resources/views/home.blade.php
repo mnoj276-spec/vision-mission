@@ -491,7 +491,7 @@
                                     <span data-translate-lookup="{{ $rJob->department->name ?? 'Government' }}">{{ $rJob->department->name ?? 'Government' }}</span> &bull; <span data-translate-lookup="{{ $rJob->state->name ?? 'Pan India' }}">{{ $rJob->state->name ?? 'Pan India' }}</span>
                                 </p>
                                 <div class="job-tags">
-                                    <span class="badge badge-dept" data-translate-lookup="{{ $rJob->qualification->name ?? 'Degree Required' }}" data-translate-prefix="🎓 ">🎓 {{ $rJob->qualification->name ?? 'Degree Required' }}</span>
+                                    <span class="badge badge-dept" data-translate-lookup="{{ str_replace("\n", " | ", $rJob->qualification->name ?? 'Degree Required') }}" data-translate-prefix="🎓 ">🎓 {{ str_replace("\n", " | ", $rJob->qualification->name ?? 'Degree Required') }}</span>
                                     <span class="badge" data-translate-key="vacancies_count" data-translate-prefix="👥 " data-translate-suffix=": {{ number_format($rJob->vacancy_count) }}" style="background: rgba(16, 185, 129, 0.08); color: #10b981;">👥 Vacancies: {{ number_format($rJob->vacancy_count) }}</span>
                                     <span class="badge badge-deadline" data-translate-key="apply_by" data-translate-prefix="📅 " data-translate-suffix=": {{ $rJob->last_date_to_apply ? $rJob->last_date_to_apply->format('d M Y') : 'N/A' }}">📅 Apply by: {{ $rJob->last_date_to_apply ? $rJob->last_date_to_apply->format('d M Y') : 'N/A' }}</span>
                                 </div>

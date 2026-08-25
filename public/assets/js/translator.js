@@ -538,7 +538,7 @@
             "filter_salary": "💸 न्यूनतम वेतन",
             "any_salary_scale": "कोई भी वेतनमान",
             "filter_free_app": "केवल निःशुल्क आवेदन (₹0 शुल्क)",
-            "btn_reset": "फिल्टर रीसेट करें",
+            "btn_reset": "रीसेट करें",
             "sort_featured": "क्रम: विशेष पहले • नवीन",
             "btn_view_details": "विवरण देखें",
             "badge_featured": "विशेष",
@@ -648,7 +648,7 @@
             "btn_upgrade_pro": "प्रो में अपग्रेड करें",
 
             // Generic Hindi Keys
-            "found_jobs": "{count} भर्तियाँ मिलीं",
+            "found_jobs": "कुल {count} परिणाम मिले",
             "apply_by": "आवेदन की अंतिम तिथि",
             "vacancies_count": "रिक्तियां",
             "btn_delete": "हटाएं",

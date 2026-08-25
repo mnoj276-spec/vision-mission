@@ -1046,7 +1046,7 @@
                                 @if($job->district) &bull; <span>{{ $job->district->name }}</span> @endif
                             </p>
                             <div class="job-tags">
-                                <span class="badge badge-dept" data-translate-lookup="{{ $job->qualification->name ?? 'Eligibility Required' }}" data-translate-prefix="🎓 ">🎓 {{ $job->qualification->name ?? 'Eligibility Required' }}</span>
+                                <span class="badge badge-dept" data-translate-lookup="{{ str_replace("\n", " | ", $job->qualification->name ?? 'Eligibility Required') }}" data-translate-prefix="🎓 ">🎓 {{ str_replace("\n", " | ", $job->qualification->name ?? 'Eligibility Required') }}</span>
                                 <span class="badge" style="background: rgba(16, 185, 129, 0.08); color: #10b981; font-weight:700;" data-translate-key="vacancies_count" data-translate-prefix="👥 " data-translate-suffix=": {{ number_format($job->vacancy_count) }}">👥 Vacancies: {{ number_format($job->vacancy_count) }}</span>
                                 <span class="badge" style="background: rgba(139, 92, 246, 0.08); color: #8b5cf6; font-weight:700;">
                                     @if($job->salary_min > 0)

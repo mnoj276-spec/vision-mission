@@ -155,7 +155,7 @@
                 @if($job->district)
                     <span class="badge" style="background: rgba(245, 158, 11, 0.1); color: #f59e0b;" data-translate-prefix="🏢 District: " data-translate-lookup="{{ $job->district->name }}">🏢 District: {{ $job->district->name }}</span>
                 @endif
-                <span class="badge badge-dept" data-translate-lookup="{{ $job->qualification->name ?? 'Degree Required' }}">{{ $job->qualification->name ?? 'Degree Required' }}</span>
+                <span class="badge badge-dept" data-translate-lookup="{{ str_replace("\n", " | ", $job->qualification->name ?? 'Degree Required') }}">{{ str_replace("\n", " | ", $job->qualification->name ?? 'Degree Required') }}</span>
                 @if($job->advertisement_number)
                     <span class="badge" style="background: rgba(59, 130, 246, 0.1); color: #3b82f6;">📋 Advt No: {{ $job->advertisement_number }}</span>
                 @endif
