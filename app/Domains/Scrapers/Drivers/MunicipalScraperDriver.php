@@ -28,20 +28,7 @@ class MunicipalScraperDriver extends AbstractScraperDriver
         $extracted = $this->parseWithSelectors($content, $config);
 
         if (empty($extracted)) {
-            if ($this->shouldAllowMockFallback()) {
-                return [
-                    [
-                        'title'         => 'MCD Assistant Engineer Civil Recruitment Ingestion 2026',
-                        'deadline_raw'  => '15-11-2026',
-                        'fee_raw'       => 'Rs 200',
-                        'official_link' => 'https://mcdonline.nic.in',
-                        'apply_link'    => 'https://mcdonline.nic.in/careers',
-                        'category_name' => 'Municipal & Local Boards',
-                        'department_name'=> 'Municipal Corporation of Delhi',
-                        'raw_text'      => 'Municipal Corporation of Delhi (MCD) Assistant Engineer recruitment. Required B.E./B.Tech Civil. Apply online by 15-11-2026. Fee Rs 200.',
-                    ]
-                ];
-            }
+
             throw new \App\Domains\Scrapers\Exceptions\ParserValidationException("Municipal scraper driver failed to parse content: Selectors yielded no matching elements.");
         }
 

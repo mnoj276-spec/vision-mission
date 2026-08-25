@@ -11,9 +11,6 @@ for (let i = 0; i < args.length; i += 2) {
 
 const url = params.url;
 const engine = params.engine || 'puppeteer';
-const proxy = params.proxy;
-const scroll = params.scroll === 'true';
-const waitForSelector = params.waitForSelector;
 
 if (!url) {
     console.error('Error: --url parameter is required.');
@@ -22,42 +19,17 @@ if (!url) {
 
 async function run() {
     try {
-        // Output headers or metadata
-        if (engine === 'puppeteer') {
-            console.log(`<!-- RENDERED BY PUPPETEER ENGINE FOR ${url} -->`);
-            if (proxy) {
-                console.log(`<!-- PROXY USED: ${proxy} -->`);
-            }
-            console.log(`
-                <html>
-                <head><title>SBI Careers Ingestion Engine</title></head>
-                <body>
-                    <div class="sbi-job">
-                        <a class="sbi-title" href="/careers/po-2026">SBI Probationary Officer PO Ingestion 2026</a>
-                        <span class="sbi-deadline">14-11-2026</span>
-                    </div>
-                </body>
-                </html>
-            `);
-        } else {
-            console.log(`<!-- RENDERED BY PLAYWRIGHT ENGINE FOR ${url} -->`);
-            if (proxy) {
-                console.log(`<!-- PROXY USED: ${proxy} -->`);
-            }
-            console.log(`
-                <html>
-                <head><title>UPSC Active Ingestion Engine</title></head>
-                <body>
-                    <table>
-                        <tr class="views-table">
-                            <td class="title">UPSC Engineering Services Main Examination 2026</td>
-                            <td class="last-date">25-09-2026</td>
-                        </tr>
-                    </table>
-                </body>
-                </html>
-            `);
-        }
+        console.log(`<!-- RENDERED BY ${engine.toUpperCase()} ENGINE FOR ${url} -->`);
+        console.log(`
+            <html>
+            <head><title>Headless Engine Disabled</title></head>
+            <body>
+                <div class="error-message">
+                    ERROR: The headless browser scraper mock has been disabled for security reasons to prevent the generation of fake government jobs. Real Playwright/Puppeteer implementation is required.
+                </div>
+            </body>
+            </html>
+        `);
     } catch (err) {
         console.error(err);
         process.exit(1);

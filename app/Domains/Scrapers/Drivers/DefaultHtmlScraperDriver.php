@@ -17,35 +17,6 @@ class DefaultHtmlScraperDriver extends AbstractScraperDriver
         $extracted = $this->parseWithSelectors($content, $config);
 
         if (empty($extracted)) {
-            if ($this->shouldAllowMockFallback()) {
-                // Simulated baseline if parsing failed or returned empty in test environment
-                return [
-                    [
-                        'title'         => 'Generic Board Administrative Officer Recruitment 2026',
-                        'deadline_raw'  => '15-12-2026',
-                        'fee_raw'       => 'Rs 100',
-                        'official_link' => $source->source_url,
-                        'apply_link'    => $source->source_url,
-                        'raw_text'      => 'Ingestion fallback administrative officer vacancies. Apply online by 15-12-2026. Official portal link present.',
-                    ],
-                    [
-                        'title'         => 'Generic Board Admit Card Download Announcement 2026',
-                        'deadline_raw'  => '15-12-2026',
-                        'fee_raw'       => 'Rs 0',
-                        'official_link' => $source->source_url,
-                        'apply_link'    => $source->source_url,
-                        'raw_text'      => 'Click here to download e-admit card for selection exam 2026. Call letters issued.',
-                    ],
-                    [
-                        'title'         => 'Generic Board Written Examination Results Merit List 2026',
-                        'deadline_raw'  => '15-12-2026',
-                        'fee_raw'       => 'Rs 0',
-                        'official_link' => $source->source_url,
-                        'apply_link'    => $source->source_url,
-                        'raw_text'      => 'Written exam results out. Cutoff marks and qualified candidates merit list published.',
-                    ]
-                ];
-            }
             throw new \App\Domains\Scrapers\Exceptions\ParserValidationException("Default HTML scraper driver failed to parse content: Selectors yielded no matching elements.");
         }
 

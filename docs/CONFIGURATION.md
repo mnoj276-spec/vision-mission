@@ -41,7 +41,6 @@ Standard Laravel configurations exist inside the `/config` directory:
 * `GEMINI_API_KEY`: API key for Google Gemini model, utilized in document extraction and OCR formatting.
 * `OPENAI_API_KEY`: Fallback LLM credentials.
 * `INDEXNOW_KEY`: 32-character key matching Bing/Yandex IndexNow APIs.
-* `ALLOW_SCRAPER_MOCK_FALLBACK`: Set to `true` in local/testing environments to bypass remote crawl locks.
 
 ---
 

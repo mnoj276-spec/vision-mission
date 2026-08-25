@@ -125,11 +125,4 @@ abstract class AbstractScraperDriver implements ScraperDriverInterface
         return '';
     }
 
-    /**
-     * Determine if mock fallbacks are allowed (e.g. in testing/local environments).
-     */
-    protected function shouldAllowMockFallback(): bool
-    {
-        return config('services.scraper.allow_mock_fallback', false) || env('ALLOW_SCRAPER_MOCK_FALLBACK', false);
-    }
 }

@@ -32,20 +32,6 @@ class AcademicScraperDriver extends AbstractScraperDriver
         $extracted = $this->parseWithSelectors($content, $config);
 
         if (empty($extracted)) {
-            if ($this->shouldAllowMockFallback()) {
-                return [
-                    [
-                        'title'         => 'Delhi University Assistant Professor Recruitment Ingest 2026',
-                        'deadline_raw'  => '30-11-2026',
-                        'fee_raw'       => 'Rs 500',
-                        'official_link' => 'https://du.ac.in',
-                        'apply_link'    => 'https://rec.uod.ac.in',
-                        'category_name' => 'Academic & Research',
-                        'department_name'=> 'Delhi University Board',
-                        'raw_text'      => 'Delhi University recruitment for Assistant Professors. Ph.D./NET required. Apply online by 30-11-2026. Fee Rs 500.',
-                    ]
-                ];
-            }
             throw new \App\Domains\Scrapers\Exceptions\ParserValidationException("Academic scraper driver failed to parse content: Selectors yielded no matching elements.");
         }
 

@@ -53,9 +53,6 @@ return [
         'key' => env('GEMINI_API_KEY') ?: env('OPENAI_API_KEY'),
     ],
 
-    'scraper' => [
-        'allow_mock_fallback' => env('ALLOW_SCRAPER_MOCK_FALLBACK', false),
-    ],
 
     'indexnow' => [
         'api_key' => env('INDEXNOW_API_KEY'),

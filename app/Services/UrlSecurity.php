@@ -73,7 +73,7 @@ class UrlSecurity
             return false;
         }
 
-        if (app()->environment('testing') || config('services.scraper.allow_mock_fallback') || env('ALLOW_SCRAPER_MOCK_FALLBACK')) {
+        if (app()->environment('testing')) {
             return true;
         }
 

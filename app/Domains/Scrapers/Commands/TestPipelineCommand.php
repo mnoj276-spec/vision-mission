@@ -182,14 +182,8 @@ class TestPipelineCommand extends Command
         
         $downloadUrl = $selectedDocUrl;
         if (!$downloadUrl) {
-            $this->line("  No target notification URL discovered. Generating deterministic mock file...");
-            $mockText = $this->getMockRecruitmentText();
-            $tempFilePath = tempnam(sys_get_temp_dir(), 'mock_notif_') . '.html';
-            file_put_contents($tempFilePath, "<html><body><pre>{$mockText}</pre></body></html>");
-            $fileExtension = 'html';
-            
-            $this->warn("  [!] Download bypassed: Bypassed download & created fallback mock file.");
-            $steps['DownloadSuccessful'] = [true, "Mock Fallback (Local)"];
+            $this->error("  [✗] Download bypassed: No target notification URL discovered.");
+            $steps['DownloadSuccessful'] = [false, "No URL"];
         } else {
             try {
                 $this->line("  Downloading target document from: {$downloadUrl}");
@@ -254,14 +248,6 @@ class TestPipelineCommand extends Command
                 $steps['DownloadSuccessful'] = [true, "Success ({$sizeKb} KB)"];
             } catch (\Exception $e) {
                 $this->error("  [✗] Download Failed: " . $e->getMessage());
-                $this->line("  Generating mock file fallback to allow verification of down-stream pipeline steps...");
-                
-                $mockText = $this->getMockRecruitmentText();
-                $tempFilePath = tempnam(sys_get_temp_dir(), 'mock_notif_') . '.html';
-                file_put_contents($tempFilePath, "<html><body><pre>{$mockText}</pre></body></html>");
-                $fileExtension = 'html';
-                
-                $this->warn("  [!] Falling back to generated mock text document.");
                 $steps['DownloadSuccessful'] = [false, "Failed: " . substr($e->getMessage(), 0, 40)];
             }
         }
@@ -299,10 +285,8 @@ class TestPipelineCommand extends Command
                     $tables = $res['tables'] ?? [];
                     $headers = $res['headers'] ?? [];
                 } else {
-                    // Treat as standard file text or HTML mock
-                    $parserUsed = 'HtmlParser';
-                    $res = $htmlParser->extractStructured($tempFilePath);
-                    $rawText = $res['text'] ?? '';
+                    $this->error("  [✗] Parser Failed: Unsupported extension ($fileExtension)");
+                    $steps['ParserSuccessful'] = [false, "Unsupported extension"];
                 }
 
                 $extractedRawText = $rawText;
@@ -328,7 +312,9 @@ class TestPipelineCommand extends Command
         $avgCharsPerPage = 0;
         $ocrNeeded = false;
         
-        if ($fileExtension === 'pdf') {
+        if (!$tempFilePath) {
+            $ocrNeeded = false;
+        } elseif ($fileExtension === 'pdf') {
             $pageCount = isset($res['page_count']) ? $res['page_count'] : 1;
             $avgCharsPerPage = $pageCount > 0 ? strlen($extractedRawText) / $pageCount : 0;
             $ocrNeeded = $isScanned || $avgCharsPerPage < 150;
@@ -507,10 +493,10 @@ class TestPipelineCommand extends Command
             DB::beginTransaction();
             
             $notificationRecord = ExtractedNotification::create([
-                'file_path'          => $tempFilePath ?: 'mock_fallback_temp.html',
-                'original_filename'  => $downloadUrl ? basename($downloadUrl) : 'mock_notification.html',
+                'file_path'          => $tempFilePath ?: '',
+                'original_filename'  => $downloadUrl ? basename($downloadUrl) : '',
                 'file_type'          => $fileExtension ?: 'html',
-                'raw_text'           => $extractedRawText ?: 'Mock notification placeholder content.',
+                'raw_text'           => $extractedRawText ?: '',
                 'extracted_data'     => $structuredData ?: null,
                 'validation_status'  => isset($validationResult['isValid']) && $validationResult['isValid'] ? 'valid' : 'invalid',
                 'validation_errors'  => isset($validationResult['errors']) ? $validationResult['errors'] : null,
@@ -530,10 +516,7 @@ class TestPipelineCommand extends Command
             $steps['Saved'] = [false, "Save Failed"];
         }
 
-        // Cleanup temporary file
-        if ($tempFilePath && file_exists($tempFilePath) && str_contains($tempFilePath, 'mock_notif_')) {
-            @unlink($tempFilePath);
-        }
+
 
         // =====================================================================
         // FINAL PIPELINE VERIFICATION REPORT
@@ -566,21 +549,5 @@ class TestPipelineCommand extends Command
         return Command::SUCCESS;
     }
 
-    /**
-     * Returns a mockup recruitment text file layout for fallback parsing.
-     */
-    protected function getMockRecruitmentText(): string
-    {
-        return "Job Title: Central Railway Clerk Recruitment 2026\n"
-             . "Department: Central Railway Board\n"
-             . "Vacancy Count: 120\n"
-             . "Qualification: Graduate Degree\n"
-             . "Age Limit: 18 to 30 years\n"
-             . "Salary: Rs. 25000 to Rs. 45000\n"
-             . "Application Fee: Rs. 100\n"
-             . "Selection Process: Written Exam\n"
-             . "Start Date: 2026-08-01\n"
-             . "Last Date to Apply: 2026-09-30\n"
-             . "Official Website: https://cr.indianrailways.gov.in";
-    }
+
 }
