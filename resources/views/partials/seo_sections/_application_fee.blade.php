@@ -26,3 +26,4 @@
                         <span class="info-val" data-i18n="pay_mode_desc">Pay the examination fee through Debit Card, Credit Card, Net Banking, or UPI mode only.</span>
                     </li>
                 </ul>
+            </div>

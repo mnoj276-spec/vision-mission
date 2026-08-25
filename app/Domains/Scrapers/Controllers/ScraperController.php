@@ -33,6 +33,15 @@ class ScraperController extends Controller
         return response()->json(['status' => 'success', 'data' => $this->scraperRepo->getAll()]);
     }
 
+    public function healthDashboard(): JsonResponse
+    {
+        $sources = ScrapingSource::orderByRaw(
+            "FIELD(health_status, 'critical', 'degraded', 'healthy', 'inactive')"
+        )->orderBy('last_failed_at', 'desc')->get();
+
+        return response()->json(['status' => 'success', 'data' => $sources]);
+    }
+
     public function store(Request $request): JsonResponse
     {
         $request->validate([

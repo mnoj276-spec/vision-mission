@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\Route;
 Route::middleware(['auth', 'admin', 'permission:create_jobs'])->prefix('api/admin')->group(function () {
 
     // ─── Scraper Source CRUD ─────────────────────────────────────────────────
+    Route::get('/scrapers/health',   [ScraperController::class, 'healthDashboard'])->name('admin.scrapers.health');
     Route::get('/scrapers',          [ScraperController::class, 'index'])->name('admin.scrapers.list');
     Route::post('/scrapers',         [ScraperController::class, 'store'])->name('admin.scrapers.store');
     Route::post('/scrapers/{id}',    [ScraperController::class, 'update'])->name('admin.scrapers.update');

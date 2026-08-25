@@ -28,6 +28,14 @@ class ScrapingSource extends Model
         'etag',
         'crawl_interval_minutes',
         'next_run_at',
+        'last_attempted_at',
+        'last_succeeded_at',
+        'last_failed_at',
+        'last_failure_reason',
+        'consecutive_failures',
+        'last_records_found',
+        'last_records_published',
+        'health_status',
     ];
 
     protected $casts = [
@@ -37,6 +45,12 @@ class ScrapingSource extends Model
         'cookies' => 'array',
         'performance_stats' => 'array',
         'next_run_at' => 'datetime',
+        'last_attempted_at' => 'datetime',
+        'last_succeeded_at' => 'datetime',
+        'last_failed_at' => 'datetime',
+        'consecutive_failures' => 'integer',
+        'last_records_found' => 'integer',
+        'last_records_published' => 'integer',
     ];
 
     /**

@@ -192,14 +192,8 @@
         
         <!-- CONTENT TYPE SWITCHER -->
         @if(in_array($job->post_type, ['job']))
-            <div class="split-info-card">
-                <div class="split-info-column">
-                    @include('partials.seo_sections._important_dates')
-                </div>
-                <div class="split-info-column">
-                    @include('partials.seo_sections._application_fee')
-                </div>
-            </div>
+            @include('partials.seo_sections._important_dates')
+            @include('partials.seo_sections._application_fee')
             @include('partials.seo_sections._age_limit')
             @include('partials.seo_sections._lifecycle')
             @include('partials.seo_sections._vacancy_breakdown')
@@ -211,42 +205,28 @@
             @include('partials.seo_sections._useful_links')
 
         @elseif(in_array($job->post_type, ['admit_card', 'result']))
-            <div class="split-info-card" style="display: block;">
-                @include('partials.seo_sections._important_dates')
-            </div>
+            @include('partials.seo_sections._important_dates')
             @include('partials.seo_sections._how_to_apply')
             @include('partials.seo_sections._useful_links')
 
         @elseif($job->post_type === 'answer_key')
-            <div class="split-info-card" style="display: block;">
-                @include('partials.seo_sections._important_dates')
-            </div>
+            @include('partials.seo_sections._important_dates')
             @include('partials.seo_sections._how_to_apply')
             @include('partials.seo_sections._useful_links')
 
         @elseif($job->post_type === 'syllabus')
-            <div class="split-info-card" style="display: block;">
-                @include('partials.seo_sections._important_dates')
-            </div>
+            @include('partials.seo_sections._important_dates')
             @include('partials.seo_sections._syllabus_pattern')
             @include('partials.seo_sections._useful_links')
 
         @elseif($job->post_type === 'notice')
-            <div class="split-info-card" style="display: block;">
-                @include('partials.seo_sections._important_dates')
-            </div>
+            @include('partials.seo_sections._important_dates')
             @include('partials.seo_sections._eligibility_overview')
             @include('partials.seo_sections._useful_links')
 
         @elseif(in_array($job->post_type, ['admission', 'scholarship']))
-            <div class="split-info-card">
-                <div class="split-info-column">
-                    @include('partials.seo_sections._important_dates')
-                </div>
-                <div class="split-info-column">
-                    @include('partials.seo_sections._application_fee')
-                </div>
-            </div>
+            @include('partials.seo_sections._important_dates')
+            @include('partials.seo_sections._application_fee')
             @include('partials.seo_sections._eligibility_overview')
             @include('partials.seo_sections._faqs')
             @include('partials.seo_sections._how_to_apply')
@@ -254,14 +234,8 @@
             
         @else
             <!-- Fallback for generic or missing post types -->
-            <div class="split-info-card">
-                <div class="split-info-column">
-                    @include('partials.seo_sections._important_dates')
-                </div>
-                <div class="split-info-column">
-                    @include('partials.seo_sections._application_fee')
-                </div>
-            </div>
+            @include('partials.seo_sections._important_dates')
+            @include('partials.seo_sections._application_fee')
             @include('partials.seo_sections._age_limit')
             @include('partials.seo_sections._vacancy_breakdown')
             @include('partials.seo_sections._eligibility_overview')

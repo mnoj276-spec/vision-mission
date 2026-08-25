@@ -117,6 +117,8 @@ class ScrapingService implements ScrapingServiceInterface
                 ],
             ]);
             
+            app(\App\Domains\Scrapers\Services\SourceHealthService::class)->recordSuccess($source, $s, $d, $q, $f);
+            
             $this->updateAdaptiveFrequency($source, $s);
 
             return ['success' => true, 'summary' => ['success' => $s, 'duplicate' => $d, 'quarantined' => $q, 'failed' => $f]];
@@ -134,6 +136,8 @@ class ScrapingService implements ScrapingServiceInterface
                 ],
             ]);
 
+            app(\App\Domains\Scrapers\Services\SourceHealthService::class)->recordSuccess($source, 0, 0, 0, 0);
+
             $this->updateAdaptiveFrequency($source, 0);
 
             return ['success' => true, 'unchanged' => true, 'summary' => ['success' => 0, 'duplicate' => 0, 'quarantined' => 0, 'failed' => 0]];
@@ -150,6 +154,8 @@ class ScrapingService implements ScrapingServiceInterface
                     'trace' => substr($e->getTraceAsString(), 0, 1000)
                 ],
             ]);
+            
+            app(\App\Domains\Scrapers\Services\SourceHealthService::class)->recordFailure($source, $e->getMessage());
 
             $source->update([
                 'next_run_at' => now()->addMinutes(10), // Short backoff retry for network/scraping errors
