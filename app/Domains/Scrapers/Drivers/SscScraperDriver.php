@@ -40,11 +40,23 @@ class SscScraperDriver extends AbstractScraperDriver
                     $attachmentUrl = 'https://ssc.gov.in/api/attachment/' . $normalizedPath;
                 }
                 
+                $endDate = $item['endDate'] ?? null;
+                $createdAt = $item['createdAt'] ?? null;
+                
+                // If this is a notice/result without a deadline, use 30 days after creation as a fallback
+                if (empty($endDate) && !empty($createdAt)) {
+                    try {
+                        $endDate = \Carbon\Carbon::parse($createdAt)->addDays(30)->format('Y-m-d\TH:i:s.u\Z');
+                    } catch (\Exception $e) {
+                        $endDate = now()->addDays(30)->format('Y-m-d\TH:i:s.u\Z');
+                    }
+                }
+
                 $extracted[] = [
                     'title' => $item['headline'] ?? '',
-                    'url' => $attachmentUrl,
-                    'deadline' => $item['endDate'] ?? null,
-                    'published_at' => $item['createdAt'] ?? null,
+                    'official_link' => $attachmentUrl,
+                    'deadline_raw' => $endDate,
+                    'published_at' => $createdAt,
                 ];
             }
             return $extracted;
