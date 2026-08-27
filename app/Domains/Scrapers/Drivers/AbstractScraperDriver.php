@@ -57,6 +57,74 @@ abstract class AbstractScraperDriver implements ScraperDriverInterface
             }
         }
 
+        if (empty($results)) {
+            $results = $this->heuristicFallbackExtract($html, $config);
+        }
+
+        return $results;
+    }
+
+    protected function heuristicFallbackExtract(string $html, array $config): array
+    {
+        $dom = new \DOMDocument();
+        libxml_use_internal_errors(true);
+        $dom->loadHTML(mb_convert_encoding($html, 'HTML-ENTITIES', 'UTF-8'));
+        libxml_clear_errors();
+
+        $xpath = new \DOMXPath($dom);
+        $links = $xpath->query('//a[@href]');
+        
+        $results = [];
+        $seen = [];
+        
+        if ($links) {
+            foreach ($links as $linkNode) {
+                $href = trim($linkNode->getAttribute('href'));
+                $title = trim($linkNode->nodeValue);
+                
+                if (empty($href) || empty($title) || strlen($title) < 10) continue;
+                if (str_starts_with($href, '#') || str_starts_with($href, 'javascript:')) continue;
+                
+                $isPdf = str_ends_with(strtolower(parse_url($href, PHP_URL_PATH) ?? ''), '.pdf');
+                $hasKeyword = preg_match('/(recruitment|notice|result|admit card|apply|vacancy|syllabus|advertisement|post|exam|commission|officer)/i', $title);
+                
+                if ($isPdf || $hasKeyword) {
+                    $parent = $linkNode->parentNode;
+                    $textContext = $title;
+                    while ($parent && !in_array(strtolower($parent->nodeName), ['tr', 'li', 'body'])) {
+                        $parent = $parent->parentNode;
+                    }
+                    if ($parent && in_array(strtolower($parent->nodeName), ['tr', 'li'])) {
+                        $textContext = trim($parent->nodeValue);
+                    }
+                    
+                    $deadline = '';
+                    if (preg_match('/(\d{2}[\/.-]\d{2}[\/.-]\d{4}|\d{4}[\/.-]\d{2}[\/.-]\d{2})/', $textContext, $m)) {
+                        $deadline = $m[1];
+                    }
+                    
+                    if (!str_starts_with($href, 'http')) {
+                        $base = parse_url($config['official_url'] ?? $config['source_url'] ?? '', PHP_URL_SCHEME) . '://' . parse_url($config['official_url'] ?? $config['source_url'] ?? '', PHP_URL_HOST);
+                        $href = rtrim($base, '/') . '/' . ltrim($href, '/');
+                    }
+                    
+                    $hash = md5($href . $title);
+                    if (!isset($seen[$hash])) {
+                        $seen[$hash] = true;
+                        $results[] = [
+                            'title'         => $title,
+                            'deadline_raw'  => $deadline,
+                            'official_link' => $href,
+                            'apply_link'    => $href,
+                            'raw_text'      => $textContext,
+                        ];
+                    }
+                    
+                    if (count($results) >= 20) break;
+                }
+            }
+        }
+        
         return $results;
     }
 
