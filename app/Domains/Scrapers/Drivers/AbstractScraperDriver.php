@@ -25,11 +25,8 @@ abstract class AbstractScraperDriver implements ScraperDriverInterface
         $itemXpath = $this->cssToXpath($config['item_selector']);
         $nodes = $xpath->query($itemXpath);
 
-        if (!$nodes || $nodes->length === 0) {
-            return [];
-        }
-
         $results = [];
+        if ($nodes && $nodes->length > 0) {
         foreach ($nodes as $node) {
             $titleSelector = $config['title_selector'] ?? '';
             $linkSelector = $config['link_selector'] ?? 'a';
@@ -56,7 +53,8 @@ abstract class AbstractScraperDriver implements ScraperDriverInterface
                 ];
             }
         }
-
+        }
+        
         if (empty($results)) {
             $results = $this->heuristicFallbackExtract($html, $config);
         }
