@@ -61,28 +61,56 @@ class TesseractEngine extends BaseEngine
             $tessdataDir = env('TESSDATA_PREFIX');
             $tessdataArg = $tessdataDir ? " --tessdata-dir \"{$tessdataDir}\"" : "";
             
-            $processResult = Process::run("{$cmd} \"{$filePath}\" \"{$tempOutput}\" -l {$langTag}{$tessdataArg}");
+            $pages = $options['pages'] ?? [];
+            $text = '';
+            $cliOutput = '';
+
+            if (!empty($pages) && is_array($pages)) {
+                foreach ($pages as $page) {
+                    $pageIndex = max(0, $page - 1); // Tesseract uses 0-based page index
+                    $pageTempOutput = tempnam(sys_get_temp_dir(), "tess_out_p{$page}");
+                    $pageTxtFile = $pageTempOutput . '.txt';
+                    
+                    $cmdStr = "{$cmd} \"{$filePath}\" \"{$pageTempOutput}\" -l {$langTag}{$tessdataArg} -c tessedit_page_number={$pageIndex}";
+                    $res = Process::run($cmdStr);
+                    $cliOutput .= "Page {$page}: " . $res->output() . "\n";
+                    
+                    if ($res->successful() && file_exists($pageTxtFile)) {
+                        $text .= file_get_contents($pageTxtFile) . "\n\n";
+                    }
+                    @unlink($pageTxtFile);
+                    @unlink($pageTempOutput);
+                }
+                
+                if (empty(trim($text))) {
+                    throw new \Exception("Tesseract CLI failed to parse specified pages.");
+                }
+                
+            } else {
+                $cmdStr = "{$cmd} \"{$filePath}\" \"{$tempOutput}\" -l {$langTag}{$tessdataArg}";
+                $processResult = Process::run($cmdStr);
+                $cliOutput = $processResult->output();
+                $txtFile = $tempOutput . '.txt';
+
+                if ($processResult->successful() && file_exists($txtFile)) {
+                    $text = file_get_contents($txtFile);
+                } else {
+                    @unlink($txtFile);
+                    @unlink($tempOutput);
+                    throw new \Exception("Tesseract CLI failed to parse text: " . $processResult->error());
+                }
+                @unlink($txtFile);
+                @unlink($tempOutput);
+            }
             
             $duration = microtime(true) - $startTime;
             $cost = 0.0;
-
-            // Tesseract appends .txt automatically to the output base
-            $txtFile = $tempOutput . '.txt';
-
-            if ($processResult->successful() && file_exists($txtFile)) {
-                $text = file_get_contents($txtFile);
-                @unlink($txtFile);
-                @unlink($tempOutput);
-                
-                $confidence = $this->computeConfidenceHeuristic($text, $language);
-                return new OcrResult($text, $confidence, $this->getName(), $duration, $cost, [
-                    'cli_output' => $processResult->output(),
-                    'simulated' => false
-                ]);
-            }
-
-            @unlink($tempOutput);
-            throw new \Exception("Tesseract CLI failed to parse text: " . $processResult->error());
+            
+            $confidence = $this->computeConfidenceHeuristic($text, $language);
+            return new OcrResult($text, $confidence, $this->getName(), $duration, $cost, [
+                'cli_output' => $cliOutput,
+                'simulated' => false
+            ]);
 
         } catch (\Throwable $e) {
             $duration = microtime(true) - $startTime;

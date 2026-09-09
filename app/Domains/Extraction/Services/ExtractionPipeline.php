@@ -195,7 +195,7 @@ class ExtractionPipeline
                 
                 // Pass scanned pages to OCR Service if available so it can process only those pages
                 $ocrOptions = !empty($scannedPages) ? ['pages' => $scannedPages] : [];
-                $ocrText = $this->ocrService->extractText($filePath, $extension); // Note: Assuming OCRService ignores options for now unless updated
+                $ocrText = $this->ocrService->extractText($filePath, $extension, $ocrOptions);
                 
                 if (!empty(trim($ocrText))) {
                     if (!empty($scannedPages)) {

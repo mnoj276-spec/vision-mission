@@ -21,7 +21,7 @@ class OCRService
      * @param string $extension
      * @return string
      */
-    public function extractText(string $filePath, string $extension): string
+    public function extractText(string $filePath, string $extension, array $customOptions = []): string
     {
         if (!file_exists($filePath)) {
             Log::error("OCR target file not found: {$filePath}");
@@ -38,6 +38,9 @@ class OCRService
             } elseif (str_contains($fileName, 'mixed')) {
                 $options['language'] = 'mixed';
             }
+
+            // Merge passed custom options (e.g. specific pages to process)
+            $options = array_merge($options, $customOptions);
 
             $result = $this->manager->extract($filePath, $options);
             return $result->text;
