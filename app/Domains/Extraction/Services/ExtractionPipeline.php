@@ -236,6 +236,7 @@ class ExtractionPipeline
             'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' => 'xlsx',
             'application/vnd.ms-excel' => 'xls',
             'text/csv' => 'csv',
+            'text/plain' => 'csv',
             'text/xml' => 'xml',
             'application/xml' => 'xml',
             'image/jpeg' => 'jpg',
@@ -249,6 +250,6 @@ class ExtractionPipeline
             return $map[$mime];
         }
         
-        return strtolower(pathinfo($filePath, PATHINFO_EXTENSION));
+        throw new \Exception("Strict Validation Failed: Unsupported MIME type '{$mime}' for file '{$filePath}'.");
     }
 }
