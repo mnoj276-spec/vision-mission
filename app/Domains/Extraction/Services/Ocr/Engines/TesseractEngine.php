@@ -58,7 +58,10 @@ class TesseractEngine extends BaseEngine
             }
 
             // Command syntax: tesseract [inputfile] [outputbase] -l [lang]
-            $processResult = Process::run("{$cmd} \"{$filePath}\" \"{$tempOutput}\" -l {$langTag}");
+            $tessdataDir = env('TESSDATA_PREFIX');
+            $tessdataArg = $tessdataDir ? " --tessdata-dir \"{$tessdataDir}\"" : "";
+            
+            $processResult = Process::run("{$cmd} \"{$filePath}\" \"{$tempOutput}\" -l {$langTag}{$tessdataArg}");
             
             $duration = microtime(true) - $startTime;
             $cost = 0.0;
