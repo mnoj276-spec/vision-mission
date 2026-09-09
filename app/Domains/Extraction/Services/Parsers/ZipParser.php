@@ -26,6 +26,21 @@ class ZipParser
 
         $zip = new \ZipArchive();
         if ($zip->open($filePath) === true) {
+            $maxUncompressedSize = 50 * 1024 * 1024; // 50MB limit
+            $totalSize = 0;
+            
+            for ($i = 0; $i < $zip->numFiles; $i++) {
+                $stat = $zip->statIndex($i);
+                if ($stat !== false && isset($stat['size'])) {
+                    $totalSize += $stat['size'];
+                }
+                
+                if ($totalSize > $maxUncompressedSize) {
+                    $zip->close();
+                    throw new \Exception("ZIP Bomb detected: Uncompressed size exceeds 50MB limit.");
+                }
+            }
+
             $zip->extractTo($tempDir);
             $zip->close();
             

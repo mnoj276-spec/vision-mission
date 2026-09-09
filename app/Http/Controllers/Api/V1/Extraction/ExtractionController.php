@@ -80,22 +80,37 @@ class ExtractionController extends Controller
 
                 try {
                     $client = new \GuzzleHttp\Client();
-                    $response = $client->request('GET', $url, [
-                        'stream' => true,
-                        'timeout' => 30,
-                        'allow_redirects' => [
-                            'max' => 5,
-                            'protocols' => ['http', 'https'],
-                            'on_redirect' => function(\Psr\Http\Message\RequestInterface $req, \Psr\Http\Message\ResponseInterface $res, \Psr\Http\Message\UriInterface $uri) {
-                                $redirectUrl = (string)$uri;
-                                try {
-                                    UrlSecurity::verifySafeUrl($redirectUrl);
-                                } catch (\Exception $e) {
-                                    throw new \Exception("SSRF Block: Redirected to unsafe domain: " . $redirectUrl . ". Reason: " . $e->getMessage());
-                                }
-                            }
-                        ]
-                    ]);
+                    $currentUrl = $url;
+                    $maxRedirects = 5;
+                    $redirectCount = 0;
+                    $response = null;
+
+                    while ($redirectCount <= $maxRedirects) {
+                        // Re-verify the URL before every request to mitigate SSRF DNS rebinding
+                        UrlSecurity::verifySafeUrl($currentUrl);
+
+                        $response = $client->request('GET', $currentUrl, [
+                            'stream' => true,
+                            'timeout' => 30,
+                            'allow_redirects' => false
+                        ]);
+
+                        $statusCode = $response->getStatusCode();
+                        if ($statusCode >= 300 && $statusCode < 400 && $response->hasHeader('Location')) {
+                            $location = $response->getHeaderLine('Location');
+                            $currentUrl = \GuzzleHttp\Psr7\UriResolver::resolve(
+                                \GuzzleHttp\Psr7\Utils::uriFor($currentUrl),
+                                \GuzzleHttp\Psr7\Utils::uriFor($location)
+                            )->__toString();
+                            $redirectCount++;
+                        } else {
+                            break;
+                        }
+                    }
+
+                    if ($redirectCount > $maxRedirects) {
+                        throw new \Exception("Too many redirects.");
+                    }
 
                     if ($response->getStatusCode() !== 200) {
                         throw new \Exception("HTTP request failed with status code " . $response->getStatusCode());
