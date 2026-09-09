@@ -31,8 +31,17 @@ class ZipParser
             
             for ($i = 0; $i < $zip->numFiles; $i++) {
                 $stat = $zip->statIndex($i);
-                if ($stat !== false && isset($stat['size'])) {
-                    $totalSize += $stat['size'];
+                if ($stat !== false) {
+                    if (isset($stat['size'])) {
+                        $totalSize += $stat['size'];
+                    }
+                    
+                    // Zip Slip Prevention: Check for directory traversal or absolute paths
+                    $filename = $stat['name'];
+                    if (str_contains($filename, '..') || str_starts_with($filename, '/') || str_starts_with($filename, '\\')) {
+                        $zip->close();
+                        throw new \Exception("Zip Slip vulnerability detected. Invalid file path: {$filename}");
+                    }
                 }
                 
                 if ($totalSize > $maxUncompressedSize) {

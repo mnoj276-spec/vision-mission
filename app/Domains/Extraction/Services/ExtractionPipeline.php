@@ -115,8 +115,20 @@ class ExtractionPipeline
         }
     }
 
-    protected function parseFile(string $filePath, string $extension): array
+    protected function parseFile(string $filePath, string $extension, int $depth = 0): array
     {
+        if ($depth > 3) {
+            Log::warning("Max archive extraction depth reached.");
+            return [
+                'rawText' => '',
+                'tables' => [],
+                'headers' => [],
+                'parserUsed' => 'MaxDepthExceeded',
+                'isScanned' => false,
+                'scannedPages' => []
+            ];
+        }
+
         $rawText = '';
         $tables = [];
         $headers = [];
@@ -135,7 +147,7 @@ class ExtractionPipeline
                 if (empty($ext)) continue;
 
                 try {
-                    $subRes = $this->parseFile($file, $ext);
+                    $subRes = $this->parseFile($file, $ext, $depth + 1);
                     $rawText .= "\n\n" . $subRes['rawText'];
                     $tables = array_merge($tables, $subRes['tables']);
                     $headers = array_merge($headers, $subRes['headers']);
