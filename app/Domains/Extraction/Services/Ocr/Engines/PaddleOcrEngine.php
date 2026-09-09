@@ -19,16 +19,24 @@ class PaddleOcrEngine extends BaseEngine
         // Windows venv structure
         $windowsPath = $basePath . DIRECTORY_SEPARATOR . 'Scripts' . DIRECTORY_SEPARATOR . 'python.exe';
         if (file_exists($windowsPath)) {
-            return $windowsPath;
+            // Check if module is installed in venv
+            $result = \Illuminate\Support\Facades\Process::run("\"{$windowsPath}\" -c \"import paddleocr\"");
+            if ($result->successful()) {
+                return $windowsPath;
+            }
         }
         
         // Linux/macOS venv structure
         $unixPath = $basePath . DIRECTORY_SEPARATOR . 'bin' . DIRECTORY_SEPARATOR . 'python';
         if (file_exists($unixPath)) {
-            return $unixPath;
+            $result = \Illuminate\Support\Facades\Process::run("\"{$unixPath}\" -c \"import paddleocr\"");
+            if ($result->successful()) {
+                return $unixPath;
+            }
         }
 
-        return '';
+        // Fallback to global python which may have paddleocr installed
+        return 'python';
     }
 
     /**
