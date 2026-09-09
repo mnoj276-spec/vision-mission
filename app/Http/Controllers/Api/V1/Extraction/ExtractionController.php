@@ -79,66 +79,86 @@ class ExtractionController extends Controller
                 }
 
                 try {
-                    $client = new \GuzzleHttp\Client();
-                    $currentUrl = $url;
-                    $maxRedirects = 5;
-                    $redirectCount = 0;
-                    $response = null;
-
-                    while ($redirectCount <= $maxRedirects) {
-                        // Re-verify the URL before every request to mitigate SSRF DNS rebinding
-                        UrlSecurity::verifySafeUrl($currentUrl);
-
-                        $response = $client->request('GET', $currentUrl, [
-                            'stream' => true,
-                            'timeout' => 30,
-                            'allow_redirects' => false
-                        ]);
-
-                        $statusCode = $response->getStatusCode();
-                        if ($statusCode >= 300 && $statusCode < 400 && $response->hasHeader('Location')) {
-                            $location = $response->getHeaderLine('Location');
-                            $currentUrl = \GuzzleHttp\Psr7\UriResolver::resolve(
-                                \GuzzleHttp\Psr7\Utils::uriFor($currentUrl),
-                                \GuzzleHttp\Psr7\Utils::uriFor($location)
-                            )->__toString();
-                            $redirectCount++;
-                        } else {
-                            break;
+                    $useGuzzle = true;
+                    
+                    if (in_array($fileType, ['html', 'htm']) && class_exists(\Spatie\Browsershot\Browsershot::class)) {
+                        try {
+                            Log::info("Universal Extraction Engine: Rendering JS URL using Browsershot for {$url}");
+                            $html = \Spatie\Browsershot\Browsershot::url($url)
+                                ->noSandbox()
+                                ->waitUntilNetworkIdle()
+                                ->evaluate('document.documentElement.outerHTML');
+                                
+                            file_put_contents($tempPath, $html);
+                            $filePath = $tempPath;
+                            $useGuzzle = false; // We successfully downloaded via headless browser
+                        } catch (\Exception $e) {
+                            Log::warning("Browsershot failed for {$url}, falling back to static Guzzle download: " . $e->getMessage());
                         }
                     }
 
-                    if ($redirectCount > $maxRedirects) {
-                        throw new \Exception("Too many redirects.");
-                    }
-
-                    if ($response->getStatusCode() !== 200) {
-                        throw new \Exception("HTTP request failed with status code " . $response->getStatusCode());
-                    }
-
-                    $body = $response->getBody();
-                    $outStream = fopen($tempPath, 'wb');
-                    if ($outStream === false) {
-                        throw new \Exception("Failed to open file for writing: " . $tempPath);
-                    }
-
-                    $totalBytes = 0;
-                    $maxBytes = 20 * 1024 * 1024; // 20MB
-
-                    while (!$body->eof()) {
-                        $chunk = $body->read(8192); // Read 8KB chunks
-                        $totalBytes += strlen($chunk);
-                        if ($totalBytes > $maxBytes) {
-                            fclose($outStream);
-                            if (file_exists($tempPath)) {
-                                unlink($tempPath);
+                    if ($useGuzzle) {
+                        $client = new \GuzzleHttp\Client();
+                        $currentUrl = $url;
+                        $maxRedirects = 5;
+                        $redirectCount = 0;
+                        $response = null;
+    
+                        while ($redirectCount <= $maxRedirects) {
+                            // Re-verify the URL before every request to mitigate SSRF DNS rebinding
+                            UrlSecurity::verifySafeUrl($currentUrl);
+    
+                            $response = $client->request('GET', $currentUrl, [
+                                'stream' => true,
+                                'timeout' => 30,
+                                'allow_redirects' => false
+                            ]);
+    
+                            $statusCode = $response->getStatusCode();
+                            if ($statusCode >= 300 && $statusCode < 400 && $response->hasHeader('Location')) {
+                                $location = $response->getHeaderLine('Location');
+                                $currentUrl = \GuzzleHttp\Psr7\UriResolver::resolve(
+                                    \GuzzleHttp\Psr7\Utils::uriFor($currentUrl),
+                                    \GuzzleHttp\Psr7\Utils::uriFor($location)
+                                )->__toString();
+                                $redirectCount++;
+                            } else {
+                                break;
                             }
-                            throw new \Exception("File size limit of 20MB exceeded.");
                         }
-                        fwrite($outStream, $chunk);
+    
+                        if ($redirectCount > $maxRedirects) {
+                            throw new \Exception("Too many redirects.");
+                        }
+    
+                        if ($response->getStatusCode() !== 200) {
+                            throw new \Exception("HTTP request failed with status code " . $response->getStatusCode());
+                        }
+    
+                        $body = $response->getBody();
+                        $outStream = fopen($tempPath, 'wb');
+                        if ($outStream === false) {
+                            throw new \Exception("Failed to open file for writing: " . $tempPath);
+                        }
+
+                        $totalBytes = 0;
+                        $maxBytes = 20 * 1024 * 1024; // 20MB
+
+                        while (!$body->eof()) {
+                            $chunk = $body->read(8192); // Read 8KB chunks
+                            $totalBytes += strlen($chunk);
+                            if ($totalBytes > $maxBytes) {
+                                fclose($outStream);
+                                if (file_exists($tempPath)) {
+                                    unlink($tempPath);
+                                }
+                                throw new \Exception("File size limit of 20MB exceeded.");
+                            }
+                            fwrite($outStream, $chunk);
+                        }
+                        fclose($outStream);
+                        $filePath = $tempPath;
                     }
-                    fclose($outStream);
-                    $filePath = $tempPath;
                 } catch (\Exception $e) {
                     if (isset($tempPath) && file_exists($tempPath)) {
                         @unlink($tempPath);

@@ -72,6 +72,23 @@ class HtmlParser
             return $this->emptyResult();
         }
 
+        // If it looks like it might be a JS-rendered page and Browsershot is available
+        if (stripos($html, '<script') !== false && class_exists(\Spatie\Browsershot\Browsershot::class)) {
+            try {
+                Log::info("HtmlParser: JavaScript detected in local file, attempting to render with Browsershot");
+                $renderedHtml = \Spatie\Browsershot\Browsershot::html($html)
+                    ->noSandbox()
+                    ->waitUntilNetworkIdle()
+                    ->evaluate('document.documentElement.outerHTML');
+                
+                if (!empty(trim($renderedHtml))) {
+                    $html = $renderedHtml;
+                }
+            } catch (\Exception $e) {
+                Log::warning("HtmlParser: Browsershot local rendering failed: " . $e->getMessage());
+            }
+        }
+
         return $this->extractStructuredFromString($html);
     }
 
